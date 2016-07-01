@@ -1,0 +1,40 @@
+# Meine Ordnerstruktur auf der OSGeo-Live
+/home/user/swos/framework für das Framework
+/home/user/swos/venv für die virtuelle Python-Umgebung
+
+# Alles basierend auf Python 2.7
+# Virtuelle Python Umgebung einrichten
+mkdir /home/user/swos
+cd /home/user/swos
+sudo pip install virtualenv
+virtualenv venv
+source venv/bin/activate
+
+# Python-Module für das Django-WebGIS-Framework installieren
+cd framework
+pip install requests
+pip install -r requirements.txt
+
+# Datenbank einrichten
+createdb swos2
+psql swos2 < swos2.db
+
+# Testserver des Django-Frameworks starten
+python manage.py runserver
+
+# Im Webbrowser
+http://localhost:8000
+http://localhost:8000/admin
+
+# Admin-Zugangsdaten
+Username: swos
+Password: swosadmin
+
+# Hinweis
+Falls das Framework nicht im Ordner /home/user/swos/framework liegt, müssen die Template-Pfade der Viewer im Django-Admin angepasst werden, dazu bitte im Admin auf Mapviewer->Mapviewer gehen und die beiden Einträge bearbeiten. Arbis bekommt das Template arbis.html, SWOS bekommt das Template viewer.html
+
+# Empfehlung
+Die Entwicklungsumgebung "PyCharm" gibt es in einer Education-Variante, die man sich nach Registrierung mit der Uni-Jena-Mailadresse herunterladen kann. Diese Variante besitzt auch eine Django-Integration (im Gegensatz zur Community-Version), was das arbeiten sehr angenehm macht. 
+
+# Frontend-Entwicklung
+Die JavaScript-Dateien findest du unter static/js. Die Template-Dateien für die Viewer unter templates/mapviewer. 

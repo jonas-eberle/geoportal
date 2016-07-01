@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h1>Edit profile</h1>
+</div>
+<div class="modal-body">
+    <form>
+        <input name="first_name" ng-model="userdata.first_name" placeholder="First name" type="text" />
+        <br>
+        <input name="last_name" ng-model="userdata.last_name" placeholder="Last name" type="text" />
+        <br>
+        <input name="password1" ng-model="userdata.password1" placeholder="New password" type="password" />
+        <br>
+        <input name="password2" ng-model="userdata.password2" placeholder="Confirm password" type="password" />
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="save()">
+        Save
+    </button>
+    <button class="btn btn-danger" ng-click="delete()">
+        Delete
+    </button>
+    <button class="btn btn-primary" ng-click="close()">
+        Cancel
+    </button>
+</div>

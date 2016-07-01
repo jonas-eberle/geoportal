@@ -1,0 +1,742 @@
+<?xml version='1.0' encoding="ISO-8859-1" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd"
+ [
+ <!ELEMENT VendorSpecificCapabilities EMPTY>
+ ]>  <!-- end of DOCTYPE declaration -->
+
+<WMT_MS_Capabilities version="1.1.1">
+
+<!-- MapServer version 6.2.1 OUTPUT=GIF OUTPUT=PNG OUTPUT=JPEG SUPPORTS=PROJ SUPPORTS=GD SUPPORTS=AGG SUPPORTS=FREETYPE SUPPORTS=CAIRO SUPPORTS=SVG_SYMBOLS SUPPORTS=ICONV SUPPORTS=FRIBIDI SUPPORTS=WMS_SERVER SUPPORTS=WMS_CLIENT SUPPORTS=WFS_SERVER SUPPORTS=WFS_CLIENT SUPPORTS=WCS_SERVER SUPPORTS=SOS_SERVER SUPPORTS=FASTCGI SUPPORTS=THREADS SUPPORTS=GEOS INPUT=JPEG INPUT=POSTGIS INPUT=OGR INPUT=GDAL INPUT=SHAPEFILE -->
+
+<Service>
+  <Name>OGC:WMS</Name>
+  <Title>SIB-ESS-C MODIS</Title>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/>
+  <ContactInformation>
+  </ContactInformation>
+</Service>
+
+<Capability>
+  <Request>
+    <GetCapabilities>
+      <Format>application/vnd.ogc.wms_xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetCapabilities>
+    <GetMap>
+      <Format>image/tiff</Format>
+      <Format>image/png</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/gif</Format>
+      <Format>image/png; mode=8bit</Format>
+      <Format>application/x-pdf</Format>
+      <Format>image/svg+xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetMap>
+    <GetFeatureInfo>
+      <Format>text/html</Format>
+      <Format>application/vnd.ogc.gml</Format>
+      <Format>text/plain</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetFeatureInfo>
+  </Request>
+  <Exception>
+    <Format>application/vnd.ogc.se_xml</Format>
+    <Format>application/vnd.ogc.se_inimage</Format>
+    <Format>application/vnd.ogc.se_blank</Format>
+  </Exception>
+  <VendorSpecificCapabilities />
+  <Layer>
+<!-- WARNING: The layer name 'SIB-ESS-C MODIS' might contain spaces or invalid characters or may start with a number. This could lead to potential problems. -->
+    <Name>SIB-ESS-C MODIS</Name>
+    <Title>SIB-ESS-C MODIS</Title>
+    <Abstract>SIB-ESS-C MODIS</Abstract>
+    <SRS>EPSG:900913</SRS>
+    <SRS>EPSG:4326</SRS>
+    <LatLonBoundingBox minx="-180" miny="-90" maxx="180" maxy="90" />
+    <BoundingBox SRS="EPSG:4326"
+                minx="-180" miny="-90" maxx="180" maxy="90" />
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd13c1_evi_time_idx</Name>
+        <Title>16-daily Enhanced Vegetation Index from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-14" nearestValue="0">2002-07-04/2015-03-14/P16D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd13c1_evi</Name>
+        <Title>16-daily Enhanced Vegetation Index from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-14" nearestValue="0">2002-07-04/2015-03-14/P16D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=myd13c1_evi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd13c1_ndvi_time_idx</Name>
+        <Title>16-daily Normalized Difference Vegetation Index from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-14" nearestValue="0">2002-07-04/2015-03-14/P16D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd13c1_ndvi</Name>
+        <Title>16-daily Normalized Difference Vegetation Index from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-14" nearestValue="0">2002-07-04/2015-03-14/P16D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=myd13c1_ndvi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd10cm_snowcover_time_idx</Name>
+        <Title>Monthly Snow Cover from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2013-12-01" nearestValue="0">2002-09-01/2013-12-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd10cm_snowcover</Name>
+        <Title>Monthly Snow Cover from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2013-12-01" nearestValue="0">2002-09-01/2013-12-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="99" height="90">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=myd10cm_snowcover&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod13c2_evi_time_idx</Name>
+        <Title>Monthly Enhanced Vegetation Index from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:3857</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2000-02-01/2015-02-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod13c2_evi</Name>
+        <Title>Monthly Enhanced Vegetation Index from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:3857</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2000-02-01/2015-02-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod13c2_evi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd11c3_lst_day_time_idx</Name>
+        <Title>Monthly Daytime Land Surface Temperature from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2002-08-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd11c3_lst_day</Name>
+        <Title>Monthly Daytime Land Surface Temperature from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2002-08-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd11c3_lst_night_time_idx</Name>
+        <Title>Monthly Nighttime Land Surface Temperature from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2002-08-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd11c3_lst_night</Name>
+        <Title>Monthly Nighttime Land Surface Temperature from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2002-08-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd13c2_ndvi_time_idx</Name>
+        <Title>Monthly Normalized Difference Vegetation Index from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2002-07-01/2015-02-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd13c2_ndvi</Name>
+        <Title>Monthly Normalized Difference Vegetation Index from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2002-07-01/2015-02-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=myd13c2_ndvi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod11c3_lst_day_time_idx</Name>
+        <Title>Monthly Daytime Land Surface Temperature from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2000-03-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod11c3_lst_day</Name>
+        <Title>Monthly Daytime Land Surface Temperature from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2000-03-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd13c2_evi_time_idx</Name>
+        <Title>Monthly Enhanced Vegetation Index from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2002-07-01/2015-02-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd13c2_evi</Name>
+        <Title>Monthly Enhanced Vegetation Index from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2002-07-01/2015-02-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=myd13c2_evi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod11a1_lst_night_time_idx</Name>
+        <Title>Daily Nighttime Land Surface Temperature from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-03-09" nearestValue="0">2010-01-01/2014-03-09/P1D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod11a1_lst_night</Name>
+        <Title>Daily Nighttime Land Surface Temperature from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-03-09" nearestValue="0">2010-01-01/2014-03-09/P1D</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod13c2_ndvi_time_idx</Name>
+        <Title>Monthly Normalized Difference Vegetation Index from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2000-02-01/2015-02-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod13c2_ndvi</Name>
+        <Title>Monthly Normalized Difference Vegetation Index from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-02-01" nearestValue="0">2000-02-01/2015-02-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod13c2_ndvi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod13a1_ndvi_time_idx</Name>
+        <Title>16-daily Normalized Difference Vegetation Index from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-02-18" nearestValue="0">2010-01-01/2014-02-18/P16D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod13a1_ndvi</Name>
+        <Title>16-daily Normalized Difference Vegetation Index from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-02-18" nearestValue="0">2010-01-01/2014-02-18/P16D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod13a1_ndvi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod10cm_snowcover_time_idx</Name>
+        <Title>Monthly Snow Cover from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2013-12-01" nearestValue="0">2000-03-01/2013-12-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod10cm_snowcover</Name>
+        <Title>Monthly Snow Cover from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2013-12-01" nearestValue="0">2000-03-01/2013-12-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="99" height="90">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod10cm_snowcover&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>myd10c2_snowcover_time_idx</Name>
+        <Title>8-daily Snow Cover from MODIS Aqua TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-01-01" nearestValue="0">2002-07-04/2014-01-01/P8D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>myd10c2_snowcover</Name>
+        <Title>8-daily Snow Cover from MODIS Aqua</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-01-01" nearestValue="0">2002-07-04/2014-01-01/P8D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="99" height="90">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=myd10c2_snowcover&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod13c1_ndvi_time_idx</Name>
+        <Title>16-daily Normalized Difference Vegetation Index from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-06" nearestValue="0">2000-02-18/2015-03-06/P16D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod13c1_ndvi</Name>
+        <Title>16-daily Normalized Difference Vegetation Index from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-06" nearestValue="0">2000-02-18/2015-03-06/P16D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod13c1_ndvi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod10c2_snowcover_time_idx</Name>
+        <Title>8-daily Snow Cover from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-01-01" nearestValue="0">2000-02-26/2014-01-01/P8D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod10c2_snowcover</Name>
+        <Title>8-daily Snow Cover from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-01-01" nearestValue="0">2000-02-26/2014-01-01/P8D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="99" height="90">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod10c2_snowcover&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod13c1_evi_time_idx</Name>
+        <Title>16-daily Enhanced Vegetation Index from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-06" nearestValue="0">2000-02-18/2015-03-06/P16D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod13c1_evi</Name>
+        <Title>16-daily Enhanced Vegetation Index from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-06" nearestValue="0">2000-02-18/2015-03-06/P16D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod13c1_evi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod11a1_lst_day_time_idx</Name>
+        <Title>Daily Daytime Land Surface Temperature from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-03-09" nearestValue="0">2010-01-01/2014-03-09/P1D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod11a1_lst_day</Name>
+        <Title>Daily Daytime Land Surface Temperature from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-03-09" nearestValue="0">2010-01-01/2014-03-09/P1D</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod13a1_evi_time_idx</Name>
+        <Title>16-daily Enhanced Vegetation Index from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-02-18" nearestValue="0">2010-01-01/2014-02-18/P16D</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod13a1_evi</Name>
+        <Title>16-daily Enhanced Vegetation Index from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-02-18" nearestValue="0">2010-01-01/2014-02-18/P16D</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="39" height="311">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mod13a1_evi&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mcd45a1_burndate_time_idx</Name>
+        <Title>Monthly Burnt Area Date from MODIS Aqua and Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-01-01" nearestValue="0">2000-04-01/2014-01-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mcd45a1_burndate</Name>
+        <Title>Monthly Burnt Area Date from MODIS Aqua and Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2014-01-01" nearestValue="0">2000-04-01/2014-01-01/P1M</Extent>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="93" height="22">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=mcd45a1_burndate&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>mod11c3_lst_night_time_idx</Name>
+        <Title>Monthly Nighttime Land Surface Temperature from MODIS Terra TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2000-03-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>mod11c3_lst_night</Name>
+        <Title>Monthly Nighttime Land Surface Temperature from MODIS Terra</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="42.2901" maxx="179.829" maxy="81.2735" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2015-03-01" nearestValue="0">2000-03-01/2015-03-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>boundary</Name>
+        <Title>Siberia Boundary</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="81.2735" maxx="179.829" maxy="42.2901" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>modis_tiles</Name>
+        <Title>MODIS Tiles</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <!-- WARNING: Optional LatLonBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement -->
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="81" height="22">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://artemis.geogr.uni-jena.de/cgi-bin/mapserv?map=/home/mapserver/modis/map.map&amp;version=1.1.1&amp;service=WMS&amp;request=GetLegendGraphic&amp;layer=modis_tiles&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>modis_tiles_mod13q1</Name>
+        <Title>MODIS Tiles</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <!-- WARNING: Optional LatLonBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement -->
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>modis_tiles_mod11a1</Name>
+        <Title>MODIS Tiles</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <!-- WARNING: Optional LatLonBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement -->
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>modis_tiles_mod11a2</Name>
+        <Title>MODIS Tiles</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <!-- WARNING: Optional LatLonBoundingBox could not be established for this layer.  Consider setting the EXTENT in the LAYER object, or wms_extent metadata. Also check that your data exists in the DATA statement -->
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>gsod-stations</Name>
+        <Title>Siberian GSOD stations</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="57.1301" miny="81.2735" maxx="179.829" maxy="42.2901" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="6.3597e+06" miny="5.20453e+06" maxx="2.00185e+07" maxy="1.64114e+07" />
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>climate-stations</Name>
+        <Title>Global climate stations</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="-180" miny="-90" maxx="180" maxy="90" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="-2.00375e+07" miny="-6.18601e+07" maxx="2.00375e+07" maxy="6.18601e+07" />
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>time_idx_test</Name>
+        <Title>MOD13C2_NDVI TIME INDEX</Title>
+        <SRS>EPSG:900913</SRS>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="49" miny="85" maxx="180" maxy="44" />
+        <BoundingBox SRS="EPSG:900913"
+                    minx="5.45466e+06" miny="5.46544e+06" maxx="2.00375e+07" maxy="1.99719e+07" />
+        <Dimension name="time" units="ISO8601"/>
+        <Extent name="time" default="2012-05-01" nearestValue="0">2000-02-01/2012-05-01/P1M</Extent>
+    </Layer>
+    <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>NDVIData</Name>
+<!-- WARNING: Mandatory metadata '..._title' was missing in this context. -->
+        <Title>NDVIData</Title>
+        <SRS>EPSG:4326</SRS>
+        <LatLonBoundingBox minx="49" miny="44" maxx="180" maxy="85" />
+        <BoundingBox SRS="EPSG:4326"
+                    minx="49" miny="44" maxx="180" maxy="85" />
+    </Layer>
+  </Layer>
+</Capability>
+</WMT_MS_Capabilities>

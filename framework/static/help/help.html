@@ -1,0 +1,55 @@
+<div class="modal-header">
+    <button ng-click="close()" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+	<h1>Help</h1>
+</div>
+<div class="modal-body modal-help">
+    <div class="text">
+    	
+		<div class="part">
+			<h3 style="margin-top: 0px!important;">Map</h3><br />
+            <table>
+            	<tr><td><img src="/swos/static/help/map-zoomin.png" /></td><td>Zoom into map</td></tr>
+				<tr><td><img src="/swos/static/help/map-zoomout.png" /></td><td>Zoom out of map</td></tr>
+				<tr><td><img src="/swos/static/help/map-maxzoom.png" /></td><td>Zoom to max extent</td></tr>
+				<tr><td><img src="/swos/static/help/map-inforequest.png" /></td><td>Request info on visible layers. You need to activate this tool by clicking on the button. Afterwards you can click in the map. A window shows the responses from the visible WMS layers.</td></tr>
+            </table>
+		</div>
+        <div class="divider_help"></div>
+		<div class="part">
+			<h3>Catalog</h3><br />
+			<img src="/swos/static/help/catalog-layer.png" width="300"/><br />
+            <table>
+            	<tr><td><img src="/swos/static/help/catalog-download.png" /></td><td>Download data (if visible)</td></tr>
+				<tr><td><img src="/swos/static/help/catalog-metadata.png" /></td><td>Show metadata of this layer</td></tr>
+				<tr><td><img src="/swos/static/help/catalog-addlayer.png" /></td><td>Add layer to map. Afterwards the layer is visible under the "Current" tab.</td></tr>
+            </table>
+		</div>
+        <div class="divider_help"></div>
+		<div class="part">
+			<h3>Current</h3><br />
+			<img src="/swos/static/help/current-layer.png"  width="300"/><br />
+            To change the order of current layers, please drag and drop the layers. The layer on the top is the most visible layer in the map.<br />
+             <table>
+				<tr><td><img src="/swos/static/help/current-visibility.png" /></td><td>Checkbox to change visibility of this layer (on/off)</td></tr>
+				<tr><td><img src="/swos/static/help/current-opacityslider.png" /></td><td>Change the opacity (0-100%) of this layer</td></tr>
+				<tr><td><img src="/swos/static/help/current-download.png" /</td><td>Download data (if visible)</td></tr>
+				<tr><td><img src="/swos/static/help/current-metadata.png" /></td><td>Show metadata of this layer</td></tr>
+				<tr><td><img src="/swos/static/help/current-zoomto.png" /</td><td>Zoom to layer</td></tr>
+				<tr><td><img src="/swos/static/help/current-delete.png" /></td><td>Remove this layer from the map</td></tr>		
+               </table>
+			</ul>
+		</div>
+        <div class="divider_help"></div>
+		<div class="part">
+			<h3>Settings</h3><br />
+			Within the settings you can change the background layer if another layer is available.
+			<img src="/swos/static/help/settings.png" />
+		</div>
+	</div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="close()">
+        Close
+    </button>
+</div>
