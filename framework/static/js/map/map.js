@@ -45,6 +45,7 @@ angular.module('webgisApp')
                   streetViewControl: false
                 });
 
+                // NOTE: leaflet can take these options in L.map() call (and the above gmap options too)
                 var view = new ol.View({
                     center: this.center,
                     projection: this.displayProjection,
@@ -132,6 +133,11 @@ angular.module('webgisApp')
             'getLayerById': function(id) {
                 return this.layers[id];
             },
+            /**
+             * Converts layer objects into OL3 format (layer object + additional data)
+             * @param layer
+             * @returns {number}
+             */
             'layerObjToOl3': function(layer) {
                 var _this = this;
                 var olLayer = -1;
