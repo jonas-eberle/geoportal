@@ -79,8 +79,8 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'swos2',
-        'USER': 'user',
-        'PASSWORD': 'user',
+        'USER': 'developer',
+        'PASSWORD': 'developer',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
