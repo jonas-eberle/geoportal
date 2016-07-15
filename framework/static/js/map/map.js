@@ -36,6 +36,40 @@ angular.module('webgisApp')
             'createMap': function(id) {
                 var _this = this;
 
+                this.gmap = new L.Google('SATELLITE',
+                    {
+                        mapOptions: {
+                            disableDefaultUI: true,
+                            keyboardShortcuts: false,
+                            draggable: false,
+                            disableDoubleClickZoom: true,
+                            scrollwheel: false,
+                            streetViewControl: false,
+                            center: this.center,
+                            zoom: this.center,
+                            minZoom: this.minZoom,
+                            maxZoom: this.maxZoom
+                        }
+                    }
+                );
+
+                this.map = new L.Map(id,
+                    {
+                        center: this.center,
+                        zoom: this.zoom_init,
+                        minZoom: this.zoom_min,
+                        maxZoom: this.zoom_max
+                    }
+                ).addLayer(this.gmap);
+
+                var baseLayers = [];
+                if (this.currentBaseLayerIndex > -1) {
+                    baseLayers.push(this.baseLayers[this.currentBaseLayerIndex]);
+                }
+
+                L.layerGroup(baseLayers).addTo(this.map);
+
+                /*
                 this.gmap = new google.maps.Map(document.getElementById('gmap'), {
                   disableDefaultUI: true,
                   keyboardShortcuts: false,
@@ -45,7 +79,6 @@ angular.module('webgisApp')
                   streetViewControl: false
                 });
 
-                // NOTE: leaflet can take these options in L.map() call (and the above gmap options too)
                 var view = new ol.View({
                     center: this.center,
                     projection: this.displayProjection,
@@ -95,7 +128,7 @@ angular.module('webgisApp')
                                 stroke: stroke,
                                 radius: 8
                             }),
-                            /*
+                            /!*
                             text: new ol.style.Text({
                                 text: feat.get('features')[0].get('name'),
                                 textAlign: 'right',
@@ -103,19 +136,19 @@ angular.module('webgisApp')
                                 fill: new ol.style.Fill({color: 'rgba(0,0,0,1)'}),
                                 stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.5)'})
                             }),
-                            */
+                            *!/
                             fill: new ol.style.Fill({
                                 color: 'rgba(255,255,255,0.5)'
                             })
                         })]
                     }
                 });
-                this.map.addInteraction(this.selectInteraction);
+                this.map.addInteraction(this.selectInteraction);*/
                 $rootScope.$broadcast('mapviewer.map_created', {})
                 return this.map;
             },
             'setBaseLayer': function(index) {
-                var layers = this.map.getLayers();
+                /*var layers = this.map.getLayers();
                 var layer = this.baseLayers[index];
                 if (layer.get('layerObj').ogc_type == 'GoogleMaps') {
                     this.gmap.setMapTypeId(google.maps.MapTypeId[layer.get('layerObj').ogc_layer]);
@@ -128,7 +161,7 @@ angular.module('webgisApp')
                 }
                 layers.insertAt(0,layer);
                 layers.remove(this.baseLayers[this.currentBaseLayerIndex]);
-                this.currentBaseLayerIndex = index;
+                this.currentBaseLayerIndex = index;*/
             },
             'getLayerById': function(id) {
                 return this.layers[id];
@@ -143,23 +176,39 @@ angular.module('webgisApp')
                 var olLayer = -1;
                 switch(layer.ogc_type) {
                     case 'WMS':
-                        olLayer = new ol.layer.Tile({
+                        var source = new L.WMS.Source(layer.ogc_link,{
+                            transparent: true,
+                            tiled: true
+                        });
+
+                        // TODO: maybe strsplit ogc_layer on ,
+                        olLayer = source.getLayer(layer.ogc_layer);
+                        // TODO: dirty workaround - actually, we would need to extend layer class
+                        olLayer.name = layer.title;
+                        olLayer.layerObj = layer;
+
+                        /*olLayer = new ol.layer.Tile({
                             name: layer.title,
                             layerObj: layer,
                             source: new ol.source.TileWMS({
                               url: layer.ogc_link,
                               params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true}
                             })
-                        })
+                        });*/
                         break;
 					case 'TMS':
-						olLayer = new ol.layer.Tile({
+                        olLayer = new L.TileLayer(layer.ogc_link.replace('{y}','{-y}'), {
+                            name: layer.title,
+                            layerObj: layer
+                        });
+
+						/*olLayer = new ol.layer.Tile({
 					      name: layer.title,
 						  layerObj: layer,
 						  source: new ol.source.XYZ({
 					        url: layer.ogc_link.replace('{y}','{-y}')
 					      })
-					    })
+					    })*/
 						break;
                     case 'WMTS':
                         if (typeof(layer.capabilities) == 'object') {
@@ -213,10 +262,11 @@ angular.module('webgisApp')
                         })
                         break;
                     case 'GoogleMaps':
-                        olLayer = new ol.layer.Tile({
+                        olLayer = new L.TileLayer();
+                        /*olLayer = new ol.layer.Tile({
                             name: layer.title,
                             layerObj: layer
-                        });
+                        });*/
                         break;
                     case 'MapQuest':
                         olLayer = new ol.layer.Tile({
@@ -475,15 +525,18 @@ angular.module('webgisApp')
                     'method': "GET",
                     'url': '/mapviewer/detail/'+id+'.json'
                 }).then(function(data){
+                    var $center = $("#center");
+                    var $nav = $("#nav-top-right2");
+
                     if (data.error != '') {
-                        $('#center').hide();
-                        $('#nav-top-right2').hide()
+                        $center.hide();
+                        $nav.hide();
                         bootbox.alert('<h2>Authentication error</h2>'+data.error, function(){$('.login').click()});
                         return
                     }
 
-                    $('#center').show();
-                    $('#nav-top-right2').show();
+                    $center.show();
+                    $nav.show();
                     
                     // hide search field if no server is configured!
                     if (data.search_url == null) {
@@ -501,7 +554,7 @@ angular.module('webgisApp')
                     mapviewer.zoom_init = data.zoom_init;
                     mapviewer.zoom_min = data.zoom_min;
                     mapviewer.zoom_max = data.zoom_max;
-                    mapviewer.center = ol.proj.transform([data.center_lon, data.center_lat], data.center_proj, mapviewer.displayProjection)
+                    mapviewer.center = [data.center_lat, data.center_lon];
                     mapviewer.datacatalog = data.layergroups;
                     if (data.layerauth == true) {
                         bootbox.alert('Please log in to see further layers!');
@@ -512,6 +565,7 @@ angular.module('webgisApp')
                             mapviewer.currentBaseLayerIndex = 0;
                         }
                         jQuery.each(data.baselayers, function(){
+                            // TODO: convert layers into LL compatible layers (ILayer)
                             var olLayer = mapviewer.layerObjToOl3(this);
                             if (olLayer !== -1) {
                                 mapviewer.baseLayers.push(olLayer);
@@ -582,7 +636,8 @@ angular.module('webgisApp')
     })
     .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope){
         $scope.$on('mapviewer.map_created', function ($broadCast, data) {
-            popup = new ol.Overlay({element: document.getElementById('popup')});
+            console.log("mapviewer.map_created");
+            /*popup = new ol.Overlay({element: document.getElementById('popup')});
             mapviewer.map.addOverlay(popup);
             stationPopup = new ol.Overlay({element: document.getElementById('stationPopup'),offset: [0, -5]});
             mapviewer.map.addOverlay(stationPopup);
@@ -628,10 +683,10 @@ angular.module('webgisApp')
                    $(element).popover('destroy');
                    //mapviewer.selectInteraction.getFeatures().clear();
                }
-            });
+            });*/
 
 
-            mapviewer.map.on("click", function(e) {
+            /*mapviewer.map.on("click", function(e) {
                 //mapviewer.selectPointerMove.getFeatures().clear();
                 var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                     if (layer == null) return false;
@@ -711,7 +766,7 @@ angular.module('webgisApp')
                     //Return true if features in the passed in layer should be considered for selection
                     return true;
                 }, mapviewer);
-            });
+            });*/
         });
 
         $scope.$on('djangoAuth.logged_in', function ($broadCast, data) {

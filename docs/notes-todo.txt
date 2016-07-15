@@ -1,0 +1,17 @@
+BaseLayers:
+- user should be able to choose between different base layers (a.k.a. which map is loaded initially as the bottom-most
+layer)
+- currently implemented: Google Maps
+- atm this is static, might have to make this dynamic somehow later down the line
+- TODO: build logic for using the baselayer the user chose
+
+Popups:
+- try to figure out, what this code does and reimplement it in LL terms
+
+Control Flow:
+- user opens webpage
+- mapjs:initialize is called
+    - fetches initial map data via REST
+    - convert base layers into format for OL/LL
+    - create the map
+    -
