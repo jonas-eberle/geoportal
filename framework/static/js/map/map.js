@@ -176,6 +176,7 @@ angular.module('webgisApp')
                 var olLayer = -1;
                 switch(layer.ogc_type) {
                     case 'WMS':
+                        console.log("WMS");
                         var source = new L.WMS.Source(layer.ogc_link,{
                             transparent: true,
                             tiled: true
@@ -197,6 +198,7 @@ angular.module('webgisApp')
                         });*/
                         break;
 					case 'TMS':
+                        console.log("TMS");
                         olLayer = new L.TileLayer(layer.ogc_link.replace('{y}','{-y}'), {
                             name: layer.title,
                             layerObj: layer
@@ -211,6 +213,7 @@ angular.module('webgisApp')
 					    })*/
 						break;
                     case 'WMTS':
+                        console.log("WTMS");
                         if (typeof(layer.capabilities) == 'object') {
                             // does not work with NASA WMTS!
                             var options = ol.source.WMTS.optionsFromCapabilities(layer.capabilities, {layer: layer.ogc_layer, matrixSet: layer.wmts_matrixset});
@@ -251,6 +254,7 @@ angular.module('webgisApp')
                         }
                         break;
                     case 'BingMaps':
+                        console.log("BingMaps");
                         olLayer = new ol.layer.Tile({
                             name: layer.title,
                             layerObj: layer,
@@ -262,6 +266,7 @@ angular.module('webgisApp')
                         })
                         break;
                     case 'GoogleMaps':
+                        console.log("GoogleMaps");
                         olLayer = new L.TileLayer();
                         /*olLayer = new ol.layer.Tile({
                             name: layer.title,
@@ -269,6 +274,7 @@ angular.module('webgisApp')
                         });*/
                         break;
                     case 'MapQuest':
+                        console.log("MapQuest");
                         olLayer = new ol.layer.Tile({
                             name: layer.title,
                             layerObj: layer,
@@ -277,6 +283,7 @@ angular.module('webgisApp')
                         });
                         break;
                     case 'OSM':
+                        console.log("OSM");
                         var osmSource;
                         if (layer.ogc_link != '') {
                             osmSource = new ol.source.OSM({url: layer.ogc_link});
@@ -290,6 +297,7 @@ angular.module('webgisApp')
                         })
                         break;
                     case 'WFS':
+                        console.log("WFS");
                         var vectorSource = new ol.source.ServerVector({
                             format: new ol.format.GeoJSON(),
                             loader: function(extent, resolution, projection) {
@@ -316,6 +324,7 @@ angular.module('webgisApp')
                         })
                         break;
                     case 'Tiled-WFS':
+                        console.log("Tiled-WFS");
                         var vectorSource = new ol.source.ServerVector({
                             format: new ol.format.GeoJSON(),
                             loader: function(extent, resolution, projection) {
@@ -345,6 +354,7 @@ angular.module('webgisApp')
                         })
                         break;
                     case 'GeoJSON':
+                        console.log("GeoJSON");
                         var vectorSource = new ol.source.ServerVector({
                             format: new ol.format.GeoJSON(),
                             loader: function(extent, resolution, projection) {
@@ -370,6 +380,7 @@ angular.module('webgisApp')
                         })
                         break;
                     case 'XYZ':
+                        console.log("XYZ");
                        olLayer = new ol.layer.Tile({
                             name: layer.title,
                             layerObj: layer,
@@ -379,6 +390,7 @@ angular.module('webgisApp')
                         });
                         break;
                     case 'SOS':
+                        console.log("SOS");
                         var layerID = layer.id;
                         if (typeof(layer.django_id) == 'number') {
                             layerID = layer.django_id;
@@ -525,6 +537,7 @@ angular.module('webgisApp')
                     'method': "GET",
                     'url': '/mapviewer/detail/'+id+'.json'
                 }).then(function(data){
+                    console.log(data);
                     var $center = $("#center");
                     var $nav = $("#nav-top-right2");
 
