@@ -135,7 +135,7 @@ angular.module('webgisApp')
                 return this.map;
             },
             'setBaseLayer': function(index) {
-                // TODO: maybe only to this when index !== currentBaseLayerIndex
+                // TODO: maybe only do this when index !== currentBaseLayerIndex
                 this.map.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
                 this.currentBaseLayerIndex = index;
                 this.map.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
@@ -800,18 +800,16 @@ angular.module('webgisApp')
         });
 
         $scope.zoomIn = function() {
-            //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() / 2);
-            mapviewer.map.getView().setZoom(mapviewer.map.getView().getZoom()+1);
-        }
+            mapviewer.map.zoomIn();
+        };
 
         $scope.zoomOut = function() {
-            //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() * 2);
-            mapviewer.map.getView().setZoom(mapviewer.map.getView().getZoom()-1);
-        }
+            mapviewer.map.zoomOut();
+        };
 
         $scope.zoomMaxExtent = function() {
-            mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection), mapviewer.map.getSize())
-        }
+            mapviewer.map.fitBounds([[64, 60],[14, -10]]);
+        };
 		
         $scope.changeSitesVisibility = function(id, $event) {
 			var olLayer = mapviewer.map.getLayers().getArray()[1];
@@ -821,7 +819,7 @@ angular.module('webgisApp')
             } else {
                 olLayer.setVisible(false);
             }
-        }
+        };
 
         $scope.infoStatus = false;
         $scope.infoEventKey = null;
@@ -834,13 +832,13 @@ angular.module('webgisApp')
                     var lon = lonlat[0].toFixed(2);
                     var lon_arrow = 'East';
                     if (lon < 0) {
-                        lon_arrow = 'West'
+                        lon_arrow = 'West';
                         lon = lon*-1;
                     }
                     var lat = lonlat[1].toFixed(2);
                     var lat_arrow = 'North';
                     if (lat < 0) {
-                        lat_arrow = 'South'
+                        lat_arrow = 'South';
                         lat = lat*-1;
                     }
                     var coordinate = '<p><strong>Position</strong><br />'+lon+'&deg; '+lon_arrow+'&nbsp;&nbsp;&nbsp;'+lat+'&deg; '+lat_arrow+'</p>';
