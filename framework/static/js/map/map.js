@@ -36,23 +36,6 @@ angular.module('webgisApp')
             'createMap': function(id) {
                 var _this = this;
 
-                this.gmap = new L.Google('SATELLITE',
-                    {
-                        mapOptions: {
-                            disableDefaultUI: true,
-                            keyboardShortcuts: false,
-                            draggable: false,
-                            disableDoubleClickZoom: true,
-                            scrollwheel: false,
-                            streetViewControl: false,
-                            center: this.center,
-                            zoom: this.center,
-                            minZoom: this.minZoom,
-                            maxZoom: this.maxZoom
-                        }
-                    }
-                );
-
                 this.map = new L.Map(id,
                     {
                         center: this.center,
@@ -60,14 +43,18 @@ angular.module('webgisApp')
                         minZoom: this.zoom_min,
                         maxZoom: this.zoom_max
                     }
-                ).addLayer(this.gmap);
+                );
 
-                var baseLayers = [];
+                // TODO: we should always have a base layer, so at this point we will select
+                // the desired one and load it
+                // TODO: what to do if there are no base layers and no index is defined?
+                var baseLayerGroup = new L.LayerGroup();
                 if (this.currentBaseLayerIndex > -1) {
-                    baseLayers.push(this.baseLayers[this.currentBaseLayerIndex]);
+                    baseLayerGroup.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
+                } else {
+                    console.log("No base layer defined.");
                 }
-
-                L.layerGroup(baseLayers).addTo(this.map);
+                this.map.addLayer(baseLayerGroup);
 
                 /*
                 this.gmap = new google.maps.Map(document.getElementById('gmap'), {
@@ -144,14 +131,27 @@ angular.module('webgisApp')
                     }
                 });
                 this.map.addInteraction(this.selectInteraction);*/
-                $rootScope.$broadcast('mapviewer.map_created', {})
+                $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
             'setBaseLayer': function(index) {
+                // TODO: maybe only to this when index !== currentBaseLayerIndex
+                this.map.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
+                this.currentBaseLayerIndex = index;
+                this.map.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
+                /*
+                NOTE:
+
+                 */
+                // get all layers currently associated with the map
                 /*var layers = this.map.getLayers();
+                // get the base layer to be set (for creating the map this is 0)
                 var layer = this.baseLayers[index];
+
                 if (layer.get('layerObj').ogc_type == 'GoogleMaps') {
+                    // if it is googlemaps, set the ID of the layertype (SATELLITE, HYBRID, etc.)
                     this.gmap.setMapTypeId(google.maps.MapTypeId[layer.get('layerObj').ogc_layer]);
+                    // now we actually show the map for the first time??
                     $('#gmap').show();
                     google.maps.event.trigger(this.gmap, 'resize');
                     $('.ol-overlaycontainer-stopevent').css('left', '66px');
@@ -267,11 +267,25 @@ angular.module('webgisApp')
                         break;
                     case 'GoogleMaps':
                         console.log("GoogleMaps");
-                        olLayer = new L.TileLayer();
-                        /*olLayer = new ol.layer.Tile({
-                            name: layer.title,
-                            layerObj: layer
-                        });*/
+                        olLayer = new L.Google(layer.ogc_layer,
+                            {
+                                mapOptions: {
+                                    disableDefaultUI: true,
+                                    keyboardShortcuts: false,
+                                    draggable: false,
+                                    disableDoubleClickZoom: true,
+                                    scrollwheel: false,
+                                    streetViewControl: false,
+                                    center: this.center,
+                                    zoom: this.center,
+                                    minZoom: this.minZoom,
+                                    maxZoom: this.maxZoom
+                                }
+                            }
+                        );
+                        // TODO: check if really necessary, can be ditched maybe
+                        olLayer.name = layer.title;
+                        olLayer.layerObj = layer;
                         break;
                     case 'MapQuest':
                         console.log("MapQuest");
@@ -590,8 +604,7 @@ angular.module('webgisApp')
                     $rootScope.$broadcast('mapviewer.catalog_loaded', mapviewer.datacatalog);
 
                     if (mapviewer.map != null) {
-                        mapviewer.map.setTarget(null);
-                        mapviewer.map = null;
+                        mapviewer.map.remove();
                     }
                     mapviewer.createMap(mapElement);
                     if (mapviewer.baseLayers.length > 0) {
@@ -606,7 +619,7 @@ angular.module('webgisApp')
                         var eachLabels = Math.round(times.length/noLabels);
                         if (eachLabels == 0) { eachLabels = 1; }
 
-                        var ticks = []; var labels =  []
+                        var ticks = []; var labels =  [];
                         var i = 0; var j=0;
                         $.each(times, function() {
                             ticks.push(i);
@@ -875,6 +888,7 @@ angular.module('webgisApp')
         $scope.baseLayers = [];
 
         $scope.$on('mapviewer.baselayers_loaded', function ($broadCast, data) {
+            console.log("mapviewer.baselayers_loaded, MapSettingsCtrl");
            $.each(mapviewer.baseLayers, function(){
                if (this.get('name') != '') {
                    $scope.baseLayers.push(this.get('name'));
@@ -918,6 +932,7 @@ angular.module('webgisApp')
     .controller('MapCatalogCtrl', function($scope, mapviewer, djangoRequests, $modal){
         $scope.layerTree = mapviewer.datacatalog;
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
+            console.log("mapviewer.catalog_loaded, MapCatalogCtrl");
             $scope.layerTree = mapviewer.datacatalog;
         });
 

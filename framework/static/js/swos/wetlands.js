@@ -3,15 +3,31 @@
 angular.module('webgisApp')
     .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal){
         $scope.wetlands = [];
-        $scope.wetlands_map = {}
+        $scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
             djangoRequests.request({
                 'method': "GET",
                 'url': '/swos/wetlands.geojson'
             }).then(function(data){
+                console.log(data);
                 //$scope.wetlands = data.features;
                 $scope.wetlands = [];
-                var vectorSource = new ol.source.Vector();
+
+                var featureLayers = L.geoJson(data, {
+                    onEachFeature: function(feature) {
+                        var prop = feature.properties;
+                        prop['show']  = true;
+                        //var layer = geometryToLayer(feature);
+                        //console.log(layer);
+                        $scope.wetlands.push(prop);
+                    }
+                });
+
+                console.log($scope.wetlands);
+
+                $scope.olLayer = featureLayers;
+                mapviewer.map.addLayer($scope.olLayer);
+                /*var vectorSource = new ol.source.Vector();
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
                 $.each(features, function(){
                     var centroid = ol.extent.getCenter(this.getGeometry().getExtent());
@@ -26,7 +42,7 @@ angular.module('webgisApp')
                     name: 'Wetlands',
                     source: vectorSource
                 });
-                mapviewer.map.addLayer($scope.olLayer);
+                mapviewer.map.addLayer($scope.olLayer);*/
             }, function(error) {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
             })
@@ -156,7 +172,11 @@ angular.module('webgisApp')
                 $('.scroller-right').click();
                 $('#link_wetland_'+wetland.id).click();    
             }*/
-            
+
+            console.log(wetland);
+            console.log(wetland.prototype);
+            var extentll = wetland.getBounds();
+            console.log(extentll);
             var extent = wetland.geometry.getExtent();
             //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
             //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
