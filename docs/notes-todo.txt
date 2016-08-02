@@ -3,15 +3,51 @@ BaseLayers:
 layer)
 - currently implemented: Google Maps
 - atm this is static, might have to make this dynamic somehow later down the line
-- TODO: build logic for using the baselayer the user chose
+- TODO: build logic for using the base layer the user chose
+
+Layer Management:
+- problem: the layers of a map are stored in a private member, although we can access it, it is in no way a good
+  practice to do it
+- thus we need to manage the layers aside from the map
+- we need to add, remove or reorder layers
+- given the layer object itself:
+    - addition with map.addLayer(layer)
+    - removal with map.removeLayer(layer)
+    - reordering maybe with map.eachLayer(function(layer){})
+        - highly dependent on the layer object supporting bringToFront/bringToBack
+        - completely inefficient if we just want to push a specific layer to the back
+- DONE: check how far reference goes. what happens if we change a layer object that has been added to a map? Does
+  the map hold a copy or just a reference to the layer object?
+    - map seems to have only references to layers
+    - test with a circle worked: we just modified the circle layer object and it changed the position on the map
+- idea: we have a map object and a layergroup which bundles layers that are to be shown on the map
+- we can retrieve all layers or just single layers from a layergroup
+- DONE: check if the order of the layers in a group is relevant to their stacking order
+    - yes it is
+    - reordering will be a bit problematic though
+    - layergroup: bringtofront by removing and adding the layer
+    - featuregroup: bringtofront and bringtoback available
+
+- we have a map object, providing us with a kind of frame for the layers
+- we have one base layer active and possibly others inactive
+    - the active base layer is the only base layer referenced by the map
+    - base layers array necessary to store the other base layer
+- we have a layergroup for each wetland
+    - these layergroups will hold all the different layers of a wetland
 
 Popups:
 - try to figure out, what this code does and reimplement it in LL terms
 
-Control Flow:
+Control Flow (atm):
 - user opens webpage
 - mapjs:initialize is called
     - fetches initial map data via REST
-    - convert base layers into format for OL/LL
+    - if baselayer:
+        - convert base layers into format for OL/LL
+        - fire event mapviewer.baselayers_loaded
+    - fire event mapviewer.catalog_loaded
     - create the map
-    -
+    - if there are baselayers, set base layer
+
+Miscellaneous:
+- TODO: in vector data, add tooltips for the various visible classes (supplied with data from the legend)
