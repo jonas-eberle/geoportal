@@ -4,6 +4,7 @@ layer)
 - currently implemented: Google Maps
 - atm this is static, might have to make this dynamic somehow later down the line
 - TODO: build logic for using the base layer the user chose
+- can be achieved with layers control of leaflet
 
 Layer Management:
 - problem: the layers of a map are stored in a private member, although we can access it, it is in no way a good
