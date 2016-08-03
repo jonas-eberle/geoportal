@@ -43,7 +43,7 @@ L.Google = L.Layer.extend({
 		// set up events
 		map.on('viewreset', this._reset, this);
 
-		this._limitedUpdate = L.Util.throttle(this._update, 150, this);
+		this._limitedUpdate = L.Util.throttle(this._update, 0, this);
 		map.on('move', this._update, this);
 
 		map.on('zoomanim', this._handleZoomAnim, this);
@@ -195,4 +195,8 @@ L.Google.asyncInitialize = function () {
 		}
 	}
 	L.Google.asyncWait = [];
+};
+
+L.google = function(type, options) {
+    return new L.Google(type, options);
 };
