@@ -4,7 +4,7 @@
 
 /* global google: true */
 
-L.Google = L.Class.extend({
+L.Google = L.Layer.extend({
 	includes: L.Mixin.Events,
 
 	options: {
@@ -43,12 +43,12 @@ L.Google = L.Class.extend({
 		// set up events
 		map.on('viewreset', this._reset, this);
 
-		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
+		this._limitedUpdate = L.Util.throttle(this._update, 150, this);
 		map.on('move', this._update, this);
 
 		map.on('zoomanim', this._handleZoomAnim, this);
 
-		//20px instead of 1em to avoid a slight overlap with google's attribution
+		// 20px instead of 1em to avoid a slight overlap with google's attribution
 		map._controlCorners.bottomright.style.marginBottom = '20px';
 
 		this._reset();
@@ -88,7 +88,7 @@ L.Google = L.Class.extend({
 			first = tilePane.firstChild;
 
 		if (!this._container) {
-			this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
+			this._container = L.DomUtil.create('div', 'leaflet-google-layer');
 			this._container.id = '_GMapContainer_' + L.Util.stamp(this);
 			this._container.style.zIndex = 'auto';
 		}
@@ -126,7 +126,7 @@ L.Google = L.Class.extend({
 			function () { _this._checkZoomLevels(); });
 		google.maps.event.addListenerOnce(map, 'tilesloaded',
 			function () { _this.fire('load'); });
-		//Reporting that map-object was initialized.
+		// Reporting that map-object was initialized.
 		this.fire('MapObjectInitialized', {mapObject: map});
 	},
 
@@ -134,7 +134,7 @@ L.Google = L.Class.extend({
 		//setting the zoom level on the Google map may result in a different zoom level than the one requested
 		//(it won't go beyond the level for which they have data).
 		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
-		if ((this._map.getZoom() !== undefined) && (this._google.getZoom() !== this._map.getZoom())) {
+		if ((this._map.getZoom() !== undefined) && (this._google.getZoom() !== Math.round(this._map.getZoom()))) {
 			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
 			this._map.setZoom(this._google.getZoom());
 		}
