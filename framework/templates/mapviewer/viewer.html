@@ -130,7 +130,7 @@
         <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
         <div ng-controller="MapViewerCtrl" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
             <div id="wetland_sites">
-            	<input type="checkbox" ng-click="changeSitesVisibility(1, $event)" id="layer_sites" checked="checked" /><label for="layer_sites">Wetland sites</label>
+            	<input type="checkbox" ng-click="changeSitesVisibility('Wetlands', $event)" id="layer_sites" checked="checked" /><label for="layer_sites">Wetland sites</label>
 			</div>
             <div id="map_icons">
                 <button type="button" ng-click="zoomIn()" class="btn btn-default btn-circle hidden-xs"><i class="fa-plus fa fa-lg"></i></button>

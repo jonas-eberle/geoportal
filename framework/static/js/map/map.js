@@ -818,12 +818,15 @@ angular.module('webgisApp')
         };
 		
         $scope.changeSitesVisibility = function(id, $event) {
-			var olLayer = mapviewer.map.getLayers().getArray()[1];
-            var checkbox = $event.target;
-            if (checkbox.checked) {
-                olLayer.setVisible(true);
+            console.log("Changing visibility of "+id);
+            if ($event.target.checked) {
+                mapviewer.map.addLayer(mapviewer.layers[id]);
             } else {
-                olLayer.setVisible(false);
+                mapviewer.map.eachLayer(function(layer) {
+                    if (layer.name == id) {
+                        mapviewer.map.removeLayer(layer);
+                    }
+                });
             }
         };
 

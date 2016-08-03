@@ -9,23 +9,27 @@ angular.module('webgisApp')
                 'method': "GET",
                 'url': '/swos/wetlands.geojson'
             }).then(function(data){
+                console.log("geojson data");
                 console.log(data);
                 //$scope.wetlands = data.features;
                 $scope.wetlands = [];
 
-                var featureLayers = L.geoJson(data, {
+                // TODO: add click handlers to select all features
+                $scope.olLayer = L.geoJson(data, {
                     onEachFeature: function(feature) {
                         var prop = feature.properties;
                         prop['show']  = true;
-                        //var layer = geometryToLayer(feature);
-                        //console.log(layer);
                         $scope.wetlands.push(prop);
                     }
                 });
+                L.extend($scope.olLayer, {
+                    name: "Wetlands"
+                });
 
+                console.log("geojson data properties");
                 console.log($scope.wetlands);
 
-                $scope.olLayer = featureLayers;
+                mapviewer.layers[$scope.olLayer.name] = $scope.olLayer;
                 mapviewer.map.addLayer($scope.olLayer);
                 /*var vectorSource = new ol.source.Vector();
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
