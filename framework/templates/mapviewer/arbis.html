@@ -23,6 +23,12 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}">
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="{% static "lib/leaflet.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "lib/Leaflet.Coordinates-0.1.5.css" %}" type="text/css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="{% static "lib/Leaflet.Coordinates-0.1.5.ie.css" %}" type="text/css" />
+    <!--[endif]-->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -32,6 +38,11 @@
 
 	<script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
+    <script src="{% static "lib/leaflet.js" %}"></script>
+    <script src="{% static "lib/leaflet-plugins-leaflet_one/layer/tile/Google.js" %}"></script>
+    <script src="{% static "lib/leaflet-plugins-leaflet_one/layer/tile/Bing.js" %}"></script>
+    <script src="{% static "lib/Leaflet.Coordinates-0.1.5.min.js" %}"></script>
+    <script src="{% static "lib/leaflet.wms.js" %}"></script>
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>

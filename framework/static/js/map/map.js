@@ -41,7 +41,8 @@ angular.module('webgisApp')
                         center: this.center,
                         zoom: this.zoom_init,
                         minZoom: this.zoom_min,
-                        maxZoom: this.zoom_max
+                        maxZoom: this.zoom_max,
+                        zoomControl: false
                     }
                 );
 
@@ -55,6 +56,14 @@ angular.module('webgisApp')
                     console.log("No base layer defined.");
                 }
                 this.map.addLayer(baseLayerGroup);
+
+                L.control.coordinates({
+                    position: "bottomleft",
+                    customLabelFcn: function(latLonObj) {
+                        return L.NumberFormatter.round(latLonObj.lng, 4, ".") + ", "
+                             + L.NumberFormatter.round(latLonObj.lat, 4, ".")
+                    }
+                }).addTo(this.map);
 
                 /*
                 this.gmap = new google.maps.Map(document.getElementById('gmap'), {
@@ -139,10 +148,7 @@ angular.module('webgisApp')
                 this.map.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
                 this.currentBaseLayerIndex = index;
                 this.map.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
-                /*
-                NOTE:
 
-                 */
                 // get all layers currently associated with the map
                 /*var layers = this.map.getLayers();
                 // get the base layer to be set (for creating the map this is 0)
