@@ -36,16 +36,6 @@ angular.module('webgisApp')
             'createMap': function(id) {
                 var _this = this;
 
-                this.map = new L.Map(id,
-                    {
-                        center: this.center,
-                        zoom: this.zoom_init,
-                        minZoom: this.zoom_min,
-                        maxZoom: this.zoom_max,
-                        zoomControl: false
-                    }
-                );
-
                 // TODO: we should always have a base layer, so at this point we will select
                 // the desired one and load it
                 // TODO: what to do if there are no base layers and no index is defined?
@@ -55,91 +45,29 @@ angular.module('webgisApp')
                 } else {
                     console.log("No base layer defined.");
                 }
-                this.map.addLayer(baseLayerGroup);
 
-                L.control.coordinates({
-                    position: "bottomleft",
-                    customLabelFcn: function(latLonObj) {
-                        return L.NumberFormatter.round(latLonObj.lng, 4, ".") + ", "
-                             + L.NumberFormatter.round(latLonObj.lat, 4, ".")
+                this.map = new L.Map(id,
+                    {
+                        layers: [ baseLayerGroup ],
+                        center: this.center,
+                        zoom: this.zoom_init,
+                        minZoom: this.zoom_min,
+                        maxZoom: this.zoom_max,
+                        zoomControl: false,
+                        renderer: L.canvas({padding: 0.75}),
+                        fadeAnimation: false,
+                        zoomAnimation: false
                     }
-                }).addTo(this.map);
+                ).addControl(
+                    L.control.coordinates({
+                        position: "bottomleft",
+                        customLabelFcn: function(latLonObj) {
+                            return L.NumberFormatter.round(latLonObj.lng, 4, ".") + ", "
+                                 + L.NumberFormatter.round(latLonObj.lat, 4, ".")
+                        }
+                    })
+                );
 
-                /*
-                this.gmap = new google.maps.Map(document.getElementById('gmap'), {
-                  disableDefaultUI: true,
-                  keyboardShortcuts: false,
-                  draggable: false,
-                  disableDoubleClickZoom: true,
-                  scrollwheel: false,
-                  streetViewControl: false
-                });
-
-                var view = new ol.View({
-                    center: this.center,
-                    projection: this.displayProjection,
-                    zoom: this.zoom_init,
-                    minZoom: this.zoom_min,
-                    maxZoom: this.zoom_max,
-                    resolutions: this.resolutions
-                });
-
-                var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
-
-                this.gmap.setZoom(view.getZoom());
-                this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
-                view.on('change:center', function() {
-                  var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
-                  _this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
-                });
-                view.on('change:resolution', function() {
-                  _this.gmap.setZoom(view.getZoom());
-                });
-                //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
-
-                var baseLayers = [];
-                if (this.currentBaseLayerIndex > -1) {
-                    baseLayers.push(this.baseLayers[this.currentBaseLayerIndex]);
-                }
-
-                this.map = new ol.Map({
-                    layers: baseLayers,
-                    target: id,
-                    view: view,
-                    controls: [new ol.control.ScaleLine()]
-                });
-                this.mousePositionControl = new ol.control.MousePosition({
-                      coordinateFormat: ol.coordinate.createStringXY(4),
-                      projection: 'EPSG:4326',
-                      undefinedHTML: ''
-                });
-
-                this.map.addControl(this.mousePositionControl);
-
-                this.selectInteraction = new ol.interaction.Select({
-                    style: function (feat, res) {
-						return [new ol.style.Style({
-                            image: new ol.style.Circle({
-                                fill: new ol.style.Fill({ color: 'rgba(255,255,255,0.5)'}),
-                                stroke: stroke,
-                                radius: 8
-                            }),
-                            /!*
-                            text: new ol.style.Text({
-                                text: feat.get('features')[0].get('name'),
-                                textAlign: 'right',
-                                textBaseline: 'top',
-                                fill: new ol.style.Fill({color: 'rgba(0,0,0,1)'}),
-                                stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.5)'})
-                            }),
-                            *!/
-                            fill: new ol.style.Fill({
-                                color: 'rgba(255,255,255,0.5)'
-                            })
-                        })]
-                    }
-                });
-                this.map.addInteraction(this.selectInteraction);*/
                 $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
@@ -148,26 +76,6 @@ angular.module('webgisApp')
                 this.map.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
                 this.currentBaseLayerIndex = index;
                 this.map.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
-
-                // get all layers currently associated with the map
-                /*var layers = this.map.getLayers();
-                // get the base layer to be set (for creating the map this is 0)
-                var layer = this.baseLayers[index];
-
-                if (layer.get('layerObj').ogc_type == 'GoogleMaps') {
-                    // if it is googlemaps, set the ID of the layertype (SATELLITE, HYBRID, etc.)
-                    this.gmap.setMapTypeId(google.maps.MapTypeId[layer.get('layerObj').ogc_layer]);
-                    // now we actually show the map for the first time??
-                    $('#gmap').show();
-                    google.maps.event.trigger(this.gmap, 'resize');
-                    $('.ol-overlaycontainer-stopevent').css('left', '66px');
-                } else {
-                    $('#gmap').hide();
-                    $('.ol-overlaycontainer-stopevent').css('left', '0px');
-                }
-                layers.insertAt(0,layer);
-                layers.remove(this.baseLayers[this.currentBaseLayerIndex]);
-                this.currentBaseLayerIndex = index;*/
             },
             'getLayerById': function(id) {
                 return this.layers[id];
