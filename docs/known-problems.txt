@@ -1,0 +1,12 @@
+- forEachFeatureAtPixel:
+- pointermove:
+    - für SOS-Layer relevant
+    - für RGB-Wert unter Cursor relevant
+- popups
+    - betrifft SOS-Layer
+    - später mal für Tooltipps in Vektordaten mit mehreren Klassen
+- baseLayer-Steuerelement von Leaflet benutzen?
+- MapQuest weiterpflegen?
+- Transformationen?
+- Verschiebungs-/Zoomprobleme, Skalierung/Verschiebung der Vektordaten
+- Google-Maps als Hintergrund bei Google-Maps
