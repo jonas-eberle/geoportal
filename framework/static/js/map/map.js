@@ -93,23 +93,17 @@ angular.module('webgisApp')
                         console.log("WMS");
                         var source = new L.WMS.Source(layer.ogc_link,{
                             transparent: true,
-                            tiled: true
+                            untiled: false,
+                            format: "image/png",
+                            version: "1.3.0"
                         });
 
                         // TODO: maybe strsplit ogc_layer on ,
                         olLayer = source.getLayer(layer.ogc_layer);
-                        // TODO: dirty workaround - actually, we would need to extend layer class
-                        olLayer.name = layer.title;
-                        olLayer.layerObj = layer;
-
-                        /*olLayer = new ol.layer.Tile({
+                        L.extend(olLayer, {
                             name: layer.title,
-                            layerObj: layer,
-                            source: new ol.source.TileWMS({
-                              url: layer.ogc_link,
-                              params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true}
-                            })
-                        });*/
+                            layerObj: layer
+                        });
                         break;
 					case 'TMS':
                         console.log("TMS");
@@ -181,7 +175,7 @@ angular.module('webgisApp')
                         break;
                     case 'GoogleMaps':
                         console.log("GoogleMaps");
-                        olLayer = new L.Google(layer.ogc_layer,
+                        olLayer = L.google(layer.ogc_layer,
                             {
                                 mapOptions: {
                                     disableDefaultUI: true,
@@ -189,17 +183,14 @@ angular.module('webgisApp')
                                     draggable: false,
                                     disableDoubleClickZoom: true,
                                     scrollwheel: false,
-                                    streetViewControl: false,
-                                    center: this.center,
-                                    zoom: this.center,
-                                    minZoom: this.minZoom,
-                                    maxZoom: this.maxZoom
+                                    streetViewControl: false
                                 }
                             }
                         );
-                        // TODO: check if really necessary, can be ditched maybe
-                        olLayer.name = layer.title;
-                        olLayer.layerObj = layer;
+                        L.extend(olLayer, {
+                            name: layer.title,
+                            layerObj: layer
+                        });
                         break;
                     case 'MapQuest':
                         console.log("MapQuest");
@@ -407,8 +398,10 @@ angular.module('webgisApp')
                     $('#slider').show();
                 }
                 this.layersMeta.unshift(layer);
-                this.data.layersCount = this.data.layersCount+1;
-                olLayer.set('layerObj', layer);
+                this.data.layersCount++;
+                L.extend(olLayer, {
+                    layerObj: layer
+                });
                 this.map.addLayer(olLayer);
 				return olLayer;
             },
@@ -419,28 +412,27 @@ angular.module('webgisApp')
                     }
                 }
 			},
-            'removeLayer': function(id, index) {
-                var layer = this.layers[id];
-                var layerIndex = $.inArray(layer, this.map.getLayers().getArray())
-                if (layerIndex >= 0) {
-                    this.layersMeta.splice(index, 1);
-                    this.selectInteraction.getFeatures().clear();
-                    var olLayer = this.map.getLayers().item(layerIndex);
-                    this.map.removeLayer(olLayer);
-                    this.data.layersCount = this.data.layersCount-1;
-                    
-                    var timeIndex = jQuery.inArray(id, this.layersTime);
-                    if (timeIndex > -1) {
-                        this.layersTime.splice(timeIndex, 1);
-                        $('#slider').hide();
-                        $('#slider .tooltip.bottom').css('margin-top', '3px');
-                        $('.ol-attribution, .ol-scale-line').css('bottom', '5px');
-                        $('.ol-mouse-position').css('bottom', '33px');
-                        $("#gmap img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
-                        $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
+            'removeLayer': function(layer, index) {
+                var that = this;
+
+                this.map.eachLayer(function(thisLayer) {
+                    if (layer.title == thisLayer.name) {
+                        that.map.removeLayer(thisLayer);
+                        that.layersMeta.splice(index, 1);
+                        that.data.layersCount--;
+
+                        var timeIndex = jQuery.inArray(layer.id, that.layersTime);
+                        if (timeIndex > -1) {
+                            that.layersTime.splice(timeIndex, 1);
+                            $('#slider').hide();
+                            $('#slider .tooltip.bottom').css('margin-top', '3px');
+                            $('.ol-attribution, .ol-scale-line').css('bottom', '5px');
+                            $('.ol-mouse-position').css('bottom', '33px');
+                            $("#gmap img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
+                            $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
+                        }
                     }
-                    
-                }
+                });
             },
             'raiseLayer': function(id, delta) {
                 var layer = this.layers[id];
@@ -982,9 +974,10 @@ angular.module('webgisApp')
             var olLayer = mapviewer.getLayerById(id);
             olLayer.setOpacity(parseFloat($scope.slider[id])/100);
         }
-        $scope.removeLayer = function(id, index) {
-            mapviewer.removeLayer(id, index);
-        }
+        $scope.removeLayer = function(layer, index) {
+            mapviewer.removeLayer(layer, index);
+            document.getElementById("layer_vis_"+layer.django_id).checked = "";
+        };
         $scope.zoomToLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             var layerObj = olLayer.get('layerObj');

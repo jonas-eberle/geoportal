@@ -210,23 +210,14 @@ angular.module('webgisApp')
         };
         
         $scope.changeVisibility = function(layer, $event) {
-            
-            var checkbox = $event.target;
-            if (checkbox.checked) {
-                var olLayer = mapviewer.addLayer(layer);
+            if ($event.target.checked) {
+                mapviewer.addLayer(layer);
             } else {
-                var layers = mapviewer.map.getLayers().getArray();
-                $.each(layers, function(){
-                    if (layer.title == this.get('name')) {
-                        var layerId = this.get('layerObj').id;
-                        console.log('LayerId: '+layerId);
-                        var index = mapviewer.getIndexFromLayer(layer.title);
-                        console.log('index: '+index);
-                        mapviewer.removeLayer(layerId, index);
-                        //this.setVisible(false);
-                        return true;
+                mapviewer.map.eachLayer(function(thisLayer) {
+                    if (layer.title == thisLayer.name) {
+                        mapviewer.removeLayer(layer);
                     }
-                })
+                });
             }
         }
     })

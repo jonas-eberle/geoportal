@@ -193,7 +193,7 @@
                                         <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
                                         <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
                                         <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-										<button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="removeLayer(layer.id, $index)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
+										<button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="removeLayer(layer, $index)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
                                     </div>
 
 
