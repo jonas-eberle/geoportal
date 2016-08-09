@@ -56,7 +56,8 @@ angular.module('webgisApp')
                         zoomControl: false,
                         renderer: L.canvas({padding: 0.75}),
                         fadeAnimation: false,
-                        zoomAnimation: false
+                        zoomAnimation: false,
+                        worldCopyJump: true
                     }
                 ).addControl(
                     L.control.coordinates({
