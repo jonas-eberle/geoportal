@@ -413,7 +413,8 @@ angular.module('webgisApp')
                 this.layersMeta.unshift(layer);
                 this.data.layersCount++;
                 L.extend(olLayer, {
-                    layerObj: layer
+                    layerObj: layer,
+                    name: layer.name
                 });
                 this.map.addLayer(olLayer);
                 return olLayer;
