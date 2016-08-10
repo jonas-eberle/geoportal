@@ -84,11 +84,11 @@ angular.module('webgisApp')
             /**
              * Creates Leaflet layers from layer data provided.
              * @param layerData
-             * @returns L.ILayer|-1
+             * @returns L.ILayer|null
              */
             "createLayer": function(layerData) {
                 //var _this = this;
-                var layer = -1;
+                var layer = null;
                 switch(layerData.ogc_type) {
                     case 'WMS':
                         console.log("WMS");
@@ -388,10 +388,10 @@ angular.module('webgisApp')
                     }
                 }
 
-                var olLayer = -1;
+                var olLayer = null;
                 layer = angular.copy(layer);
                 olLayer = this.createLayer(layer);
-                if (olLayer === -1) {
+                if (olLayer === null) {
                     alert('Layer could not be added, type '+layer.type+' is not implemented!');
                     return false;
                 }
@@ -511,9 +511,8 @@ angular.module('webgisApp')
                             mapviewer.currentBaseLayerIndex = 0;
                         }
                         jQuery.each(data.baselayers, function(){
-                            // TODO: convert layers into LL compatible layers (ILayer)
                             var olLayer = mapviewer.createLayer(this);
-                            if (olLayer !== -1) {
+                            if (olLayer !== null) {
                                 mapviewer.baseLayers.push(olLayer);
                             }
                         });
