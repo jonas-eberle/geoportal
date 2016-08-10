@@ -1,20 +1,16 @@
 'use strict';
 
 angular.module('webgisApp')
-    .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal){
+    .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests){
         $scope.wetlands = [];
         $scope.wetlands_map = {};
-        $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
+        $scope.$on('mapviewer.catalog_loaded', function () {
             djangoRequests.request({
                 'method': "GET",
                 'url': '/swos/wetlands.geojson'
             }).then(function(data){
-                console.log("geojson data");
-                console.log(data);
-                //$scope.wetlands = data.features;
                 $scope.wetlands = [];
 
-                // TODO: add click handlers to select all features
                 $scope.olLayer = L.geoJson(data, {
                     style: function() {
                         return {
@@ -25,6 +21,7 @@ angular.module('webgisApp')
                     onEachFeature: function (feature, layer) {
                         var prop = feature.properties;
                         prop['show'] = true;
+                        prop['bounds'] = layer.getBounds();
                         $scope.wetlands.push(prop);
 
                         layer.on("click", function (event) {
@@ -36,9 +33,6 @@ angular.module('webgisApp')
                             clickedLayer.setStyle({
                                 stroke: false
                             });
-
-                            // zoom to clicked layer
-                            mapviewer.map.fitBounds(clickedLayer.getBounds());
 
                             $scope.selectWetlandFromId(clickedLayer.feature.id);
                         });
@@ -147,43 +141,48 @@ angular.module('webgisApp')
         
         $scope.selectWetland = function(wetland) {
             $scope.activeTab = 1; //wetland.id;
-            djangoRequests.request({
-                'method': "GET",
-                'url': '/swos/wetland/'+wetland.id
-            }).then(function(data){
-                console.log("selected wetland");
-                console.log(data);
-                wetland['data'] = data;
-                //$scope.wetlands_opened[wetland.id] = wetland;
-                $scope.value = wetland;
+
+            if ($scope.selectedWetlandId === undefined || $scope.selectedWetlandId !== wetland.id) {
+                $scope.selectedWetlandId = wetland.id;
 
                 djangoRequests.request({
                     'method': "GET",
-                    'url': '/swos/wetland/'+wetland.id+'/panoramio.json'
+                    'url': '/swos/wetland/'+wetland.id
                 }).then(function(data){
-                    //$scope.wetlands_opened[wetland.id]['pictures'] = data;
-                    $scope.value['pictures'] = data;
+                    wetland['data'] = data;
+                    //$scope.wetlands_opened[wetland.id] = wetland;
+                    $scope.value = wetland;
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/panoramio.json'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
+                        $scope.value['pictures'] = data;
+                    });
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/youtube.json'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['videos'] = data;
+                        $scope.value['videos'] = data;
+                    });
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/satdata.json'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['satdata'] = data;
+                        $scope.value['satdata'] = data;
+                    })
+
+                }, function() {
+                    bootbox.alert('<h1>Error while loading wetland details</h1>');
                 });
 
-                djangoRequests.request({
-                    'method': "GET",
-                    'url': '/swos/wetland/'+wetland.id+'/youtube.json'
-                }).then(function(data){
-                    //$scope.wetlands_opened[wetland.id]['videos'] = data;
-                    $scope.value['videos'] = data;
-                });
-
-                djangoRequests.request({
-                    'method': "GET",
-                    'url': '/swos/wetland/'+wetland.id+'/satdata.json'
-                }).then(function(data){
-                    //$scope.wetlands_opened[wetland.id]['satdata'] = data;
-                    $scope.value['satdata'] = data;
-                })
-
-            }, function(error) {
-                bootbox.alert('<h1>Error while loading wetland details</h1>');
-            });
+                mapviewer.map.fitBounds(wetland["bounds"]);
+            }
         };
         
         $scope.foo = function(id) {
