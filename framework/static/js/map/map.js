@@ -55,6 +55,7 @@ angular.module('webgisApp')
                         maxZoom: this.zoom_max,
                         zoomControl: false,
                         renderer: L.canvas({padding: 0.75}),
+                        // renderer: L.svg({padding: 0.75}),
                         fadeAnimation: false,
                         zoomAnimation: false,
                         worldCopyJump: true
@@ -92,31 +93,31 @@ angular.module('webgisApp')
                 switch(layerData.ogc_type) {
                     case 'WMS':
                         console.log("WMS");
-                        var source = new L.WMS.Source(layerData.ogc_link,{
-                            transparent: true,
-                            untiled: false,
+                        // var source = new L.WMS.Source(layerData.ogc_link,{
+                        //     transparent: true,
+                        //     untiled: false,
+                        //     format: "image/png",
+                        //     version: "1.3.0"
+                        // });
+                        //
+                        // // TODO: maybe strsplit ogc_layer on ,
+                        // layer = source.getLayer(layerData.ogc_layer);
+                        layer = new L.tileLayer.wms(layerData.ogc_link, {
+                            layers: layerData.ogc_layer,
+                            version: "1.3.0",
                             format: "image/png",
-                            version: "1.3.0"
-                        });
-
-                        // TODO: maybe strsplit ogc_layer on ,
-                        layer = source.getLayer(layerData.ogc_layer);
-                        L.extend(layer, {
-                            name: layerData.title,
-                            layerObj: layerData
+                            transparent: true
                         });
                         break;
                     case 'TMS':
                         console.log("TMS");
                         layer = new L.TileLayer(layerData.ogc_link, {
                             tms: true,
-                            errorTileUrl: '../../static/img/errorTile.png',
-                            name: layerData.title,
-                            layerObj: layerData
+                            errorTileUrl: '../../static/img/errorTile.png'
                         });
                         break;
                     case 'WMTS':
-                        console.log("WTMS");
+                        console.log("WMTS");
                         // if (typeof(layer.capabilities) == 'object') {
                         //     // does not work with NASA WMTS!
                         //     var options = ol.source.WMTS.optionsFromCapabilities(layer.capabilities, {layer: layer.ogc_layer, matrixSet: layer.wmts_matrixset});
@@ -173,10 +174,6 @@ angular.module('webgisApp')
                                 type: layerData.ogc_layer
                             }
                         );
-                        L.extend(layer, {
-                            name: layerData.title,
-                            layerObj: layerData
-                        });
                         break;
                     case 'GoogleMaps':
                         console.log("GoogleMaps");
@@ -192,10 +189,6 @@ angular.module('webgisApp')
                                 }
                             }
                         );
-                        L.extend(layer, {
-                            name: layerData.title,
-                            layerObj: layerData
-                        });
                         break;
                     case 'OSM':
                         console.log("OSM");
@@ -216,10 +209,6 @@ angular.module('webgisApp')
                         }
                         layer = L.tileLayer(url, {
                             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
-                        });
-                        L.extend(layer, {
-                            name: layerData.title,
-                            layerObj: layerData
                         });
                         break;
                     case 'WFS':
@@ -281,36 +270,19 @@ angular.module('webgisApp')
                         break;
                     case 'GeoJSON':
                         console.log("GeoJSON");
-                        // var vectorSource = new ol.source.ServerVector({
-                        //     format: new ol.format.GeoJSON(),
-                        //     loader: function(extent, resolution, projection) {
-                        //         $('#loading-div').show();
-                        //         djangoRequests.request({
-                        //             url: layer.ogc_link,
-                        //             method: 'GET'
-                        //         }).then(function(data){
-                        //             var features = vectorSource.readFeatures(data);
-                        //             $.each(features, function(){
-                        //                 this.getGeometry().transform('EPSG:4326', _this.displayProjection);
-                        //             })
-                        //             vectorSource.addFeatures(features);
-                        //             $('#loading-div').hide();
-                        //         })
-                        //     },
-                        //     projection: 'EPSG:4326'
-                        // });
-                        // olLayer = new ol.layer.Vector({
-                        //     name: layer.title,
-                            // layerObj: layer,
-                        //     source: vectorSource
-                        // })
+                        $('#loading-div').show();
+                        layer = L.geoJson();
+                        djangoRequests.request({
+                            url   : layerData.ogc_link,
+                            method: 'GET'
+                        }).then(function(data){
+                            layer.addData(data);
+                            $('#loading-div').hide();
+                        });
                         break;
                     case 'XYZ':
                         console.log("XYZ");
-                        layer = new L.TileLayer(layerData.ogc_link, {
-                            name: layerData.title,
-                            layerObj: layerData
-                        });
+                        layer = new L.TileLayer(layerData.ogc_link);
 
                         // olLayer = new ol.layer.Tile({
                         //     name: layer.title,
@@ -376,11 +348,16 @@ angular.module('webgisApp')
                         // })
                         break;
                 }
+
+                if (layer) {
+                    L.extend(layer, {
+                        layerObj: layerData,
+                        name: layerData.title
+                    });
+                }
                 return layer;
             },
             'addLayer': function(layer) {
-                console.log("mapviewer.addlayer");
-                var _this = this;
                 for (var i=0; i<this.layersMeta.length; i++) {
                     if (layer.title == this.layersMeta[i].name) {
                         bootbox.alert('Layer exists already in the map. Please see the "Current" tab.');
@@ -388,10 +365,9 @@ angular.module('webgisApp')
                     }
                 }
 
-                var olLayer = null;
                 layer = angular.copy(layer);
-                olLayer = this.createLayer(layer);
-                if (olLayer === null) {
+                var llLayer = this.createLayer(layer);
+                if (llLayer === null) {
                     alert('Layer could not be added, type '+layer.type+' is not implemented!');
                     return false;
                 }
@@ -400,7 +376,7 @@ angular.module('webgisApp')
                 }
                 layer.name = layer.title;
                 layer.id = Math.random().toString(36).substring(2, 15);
-                this.layers[layer.id] = olLayer;
+                this.layers[layer.id] = llLayer;
                 if (layer.ogc_time == true) {
                     this.layersTime.push(layer.id);
                     $('#slider .tooltip.bottom').css('margin-top', '20px');
@@ -410,48 +386,46 @@ angular.module('webgisApp')
                     $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '60px');
                     $('#slider').show();
                 }
-                this.layersMeta.unshift(layer);
                 this.data.layersCount++;
-                L.extend(olLayer, {
-                    layerObj: layer,
-                    name: layer.name
-                });
-                this.map.addLayer(olLayer);
-                return olLayer;
+                llLayer.layerObj = layer;
+                llLayer.options.pane = "overlayPane";
+                this.layersMeta.unshift(llLayer);
+                this.restackLayers();
+                this.map.addLayer(llLayer);
+                return llLayer;
             },
-            'getIndexFromLayer': function(title) {
-                for (var i=0; i<this.layersMeta.length; i++) {
-                    if (title == this.layersMeta[i].name) {
-                        return i;
-                    }
+            /**
+             * Removes the layer from the map.
+             * @param layer     Leaflet Layer Object
+             * @param index     index of the layer in layersMeta
+             */
+            'removeLayer': function(layer, index) {
+                this.map.removeLayer(layer);
+                this.layersMeta.splice(index, 1);
+                this.restackLayers();
+                this.data.layersCount--;
+
+                var timeIndex = jQuery.inArray(layer.layerObj.id, this.layersTime);
+                if (timeIndex > -1) {
+                    this.layersTime.splice(timeIndex, 1);
+                    $('#slider').hide();
+                    $('#slider .tooltip.bottom').css('margin-top', '3px');
+                    $('.ol-attribution, .ol-scale-line').css('bottom', '5px');
+                    $('.ol-mouse-position').css('bottom', '33px');
+                    $("#gmap img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
+                    $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
                 }
             },
-            'removeLayer': function(layer, index) {
-                var that = this;
-
-                this.map.eachLayer(function(thisLayer) {
-                    if (layer.title == thisLayer.name) {
-                        that.map.removeLayer(thisLayer);
-                        that.layersMeta.splice(index, 1);
-                        that.data.layersCount--;
-
-                        var timeIndex = jQuery.inArray(layer.id, that.layersTime);
-                        if (timeIndex > -1) {
-                            that.layersTime.splice(timeIndex, 1);
-                            $('#slider').hide();
-                            $('#slider .tooltip.bottom').css('margin-top', '3px');
-                            $('.ol-attribution, .ol-scale-line').css('bottom', '5px');
-                            $('.ol-mouse-position').css('bottom', '33px');
-                            $("#gmap img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
-                            $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
-                        }
-                    }
+            'restackLayers': function() {
+                var layersCount = this.data.layersCount;
+                this.layersMeta.forEach(function(layer, index) {
+                    layer.setZIndex(450 + layersCount - index);
                 });
             },
             'raiseLayer': function(id, delta) {
                 var layer = this.layers[id];
-                var layerIndex = $.inArray(layer, this.map.getLayers().getArray())
-                var layers = this.map.getLayers()
+                var layerIndex = $.inArray(layer, this.map.getLayers().getArray());
+                var layers = this.map.getLayers();
 
                 layers.insertAt(layerIndex+delta, layer);
                 if (delta < 0) layerIndex = layerIndex+1;
@@ -461,7 +435,7 @@ angular.module('webgisApp')
                 var _this = this;
                 $.each(this.layersTime, function() {
                     var layer = _this.layers[this];
-                    var source = layer.getSource()
+                    var source = layer.getSource();
                     source.updateParams({'TIME':time});
                 });
             },
@@ -571,10 +545,7 @@ angular.module('webgisApp')
                         $('#slider .slider .tooltip-main').removeClass('top').addClass('bottom');
                         $('#slider').hide();
                     }
-
-                }, function(error) {
-                    
-                })
+                });
             }
         };
         return service;
@@ -808,9 +779,10 @@ angular.module('webgisApp')
 
         $scope.$on('mapviewer.baselayers_loaded', function ($broadCast, data) {
             console.log("mapviewer.baselayers_loaded, MapSettingsCtrl");
+            console.log(mapviewer.baseLayers);
            $.each(mapviewer.baseLayers, function(){
-               if (this.get('name') != '') {
-                   $scope.baseLayers.push(this.get('name'));
+               if (this['name'] != '') {
+                   $scope.baseLayers.push(this['name']);
                }
                $scope.selectedBaseLayer = $scope.baseLayers[mapviewer.currentBaseLayerIndex];
            });
@@ -820,7 +792,7 @@ angular.module('webgisApp')
         $scope.changeBaseLayer = function() {
             var index = $.inArray($scope.selectedBaseLayer, $scope.baseLayers);
             mapviewer.setBaseLayer(index);
-        }
+        };
         
         $scope.showMetadata = function() {
             var layer = mapviewer.baseLayers[mapviewer.currentBaseLayerIndex];
@@ -842,7 +814,7 @@ angular.module('webgisApp')
             }, function(error) {
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
-        }
+        };
 
         $('.dropdown').find('select').click(function (e) {
             e.stopPropagation();
@@ -879,7 +851,7 @@ angular.module('webgisApp')
             }, function(error) {
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
-        }
+        };
 
         $scope.activeLayer = -1;
         $scope.hoverLayer = function(elem, layerID, $event) {
@@ -896,7 +868,7 @@ angular.module('webgisApp')
                     }
                 }, 300)
             })
-        }
+        };
 
         $scope.hidePopover = function() {
             setTimeout(function () {
@@ -904,7 +876,7 @@ angular.module('webgisApp')
                    $('body .popover').popover('hide');
                 }
             }, 300);
-        }
+        };
 
         $scope.download = function(layer) {
             window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
@@ -912,20 +884,17 @@ angular.module('webgisApp')
     })
     .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests) {
         $scope.layersMeta = mapviewer.layersMeta;
-        $scope.slider = []
+        $scope.slider = [];
         $scope.newLayerIndex = -1;
-        $scope.mapviewerdata = mapviewer.data
-        $scope.prepareIndex = function(event, index, item, type) {
+        $scope.mapviewerdata = mapviewer.data;
+        $scope.prepareIndex = function(event, index, item) {
             $scope.newLayerIndex = index;
             return item;
-        }
+        };
         $scope.toggleLegend = function(layer) {
-            if (layer.showLegend == true) {
-                layer.showLegend = false;
-            } else {
-                layer.showLegend = true;
-            }
-        }
+            // boolean negation of showLegend
+            layer.showLegend = !layer.showLegend;
+        };
         $scope.toggleStations = function(layer) {
             //load stations if no one available
             if (typeof(layer.stations) == 'undefined') {
@@ -943,7 +912,7 @@ angular.module('webgisApp')
             } else {
                 layer.showStations = true;
             }
-        }
+        };
         $scope.zoomToStation = function(station) {
             var extent = [station.lat, station.lon, station.lat, station.lon];
             extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
@@ -962,19 +931,13 @@ angular.module('webgisApp')
             stationPopup.setPosition([extent[0], extent[1]]);
             $(element).popover('show');
             $('.ol-overlay-container .popover .arrow').show();
-        }
+        };
         $scope.changeLayer = function(index, $event) {
-            var layerId = $scope.layersMeta[index].id;
+            // HACK: actually we overwrite the layerObj with the leaflet layer object here
+            $scope.layersMeta[$scope.newLayerIndex] = $scope.layersMeta[index];
             $scope.layersMeta.splice(index, 1);
-
-            if ($scope.newLayerIndex > index) {
-                $scope.newLayerIndex = $scope.newLayerIndex-1;
-            } else {
-
-            }
-            var delta = index-$scope.newLayerIndex;
-            mapviewer.raiseLayer(layerId, delta);
-        }
+            mapviewer.restackLayers();
+        };
         $scope.changeVisibility = function(id, $event) {
             var olLayer = mapviewer.getLayerById(id);
             var checkbox = $event.target;
@@ -983,26 +946,30 @@ angular.module('webgisApp')
             } else {
                 olLayer.setVisible(false);
             }
-        }
+        };
         $scope.changeOpacity = function(id, index) {
             var olLayer = mapviewer.getLayerById(id);
             olLayer.setOpacity(parseFloat($scope.slider[id])/100);
-        }
+        };
         $scope.removeLayer = function(layer, index) {
             mapviewer.removeLayer(layer, index);
-            if (layer["django_id"] !== undefined) {
-                document.getElementById("layer_vis_"+layer.django_id).checked = "";
+            var checkbox;
+            if (layer.layerObj["django_id"] !== undefined
+                && (checkbox = document.getElementById("layer_vis_"+layer.layerObj.django_id))) {
+                checkbox.checked = "";
             }
         };
-        $scope.zoomToLayer = function(id) {
-            var olLayer = mapviewer.getLayerById(id);
-            var layerObj = olLayer.get('layerObj');
-            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
-            if (layerObj.epsg > 0) {
-                extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
-            }
-            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
-        }
+        /**
+         * Pans and zooms the map so that layer is in the center of the map.
+         * @param layerObj     layer data (without the surrounding Leaflet Layer data)
+         */
+        $scope.zoomToLayer = function(layerObj) {
+            var bounds = L.latLngBounds([
+                [layerObj.south, layerObj.west],
+                [layerObj.north, layerObj.east]
+            ]);
+            mapviewer.map.fitBounds(bounds);
+        };
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
                 $('#loading-div').show();
@@ -1038,7 +1005,7 @@ angular.module('webgisApp')
                 });
             }
 
-        }
+        };
 
         $scope.updateLayer = function(id, date) {
             var olLayer = mapviewer.getLayerById(id);
@@ -1049,11 +1016,11 @@ angular.module('webgisApp')
             } else if (type == 'WMTS') {
                 source.updateDimensions({'time':date});
             }
-        }
+        };
 
         $scope.download = function(layer) {
             window.open(subdir+'/layers/detail/'+layer.django_id+'/download', 'download_'+layer.django_id);
-        }
+        };
 
         $scope.addOwnLayer = function() {
             var modalInstance = $modal.open({
@@ -1404,4 +1371,3 @@ angular.module('webgisApp')
         mapviewer.initialize(mapId, 'map', true); //id of mapviewer
     })
 ;
-

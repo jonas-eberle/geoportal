@@ -180,11 +180,12 @@ angular.module('webgisApp')
         if ($event.target.checked) {
             mapviewer.addLayer(layer);
         } else {
-            mapviewer.map.eachLayer(function(thisLayer) {
-                if (layer.title == thisLayer.name) {
-                    mapviewer.removeLayer(layer);
+            for(var i = 0; i < mapviewer.layersMeta.length; i++) {
+                if (layer.title === mapviewer.layersMeta[i].name) {
+                    mapviewer.removeLayer(mapviewer.layersMeta[i], i);
+                    break;
                 }
-            });
+            }
         }
     }
 })
