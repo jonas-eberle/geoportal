@@ -5,8 +5,5 @@
 - popups
     - betrifft SOS-Layer
     - später mal für Tooltipps in Vektordaten mit mehreren Klassen
-- baseLayer-Steuerelement von Leaflet benutzen?
-- MapQuest weiterpflegen?
-- Transformationen?
 - Verschiebungs-/Zoomprobleme, Skalierung/Verschiebung der Vektordaten
 - Google-Maps als Hintergrund bei Google-Maps
