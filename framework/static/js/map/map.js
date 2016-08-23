@@ -808,13 +808,12 @@ angular.module('webgisApp')
         
         $scope.showMetadata = function() {
             var layer = mapviewer.baseLayers[mapviewer.currentBaseLayerIndex];
-            var layerObj = layer.get('layerObj');
             $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
-                'url': '/layers/detail/'+layerObj.id+'.json'
+                'url': '/layers/detail/'+layer.layerObj.id+'.json'
             }).then(function(data){
-                var modalInstance = $modal.open({
+                $modal.open({
                     controller: 'ModalInstanceCtrl',
                     templateUrl: subdir+'/static/includes/metadata.html',
                     resolve: {
@@ -823,7 +822,7 @@ angular.module('webgisApp')
                     }
                 });
                 $('#loading-div').hide();
-            }, function(error) {
+            }, function() {
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
         };
