@@ -70,6 +70,10 @@ angular.module('webgisApp')
                     })
                 );
 
+                if (this.baseLayers[this.currentBaseLayerIndex].layerObj.ogc_type === "GoogleMaps") {
+                    $(".leaflet-bottom.leaflet-right").hide();
+                }
+
                 $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
