@@ -949,13 +949,11 @@ angular.module('webgisApp')
             $scope.layersMeta.splice(index, 1);
             mapviewer.restackLayers();
         };
-        $scope.changeVisibility = function(id, $event) {
-            var olLayer = mapviewer.getLayerById(id);
-            var checkbox = $event.target;
-            if (checkbox.checked) {
-                olLayer.setVisible(true);
+        $scope.changeVisibility = function(layer, $event) {
+            if ($event.target.checked) {
+                mapviewer.map.addLayer(layer);
             } else {
-                olLayer.setVisible(false);
+                mapviewer.map.removeLayer(layer);
             }
         };
         $scope.changeOpacity = function(id, index) {
