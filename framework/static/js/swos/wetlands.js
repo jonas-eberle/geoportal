@@ -14,7 +14,7 @@ angular.module('webgisApp')
                 style: function() {
                     return {
                         fillOpacity: 0.5,
-                        fillColor  : "#fff"
+                        fillColor  : "#ccc"
                     }
                 },
                 onEachFeature: function(feature, layer) {
