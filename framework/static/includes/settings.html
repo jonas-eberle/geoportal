@@ -1,11 +1,12 @@
 <a href="#" class="dropdown" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
 <div class="dropdown-menu dropdown-menu-arrow" check-drop-up role="menu" style="padding:17px;">
-	<div>SETTINGS</div>
-	<div class="divider"></div>
-	<div ng-controller="MapSettingsCtrl">
-		<strong style="white-space: nowrap;">Set background map: </strong>
-		<select  class="form-control select-background-map" ng-model="selectedBaseLayer" ng-options="item for item in baseLayers" ng-change="changeBaseLayer()"></select>
-		<!--<button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="showMetadata()" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>-->
-		<a href="#" ng-click="showMetadata()">Show metadata</a>
-	</div>
+    <div>SETTINGS</div>
+    <div class="divider"></div>
+    <div ng-controller="MapSettingsCtrl">
+        <strong style="white-space: nowrap;">Set background map: </strong>
+        <select class="form-control select-background-map" ng-model="selectedBaseLayer"
+                ng-options="item for item in baseLayers" ng-change="changeBaseLayer()"></select>
+        <!--<button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="showMetadata()" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>-->
+        <a href="#" ng-click="showMetadata()">Show metadata</a>
+    </div>
 </div>

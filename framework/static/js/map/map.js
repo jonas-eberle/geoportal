@@ -15,6 +15,7 @@ angular.module('webgisApp')
     .service('mapviewer', function mapviewer(djangoRequests, $rootScope, $modal) {
         var service = {
             'baseLayers': [],
+            'baseLayerGroup': null,     // hold the leaflet LayerGroup object we will use for baselayers
             'layers': {},
             'layersTime': [],
             'layersMeta': [],
@@ -34,21 +35,11 @@ angular.module('webgisApp')
 
             /* functions */
             'createMap': function(id) {
-                var _this = this;
-
-                // TODO: we should always have a base layer, so at this point we will select
-                // the desired one and load it
-                // TODO: what to do if there are no base layers and no index is defined?
-                var baseLayerGroup = new L.LayerGroup();
-                if (this.currentBaseLayerIndex > -1) {
-                    baseLayerGroup.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
-                } else {
-                    console.log("No base layer defined.");
-                }
+                this.baseLayerGroup = new L.LayerGroup();
 
                 this.map = new L.Map(id,
                     {
-                        layers: [ baseLayerGroup ],
+                        layers: [ this.baseLayerGroup ],
                         center: this.center,
                         zoom: this.zoom_init,
                         minZoom: this.zoom_min,
@@ -69,19 +60,39 @@ angular.module('webgisApp')
                         }
                     })
                 );
-
-                if (this.baseLayers[this.currentBaseLayerIndex].layerObj.ogc_type === "GoogleMaps") {
-                    $(".leaflet-bottom.leaflet-right").hide();
-                }
-
-                $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
+            /**
+             * Adds the desired baselayer to the map and corrects the appearance of leaflet's attribution control.
+             * @param index     array index relative to the mapviewer's baselayer array
+             */
             'setBaseLayer': function(index) {
-                // TODO: maybe only do this when index !== currentBaseLayerIndex
-                this.map.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
-                this.currentBaseLayerIndex = index;
-                this.map.addLayer(this.baseLayers[this.currentBaseLayerIndex]);
+                if (index != this.currentBaseLayerIndex) {
+                    // remove the current baselayer (if it is associated with the map)
+                    if ((this.currentBaseLayerIndex !== -1) || this.baseLayerGroup.hasLayer(this.baseLayers[this.currentBaseLayerIndex])) {
+                        this.baseLayerGroup.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
+                    } else {
+                        console.log("nothing to do, baselayer is not associated with the map");
+                    }
+
+                    // update the current baselayer index and add the new baselayer to the map
+                    this.currentBaseLayerIndex = index;
+                    var newBaseLayer = this.baseLayers[this.currentBaseLayerIndex];
+                    this.baseLayerGroup.addLayer(newBaseLayer);
+
+                    // hide/show leaflet's attribution field depending on the chosen baselayer (Google has its own
+                    // attribution line)
+                    var $leafletAttribution = $(".leaflet-bottom.leaflet-right");
+                    switch (newBaseLayer.layerObj.ogc_type) {
+                        case "GoogleMaps":
+                            $leafletAttribution.hide();
+                            break;
+                        case "OSM":
+                        case "BingMaps":
+                            $leafletAttribution.show();
+                            break;
+                    }
+                }
             },
             'getLayerById': function(id) {
                 return this.layers[id];
@@ -104,8 +115,7 @@ angular.module('webgisApp')
                         //     version: "1.3.0"
                         // });
                         //
-                        // // TODO: maybe strsplit ogc_layer on ,
-                        // layer = source.getLayer(layerData.ogc_layer);
+                        // TODO: maybe strsplit ogc_layer on ,
                         layer = new L.tileLayer.wms(layerData.ogc_link, {
                             layers: layerData.ogc_layer,
                             version: "1.3.0",
@@ -486,17 +496,12 @@ angular.module('webgisApp')
                     }
                     if (baseLayer == true) {
                         mapviewer.baseLayers = [];
-                        if (data.baselayers.length > 0) {
-                            mapviewer.currentBaseLayerIndex = 0;
-                        }
                         jQuery.each(data.baselayers, function(){
                             var olLayer = mapviewer.createLayer(this);
                             if (olLayer !== null) {
                                 mapviewer.baseLayers.push(olLayer);
                             }
                         });
-    
-                        $rootScope.$broadcast('mapviewer.baselayers_loaded', mapviewer.baseLayers);
                     }
                     $rootScope.$broadcast('mapviewer.catalog_loaded', mapviewer.datacatalog);
 
@@ -504,20 +509,21 @@ angular.module('webgisApp')
                         mapviewer.map.remove();
                     }
                     mapviewer.createMap(mapElement);
-                    if (mapviewer.baseLayers.length > 0) {
-                        mapviewer.setBaseLayer(0);
-                    }
+                    mapviewer.setBaseLayer(0);
+                    $rootScope.$broadcast('mapviewer.map_created', {});
+                    // $rootScope.$broadcast("mapviewer.baselayers_loaded", {});
                     $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
                     $('#loading-div').hide();
-                    
+
+                    // TODO: === true or just any truthy value?
                     if (data.time_slider == true) {
-                        var times = data.time_slider_dates.split(',')
-                        var noLabels = parseInt($("#slider").width()/80);
-                        var eachLabels = Math.round(times.length/noLabels);
+                        var times = data.time_slider_dates.split(','),
+                            noLabels = parseInt($("#slider").width()/80),
+                            eachLabels = Math.round(times.length/noLabels);
+
                         if (eachLabels == 0) { eachLabels = 1; }
 
-                        var ticks = []; var labels =  [];
-                        var i = 0; var j=0;
+                        var ticks = [], labels = [], i = 0, j=0;
                         $.each(times, function() {
                             ticks.push(i);
                             if (j==eachLabels) {
@@ -541,14 +547,13 @@ angular.module('webgisApp')
                             selection: 'none', formatter: function (value) {
                                 return times[value];
                             }
-                        }).on('change', function (e) {
-
                         }).on('slideStop', function (e) {
                             mapviewer.changeWMSTime(times[e.value]);
                         });
                         $('#slider .slider .tooltip-main').removeClass('top').addClass('bottom');
                         $('#slider').hide();
                     }
+                    $rootScope.$broadcast("mapviewer.baselayers_loaded", {});
                 });
             }
         };
@@ -781,18 +786,21 @@ angular.module('webgisApp')
     .controller('MapSettingsCtrl', function($scope, mapviewer, djangoRequests, $modal){
         $scope.baseLayers = [];
 
-        $scope.$on('mapviewer.baselayers_loaded', function ($broadCast, data) {
-            console.log("mapviewer.baselayers_loaded, MapSettingsCtrl");
-            console.log(mapviewer.baseLayers);
-           $.each(mapviewer.baseLayers, function(){
-               if (this['name'] != '') {
-                   $scope.baseLayers.push(this['name']);
-               }
-               $scope.selectedBaseLayer = $scope.baseLayers[mapviewer.currentBaseLayerIndex];
-           });
+        $scope.$on("mapviewer.baselayers_loaded", function () {
+            if (!mapviewer.mapSettingsLoaded) {
+                console.log("initializing baselayer selector");
+                $.each(mapviewer.baseLayers, function(){
+                   if (this['name'] != '') {
+                       $scope.baseLayers.push(this['name']);
+                   }
+                   $scope.selectedBaseLayer = $scope.baseLayers[mapviewer.currentBaseLayerIndex];
+                });
+                mapviewer.mapSettingsLoaded = true;
+            } else {
+                console.log("map setting already loaded");
+            }
         });
 
-        //$scope.selectedBaseLayer = $scope.baseLayers[mapviewer.currentBaseLayerIndex];
         $scope.changeBaseLayer = function() {
             var index = $.inArray($scope.selectedBaseLayer, $scope.baseLayers);
             mapviewer.setBaseLayer(index);
