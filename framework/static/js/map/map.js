@@ -116,7 +116,7 @@ angular.module('webgisApp')
                         // });
                         //
                         // TODO: maybe strsplit ogc_layer on ,
-                        layer = new L.tileLayer.wms(layerData.ogc_link, {
+                        layer = L.tileLayer.wms(layerData.ogc_link, {
                             layers: layerData.ogc_layer,
                             version: "1.3.0",
                             format: "image/png",
@@ -125,7 +125,7 @@ angular.module('webgisApp')
                         break;
                     case 'TMS':
                         console.log("TMS");
-                        layer = new L.TileLayer(layerData.ogc_link, {
+                        layer = L.tileLayer(layerData.ogc_link, {
                             tms: true,
                             errorTileUrl: '../../static/img/errorTile.png'
                         });
@@ -296,7 +296,7 @@ angular.module('webgisApp')
                         break;
                     case 'XYZ':
                         console.log("XYZ");
-                        layer = new L.TileLayer(layerData.ogc_link);
+                        layer = L.tileLayer(layerData.ogc_link);
 
                         // olLayer = new ol.layer.Tile({
                         //     name: layer.title,
@@ -371,28 +371,33 @@ angular.module('webgisApp')
                 }
                 return layer;
             },
-            'addLayer': function(layer) {
+            /**
+             * Creates a layer from the supplied layerData and adds it to the map.
+             * @param layerData
+             * @returns L.ILayer | null
+             */
+            'addLayer': function(layerData) {
                 for (var i=0; i<this.layersMeta.length; i++) {
-                    if (layer.title == this.layersMeta[i].name) {
+                    if (layerData.title == this.layersMeta[i].name) {
                         bootbox.alert('Layer exists already in the map. Please see the "Current" tab.');
-                        return false;
+                        return null;
                     }
                 }
 
-                layer = angular.copy(layer);
-                var llLayer = this.createLayer(layer);
+                layerData = angular.copy(layerData);
+                var llLayer = this.createLayer(layerData);
                 if (llLayer === null) {
-                    alert('Layer could not be added, type '+layer.type+' is not implemented!');
-                    return false;
+                    alert('Layer could not be added, type '+layerData.type+' is not implemented!');
+                    return null;
                 }
-                if (typeof(layer.django_id) == 'undefined') {
-                    layer.django_id = layer.id;
+                if (typeof(layerData.django_id) == 'undefined') {
+                    layerData.django_id = layerData.id;
                 }
-                layer.name = layer.title;
-                layer.id = Math.random().toString(36).substring(2, 15);
-                this.layers[layer.id] = llLayer;
-                if (layer.ogc_time == true) {
-                    this.layersTime.push(layer.id);
+                layerData.name = layerData.title;
+                layerData.id = Math.random().toString(36).substring(2, 15);
+                this.layers[layerData.id] = llLayer;
+                if (layerData.ogc_time == true) {
+                    this.layersTime.push(layerData.id);
                     $('#slider .tooltip.bottom').css('margin-top', '20px');
                     $('.ol-attribution, .ol-scale-line').css('bottom', '70px');
                     $('.ol-mouse-position').css('bottom', '100px');
@@ -401,7 +406,7 @@ angular.module('webgisApp')
                     $('#slider').show();
                 }
                 this.data.layersCount++;
-                llLayer.layerObj = layer;
+                llLayer.layerObj = layerData;
                 llLayer.options.pane = "overlayPane";
                 this.layersMeta.unshift(llLayer);
                 this.restackLayers();
@@ -870,7 +875,7 @@ angular.module('webgisApp')
     .controller('MapCatalogCtrl', function($scope, mapviewer, djangoRequests, $modal){
         $scope.layerTree = mapviewer.datacatalog;
         console.log($scope.layerTree);
-        $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
+        $scope.$on('mapviewer.catalog_loaded', function () {
             console.log("mapviewer.catalog_loaded, MapCatalogCtrl");
             $scope.layerTree = mapviewer.datacatalog;
             console.log($scope.layerTree);
@@ -979,7 +984,7 @@ angular.module('webgisApp')
             $(element).popover('show');
             $('.ol-overlay-container .popover .arrow').show();
         };
-        $scope.changeLayer = function(index, $event) {
+        $scope.changeLayer = function(index) {
             // HACK: actually we overwrite the layerObj with the leaflet layer object here
             $scope.layersMeta[$scope.newLayerIndex] = $scope.layersMeta[index];
             $scope.layersMeta.splice(index, 1);
@@ -992,7 +997,7 @@ angular.module('webgisApp')
                 mapviewer.map.removeLayer(layer);
             }
         };
-        $scope.changeOpacity = function(id, index) {
+        $scope.changeOpacity = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             olLayer.setOpacity(parseFloat($scope.slider[id])/100);
         };
@@ -1082,8 +1087,8 @@ angular.module('webgisApp')
         $scope.service = {
             url: '',
             type: 'WMS'
-        }
-        $scope.layers = []
+        };
+        $scope.layers = [];
         $scope.showLayers = false;
         $scope.selectedLayer = '';
         $scope.layerURL = '';
@@ -1091,7 +1096,7 @@ angular.module('webgisApp')
         $scope.ogc_readers = {
             'WMS': new ol.format.WMSCapabilities(),
             'WMTS': new ol.format.WMTSCapabilities()
-        }
+        };
 
         $scope.submitURL = function() {
             var urlExtentChar = '?';
@@ -1134,7 +1139,7 @@ angular.module('webgisApp')
                 bootbox.alert('An error occurred');
                 //console.log(err);
             });
-        }
+        };
 
         $scope.selectLayer = function(selectedLayer) {
             $scope.selectedLayer = selectedLayer;
@@ -1212,7 +1217,7 @@ angular.module('webgisApp')
                 mapviewer.addLayer(selectedLayer);
             }
 
-        }
+        };
 
         $scope.close = function() {
             $modalInstance.close();
