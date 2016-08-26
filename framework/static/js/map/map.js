@@ -453,6 +453,45 @@ angular.module('webgisApp')
                     source.updateParams({'TIME':time});
                 });
             },
+            /**
+             * Prepares the parameters of a GetFeatureInfo request and adds them to the provided geoserver url.
+             * @param url {string}          the url of the geoserver to query
+             * @param clickedPoint L.Point  coordinates relative to the map's viewport
+             * @param wmsParams Object      parameters of the WMS layer at clickedPoint
+             * @returns {string}
+             */
+            'generateGetFeatureInfoUrl': function(url, clickedPoint, wmsParams) {
+                var size   = this.map.getSize();
+                var crs    = this.map.options.crs;
+                var bounds = this.map.getBounds();
+                var nw     = crs.project(bounds.getNorthWest());
+                var se     = crs.project(bounds.getSouthEast());
+                var bbox   = (
+                    crs === L.CRS.EPSG4326 ? [se.y, nw.x, nw.y, se.x] : [nw.x, se.y, se.x, nw.y]
+                ).join(',');
+
+                var params = {
+                    service: "WMS",
+                    version: wmsParams.version,
+                    request: "GetFeatureInfo",
+                    format: wmsParams.format,
+                    transparent: wmsParams.transparent,
+                    query_layers: wmsParams.layers,
+                    layers: wmsParams.layers,
+                    info_format: 'text/html',
+                    // tell geoserver that the map's viewport is one tile...
+                    width: size.x,
+                    height: size.y,
+                    // ...so we can use pixel coordinates relative to the map
+                    i: clickedPoint.x,
+                    j: clickedPoint.y,
+                    crs: crs.code,
+                    styles: wmsParams.styles,
+                    bbox: bbox
+                };
+
+                return url + L.Util.getParamString(params, url, true);
+            },
             'initialize': function(id, mapElement, baseLayer) {
                 var mapviewer = this;
                 djangoRequests.request({
@@ -697,6 +736,10 @@ angular.module('webgisApp')
             mapviewer.initialize(mapId, 'map', false);
         });
 
+        $scope.stopPropagation = function($event) {
+            $event.stopPropagation();
+        };
+
         $scope.zoomIn = function() {
             mapviewer.map.zoomIn();
         };
@@ -723,54 +766,47 @@ angular.module('webgisApp')
         };
 
         $scope.infoStatus = false;
-        $scope.infoEventKey = null;
-        $scope.requestInfo = function() {
-            if ($scope.infoStatus == false) {
-                $scope.infoStatus = true;
-                $scope.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
-                    var viewResolution = mapviewer.map.getView().getResolution();
-                    var lonlat = ol.proj.transform(evt.coordinate, mapviewer.map.getView().getProjection(), 'EPSG:4326');
-                    var lon = lonlat[0].toFixed(2);
-                    var lon_arrow = 'East';
-                    if (lon < 0) {
-                        lon_arrow = 'West';
-                        lon = lon*-1;
-                    }
-                    var lat = lonlat[1].toFixed(2);
-                    var lat_arrow = 'North';
-                    if (lat < 0) {
-                        lat_arrow = 'South';
-                        lat = lat*-1;
-                    }
-                    var coordinate = '<p><strong>Position</strong><br />'+lon+'&deg; '+lon_arrow+'&nbsp;&nbsp;&nbsp;'+lat+'&deg; '+lat_arrow+'</p>';
+        $scope.infoEventKey = {};
+        $scope.requestInfo = function($event) {
+            if (!$scope.infoStatus) {
+                mapviewer.map.addEventListener('click', function(event) {
+                    var clickedLatLng = event.latlng;
+                    var lngArrow = (clickedLatLng.lng < 0 ? 'West' : 'East');
+                    var latArrow = (clickedLatLng.lat < 0 ? 'South' : 'North');
 
-                    var urls = [];
-                    var names = [];
-                    $.each(mapviewer.map.getLayers().getArray().slice(1), function(){
-                       var layer = this;
-                       if (layer.getVisible() == false) {
-                            return true;
-                       }
-                       // Works only for WMS layers
-                       try {
-                           var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapviewer.displayProjection, {'INFO_FORMAT': 'text/html'});
-                           urls.push(encodeURIComponent(url));
-                           names.push(encodeURIComponent(layer.get('name')));
-                       } catch(e) {}
+                    var coordinate = '<p><strong>Position</strong><br />'
+                        + L.NumberFormatter.round(Math.abs(clickedLatLng.lng), 2, ".")
+                        + '&deg; ' + lngArrow + '&nbsp;&nbsp;&nbsp;'
+                        + L.NumberFormatter.round(Math.abs(clickedLatLng.lat), 2, ".") + '&deg; ' + latArrow + '</p>';
+
+                    // retrieve a list of all currently visible layers (hasLayer) of type WMS (ogc_type == "WMS")
+                    var visibleWMSLayers = mapviewer.layersMeta.filter(function(layer) {
+                        return mapviewer.map.hasLayer(layer) && (layer.layerObj.ogc_type == "WMS");
                     });
+
+                    var urls = [], names = [];
+                    $.each(visibleWMSLayers, function(index, layer){
+                        urls.push(encodeURIComponent(
+                            mapviewer.generateGetFeatureInfoUrl(
+                                layer.layerObj.ogc_link, event.containerPoint, layer.wmsParams
+                            )
+                        ));
+                        names.push(encodeURIComponent(layer.name));
+                    });
+
                     if (urls.length > 0) {
                         $('#loading-div').show();
                         djangoRequests.request({
                             url: '/layers/info?url='+urls.join('||')+'&names='+names.join('||'),
                             method: 'GET'
-                         }).then(function(data) {
+                        }).then(function(data) {
                             var dialog = bootbox.dialog({title: 'Feature Info Response', message: coordinate+data, backdrop: false});
                             dialog.removeClass('modal').addClass('mymodal').drags({handle:'.modal-header'});
                             var width = $(document).width()/2-300;
                             if (width < 0) {width='2%';}
                             $('.modal-content', dialog).css('left', width);
                             $('#loading-div').hide();
-                         }, function(err){
+                        }, function(err){
                             $('#loading-div').hide();
                             bootbox.alert('An error occurred while loading data: '+err.error);
                         });
@@ -778,9 +814,9 @@ angular.module('webgisApp')
                     }
                 });
             } else {
-                $scope.infoStatus = false;
-                mapviewer.map.unByKey($scope.infoEventKey);
+                mapviewer.map.removeEventListener('click');
             }
+            $scope.infoStatus = !$scope.infoStatus;
         }
     })
     .controller('MapSettingsCtrl', function($scope, mapviewer, djangoRequests, $modal){

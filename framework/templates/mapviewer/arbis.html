@@ -130,38 +130,40 @@
 
     <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
     <div ng-controller="MapViewerCtrl" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
-        <div id="map_icons">
-            <button type="button" ng-click="zoomIn()" class="btn btn-default btn-circle hidden-xs"><i
-                    class="fa-plus fa fa-lg"></i></button>
-            <button type="button" ng-click="zoomOut()" class="btn btn-default btn-circle hidden-xs"><i
-                    class="fa-minus fa fa-lg"></i></button>
-            <button type="button" ng-click="zoomMaxExtent()" class="btn btn-default btn-circle"><i
-                    class="fa-globe fa fa-lg"></i></button>
-            <!--                <button type="button" ng-click="createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-            <button type="button" ng-click="requestInfo()" ng-class="{'btn-active': infoStatus}"
-                    class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
-        </div>
+        <div id="map_head_controls_wrapper" ng-click="stopPropagation($event);">
+            <div id="map_icons">
+                <button type="button" ng-click="zoomIn()" class="btn btn-default btn-circle hidden-xs"><i
+                        class="fa-plus fa fa-lg"></i></button>
+                <button type="button" ng-click="zoomOut()" class="btn btn-default btn-circle hidden-xs"><i
+                        class="fa-minus fa fa-lg"></i></button>
+                <button type="button" ng-click="zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        class="fa-globe fa fa-lg"></i></button>
+                <!--                <button type="button" ng-click="createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
+                <button type="button" ng-click="requestInfo($event)" ng-class="{'btn-active': infoStatus}"
+                        class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+            </div>
 
-        <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl">
-            <form ng-submit="search();">
-                <input type="text" ng-model="text" class="form-control" placeholder="Search for..." id="search_desktop">
-                <br style="clear:both"/>
-                <div id="search-extend">
-                    <!--
-                    <div style="float: left; padding-top: 10px;">
-                      <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
+            <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl">
+                <form ng-submit="search();">
+                    <input type="text" ng-model="text" class="form-control" placeholder="Search for..." id="search_desktop">
+                    <br style="clear:both"/>
+                    <div id="search-extend">
+                        <!--
+                        <div style="float: left; padding-top: 10px;">
+                          <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
+                        </div>
+                        -->
+                        <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">Search
+                        </button>
+                        <br style="clear:both;"/>
                     </div>
-                    -->
-                    <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">Search
-                    </button>
-                    <br style="clear:both;"/>
-                </div>
 
-            </form>
-        </div><!-- /input-group -->
+                </form>
+            </div><!-- /input-group -->
 
-        <div id="slider">
-            <div class="input"><input type="text"/></div>
+            <div id="slider">
+                <div class="input"><input type="text"/></div>
+            </div>
         </div>
 
     </div>
