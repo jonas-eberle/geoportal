@@ -1,3 +1,5 @@
 .idea/*
 venv/*
 *.pyc
+run.sh
+*server.log
