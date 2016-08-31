@@ -1,9 +1,0 @@
-Notes about how Angular works
-
-- specify Angular app in html-tag
-- Angular app has Services, Controllers, Directives etc.
-    - base structure is:
-        var app = angular.module(...)
-        app.controller("...Ctrl", function() ...).services(...) etc.
-    - run-method as an equivalent to window.onload
-- Scopes have a method "$broadcast(name, args)" to fire events (even custom ones)
