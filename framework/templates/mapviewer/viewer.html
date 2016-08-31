@@ -184,61 +184,61 @@
         <!-- List GROUP -->
         <!--<div ng-show="!layersMeta.length">No layers added to the map!</div>-->
         <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item, type)">
-            <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer.layerObj"
+            <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer"
                  dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move">
 
                 <div class="catalog-item">
                     <div class="item_left">
-                        <input type="checkbox" ng-click="changeVisibility(layer, $event)" id="id_{{ layer.layerObj.id }}"
-                               checked="checked"/><label for="id_{{ layer.layerObj.id }}"></label>
+                        <input type="checkbox" ng-click="changeVisibility($event, layer.id)" id="id_{{ layer.id }}"
+                               checked="checked"/><label for="id_{{ layer.id }}"></label>
                     </div>
                     <div class="item_catalog">
-                        <div class="item_title">{{ layer.layerObj.title }}</div>
+                        <div class="item_title">{{ layer.title }}</div>
                         <div class="item_desc">
-                            <input transparency-slider class="slider" ng-model="slider[layer.layerObj.id]"
-                                   ng-change="changeOpacity(layer.layerObj.id, $index)" data-slider-id="slider_{{ layer.layerObj.id }}"
+                            <input transparency-slider class="slider" ng-model="slider[layer.id]"
+                                   ng-change="changeOpacity(layer.id)" data-slider-id="slider_{{ layer.id }}"
                                    type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1"
                                    data-slider-value="100"/>
-                            <div ng-if="layer.layerObj.dates">Specify date: <select ng-model="layer.layerObj.selectedDate"
-                                                                           ng-change="updateLayer(layer.layerObj.id, layer.layerObj.selectedDate)"
-                                                                           ng-options="o as o for o in layer.layerObj.dates"></select>
+                            <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate"
+                                                                           ng-change="updateLayer(layer.id, layer.selectedDate)"
+                                                                           ng-options="o as o for o in layer.dates"></select>
                             </div>
                         </div>
                         <div class="item_icon">
                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button"
-                                    ng-if="layer.layerObj.legend" ng-click="toggleLegend(layer.layerObj)" class="btn btn-default"
+                                    ng-if="layer.legend" ng-click="toggleLegend(layer)" class="btn btn-default"
                                     aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
-                            <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.layerObj.downloadable"
-                                    type="button" ng-click="download(layer.layerObj)" class="btn btn-default"
+                            <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable"
+                                    type="button" ng-click="download(layer)" class="btn btn-default"
                                     aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
                             <button tooltip-placement="bottom" tooltip="Show metadata" type="button"
-                                    ng-click="showMetadata(layer.layerObj)" class="btn btn-default" aria-label="Left Align"><i
+                                    ng-click="showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i
                                     class="fa fa-file-text-o fa-lg"></i></button>
                             <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button"
-                                    ng-if="layer.layerObj.ogc_type == 'SOS'" ng-click="toggleStations(layer.layerObj)"
+                                    ng-if="layer.ogc_type == 'SOS'" ng-click="toggleStations(layer)"
                                     class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i>
                             </button>
                             <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button"
-                                    ng-click="zoomToLayer(layer.layerObj)" class="btn btn-default" aria-label="Left Align"><i
+                                    ng-click="zoomToLayer(layer)" class="btn btn-default" aria-label="Left Align"><i
                                     class="fa fa-search fa-lg"></i></button>
                             <button tooltip-placement="bottom" tooltip="Remove layer" type="button"
-                                    ng-click="removeLayer(layer, $index)" class="btn btn-default"
+                                    ng-click="removeLayer(layer.id)" class="btn btn-default"
                                     aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
                         </div>
 
 
                     </div>
-                    <div class="item_stations" ng-if="layer.layerObj.ogc_type == 'SOS'" ng-hide="!layer.layerObj.showStations">
+                    <div class="item_stations" ng-if="layer.ogc_type == 'SOS'" ng-hide="!layer.showStations">
                         <strong>Available stations:</strong>
                         <ul style="padding-left:20px;">
-                            <li ng-repeat="station in layer.layerObj.stations"><a href="#"
+                            <li ng-repeat="station in layer.stations"><a href="#"
                                                                          ng-click="zoomToStation(station);">{{ station.name }}
                                 ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
                         </ul>
                     </div>
-                    <div class="item_legend" style="margin-left:40px;margin-top:10px;" ng-if="layer.layerObj.legend"
-                         ng-hide="!layer.layerObj.showLegend">
-                        <a href="{{ layer.layerObj.legend }}" target="_blank"><img ng-src="{{ layer.layerObj.legend }}" alt="Layer legend"
+                    <div class="item_legend" style="margin-left:40px;margin-top:10px;" ng-if="layer.legend"
+                         ng-hide="!layer.showLegend">
+                        <a href="{{ layer.legend }}" target="_blank"><img ng-src="{{ layer.legend }}" alt="Layer legend"
                                                                           style="max-width:100%"/></a>
                     </div>
                 </div>
@@ -352,7 +352,7 @@
                                     <strong>Datasets:</strong>
                                     <div class="select" ng-if="product.layers.length > 0">
                                         <div ng-repeat="layer in product.layers">
-                                            <input type="checkbox" ng-click="changeVisibility(layer, $event);"
+                                            <input type="checkbox" ng-click="changeVisibility($event, layer);"
                                                    id="layer_vis_{{ layer.id }}"/><label
                                                 for="layer_vis_{{ layer.id }}"> {{ layer.title }}</label>
                                         </div>
@@ -481,8 +481,6 @@
 <script src="{% static "lib/bootstrap-slider.min.js" %}"></script>
 <script src="{% static "lib/jquery-drags.js" %}"></script>
 
-
-<script src="{% static "js/leaflet/leaflet-swos.js" %}"></script>
 <script src="{% static "js/app.js" %}"></script>
 <script src="{% static "js/auth/auth.js" %}"></script>
 <script src="{% static "js/map/map.js" %}"></script>

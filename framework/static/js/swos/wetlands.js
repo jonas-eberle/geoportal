@@ -125,8 +125,22 @@ angular.module('webgisApp')
                 'method': "GET",
                 'url'   : '/swos/wetland/' + wetland.id
             }).then(function(data) {
+                var products = data['products'];
+                if (typeof products !== 'undefined') {
+                    products.forEach(function(product) {
+                        if (typeof product['layers'] !== 'undefined') {
+                            product['layers'].map(function(layer) {
+                                if (typeof(layer.django_id) === 'undefined') {
+                                    layer.django_id = layer.id;
+                                    layer.id = Math.random().toString(36).substring(2, 15);
+                                }
+                            });
+                        }
+                    });
+                }
                 wetland['data'] = data;
                 //$scope.wetlands_opened[wetland.id] = wetland;
+
                 $scope.value = wetland;
 
                 djangoRequests.request({
@@ -176,16 +190,11 @@ angular.module('webgisApp')
         $('#link_wetland_list').click();
     };
 
-    $scope.changeVisibility = function(layer, $event) {
+    $scope.changeVisibility = function($event, layer) {
         if ($event.target.checked) {
             mapviewer.addLayer(layer);
         } else {
-            for(var i = 0; i < mapviewer.layersMeta.length; i++) {
-                if (layer.title === mapviewer.layersMeta[i].name) {
-                    mapviewer.removeLayer(mapviewer.layersMeta[i], i);
-                    break;
-                }
-            }
+            mapviewer.removeLayer(layer.id);
         }
     }
 })

@@ -395,11 +395,11 @@ angular.module('webgisApp')
                     alert('Layer could not be added, type '+layerData.type+' is not implemented!');
                     return null;
                 }
-                if (typeof(layerData.django_id) == 'undefined') {
+                if (typeof(layerData.django_id) === 'undefined') {
                     layerData.django_id = layerData.id;
+                    layerData.id = Math.random().toString(36).substring(2, 15);
                 }
                 layerData.name = layerData.title;
-                layerData.id = Math.random().toString(36).substring(2, 15);
                 this.layers[layerData.id] = llLayer;
                 if (layerData.ogc_time == true) {
                     this.layersTime.push(layerData.id);
@@ -413,7 +413,7 @@ angular.module('webgisApp')
                 this.data.layersCount++;
                 llLayer.layerObj = layerData;
                 llLayer.options.pane = "overlayPane";
-                this.layersMeta.unshift(llLayer);
+                this.layersMeta.unshift(layerData);
                 this.restackLayers();
                 this.map.addLayer(llLayer);
                 return llLayer;
@@ -423,13 +423,23 @@ angular.module('webgisApp')
              * @param layer     Leaflet Layer Object
              * @param index     index of the layer in layersMeta
              */
-            'removeLayer': function(layer, index) {
-                this.map.removeLayer(layer);
-                this.layersMeta.splice(index, 1);
+            'removeLayer': function(id) {
+                var metaIndex = NaN;
+                this.layersMeta.some(function(layerData, arrayIndex) {
+                    if (layerData['id'] == id) {
+                        metaIndex = arrayIndex;
+                        return true;
+                    }
+                });
+
+                this.map.removeLayer(this.layers[id]);
+                if (!isNaN(metaIndex)) {
+                    this.layersMeta.splice(metaIndex, 1);
+                }
                 this.restackLayers();
                 this.data.layersCount--;
 
-                var timeIndex = jQuery.inArray(layer.layerObj.id, this.layersTime);
+                var timeIndex = jQuery.inArray(this.layers[id].layerObj.id, this.layersTime);
                 if (timeIndex > -1) {
                     this.layersTime.splice(timeIndex, 1);
                     $('#slider').hide();
@@ -439,11 +449,14 @@ angular.module('webgisApp')
                     $("#gmap img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
                     $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
                 }
+
+                delete this.layers[id];
             },
             'restackLayers': function() {
-                var layersCount = this.data.layersCount;
-                this.layersMeta.forEach(function(layer, index) {
-                    layer.setZIndex(450 + layersCount - index);
+                var that = this;
+                var layersCount = that.data.layersCount;
+                that.layersMeta.forEach(function(layer, index) {
+                    that.layers[layer.id].setZIndex(450 + layersCount - index);
                 });
             },
             'raiseLayer': function(id, delta) {
@@ -995,22 +1008,33 @@ angular.module('webgisApp')
             $scope.layersMeta.splice(index, 1);
             mapviewer.restackLayers();
         };
-        $scope.changeVisibility = function(layer, $event) {
+
+        /**
+         * Changes visibility of a layer by adding/removing it from the map. The layer object itself is NOT destroyed
+         * in the process.
+         * @param $event    angular event object
+         * @param id        id of the layer to add/remove from the map
+         */
+        $scope.changeVisibility = function($event, id) {
             if ($event.target.checked) {
-                mapviewer.map.addLayer(layer);
+                mapviewer.map.addLayer(mapviewer.layers[id]);
             } else {
-                mapviewer.map.removeLayer(layer);
+                mapviewer.map.removeLayer(mapviewer.layers[id]);
             }
         };
         $scope.changeOpacity = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             olLayer.setOpacity(parseFloat($scope.slider[id])/100);
         };
-        $scope.removeLayer = function(layer, index) {
-            mapviewer.removeLayer(layer, index);
+
+        /**
+         * Calls the removeLayer service method and unchecks the checkbox of the removed layer
+         * @param id            ID of the layer in mapviewer.layers
+         */
+        $scope.removeLayer = function(id) {
+            mapviewer.removeLayer(id);
             var checkbox;
-            if (layer.layerObj["django_id"] !== undefined
-                && (checkbox = document.getElementById("layer_vis_"+layer.layerObj.django_id))) {
+            if (checkbox = document.getElementById("layer_vis_"+id)) {
                 checkbox.checked = "";
             }
         };
