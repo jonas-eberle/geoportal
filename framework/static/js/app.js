@@ -6,7 +6,7 @@ angular.module('webgisApp', [
     'ngRoute',
     'ui.bootstrap',
     'dndLists',
-    'nsPopover',
+    'nsPopover'
 ])
     .service('djangoRequests', function djangoRequests($q, $http, $cookies, $rootScope) {
 
@@ -25,7 +25,7 @@ angular.module('webgisApp', [
                 $http.defaults.headers.common["If-Modified-Since"] = "0";
 
                 // Continue
-                params = args.params || {}
+                params = args.params || {};
                 args = args || {};
                 var deferred = $q.defer(), url = this.API_URL + args.url, method = args.method || "GET", params = params, data = args.data || {};
                 // Fire the request, as configured.
@@ -81,7 +81,7 @@ angular.module('webgisApp', [
                 this.alert = alert;
                 $rootScope.$broadcast('alert.added');
             }
-        }
+        };
         return sharedService;
     })
     .controller('AlertCtrl', function ($scope, AlertService) {
@@ -91,7 +91,7 @@ angular.module('webgisApp', [
             $scope.alerts = [AlertService.alert];
         });
 
-        $scope.closeAlert = function (index) {
+        $scope.closeAlert = function () {
             $scope.alerts = [];
         };
     })
@@ -107,33 +107,25 @@ angular.module('webgisApp', [
     })
     .controller('InfoCtrl', function ($scope, $modal) {
         $scope.info = function () {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: 'ModalInstanceCtrl',
                 template  : $('#info_text').html(),
                 //templateUrl: subdir+'/static/includes/window_info.html?v=3',
                 backdrop  : 'static',
                 resolve   : {
-                    data : function () {
-                        return {};
-                    },
-                    title: function () {
-                        return '';
-                    }
+                    data : function () { return {}; },
+                    title: function () { return ''; }
                 }
             });
         };
         $scope.help = function () {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller : 'ModalInstanceCtrl',
                 templateUrl: subdir + '/static/help/help.html',
                 backdrop   : 'static',
                 resolve    : {
-                    data : function () {
-                        return {};
-                    },
-                    title: function () {
-                        return '';
-                    }
+                    data : function () { return {}; },
+                    title: function () { return ''; }
                 }
             });
         };
@@ -145,5 +137,4 @@ angular.module('webgisApp', [
                 $(element).parent().drags({handle: '.modal-header'});
             }
         };
-    })
-;
+    });

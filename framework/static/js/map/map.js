@@ -1,12 +1,13 @@
 'use strict';
 
-var fill = new ol.style.Fill({
-   color: 'rgba(12, 216, 247, 1)'
- });
- var stroke = new ol.style.Stroke({
-   color: 'rgba(0, 0, 204, 1)',
-   width: 1.25
- });
+// TODO: OL3 remnants
+// var fill = new ol.style.Fill({
+//    color: 'rgba(12, 216, 247, 1)'
+//  });
+//  var stroke = new ol.style.Stroke({
+//    color: 'rgba(0, 0, 204, 1)',
+//    width: 1.25
+//  });
 
 var popup;
 var stationPopup;
@@ -33,7 +34,12 @@ angular.module('webgisApp')
                 'addexternallayer': false
             },
 
-            /* functions */
+            /**
+             * Creates the map object and basic controls. This method does NOT add any base layers, instead use this
+             * method in combination with setBaseLayer to get a map + base layer.
+             * @param id
+             * @returns L.Map
+             */
             'createMap': function(id) {
                 this.baseLayerGroup = new L.LayerGroup();
 
@@ -76,8 +82,6 @@ angular.module('webgisApp')
                     // remove the current baselayer (if it is associated with the map)
                     if ((this.currentBaseLayerIndex !== -1) || this.baseLayerGroup.hasLayer(this.baseLayers[this.currentBaseLayerIndex])) {
                         this.baseLayerGroup.removeLayer(this.baseLayers[this.currentBaseLayerIndex]);
-                    } else {
-                        console.log("nothing to do, baselayer is not associated with the map");
                     }
 
                     // update the current baselayer index and add the new baselayer to the map
@@ -99,27 +103,21 @@ angular.module('webgisApp')
                     }
                 }
             },
+
             'getLayerById': function(id) {
                 return this.layers[id];
             },
+
             /**
              * Creates Leaflet layers from layer data provided.
              * @param layerData
              * @returns L.ILayer|null
              */
             "createLayer": function(layerData) {
-                //var _this = this;
                 var layer = null;
                 switch(layerData.ogc_type) {
                     case 'WMS':
                         console.log("WMS");
-                        // var source = new L.WMS.Source(layerData.ogc_link,{
-                        //     transparent: true,
-                        //     untiled: false,
-                        //     format: "image/png",
-                        //     version: "1.3.0"
-                        // });
-                        //
                         // TODO: maybe strsplit ogc_layer on ,
                         layer = L.tileLayer.wms(layerData.ogc_link, {
                             layers: layerData.ogc_layer,
@@ -140,7 +138,7 @@ angular.module('webgisApp')
                         // if (typeof(layer.capabilities) == 'object') {
                         //     // does not work with NASA WMTS!
                         //     var options = ol.source.WMTS.optionsFromCapabilities(layer.capabilities, {layer: layer.ogc_layer, matrixSet: layer.wmts_matrixset});
-                        //     olLayer = new ol.layer.Tile({
+                        //     llLayer = new ol.layer.Tile({
                         //         source: new ol.source.WMTS(options)
                         //     });
                         // } else {
@@ -157,7 +155,7 @@ angular.module('webgisApp')
                         //     })
                         //     var matrixIds = [];
                         //     for (var i=0; i<resolutions.length; i++) { matrixIds.push(i); }
-                        //     olLayer = new ol.layer.Tile({
+                        //     llLayer = new ol.layer.Tile({
                         //         name: layer.title,
                         //         layerObj: layer,
                         //         source: new ol.source.WMTS({
@@ -178,7 +176,7 @@ angular.module('webgisApp')
                         break;
                     case 'BingMaps':
                         console.log("BingMaps");
-                        // olLayer = new ol.layer.Tile({
+                        // llLayer = new ol.layer.Tile({
                         //     name: layer.title,
                         //     layerObj: layer,
                         //     source: new ol.source.BingMaps({
@@ -196,18 +194,16 @@ angular.module('webgisApp')
                         break;
                     case 'GoogleMaps':
                         console.log("GoogleMaps");
-                        layer = L.google(layerData.ogc_layer,
-                            {
-                                mapOptions: {
-                                    disableDefaultUI: true,
-                                    keyboardShortcuts: false,
-                                    draggable: false,
-                                    disableDoubleClickZoom: true,
-                                    scrollwheel: false,
-                                    streetViewControl: false
-                                }
+                        layer = L.google(layerData.ogc_layer, {
+                            mapOptions: {
+                                disableDefaultUI: true,
+                                keyboardShortcuts: false,
+                                draggable: false,
+                                disableDoubleClickZoom: true,
+                                scrollwheel: false,
+                                streetViewControl: false
                             }
-                        );
+                        });
                         break;
                     case 'OSM':
                         console.log("OSM");
@@ -217,7 +213,7 @@ angular.module('webgisApp')
                         // } else {
                         //     osmSource = new ol.source.OSM();
                         // }
-                        // olLayer = new ol.layer.Tile({
+                        // llLayer = new ol.layer.Tile({
                         //     name: layer.title,
                         //     layerObj: layer,
                         //     source: osmSource
@@ -251,7 +247,7 @@ angular.module('webgisApp')
                         //     },
                         //     projection: _this.displayProjection
                         // });
-                        // olLayer = new ol.layer.Vector({
+                        // llLayer = new ol.layer.Vector({
                         //     name: layer.title,
                         //     layerObj: layer,
                         //     source: vectorSource
@@ -281,7 +277,7 @@ angular.module('webgisApp')
                         //     ),
                         //     projection: _this.displayProjection
                         // });
-                        // olLayer = new ol.layer.Vector({
+                        // llLayer = new ol.layer.Vector({
                         //     name: layer.title,
                         //     layerObj: layer,
                         //     source: vectorSource
@@ -302,14 +298,6 @@ angular.module('webgisApp')
                     case 'XYZ':
                         console.log("XYZ");
                         layer = L.tileLayer(layerData.ogc_link);
-
-                        // olLayer = new ol.layer.Tile({
-                        //     name: layer.title,
-                        //     layerObj: layer,
-                        //     source: new ol.source.XYZ({
-                        //         url: layer.ogc_link
-                        //     })
-                        // });
                         break;
                     case 'SOS':
                         console.log("SOS");
@@ -336,7 +324,7 @@ angular.module('webgisApp')
                         //     },
                         //     projection: 'EPSG:4326'
                         // });
-                        // olLayer = new ol.layer.Vector({
+                        // llLayer = new ol.layer.Vector({
                         //     name: layer.title,
                         //     layerObj: layer,
                         //     source: new ol.source.Cluster({
@@ -376,6 +364,7 @@ angular.module('webgisApp')
                 }
                 return layer;
             },
+
             /**
              * Creates a layer from the supplied layerData and adds it to the map.
              * @param layerData
@@ -418,10 +407,10 @@ angular.module('webgisApp')
                 this.map.addLayer(llLayer);
                 return llLayer;
             },
+
             /**
-             * Removes the layer from the map.
-             * @param layer     Leaflet Layer Object
-             * @param index     index of the layer in layersMeta
+             * Removes the layer with the given id from the map.
+             * @param id    ID of the layer in mapviewer.layers
              */
             'removeLayer': function(id) {
                 var metaIndex = NaN;
@@ -452,6 +441,10 @@ angular.module('webgisApp')
 
                 delete this.layers[id];
             },
+
+            /**
+             * Updates the z-index of all currently active layers.
+             */
             'restackLayers': function() {
                 var that = this;
                 var layersCount = that.data.layersCount;
@@ -459,16 +452,9 @@ angular.module('webgisApp')
                     that.layers[layer.id].setZIndex(450 + layersCount - index);
                 });
             },
-            'raiseLayer': function(id, delta) {
-                var layer = this.layers[id];
-                var layerIndex = $.inArray(layer, this.map.getLayers().getArray());
-                var layers = this.map.getLayers();
 
-                layers.insertAt(layerIndex+delta, layer);
-                if (delta < 0) layerIndex = layerIndex+1;
-                layers.removeAt(layerIndex);
-            },
             'changeWMSTime': function(time) {
+                // TODO: OL3 remnant
                 var _this = this;
                 $.each(this.layersTime, function() {
                     var layer = _this.layers[this];
@@ -476,6 +462,7 @@ angular.module('webgisApp')
                     source.updateParams({'TIME':time});
                 });
             },
+
             /**
              * Prepares the parameters of a GetFeatureInfo request and adds them to the provided geoserver url.
              * @param url {string}          the url of the geoserver to query
@@ -515,13 +502,19 @@ angular.module('webgisApp')
 
                 return url + L.Util.getParamString(params, url, true);
             },
-            'initialize': function(id, mapElement, baseLayer) {
+
+            /**
+             * Initializes the application.
+             * @param id                id of Mapviewer
+             * @param mapElement        id of the DOM element the map should be added to
+             * @param wantsBaseLayer    true, if base layer should be drawn
+             */
+            'initialize': function(id, mapElement, wantsBaseLayer) {
                 var mapviewer = this;
                 djangoRequests.request({
                     'method': "GET",
                     'url': '/mapviewer/detail/'+id+'.json'
                 }).then(function(data){
-                    console.log(data);
                     var $center = $("#center");
                     var $nav = $("#nav-top-right2");
 
@@ -556,7 +549,7 @@ angular.module('webgisApp')
                     if (data.layerauth == true) {
                         bootbox.alert('Please log in to see further layers!');
                     }
-                    if (baseLayer == true) {
+                    if (wantsBaseLayer) {
                         mapviewer.baseLayers = [];
                         jQuery.each(data.baselayers, function(){
                             var olLayer = mapviewer.createLayer(this);
@@ -573,7 +566,8 @@ angular.module('webgisApp')
                     mapviewer.createMap(mapElement);
                     mapviewer.setBaseLayer(0);
                     $rootScope.$broadcast('mapviewer.map_created', {});
-                    // $rootScope.$broadcast("mapviewer.baselayers_loaded", {});
+                    // TODO: ensure, that the subscribed event handler is always fired (maybe race condition??)
+                    $rootScope.$broadcast("mapviewer.baselayers_loaded");
                     $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
                     $('#loading-div').hide();
 
@@ -615,7 +609,6 @@ angular.module('webgisApp')
                         $('#slider .slider .tooltip-main').removeClass('top').addClass('bottom');
                         $('#slider').hide();
                     }
-                    $rootScope.$broadcast("mapviewer.baselayers_loaded", {});
                 });
             }
         };
@@ -623,7 +616,7 @@ angular.module('webgisApp')
     })
     .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope){
         $scope.$on('mapviewer.map_created', function ($broadCast, data) {
-            console.log("mapviewer.map_created");
+            // TODO: OL3 remnant
             /*popup = new ol.Overlay({element: document.getElementById('popup')});
             mapviewer.map.addOverlay(popup);
             stationPopup = new ol.Overlay({element: document.getElementById('stationPopup'),offset: [0, -5]});
@@ -670,7 +663,6 @@ angular.module('webgisApp')
                //     //mapviewer.selectInteraction.getFeatures().clear();
                // }
             });
-
 
             mapviewer.map.on("click", function(e) {
                 //mapviewer.selectPointerMove.getFeatures().clear();
@@ -755,7 +747,7 @@ angular.module('webgisApp')
             });
         });
 
-        $scope.$on('djangoAuth.logged_in', function ($broadCast, data) {
+        $scope.$on('djangoAuth.logged_in', function () {
             mapviewer.initialize(mapId, 'map', false);
         });
 
@@ -763,40 +755,53 @@ angular.module('webgisApp')
             $event.stopPropagation();
         };
 
+        /**
+         * Zoom in.
+         */
         $scope.zoomIn = function() {
             mapviewer.map.zoomIn();
         };
 
+        /**
+         * Zoom out.
+         */
         $scope.zoomOut = function() {
             mapviewer.map.zoomOut();
         };
 
+        /**
+         * Zooms and pans the map to the initial view
+         */
         $scope.zoomMaxExtent = function() {
-            mapviewer.map.fitBounds([[64, 60],[14, -10]]);
+            mapviewer.map.setView(mapviewer.center, mapviewer.zoom_init);
         };
-        
+
+        /**
+         * Changes visibility of sites layer.
+         * @param id
+         * @param $event
+         */
         $scope.changeSitesVisibility = function(id, $event) {
-            console.log("Changing visibility of "+id);
             if ($event.target.checked) {
                 mapviewer.map.addLayer(mapviewer.layers[id]);
             } else {
-                mapviewer.map.eachLayer(function(layer) {
-                    if (layer.name == id) {
-                        mapviewer.map.removeLayer(layer);
-                    }
-                });
+                mapviewer.map.removeLayer(mapviewer.layers[id]);
             }
         };
 
         $scope.infoStatus = false;
         $scope.infoEventKey = {};
-        $scope.requestInfo = function($event) {
+        /**
+         * Binds/Unbinds the click event handler for GetFeatureInfo-requests.
+         */
+        $scope.requestInfo = function() {
             if (!$scope.infoStatus) {
                 mapviewer.map.addEventListener('click', function(event) {
                     var clickedLatLng = event.latlng;
                     var lngArrow = (clickedLatLng.lng < 0 ? 'West' : 'East');
                     var latArrow = (clickedLatLng.lat < 0 ? 'South' : 'North');
 
+                    // prepare the coordinates the will be shown in the informational popup
                     var coordinate = '<p><strong>Position</strong><br />'
                         + L.NumberFormatter.round(Math.abs(clickedLatLng.lng), 2, ".")
                         + '&deg; ' + lngArrow + '&nbsp;&nbsp;&nbsp;'
@@ -807,6 +812,7 @@ angular.module('webgisApp')
                         return mapviewer.map.hasLayer(layer) && (layer.layerObj.ogc_type == "WMS");
                     });
 
+                    // generate all the urls for the requests (one per visible WMS layer)
                     var urls = [], names = [];
                     $.each(visibleWMSLayers, function(index, layer){
                         urls.push(encodeURIComponent(
@@ -845,6 +851,10 @@ angular.module('webgisApp')
     .controller('MapSettingsCtrl', function($scope, mapviewer, djangoRequests, $modal){
         $scope.baseLayers = [];
 
+        /**
+         * Prepares the (custom) base layer selection control.
+         * TODO: ensure that this is always executed (possible problem: race condition?)
+         */
         $scope.$on("mapviewer.baselayers_loaded", function () {
             if (!mapviewer.mapSettingsLoaded) {
                 console.log("initializing baselayer selector");
@@ -860,11 +870,17 @@ angular.module('webgisApp')
             }
         });
 
+        /**
+         * Calls the setBaseLayer service method to configure the selected base layer.
+         */
         $scope.changeBaseLayer = function() {
             var index = $.inArray($scope.selectedBaseLayer, $scope.baseLayers);
             mapviewer.setBaseLayer(index);
         };
-        
+
+        /**
+         * Loads and shows the metadata associated with the current base layer.
+         */
         $scope.showMetadata = function() {
             var layer = mapviewer.baseLayers[mapviewer.currentBaseLayerIndex];
             $('#loading-div').show();
@@ -892,24 +908,29 @@ angular.module('webgisApp')
     })
     .controller('MapCatalogCtrl', function($scope, mapviewer, djangoRequests, $modal){
         $scope.layerTree = mapviewer.datacatalog;
-        console.log($scope.layerTree);
         $scope.$on('mapviewer.catalog_loaded', function () {
-            console.log("mapviewer.catalog_loaded, MapCatalogCtrl");
             $scope.layerTree = mapviewer.datacatalog;
-            console.log($scope.layerTree);
         });
 
+        /**
+         * Calls the addLayer service method to add the layer to the map.
+         * @param layer
+         */
         $scope.addLayerToMap = function(layer) {
             mapviewer.addLayer(layer);
         };
 
+        /**
+         * Loads and shows the metadata associated with layer.
+         * @param layer
+         */
         $scope.showMetadata = function(layer) {
             $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
                 'url': '/layers/detail/'+layer.id+'.json'
             }).then(function(data){
-                var modalInstance = $modal.open({
+                $modal.open({
                     controller: 'ModalInstanceCtrl',
                     templateUrl: subdir+'/static/includes/metadata.html',
                     resolve: {
@@ -925,12 +946,13 @@ angular.module('webgisApp')
 
         $scope.activeLayer = -1;
         $scope.hoverLayer = function(elem, layerID, $event) {
-            if ($scope.activeLayer == layerID && $('body .popover').length > 0) {
+            var $bodyPopOver = $('body .popover');
+            if ($scope.activeLayer == layerID && $bodyPopOver.length > 0) {
                 return false;
             }
             $scope.activeLayer = layerID;
             $($event.target).popover('show');
-            $('body .popover').on('mouseleave', function(){
+            $bodyPopOver.on('mouseleave', function(){
                 var _this = this;
                 setTimeout(function () {
                     if (!$($event.target).parent().is(':hover')) {
@@ -957,18 +979,33 @@ angular.module('webgisApp')
         $scope.slider = [];
         $scope.newLayerIndex = -1;
         $scope.mapviewerdata = mapviewer.data;
+
+        /**
+         * Stores the new index of the dragged layer in scope.
+         * @param event
+         * @param index
+         * @param item
+         * @returns {*}
+         */
         $scope.prepareIndex = function(event, index, item) {
             $scope.newLayerIndex = index;
             return item;
         };
+
+        /**
+         * Toggles display of the corresponding layer's legend.
+         * @param layer
+         */
         $scope.toggleLegend = function(layer) {
             // boolean negation of showLegend
             layer.showLegend = !layer.showLegend;
         };
+
         $scope.toggleStations = function(layer) {
+            // TODO: OL3 remnant
             //load stations if no one available
             if (typeof(layer.stations) == 'undefined') {
-                layer.stations = []
+                layer.stations = [];
                 var olLayer = mapviewer.getLayerById(layer.id);
                 var features = olLayer.getSource().getSource().getFeatures();
                 $.each(features, function(){
@@ -977,13 +1014,12 @@ angular.module('webgisApp')
                 });
                 //console.log(features);
             }
-            if (layer.showStations == true) {
-                layer.showStations = false;
-            } else {
-                layer.showStations = true;
-            }
+
+            layer.showStations = !layer.showStations;
         };
+
         $scope.zoomToStation = function(station) {
+            // TODO: OL3 remnant
             var extent = [station.lat, station.lon, station.lat, station.lon];
             extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
             mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
@@ -1002,6 +1038,11 @@ angular.module('webgisApp')
             $(element).popover('show');
             $('.ol-overlay-container .popover .arrow').show();
         };
+
+        /**
+         * Changes the layer order.
+         * @param index     old index of the layer that has been dragged
+         */
         $scope.changeLayer = function(index) {
             // HACK: actually we overwrite the layerObj with the leaflet layer object here
             $scope.layersMeta[$scope.newLayerIndex] = $scope.layersMeta[index];
@@ -1022,6 +1063,11 @@ angular.module('webgisApp')
                 mapviewer.map.removeLayer(mapviewer.layers[id]);
             }
         };
+
+        /**
+         * Changes the opacity of a layer.
+         * @param id
+         */
         $scope.changeOpacity = function(id) {
             var layer = mapviewer.layers[id];
             var opacity = parseFloat($scope.slider[id])/100;
@@ -1045,6 +1091,7 @@ angular.module('webgisApp')
                 checkbox.checked = "";
             }
         };
+
         /**
          * Pans and zooms the map so that layer is in the center of the map.
          * @param layerObj     layer data (without the surrounding Leaflet Layer data)
@@ -1056,6 +1103,11 @@ angular.module('webgisApp')
             ]);
             mapviewer.map.fitBounds(bounds);
         };
+
+        /**
+         * Loads and shows the metadata associated with layer.
+         * @param layer
+         */
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
                 $('#loading-div').show();
@@ -1063,30 +1115,26 @@ angular.module('webgisApp')
                     'method': "GET",
                     'url': '/layers/detail/' + layer.django_id + '.json'
                 }).then(function (data) {
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         controller: 'ModalInstanceCtrl',
                         templateUrl: subdir+'/static/includes/metadata.html',
                         resolve: {
-                            data: function () {
-                                return data;
-                            },
-                            title: function () {
-                                return data.title;
-                            }
+                            data: function () { return data; },
+                            title: function () { return data.title; }
                         }
                     });
                     $('#loading-div').hide();
-                }, function (error) {
+                }, function () {
                     bootbox.alert('<h1>No Metadata information available!</h1>');
                     $('#loading-div').hide();
                 })
             } else {
-                var modalInstance = $modal.open({
+                $modal.open({
                     controller: 'ModalInstanceCtrl',
                     templateUrl: subdir+'/static/includes/metadata.html',
                     resolve: {
-                        data: function() {return layer;},
-                        title: function() {return layer.title;}
+                        data: function() { return layer; },
+                        title: function() { return layer.title; }
                     }
                 });
             }
@@ -1094,6 +1142,7 @@ angular.module('webgisApp')
         };
 
         $scope.updateLayer = function(id, date) {
+            // TODO: OL3 remnant
             var olLayer = mapviewer.getLayerById(id);
             var source = olLayer.getSource();
             var type = olLayer.get('layerObj').ogc_type;
@@ -1109,7 +1158,7 @@ angular.module('webgisApp')
         };
 
         $scope.addOwnLayer = function() {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: 'MapAddOwnLayer',
                 templateUrl: subdir+'/static/includes/addownlayer.html',
                 resolve: {
@@ -1129,6 +1178,7 @@ angular.module('webgisApp')
         $scope.selectedLayer = '';
         $scope.layerURL = '';
 
+        // TODO: Leaflet does not have something like this
         $scope.ogc_readers = {
             'WMS': new ol.format.WMSCapabilities(),
             'WMTS': new ol.format.WMTSCapabilities()
@@ -1301,12 +1351,13 @@ angular.module('webgisApp')
 
         $scope.close = function () {
             $modalInstance.close();
+            // TODO: Leaflet has no SelectInteraction control
             mapviewer.selectInteraction.getFeatures().clear();
         };
 
         $scope.ylabel = 'name [unit]';
         $scope.chartdata = [];
-        $scope.parameters = []
+        $scope.parameters = [];
 
         $scope.labels = ['isodate',$scope.feature.get('name')];
         $scope.colors = ['black'];
@@ -1314,14 +1365,15 @@ angular.module('webgisApp')
         $scope.download = function() {
             var url = subdir+$scope.request_url+'&download=true';
             window.open(url, 'download_sos');
-        }
+        };
 
         $scope.changeOptions = function() {
             var start = (typeof($scope.startDate) == 'object') ? $scope.startDate.toISOString() : $scope.startDate;
             var end = (typeof($scope.endDate) == 'object') ? $scope.endDate.toISOString() : $scope.endDate;
             var param = $scope.parameter.definition;
 
-            $scope.request_url = '/layers/sos/data?id='+$scope.layer.django_id+'&procedure='+$scope.feature.get('procedure')+'&start='+start+'&end='+end+'&param='+param
+            $scope.request_url = '/layers/sos/data?id='+$scope.layer.django_id
+                +'&procedure='+$scope.feature.get('procedure')+'&start='+start+'&end='+end+'&param='+param;
 
             $('#loading-div').show();
             djangoRequests.request({

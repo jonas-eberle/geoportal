@@ -37,8 +37,6 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script src="{% static "lib/ol.js" %}"></script>
-    <link href="{% static "lib/ol.css" %}" rel="stylesheet"/>
     <script src="{% static "lib/leaflet.js" %}"></script>
     <script src="{% static "lib/leaflet-plugins-leaflet_one/layer/tile/Google.js" %}"></script>
     <script src="{% static "lib/leaflet-plugins-leaflet_one/layer/tile/Bing.js" %}"></script>
@@ -139,7 +137,7 @@
                 <button type="button" ng-click="zoomMaxExtent()" class="btn btn-default btn-circle"><i
                         class="fa-globe fa fa-lg"></i></button>
                 <!--                <button type="button" ng-click="createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                <button type="button" ng-click="requestInfo($event)" ng-class="{'btn-active': infoStatus}"
+                <button type="button" ng-click="requestInfo()" ng-class="{'btn-active': infoStatus}"
                         class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
             </div>
 

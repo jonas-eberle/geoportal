@@ -10,7 +10,7 @@ angular.module('webgisApp')
         }).then(function(data) {
             $scope.wetlands = [];
 
-            $scope.olLayer = L.geoJson(data, {
+            $scope.llLayer = L.geoJson(data, {
                 style: function() {
                     return {
                         fillOpacity: 0.5,
@@ -27,7 +27,7 @@ angular.module('webgisApp')
                         var clickedLayer = event.target;
 
                         // remove highlighting from all features
-                        $scope.olLayer.setStyle({stroke: true});
+                        $scope.llLayer.setStyle({stroke: true});
                         // highlight the clicked feature
                         clickedLayer.setStyle({
                             stroke: false
@@ -37,12 +37,12 @@ angular.module('webgisApp')
                     });
                 }
             });
-            L.extend($scope.olLayer, {
+            L.extend($scope.llLayer, {
                 name: "Wetlands"
             });
 
-            mapviewer.layers[$scope.olLayer.name] = $scope.olLayer;
-            mapviewer.map.addLayer($scope.olLayer);
+            mapviewer.layers[$scope.llLayer.name] = $scope.llLayer;
+            mapviewer.map.addLayer($scope.llLayer);
         }, function() {
             bootbox.alert('<h1>Error while loading wetlands</h1>');
         })

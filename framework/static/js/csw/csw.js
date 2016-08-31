@@ -12,12 +12,10 @@ angular.module('webgisApp')
                 pages       : 0,
                 itemsPerPage: 10
             },
-            'setPage'     : function (page) {
-
-            },
+            'setPage'     : function (page) { },
             'search'      : function (text) {
                 if (parseInt(this.server) === 0) {
-                    bootbox.alert('Server ID is not valid!')
+                    bootbox.alert('Server ID is not valid!');
                     return false;
                 }
                 if (text == '') {
@@ -34,20 +32,14 @@ angular.module('webgisApp')
                     console.log(data);
                     //self.results.totalCount = data.totalCount
                     $('#loading-div').hide();
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         controller : 'SearchResultsModalCtrl',
                         templateUrl: subdir + '/static/includes/searchresults.html',
                         backdrop   : 'static',
                         resolve    : {
-                            title     : function () {
-                                return 'Search results for: ' + text;
-                            },
-                            results   : function () {
-                                return data;
-                            },
-                            searchData: function () {
-                                return searchData;
-                            }
+                            title     : function () { return 'Search results for: ' + text; },
+                            results   : function () { return data; },
+                            searchData: function () { return searchData; }
                         }
                     });
                 });
@@ -55,7 +47,7 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .controller('SearchBoxCtrl', function ($scope, csw, djangoRequests, $modal) {
+    .controller('SearchBoxCtrl', function ($scope, csw) {
 
         $scope.text = '';
 
@@ -75,16 +67,12 @@ angular.module('webgisApp')
         };
 
         $scope.showMetadata = function (layer) {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller : 'ModalInstanceCtrl',
                 templateUrl: subdir + '/static/includes/metadata.html',
                 resolve    : {
-                    data : function () {
-                        return layer;
-                    },
-                    title: function () {
-                        return layer.title;
-                    }
+                    data : function () { return layer; },
+                    title: function () { return layer.title; }
                 }
             });
         };
