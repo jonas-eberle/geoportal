@@ -15,7 +15,7 @@ angular.module('webgisApp')
     .service('mapviewer', function mapviewer(djangoRequests, $rootScope, $modal) {
         var service = {
             'baseLayers': [],
-            'baseLayerGroup': null,     // hold the leaflet LayerGroup object we will use for baselayers
+            'baseLayerGroup': null,     // holds the leaflet LayerGroup object we will use for baselayers
             'layers': {},
             'layersTime': [],
             'layersMeta': [],
@@ -59,9 +59,14 @@ angular.module('webgisApp')
                                  + L.NumberFormatter.round(latLonObj.lat, 4, ".")
                         }
                     })
+                ).addControl(
+                    L.control.scale({
+                        imperial: false
+                    })
                 );
                 return this.map;
             },
+
             /**
              * Adds the desired baselayer to the map and corrects the appearance of leaflet's attribution control.
              * @param index     array index relative to the mapviewer's baselayer array
