@@ -170,16 +170,9 @@ angular.module('webgisApp')
             }, function() {
                 bootbox.alert('<h1>Error while loading wetland details</h1>');
             });
-
-            mapviewer.map.fitBounds(wetland["bounds"]);
         }
-    };
 
-    $scope.foo = function() {
-        console.log('foo');
-        reAdjust();
-        $('.scroller-right').click();
-        //$('#sidebar-tabs a:last').tab('show')
+        mapviewer.map.fitBounds(wetland["bounds"]);
     };
 
     $scope.closeWetland = function(id) {
