@@ -1023,8 +1023,15 @@ angular.module('webgisApp')
             }
         };
         $scope.changeOpacity = function(id) {
-            var olLayer = mapviewer.getLayerById(id);
-            olLayer.setOpacity(parseFloat($scope.slider[id])/100);
+            var layer = mapviewer.layers[id];
+            var opacity = parseFloat($scope.slider[id])/100;
+            if (layer instanceof L.GridLayer) {
+                layer.setOpacity(opacity);
+            } else {
+                layer.setStyle(function() {
+                    return { opacity: opacity }
+                });
+            }
         };
 
         /**
