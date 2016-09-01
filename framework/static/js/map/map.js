@@ -135,6 +135,7 @@ angular.module('webgisApp')
                         break;
                     case 'WMTS':
                         console.log("WMTS");
+                        // TODO: OL3 remnants
                         // if (typeof(layer.capabilities) == 'object') {
                         //     // does not work with NASA WMTS!
                         //     var options = ol.source.WMTS.optionsFromCapabilities(layer.capabilities, {layer: layer.ogc_layer, matrixSet: layer.wmts_matrixset});
@@ -223,11 +224,13 @@ angular.module('webgisApp')
                             url = layerData.ogc_link;
                         }
                         layer = L.tileLayer(url, {
-                            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
+                            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
+                            maxZoom: 18
                         });
                         break;
                     case 'WFS':
                         console.log("WFS");
+                        // TODO: OL3 remnants
                         // var vectorSource = new ol.source.ServerVector({
                         //     format: new ol.format.GeoJSON(),
                         //     loader: function(extent, resolution, projection) {
@@ -255,6 +258,7 @@ angular.module('webgisApp')
                         break;
                     case 'Tiled-WFS':
                         console.log("Tiled-WFS");
+                        // TODO: OL3 remnants
                         // var vectorSource = new ol.source.ServerVector({
                         //     format: new ol.format.GeoJSON(),
                         //     loader: function(extent, resolution, projection) {
@@ -301,6 +305,7 @@ angular.module('webgisApp')
                         break;
                     case 'SOS':
                         console.log("SOS");
+                        // TODO: OL3 remnants
                         // var layerID = layer.id;
                         // if (typeof(layer.django_id) == 'number') {
                         //     layerID = layer.django_id;
@@ -414,6 +419,7 @@ angular.module('webgisApp')
              */
             'removeLayer': function(id) {
                 var metaIndex = NaN;
+                // to return early (we can stop if the condition is true), we cannot use forEach here
                 this.layersMeta.some(function(layerData, arrayIndex) {
                     if (layerData['id'] == id) {
                         metaIndex = arrayIndex;
