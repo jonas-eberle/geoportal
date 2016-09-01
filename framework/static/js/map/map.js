@@ -814,16 +814,17 @@ angular.module('webgisApp')
                         + L.NumberFormatter.round(Math.abs(clickedLatLng.lat), 2, ".") + '&deg; ' + latArrow + '</p>';
 
                     // retrieve a list of all currently visible layers (hasLayer) of type WMS (ogc_type == "WMS")
-                    var visibleWMSLayers = mapviewer.layersMeta.filter(function(layer) {
-                        return mapviewer.map.hasLayer(layer) && (layer.layerObj.ogc_type == "WMS");
+                    var visibleWMSLayers = mapviewer.layersMeta.filter(function(layerData) {
+                        return mapviewer.map.hasLayer(mapviewer.layers[layerData.id]) && (layerData.ogc_type == "WMS");
                     });
 
                     // generate all the urls for the requests (one per visible WMS layer)
                     var urls = [], names = [];
-                    $.each(visibleWMSLayers, function(index, layer){
+                    $.each(visibleWMSLayers, function(index, layerData){
+                        var layer = mapviewer.layers[layerData.id];
                         urls.push(encodeURIComponent(
                             mapviewer.generateGetFeatureInfoUrl(
-                                layer.layerObj.ogc_link, event.containerPoint, layer.wmsParams
+                                layerData.ogc_link, event.containerPoint, layer.wmsParams
                             )
                         ));
                         names.push(encodeURIComponent(layer.name));
