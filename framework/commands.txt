@@ -1,0 +1,14 @@
+# Aktivieren der virtuellen Python-Umgebung
+source venv/bin/active
+
+# Start des Django Frameworks
+cd framework
+python manage.py runserver
+
+# Das Frontend kann nun im Browser geoeffnet werden
+http://localhost:8000
+
+# Das Backend ist auch erreichbar
+http://localhost:8000/admin
+# Username: swos
+# Password: swosuser

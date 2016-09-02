@@ -1,0 +1,104 @@
+<div modal-draggable class="modal-header">
+    <h1>{{title}}</h1>
+</div>
+<div class="modal-body metadataModal">
+	<div class="item" ng-if="value_passed.identifier">
+	    <div class="headline">
+	        Identifier
+	    </div>
+	    <div class="description">
+	        {{value_passed.identifier}}
+	    </div>
+	</div>
+	<div class="item">
+	    <div class="headline">
+	        Resource Title
+	    </div>
+	    <div class="description">
+	        {{value_passed.title}}
+	    </div>
+	</div>
+	<div class="item">
+	    <div class="headline">
+	        Resource Description
+	    </div>
+	    <div class="description">
+	        {{value_passed.abstract}}
+	    </div>
+	</div>
+	<div class="item">
+	    <div class="headline">
+	        Category
+	    </div>
+	    <div class="description">
+	        {{value_passed.topicCategory}}
+	    </div>
+	</div>
+	<div class="item" ng-if="value_passed.keywords">
+	    <div class="headline">
+	        Keywords
+	    </div>
+	    <div class="description">
+	        {{value_passed.keywords}}
+	    </div>
+	</div>
+	<div class="item">
+	    <div class="headline">
+	        Bounding Box (Lat, Lon Coordinates)
+	    </div>
+	    <div class="description">
+	        North: {{value_passed.north}}
+	        <br>
+	        West: {{value_passed.west}}
+	        <br>
+	        South: {{value_passed.south}}
+	        <br>
+	        East: {{value_passed.east}}
+	    </div>
+	</div>
+	<div class="item" ng-if="value_passed.lineage">
+	    <div class="headline">
+	        Lineage
+	    </div>
+	    <div class="description">
+	        {{value_passed.lineage}}
+	    </div>
+	</div>
+	<div class="item" ng-if="value_passed.equi_scale > 0">
+	    <div class="headline">
+	        Resolution
+	    </div>
+	    <div class="description">
+	        {{value_passed.equi_scale}}
+	    </div>
+	</div>
+	<div class="item">
+	    <div class="headline">
+	        Point of Contact
+	    </div>
+	    <div class="description">
+	        {{value_passed.meta_contact.organisation}}<br ng-if="value_passed.meta_contact.organisation">
+	        {{value_passed.meta_contact.address}}<br ng-if="value_passed.meta_contact.address">
+	        {{value_passed.meta_contact.postcode}} {{value_passed.meta_contact.city}}<br ng-if="value_passed.meta_contact.city">
+	        Contact: {{value_passed.meta_contact.first_name}} {{value_passed.meta_contact.last_name}}<br>
+	        Email: {{value_passed.meta_contact.email}}
+	    </div>
+	</div>
+	<div class="item">
+	    <div class="headline">
+	        Data Distributor
+	    </div>
+	    <div class="description">
+	        {{value_passed.dataset_contact_new.organisation}}<br ng-if="value_passed.dataset_contact_new.organisation">
+	        {{value_passed.dataset_contact_new.address}}<br ng-if="value_passed.dataset_contact_new.address">
+	        {{value_passed.dataset_contact_new.postcode}} {{value_passed.dataset_contact_new.city}}<br ng-if="value_passed.dataset_contact_new.city">
+	        Contact: {{value_passed.dataset_contact_new.first_name}} {{value_passed.dataset_contact_new.last_name}}<br>
+	        Email: {{value_passed.dataset_contact_new.email}}
+	    </div>
+	</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="close()">
+        Close
+    </button>
+</div>

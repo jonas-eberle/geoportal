@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>MapViewers</title>
+</head>
+<body>
+
+{% if viewers %}
+    <ul>
+    {% for viewer in viewers %}
+        <li><a href="{{ subdir }}/mapviewer/detail/{{ viewer.id }}.html">{{ viewer.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No mapviewers are available.</p>
+{% endif %}
+
+</body>
+</html>
