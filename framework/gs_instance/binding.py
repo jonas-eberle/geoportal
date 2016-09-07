@@ -70,6 +70,7 @@ def main(cat, folder, sld_folder, pycsw_url):
 
     files =  finder(folder, raster_exts+['*.shp'])
     log.debug(files)
+    log.info(len(files))
     '''
     for raster in rasters:
         base, type = os.path.splitext(raster)
@@ -103,12 +104,15 @@ def main(cat, folder, sld_folder, pycsw_url):
             log.info('The layer {name} is already integrated'.format(name=base))
             continue
         else:
+            log.info(name)
             #Split the filepath into product and country needs the defined folder structure
             dirs = os.path.dirname(base).split('/')
             product = dirs[-1]
             if product == 'LULC':
                 name_list = name.split('_')
-                product = '_'.join([name_list[1],name_list[2]])
+                product_style = '_'.join([name_list[1],name_list[2]])
+            else:
+                product_style = product
             country_wetland = dirs[-2]
 
             # Check the sld_templates folder for products
@@ -120,9 +124,9 @@ def main(cat, folder, sld_folder, pycsw_url):
             finals = [os.path.splitext(temp)[0] for temp in finals]
 
             # Make a specific .sld file from the template and integrate it into the geoserver
-            if product in templates:
+            if product_style in templates:
                 if not os.path.isfile(base + '.sld'):
-                    make_sld(shape, os.path.join(sld_folder,'templates',product)+'.sld')
+                    make_sld(shape, os.path.join(sld_folder,'templates',product_style)+'.sld')
                 sld = ''.join([base, '.sld'])
                 try:
                     with open(sld) as f:
@@ -132,18 +136,18 @@ def main(cat, folder, sld_folder, pycsw_url):
                 finally:
                     style=name
             # Integrate the style in the geoserver
-            elif product in finals:
-                sld = ''.join([os.path.join(sld_folder,'finals/',product),'.sld'])
+            elif product_style in finals:
+                sld = ''.join([os.path.join(sld_folder,'finals/',product_style),'.sld'])
                 try:
                     with open(sld) as f:
-                        cat.create_style(product, f.read(), overwrite=False, style_format="sld11")
+                        cat.create_style(product_style, f.read(), overwrite=False, style_format="sld11")
                 except ConflictingDataError:
                     pass
                 finally:
-                    style=product
+                    style=product_style
             else:
-                log.warning('The SLD for {product} is missing'.format(product=product))
-                missing_slds.append(product)
+                log.warning('The SLD for {product} is missing'.format(product=product_style))
+                missing_slds.append(product_style)
                 continue
             log.debug(style)
 
@@ -205,8 +209,69 @@ def main(cat, folder, sld_folder, pycsw_url):
             shape_data['dataset_contact_new'] = contact
             data.append(shape_data)
         log.debug('End of for')
-        log.info(missing_slds)
+    log.info(missing_slds)
     return data
+
+def add_styles(cat, folder, sld_folder):
+    missing_slds = []
+    raster_exts = ['*.tif', '*.tiff', '*.geotiff', '*.geotif']
+    files =  finder(folder, raster_exts+['*.shp'])
+    print cat.service_url
+    for shape in files:
+        shape_data = {}
+        base, type = os.path.splitext(shape)
+        name = os.path.basename(base)
+        dirs = os.path.dirname(base).split('/')
+        product = dirs[-1]
+        if product == 'LULC':
+            name_list = name.split('_')
+            product_style = '_'.join([name_list[1], name_list[2]])
+        else:
+            product_style = product
+        country_wetland = dirs[-2]
+
+        # Check the sld_templates folder for products
+        templates = map(os.path.basename, finder(os.path.join(sld_folder, 'templates/'), ['*.sld']))
+        templates = [os.path.splitext(temp)[0] for temp in templates]
+
+        # Check the sld_folder/finals for slds.
+        finals = map(os.path.basename, finder(os.path.join(sld_folder, 'finals/'), ['*.sld']))
+        finals = [os.path.splitext(temp)[0] for temp in finals]
+        print product_style
+        # Make a specific .sld file from the template and integrate it into the geoserver
+        if product_style in templates:
+            if not os.path.isfile(base + '.sld'):
+                make_sld(shape, os.path.join(sld_folder, 'templates', product_style) + '.sld')
+            sld = ''.join([base, '.sld'])
+            try:
+                with open(sld) as f:
+                    cat.create_style(name, f.read(), overwrite=False, style_format="sld11")
+            except ConflictingDataError:
+                pass
+            finally:
+                style = name
+        # Integrate the style in the geoserver
+        elif product_style in finals:
+            sld = ''.join([os.path.join(sld_folder, 'finals/', product_style), '.sld'])
+            try:
+                with open(sld) as f:
+                    cat.create_style(product_style, f.read(), overwrite=False, style_format="sld11")
+            except ConflictingDataError:
+                pass
+            finally:
+                style = product_style
+        else:
+            log.warning('The SLD for {product} is missing'.format(product=product_style))
+            missing_slds.append(product_style)
+            continue
+        log.debug(style)
+    print missing_slds
+
+def export_to_django(cat):
+    fieldnames = ['title', 'abstract', 'legend_url', 'west', 'east', 'south', 'north','wetland','product','geo_description']
+    shape_data = {field:'' for field in fieldnames}
+
+
 
 
 if __name__ == '__main__':

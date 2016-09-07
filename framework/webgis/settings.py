@@ -198,6 +198,11 @@ GEOSERVER = {'default':{
         'URL': 'http://localhost:8082/geoserver/rest/',
         'USER': 'admin',
         'PASSWORD': 'geoserver'
+    },
+    'earthcare':{
+        'URL': 'http://earthcare.ads.uni-jena.de:8080/geoserver/rest',
+        'USER': 'swos',
+        'PASSWORD': 'earthcare_password'
     }
 }
 
@@ -205,9 +210,10 @@ GEOSERVER = {'default':{
 SFTP = {
     'FOLDER':'products/',
     'URL':'swos-data.jena-optronik.de',
-    'USER': 'sftp_username',
+    'USER': 'felix.cremer',
     'PASSWORD': 'sftp_password'
 }
+
 DEST_FOLDER = '/home/user/swos/data/'
 
 SLD_FOLDER = '/home/user/swos/SLDs'

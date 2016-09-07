@@ -31,12 +31,12 @@ def add_linkage(xml, ext, url = 'http://artemis.geogr.uni-jena.de/geoserver/rest
         return e
     # Set the type information for the OGC download service, from the file extension
     if ext == '.shp':
-        type ='wfs'
+        type_string ='wfs'
         type_name = 'Feature'
         type_spec = '1.1.0'
         representation_type = 'vector'
     elif ext in ['.tif', '.tiff', '.geotiff', '.geotif']:
-        type = 'wcs'
+        type_string = 'wcs'
         type_name = 'Coverage'
         type_spec = '1.0.0'
         representation_type = 'raster'
@@ -56,7 +56,7 @@ def add_linkage(xml, ext, url = 'http://artemis.geogr.uni-jena.de/geoserver/rest
     # todo: What about rest
     testsite_url =''.join([url,testsite,'/'])
     wms_url = ''.join([testsite_url, 'wms?'])
-    type_url = ''.join([testsite_url, type, '?'])
+    type_url = ''.join([testsite_url, type_string, '?'])
     jpeg_link = '{folder}{jpeg}.jpg'.format(folder=jpeg_folder,jpeg=name)
     data_id = root.find('.//{http://www.isotc211.org/2005/gmd}MD_DataIdentification')
     png = 'png/{z}/{x}/{y}.png'

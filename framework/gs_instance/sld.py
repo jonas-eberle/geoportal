@@ -128,10 +128,20 @@ def get_rgb_json(sld):
     tree = ET.parse(sld)
     root = tree.getroot()
     rgbs={}
+    print sld
     for rule in root.findall('.//se:Rule', namespaces):
-        title = rule.find('.//se:Title', namespaces).text
-        rgbs[title] = rule.find('.//se:Fill/se:SvgParameter', namespaces).text
-
+        print rule[0].tag
+        if 'RasterSymbolizer' in rule[0].tag:
+            print 'r'
+            color_map = rule.find('.//se:ColorMap',namespaces)
+            if color_map.attrib['type'] == 'values':
+                for entry in color_map:
+                    rgbs[entry.attrib['label']] = entry.attrib['color']
+        else:
+            title = rule.find('.//se:Title', namespaces).text
+            print title
+            rgbs[title] = rule.find('.//se:Fill/se:SvgParameter', namespaces).text
+    print rgbs
     return json.dumps(rgbs)
 
 def sld_from_csv(csvpath, column_name, outfile):
@@ -201,9 +211,12 @@ def sld_from_csv(csvpath, column_name, outfile):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     path = "/home/user/swos/MAES_legend_fix.csv"
-    out = "/home/user/swos/SLDs/LULC_MAES"
-    column = "MAES_L2"
-    sld_from_csv(path, column, out)
+    sld_vec = "/home/user/swos/SLDs/templates/LULC_MAES.sld"
+    out_ras = '/home/user/swos/SLDs/finals/SWD.sld'
+    print get_rgb_json(out_ras)
+    print get_rgb_json(sld_vec)
+    #column = "MAES_L2"
+    #sld_from_csv(path, column, out)
     exit()
     sld = '/home/user/swos/data/Spain_Fuente-de-Piedra/LULCC_L/SWOS_LULCC_L_Fuente-de-Piedra_1975-1989.shp'
     full_sld ='/home/user/swos/SLDs/templates/LULCC_L.sld'
