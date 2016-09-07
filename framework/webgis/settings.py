@@ -104,14 +104,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-#STATIC_ROOT = '/home/sibessc/workspace/swos/framework/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 #STATIC_ROOT = '/Users/jonas/Workspaces/webgisDjango/static/'
 SUBDIR = '/swos'
 STATIC_URL = SUBDIR+'/static/'
 #STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    #os.path.join(BASE_DIR, "static"),
 )
 
 #MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'
