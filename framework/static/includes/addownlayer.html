@@ -1,0 +1,44 @@
+<div modal-draggable class="modal-header">
+    <h1>{{title}}</h1>
+</div>
+<div class="modal-body AddOwnLayerModal">
+
+	<form class="form form-horizontal" role="form" ng-submit="submitURL()" name="registerForm" id="formRegister">
+	    <div class="form-group">
+	        <label for="service_url" class="col-sm-3 control-label">
+	            Service URL
+	        </label>
+	        <div class="col-sm-9">
+	            <input name="service_url" id="service_url" ng-model="service.url" placeholder="Service URL" type="text" class="form-control">
+	        </div>
+	        <label for="service_url" class="col-sm-3 control-label">
+	            Service Type
+	        </label>
+	        <div class="col-sm-9">
+	            <select name="service_type" id="service_type" ng-model="service.type">
+	                <option value="WMS">WMS</option>
+	                <option value="WMTS">WMTS</option>
+	            </select>
+	        </div>
+	    </div>
+	    <div class="form-group" ng-if="showLayers">
+	        <label for="layers" class="col-sm-3 control-label">
+	            Layers
+	        </label>
+	        <div class="col-sm-9">
+	            <select id="layers" ng-model="selectedLayer" ng-change="selectLayer(selectedLayer)" ng-options="layer as layer.ogc_layer for layer in layers">
+	                <option value="">-- choose layer --</option>
+	            </select>
+	        </div>
+	    </div>
+	</form>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="submitURL()">
+        List layers
+    </button>
+    <button class="btn btn-primary" ng-click="close()">
+        Close
+    </button>
+</div>

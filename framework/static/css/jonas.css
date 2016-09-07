@@ -1,0 +1,136 @@
+/**
+ * The dndDraggingSource class will be appdived to
+ * the source element of a drag operation. It makes
+ * sense to hide it to give the user the feedivng
+ * that he's actually moving it.
+ */
+.sidebar div[dnd-list] .dndDraggingSource {
+    display: none;
+}
+
+/**
+ * An element with .dndPlaceholder class will be
+ * added to the dnd-list while the user is dragging
+ * over it.
+ */
+.sidebar div[dnd-list] .dndPlaceholder {
+    display: block;
+    background-color: #ddd;
+    min-height: 42px;
+}
+
+.registerFormDiv {
+    width: 300px;
+}
+
+.ol-zoom {
+    display:none;
+}
+
+.ol-mouse-position {
+    position: absolute;
+    top: auto !important;
+    right: auto !important;
+    left: 8px;
+    bottom: 33px;
+    background-color: rgba(0,60,136,.3);
+	color: white;
+	font-size: 0.9em;
+    border-radius: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
+    white-space: nowrap;
+}
+
+.ol-scale-line {
+	bottom: 5px;
+}
+
+.select-background-map {
+    width: auto !important;
+}
+
+.modal-footer.chart {
+    margin-top: 30px;
+}
+
+.chart.options label {
+    float:left;
+	margin-right: 8px;
+}
+
+.chart.options input {
+    float:left;
+    width: 150px;
+}
+
+.chart.options .date_start, .chart.options .date_end, .chart.options .plot {
+    float:left;
+}
+
+
+.modal-body.chart {
+    width:94%;
+    height:300px;
+    clear:both;
+}
+
+.modal-body.chart canvas {
+    left: 0;
+}
+
+.searchresults .item_title {
+    font-weight: bold;
+}
+
+.searchresults {
+    max-height: 300px;
+    overflow: auto;
+}
+
+#slider {
+  position: absolute;
+  bottom: 0px;
+  height: 60px;
+  z-index: 999999;
+    background-color: rgba(85,85,85,0.8);
+    width: 100%;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 10px;
+}
+
+#slider .input {
+    width: 100%;
+}
+
+/*
+#slider .tooltip.bottom {
+    margin-top: 20px;
+}
+
+.ol-attribution, .ol-mouse-position {
+    bottom: 70px !important;
+}
+*/
+
+#footer_img img {
+	max-height: 100%;
+}
+
+.ol-overlay-container .popover-title .close {
+    position: absolute;
+    color: gray;
+    top: 1px;
+    font-size: 1em;
+    right: 3px;
+}
+
+.ol-overlay-container .popover .arrow {
+    display: none;
+}
+
+.item_stations {
+    margin-left: 40px;
+    margin-top: 20px;
+}
