@@ -46,8 +46,8 @@ class Wetland(models.Model):
             count += sat['count']
         return count    
     
-    def satellitedata(self):
-        if os.path.isfile(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json'):
+    def satellitedata(self, forceUpdate=False):
+        if os.path.isfile(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json') and forceUpdate == False:
             with open(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json', 'r') as f:
                 data = json.load(f)
                 return data
@@ -82,8 +82,8 @@ class Wetland(models.Model):
                 json.dump(data, f)
             return data
     
-    def panoramio(self, start=0, max=-1):
-        if os.path.isfile(settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json'):
+    def panoramio(self, start=0, max=-1, forceUpdate=False):
+        if os.path.isfile(settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json') and forceUpdate == False:
             with open(settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json', 'r') as f:
                 photos = json.load(f)
         else:
@@ -100,8 +100,8 @@ class Wetland(models.Model):
             photos['photos'] = images[start:]
         return photos
     
-    def youtube(self, start=0, max=-1):
-        if os.path.isfile(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json'):
+    def youtube(self, start=0, max=-1, forceUpdate=False):
+        if os.path.isfile(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json') and forceUpdate == False:
             with open(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json', 'r') as f:
                 videos = json.load(f)
         else:
@@ -136,6 +136,7 @@ class Product(models.Model):
     description = models.TextField()
     wetlands = models.ManyToManyField(Wetland, blank=True, related_name='swos_product_wetlands', verbose_name="Wetlands")
     short_name = models.CharField(max_length=100)
+    order = models.PositiveIntegerField(default=0)
     
     def __unicode__(self):
         return u"%s" %(self.name)
@@ -145,6 +146,7 @@ class Indicator(models.Model):
     description = models.TextField()
     wetlands = models.ManyToManyField(Wetland, blank=True, related_name='swos_indicator_wetlands', verbose_name="Wetlands")
     products = models.ManyToManyField(Product, blank=True, related_name='swos_indicator_products', verbose_name="Products")
+    order = models.PositiveIntegerField(default=0)
     
     def __unicode__(self):
         return u"%s" %(self.name)

@@ -72,7 +72,27 @@ angular.module('webgisApp')
 					$scope.allImages = true;
 				}
 			})
-		}	
+		}
+		$scope.moreImages = function(action) {
+			if (action == 'prev') {
+				$scope.imagesCurrentPage -= 1;
+			} else {
+				$scope.imagesCurrentPage += 1;
+			}
+			var start = $scope.imagesCurrentPage*$scope.imagesMaxPage - $scope.imagesMaxPage;
+			djangoRequests.request({
+				'method': "GET",
+				'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
+			}).then(function(data){
+				$scope.value['pictures']['photos'] = data['photos'];
+				if (data['photos'].length < $scope.imagesMaxPage) {
+					$scope.allImages = true;
+				} else {
+					$scope.allImages = false;
+				}
+			})
+			
+		}
 		
 		$scope.showFoto = function(picture) {
 			console.log(picture);
@@ -253,15 +273,58 @@ angular.module('webgisApp')
             if (checkbox.checked) {
 				var olLayer = mapviewer.addLayer(layer);
 				// load colors
-				console.log('layer id: '+layer.id);
-				djangoRequests.request({
-					'method': "GET",
-					'url': '/swos/wetland/layer/'+layer.id+'/colors.json'
-				}).then(function(data){
-					console.log(data);
-					mapColors[layer.id] = data;
-					console.log(mapColors);
-				})
+				if (!(layer.id in mapColors)) {
+					djangoRequests.request({
+						'method': "GET",
+						'url': '/swos/wetland/layer/' + layer.id + '/colors.json'
+					}).then(function(data){
+						mapColors[layer.id] = data;
+					})
+				}
+				
+				// check intersection, if no, please zoom to the new layer!
+				var mapExtent = mapviewer.map.getView().calculateExtent(mapviewer.map.getSize());
+				var mapExtent = ol.proj.transformExtent(mapExtent, 'EPSG:3857', 'EPSG:4326');
+				var mapJSON = {
+				  "type": "Feature",
+				  "properties": {"fill":"#fff"},
+				  "geometry": {
+				    "type": "Polygon",
+				    "coordinates": [[
+				      [mapExtent[0], mapExtent[1]],
+				      [mapExtent[0], mapExtent[3]],
+					  [mapExtent[2], mapExtent[3]],
+					  [mapExtent[2], mapExtent[1]],
+				      [mapExtent[0], mapExtent[1]]
+				    ]]
+				  }
+				};
+				
+				var layerExtent = [layer.west, layer.south, layer.east, layer.north];
+	            var layerJSON = {
+				  "type": "Feature",
+				  "properties": {"fill":"#fff"},
+				  "geometry": {
+				    "type": "Polygon",
+				    "coordinates": [[
+				      [layer.west, layer.south],
+				      [layer.west, layer.north],
+					  [layer.east, layer.north],
+					  [layer.east, layer.south],
+				      [layer.west, layer.south]
+				    ]]
+				  }
+				};
+				
+				var intersection = turf.intersect(mapJSON, layerJSON);
+				console.log(intersection);
+				if (typeof(intersection) == 'undefined') {
+					// zoom to new layer
+					if (layer.epsg > 0) {
+		                layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:'+layer.epsg, mapviewer.map.getView().getProjection().getCode());
+		            }
+					mapviewer.map.getView().fitExtent(layerExtent, mapviewer.map.getSize());
+				}
             } else {
 				var layers = mapviewer.map.getLayers().getArray();
 				$.each(layers, function(){

@@ -15,8 +15,16 @@ class WetlandLayerAdmin(LayersAdmin):
 class Wetlands(admin.OSMGeoAdmin):
     list_display = ('name', 'country', 'identifier', 'geo_scale', 'partner')
 
+
+from suit.admin import SortableModelAdmin
+class ProductAdmin(SortableModelAdmin):
+    sortable = 'order'
+    
+class IndicatorAdmin(SortableModelAdmin):
+    sortable = 'order'
+
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
-admin.site.register(Product)
-admin.site.register(Indicator)
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Indicator, IndicatorAdmin)
 admin.site.register(WetlandLayer, WetlandLayerAdmin)

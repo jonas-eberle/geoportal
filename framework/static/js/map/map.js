@@ -413,6 +413,7 @@ angular.module('webgisApp')
                 }
                 layer.name = layer.title;
                 layer.id = Math.random().toString(36).substring(2, 15);
+				layer.showLegend = true;
                 this.layers[layer.id] = olLayer;
                 if (layer.ogc_time == true) {
                     this.layersTime.push(layer.id);
@@ -615,9 +616,7 @@ angular.module('webgisApp')
 						var imagevalue = context.getImageData(e.pixel[0],e.pixel[1],1,1);
 						var rgba = imagevalue.data;
 						var legend_name = mapColors[layerObj.django_id][rgba[0]+'-'+rgba[1]+'-'+rgba[2]];
-						//$scope.legendLayers.push({'name':layer.get('name'), 'legend': legend_name});
-						//console.log($scope.legendLayers);
-						$('#map_legend').append('<div style="padding: 5px;"><strong>'+layer.get('name')+': </strong><br/>'+legend_name+': '+rgba[0]+'-'+rgba[1]+'-'+rgba[2]+'</div>')
+						$('#map_legend').append('<div style="padding: 5px;"><strong>'+layer.get('name')+': </strong><br/><div style="float:left;width:16px;height:16px;background-color: rgba('+rgba[0]+', '+rgba[1]+', '+rgba[2]+', 1); border-color: black;margin-top:2px;"></div>&nbsp;'+legend_name+'</div>')
 						return true;
 				   }		           
 			   });

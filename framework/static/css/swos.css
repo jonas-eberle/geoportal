@@ -178,6 +178,11 @@ h4 {
     width: 100%;
 }
 
+.geospatial_data.noImage .tab-content {
+	height: calc(100% - 50px);
+	height: -moz-calc(100% - 50px);
+}
+
 .wetland-image {
 	max-height: 225px;
     overflow: hidden;
@@ -232,4 +237,55 @@ button.btn-loadmore:hover {
 
 #map_legend h4 {
 	margin-top: 5px;
+}
+
+.panoramio-wapi-tos.wetland_image {
+	width: 396px;
+    position: absolute;
+    top: 209px;
+    font-size: 12px;
+    color: white;
+    padding-left: 3px;
+}
+
+.geospatial_data .wetland-image:hover .panoramio-wapi-tos.wetland_image {
+	top: 190px;
+}
+
+.panoramio-wapi-tos.wetland_image .desc {
+	display:none;
+}
+
+.geospatial_data .wetland-image:hover .panoramio-wapi-tos.wetland_image .desc {
+	display:block;
+}
+
+@media (min-width: 992px){
+	.col-md-3 {
+	    width: 405px;
+	}
+}
+
+@media (min-width: 768px) {
+	#sidebar > .tab-content {
+	    right: 2px;
+	    width: 400px;
+	}
+}
+
+@media (min-width: 992px) {
+	.col-md-9 {
+	    width: calc(100% - 405px);
+		width: -moz-calc(100% - 405px);
+	}
+}
+
+@media (max-height: 680px) {
+	.geospatial_data .wetland-image {
+		display:none;
+	}
+	.geospatial_data .tab-content {
+		height: calc(100% - 50px);
+    	height: -moz-calc(100% - 50px);
+	}
 }

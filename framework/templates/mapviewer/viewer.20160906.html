@@ -19,7 +19,7 @@
 	<!-- Jonas CSS -->
 	<link href="{% static "css/jonas.css" %}" rel="stylesheet">
 	<link href="{% static "lib/nsPopover.css" %}" rel="stylesheet">
-	<link href="{% static "css/swos.css" %}" rel="stylesheet">
+	<link href="{% static "css/swos.css" %}?v=20160908" rel="stylesheet">
 	<link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -32,6 +32,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+	<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
 	<script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
 
@@ -252,10 +253,17 @@
 
             </div>
 			
-			<div role="tabpanel" class="tab-pane geospatial_data" ng-if="value!=null" ng-class="{active: activeTab==1}" id="wetland_opened">
+			<div role="tabpanel" class="tab-pane geospatial_data" ng-if="value!=null" ng-class="{active: activeTab==1, noImage: value.data.image == null}" id="wetland_opened">
 				<!--<h2>{{value.name}}</h2>-->
 				<div ng-if="value.data.image!=null" class="wetland-image">
-				  <img src="{{value.data.image}}" width="100%" />
+				  <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}"><img src="{{value.data.image}}" width="100%"/></a>
+				  <div class="panoramio-wapi-tos wetland_image">
+						<div class="desc">{{value.data.image_desc}}</div>
+						<div ng-if="value.data.image.indexOf('panoramio') > -1">
+							<a href="http://www.panoramio.com" target="_blank"><img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
+							<span style="font-size:12px;">The copyright of the photos hold their owners!</span>
+						</div>
+				  </div>
 				</div>
 						
 				<tabset justified="true">
@@ -272,7 +280,7 @@
 						<div class="buttons" style="text-align: center;margin-top: 20px;">
 							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()"><div class="flaticon-business"></div>{{value.data.count.indicators}} Indicators</button>
 							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()"><div class="flaticon-layers"></div>{{value.data.count.products}} Products</button>
-							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()"><div class="flaticon-space-satellite-station"></div>{{value.data.count.satdata}} Satellitedata</button>	
+							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()"><div class="flaticon-space-satellite-station"></div>{{value.data.count.satdata}} Satellite data</button>	
 							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-1 a').click()"><div class="flaticon-technology-1"></div>{{value.data.count.images}} Photos</button>
 							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology a').click()"><div class="flaticon-technology"></div>{{value.data.count.videos}} Videos</button>
 							<button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()"><div class="flaticon-technology-2"></div>{{value.data.count.externaldb}} External databases</button>	
@@ -308,20 +316,17 @@
 								<div class="options">
 									<h4 style="font-weight: bold">{{product.name}}</h4>
 									{{product.description}}<br /><br />
-									<strong>Datasets:</strong>
-									<div class="select" ng-if="product.layers.length > 0">
-										<div ng-repeat="layer in product.layers">
-											<input type="checkbox" ng-click="changeVisibility(layer, $event);" id="layer_vis_{{layer.id}}" /><label for="layer_vis_{{layer.id}}"> {{layer.title}}</label> 
+									<div class="products_datasets">
+										<strong>Datasets:</strong>
+										<div class="select" ng-if="product.layers.length > 0">
+											<div ng-repeat="layer in product.layers">
+												<input type="checkbox" ng-click="changeVisibility(layer, $event);" id="layer_vis_{{layer.id}}" /><label for="layer_vis_{{layer.id}}"> {{layer.title}}</label> 
+											</div>
+										</div>
+										<div class="select" ng-if="product.layers.length == 0">
+											No datasets available.
 										</div>
 									</div>
-									<div class="select" ng-if="product.layers.length == 0">
-										No datasets available.
-									</div>
-									<!--
-									<div class="legend">
-										<img style="margin-top: 5px;" ng-repeat="layer in product.layers" src="/swos{{layer.legend}}" width="100%" />
-									</div>
-									-->
 								</div>
 							</li>
 						</ul>
@@ -348,13 +353,21 @@
 								<td>{{data.enddate}}</td>
 							</tr>
 						</table>
+						<div class="note">
+							<strong>Please note: </strong><br />
+							Official satellite data archives have been queried once on 2016-09-08. Regular updates are planned. 
+							<br /><br />
+							So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!
+							<br /><br /> 
+							Further satellite data discovery and processing tools are planned within the SWOS project. 
+						</div>
 			        </tab>
 					
 					<!-- Photos -->
 					<tab class="flaticon-technology-1" heading="">
 						<div style="/*height: 185px;overflow-y: auto;*/">
 							<span ng-if="!value.pictures">Loading...</span>
-							<a ng-repeat="picture in value.pictures.photos" class="fancybox" rel="gallery1" data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg" data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}} ({{picture.owner_name}})</a>" href="{{picture.photo_url}}" target="_blank"><img src="{{picture.photo_file_url}}" alt="{{picture.photo_title}} ({{picture.owner_name}})" title="{{picture.photo_title}} ({{picture.owner_name}})" style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
+							<a ng-repeat="picture in value.pictures.photos" class="fancybox" rel="gallery1" data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg" data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)" href="{{picture.photo_url}}" target="_blank"><img src="{{picture.photo_file_url}}" alt="{{picture.photo_title}} ({{picture.owner_name}})" title="{{picture.photo_title}} ({{picture.owner_name}})" style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
 						</div>
 						<div class="panoramio-wapi-tos" style="width: 396px; color: black !important; background-color: white !important;">
 							<a href="http://www.panoramio.com" target="_top"><img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
@@ -362,7 +375,8 @@
 							  The copyright of the photos hold their owners!
 							</span>
 						</div>
-						<button ng-if="!allImages" type="button" class="btn btn-loadmore" ng-click="loadMoreImages()">Load more image</button>
+						<button style="margin-left: 5px;" ng-if="imagesCurrentPage > 1" type="button" class="btn btn-prev" ng-click="moreImages('prev')">Previous</button>
+						<button style="float:right;margin-right: 10px;" ng-if="!allImages" type="button" class="btn btn-next" ng-click="moreImages('next')">Next</button>
 					</tab>
 					
 					<!-- Videos -->
@@ -437,9 +451,9 @@
 
     <script src="{% static "js/app.js" %}"></script>
     <script src="{% static "js/auth/auth.js" %}"></script>
-    <script src="{% static "js/map/map.js" %}"></script>
+    <script src="{% static "js/map/map.js" %}?v=20160908"></script>
     <script src="{% static "js/csw/csw.js" %}"></script>
-	<script src="{% static "js/swos/wetlands.js" %}"></script>
+	<script src="{% static "js/swos/wetlands.js" %}?v=20160908"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 

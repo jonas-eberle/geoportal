@@ -37,7 +37,7 @@ class WetlandDetail(APIView):
         from layers.models import LayerSerializer
         products = Product.objects.filter(wetlands__id=wetland.id)
         indicators = Indicator.objects.filter(wetlands__id=wetland.id)
-        layers = WetlandLayer.objects.filter(wetland_id=wetland.id)
+        layers = WetlandLayer.objects.filter(wetland_id=wetland.id).order_by('title')
         
         temp_products_layers = dict()
         temp_indicators_layers = dict()
@@ -63,11 +63,15 @@ class WetlandDetail(APIView):
         for product in temp_products:
             product = temp_products[product]
             layers = temp_products_layers[product.id]
-            finalJSON['products'].append({'id': product.id, 'name': product.name, 'description': product.description, 'layers': layers})
+            finalJSON['products'].append({'id': product.id, 'name': product.name, 'order': product.order, 'description': product.description, 'layers': layers})
         for indicator in temp_indicators:
             indicator = temp_indicators[indicator]
             layers = temp_indicators_layers[indicator.id]
             finalJSON['indicators'].append({'id': indicator.id, 'name': indicator.name, 'layers': layers})
+        
+        # sort the products according to the order attribute
+        finalJSON['products'] = sorted(finalJSON['products'], key=lambda x: x['order'], reverse=False)
+        finalJSON['indicators'] = sorted(finalJSON['indicators'], key=lambda x: x['order'], reverse=False)
         
         finalJSON['count'] = dict()
         finalJSON['count']['images'] = wetland.count_images
