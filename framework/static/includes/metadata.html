@@ -72,6 +72,7 @@
 	        {{value_passed.equi_scale}}
 	    </div>
 	</div>
+	<!--
 	<div class="item">
 	    <div class="headline">
 	        Point of Contact
@@ -84,16 +85,15 @@
 	        Email: {{value_passed.meta_contact.email}}
 	    </div>
 	</div>
+	-->
 	<div class="item">
 	    <div class="headline">
-	        Data Distributor
+	        Point of Contact (Dataset)
 	    </div>
 	    <div class="description">
-	        {{value_passed.dataset_contact_new.organisation}}<br ng-if="value_passed.dataset_contact_new.organisation">
-	        {{value_passed.dataset_contact_new.address}}<br ng-if="value_passed.dataset_contact_new.address">
-	        {{value_passed.dataset_contact_new.postcode}} {{value_passed.dataset_contact_new.city}}<br ng-if="value_passed.dataset_contact_new.city">
-	        Contact: {{value_passed.dataset_contact_new.first_name}} {{value_passed.dataset_contact_new.last_name}}<br>
-	        Email: {{value_passed.dataset_contact_new.email}}
+	        <div ng-if="value_passed.dataset_contact_new.organisation">{{value_passed.dataset_contact_new.organisation}}</div>
+	        <div ng-if="value_passed.dataset_contact_new.last_name">Contact: {{value_passed.dataset_contact_new.first_name}} {{value_passed.dataset_contact_new.last_name}}</div>
+	        <div ng-if="value_passed.dataset_contact_new.email">Email: {{value_passed.dataset_contact_new.email}}</div>
 	    </div>
 	</div>
 </div>

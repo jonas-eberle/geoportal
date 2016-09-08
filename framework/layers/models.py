@@ -8,8 +8,8 @@ from webgis import settings
 
 # Contact model (referenced 2x in layer model for metadata contact and dataset contact)
 class Contact(models.Model):
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=200, blank=True)
+    last_name = models.CharField(max_length=200, blank=True)
     position = models.CharField(max_length=200, blank=True)
     address = models.CharField(max_length=200, blank=True)
     postcode = models.CharField(max_length=200, blank=True)
@@ -26,7 +26,13 @@ class Contact(models.Model):
     website = models.CharField(max_length=200, blank=True)
 
     def __unicode__(self):
-        return u"%s %s" %(self.first_name, self.last_name)
+        if self.first_name != '' or self.last_name != '':
+            name = u"%s %s" %(self.first_name, self.last_name)
+        elif self.organisation != '':
+            name = self.organisation
+        elif self.email != '':
+            name = self.email
+        return name
 
 # Specify a contact serializer for JSON output (used in MetadataSerializer)
 class ContactSerializer(serializers.ModelSerializer):
