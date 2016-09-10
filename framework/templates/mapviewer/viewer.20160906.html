@@ -334,25 +334,33 @@
 					
 					<!-- Data -->
 					<tab class="flaticon-space-satellite-station" heading="">
-						<table class="table data">
-							<tr>
-								<!--<th>&nbsp;</th>-->
-								<th>Sensor</th>
-								<th>Scenes</th>
-								<th>Start</th>
-								<th>End</th>
-							</tr>
-							<tr ng-if="!value.satdata">
-								<td colspan="4">Loading...</td>
-							</tr>
-							<tr ng-repeat="data in value.satdata" >
-								<!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
-								<td>{{data.sensor}}</td>
-								<td>{{data.count}}</td>
-								<td>{{data.begindate}}</td>
-								<td>{{data.enddate}}</td>
-							</tr>
-						</table>
+						<accordion close-others="false">
+							 <accordion-group heading="Yearly coverage by sensor" is-open="true">
+							 	<a href="/swos/swos/media/cache/satdata_{{value.id}}.png" class="fancybox"><img src="/swos/swos/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
+							 </accordion-group>
+							 <accordion-group heading="Total amount by sensor">
+							 	<table class="table data">
+									<tr>
+										<!--<th>&nbsp;</th>-->
+										<th>Sensor</th>
+										<th>Scenes</th>
+										<th>Start</th>
+										<th>End</th>
+									</tr>
+									<tr ng-if="!value.satdata">
+										<td colspan="4">Loading...</td>
+									</tr>
+									<tr ng-repeat="data in value.satdata" >
+										<!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
+										<td>{{data.sensor}}</td>
+										<td>{{data.count}}</td>
+										<td>{{data.begindate}}</td>
+										<td>{{data.enddate}}</td>
+									</tr>
+								</table>
+							 </accordion-group>
+						</accordion>
+						
 						<div class="note">
 							<strong>Please note: </strong><br />
 							Official satellite data archives have been queried once on 2016-09-08. Regular updates are planned. 

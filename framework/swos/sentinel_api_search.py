@@ -39,6 +39,7 @@ class SentinelDownloader(object):
         self.__esa_api_url = api_url
         self.__esa_username = username
         self.__esa_password = password
+        self.__scenes = []
 
     def set_geometries(self, geometries):
         """Manually set one or more geometries for data search
@@ -139,6 +140,20 @@ class SentinelDownloader(object):
         for scene in self.__scenes:
             dates.append(int(scene['beginposition'][0:4]))
         return {'count': count, 'begindate': min(dates), 'enddate': max(dates)}
+    
+    def get_summary_by_year(self):
+        data = {}
+        for scene in self.__scenes:
+            year = int(scene['beginposition'][0:4])
+            if year not in data:
+                data[year] = []
+            data[year].append(scene)
+        
+        result = {}
+        for year in data:
+            result[year] = len(data[year])
+        
+        return result        
     
     def clean(self):
         self.__scenes = []
