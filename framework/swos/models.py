@@ -353,7 +353,7 @@ class Wetland(models.Model):
             from apiclient.discovery import build
             DEVELOPER_KEY = "ANPASSEN"
             PRE_URL = "https://www.youtube.com/watch?v="
-            youtube = build('youtube', 'v3', developerKey=ANPASSEN)
+            youtube = build('youtube', 'v3', developerKey=DEVELOPER_KEY)
             videos = []
             i=0
             while True:
