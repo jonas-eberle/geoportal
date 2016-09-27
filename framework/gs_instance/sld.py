@@ -69,22 +69,25 @@ def make_sld(shape, full_sld):
     rules =[]
 
     # Get the column name, which is used in the full_sld and get the distinct values in the shapefile
-    column = root.find('.//ogc:PropertyIsEqualTo', namespaces)[0].text
-    log.debug("Column: "+column)
-    distincts = get_distinct(shape, column)
-    log.debug('Distincts '+str(distincts))
+    columns = sorted(set(thing[0].text for thing in root.findall('.//ogc:PropertyIsEqualTo', namespaces)))
+    log.debug(columns)
+    log.debug(full_sld)
+    for column in columns:
+        log.debug("Column: "+str(column))
+        distincts = get_distinct(shape, column)
+        log.debug('Distincts '+str(distincts))
 
-    # Find the rules which are applicable on the shapefile
-    for rule in root.findall('.//se:Rule', namespaces):
-        #print rule.text
-        prop = rule.find('.//ogc:PropertyIsEqualTo', namespaces)
-        log.debug(prop[0].text)
-        if prop[0].text == column:
-            log.debug("in if")
-            log.debug("Rule"+prop[1].text)
-            if prop[1].text in distincts:
-                log.debug("add rule")
-                rules.append(rule)
+        # Find the rules which are applicable on the shapefile
+        for rule in root.findall('.//se:Rule', namespaces):
+            #print rule.text
+            prop = rule.find('.//ogc:PropertyIsEqualTo', namespaces)
+            log.debug(prop[0].text)
+            if prop[0].text == column:
+                log.debug("in if")
+                log.debug("Rule"+prop[1].text)
+                if prop[1].text in distincts:
+                    log.debug("add rule")
+                    rules.append(rule)
     # Get the shape name to name UserStyle and NamedLayer in the sld file
     shape_name = os.path.basename(shape)
     shape_name = os.path.splitext(shape_name)[0]
@@ -201,9 +204,9 @@ def sld_from_csv(csvpath, column_name, outfile):
             blue = hex(int(row['Blue']))[2:]
 
             rgb_code = ''.join(['#',red,green,blue])
-            ruletext =ruletext.format(class_name=row['Class Name'],column_value=row['Class ID'],rgb_code=rgb_code,column=column_name)
-            print ruletext
-            rule = ET.fromstring(ruletext)
+            ruletext_row = ruletext.format(class_name=row['Class Name'],column_value=row['Class ID'],rgb_code=rgb_code,column=column_name)
+            print ruletext_row
+            rule = ET.fromstring(ruletext_row)
             featureStyle.append(rule)
 
     new_sld.write(outfile)
@@ -213,10 +216,11 @@ if __name__ == '__main__':
     path = "/home/user/swos/MAES_legend_fix.csv"
     sld_vec = "/home/user/swos/SLDs/templates/LULC_MAES.sld"
     out_ras = '/home/user/swos/SLDs/finals/SWD.sld'
-    print get_rgb_json(out_ras)
-    print get_rgb_json(sld_vec)
-    #column = "MAES_L2"
-    #sld_from_csv(path, column, out)
+    out = '/home/user/swos/LULC_MAES.sld'
+    #print get_rgb_json(out_ras)
+    #print get_rgb_json(sld_vec)
+    column = "MAES_L2"
+    sld_from_csv(path, column, out)
     exit()
     sld = '/home/user/swos/data/Spain_Fuente-de-Piedra/LULCC_L/SWOS_LULCC_L_Fuente-de-Piedra_1975-1989.shp'
     full_sld ='/home/user/swos/SLDs/templates/LULCC_L.sld'

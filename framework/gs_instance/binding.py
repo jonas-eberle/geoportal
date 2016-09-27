@@ -111,6 +111,8 @@ def main(cat, folder, sld_folder, pycsw_url):
             if product == 'LULC':
                 name_list = name.split('_')
                 product_style = '_'.join([name_list[1],name_list[2]])
+            elif product == 'Water_Quality':
+                product_style = '_'.join(product,wetland)
             else:
                 product_style = product
             country_wetland = dirs[-2]
@@ -212,7 +214,7 @@ def main(cat, folder, sld_folder, pycsw_url):
     log.info(missing_slds)
     return data
 
-def add_styles(cat, folder, sld_folder):
+def add_styles(cat, folder, sld_folder,reset=False):
     missing_slds = []
     raster_exts = ['*.tif', '*.tiff', '*.geotiff', '*.geotif']
     files =  finder(folder, raster_exts+['*.shp'])
@@ -240,12 +242,20 @@ def add_styles(cat, folder, sld_folder):
         print product_style
         # Make a specific .sld file from the template and integrate it into the geoserver
         if product_style in templates:
-            if not os.path.isfile(base + '.sld'):
+            log.debug('template')
+            log.debug(not os.path.isfile(base + '.sld') or reset)
+            if not os.path.isfile(base + '.sld') or reset:
+                log.debug('Start Making the sld')
+                log.debug(str(shape))
                 make_sld(shape, os.path.join(sld_folder, 'templates', product_style) + '.sld')
             sld = ''.join([base, '.sld'])
             try:
                 with open(sld) as f:
-                    cat.create_style(name, f.read(), overwrite=False, style_format="sld11")
+                    if reset:
+                        log.debug('Upload')
+                        cat.create_style(name, f.read(), overwrite=False, style_format="sld11")
+                    else:
+                        cat.create_style(name, f.read(), overwrite=False, style_format="sld11")
             except ConflictingDataError:
                 pass
             finally:
@@ -264,13 +274,13 @@ def add_styles(cat, folder, sld_folder):
             log.warning('The SLD for {product} is missing'.format(product=product_style))
             missing_slds.append(product_style)
             continue
+        layer = cat.get_layer(name)
+        log.debug(layer)
+        layer._set_default_style(style)
+        cat.save(layer)
+
         log.debug(style)
     print missing_slds
-
-def export_to_django(cat):
-    fieldnames = ['title', 'abstract', 'legend_url', 'west', 'east', 'south', 'north','wetland','product','geo_description']
-    shape_data = {field:'' for field in fieldnames}
-
 
 
 
