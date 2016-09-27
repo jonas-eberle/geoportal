@@ -2,12 +2,13 @@ from __future__ import unicode_literals
 
 from django.apps import AppConfig
 from geoserver.catalog import Catalog
-import gs_instance.binding
+import xml.etree.ElementTree as ET
 import pysftp
 from django.conf import settings
 import os
 from time import asctime
 from gs_instance.sld import get_rgb_json
+import gs_instance.binding
 
 class LayersConfig(AppConfig):
     name = 'layers'
@@ -77,6 +78,10 @@ def check_sftp():
                 for thing in files_down:
                     sftp.get(u'/'.join([wetland,'/',product,'/',thing]), os.path.join(loc_folder,wetland,product,thing),preserve_mtime=True )
 def add_layers():
+    """
+    Add the products in settings.DEST_FOLDER into the default geoserver
+    """
+    # todo: Add a variable to set which geoserver instance should be used
     url = settings.GEOSERVER['default']['URL']
     geoserver_user = settings.GEOSERVER['default']['USER']
     geoserver_password = settings.GEOSERVER['default']['PASSWORD']
@@ -86,28 +91,94 @@ def add_layers():
     data = gs_instance.binding.main(cat, settings.DEST_FOLDER, settings.SLD_FOLDER, settings.PYCSW_URL)
     for thing in data:
         print thing['title']
-    return
 
-    for layer_data in data:
-        print layer_data
-        print type(layer_data['wetland'])
-        from layers.models import Layer, Contact
-        from swos.models import WetlandLayer, Product, Wetland
-        print 'initial_new'
-        print layer_data['product']
-        product = Product.objects.get(short_name=layer_data['product'])
-        layer_data['product']=product
 
-        wetland_name = layer_data['wetland']
-        print wetland_name
+def add_data_in_django_xml():
+    print 'Start:', asctime()
+    namespaces = {'gmd':"http://www.isotc211.org/2005/gmd", 'gco':"http://www.isotc211.org/2005/gco",'gml':"http://www.opengis.net/gml"}
+    from layers.models import Layer, Contact
+    from swos.models import WetlandLayer, Product, Wetland
+    url = settings.GEOSERVER['earthcare']['URL']
+    geoserver_user = settings.GEOSERVER['earthcare']['USER']
+    geoserver_password = settings.GEOSERVER['earthcare']['PASSWORD']
+    cat = Catalog(url, username=geoserver_user, password=geoserver_password)
+    loc_folder = settings.DEST_FOLDER
+    url = url.replace('geoserver/rest', 'geoserver/')
+    gs_resources = cat.get_resources()
+    for gs_resource in gs_resources:
+        name = gs_resource.name
+        if WetlandLayer.objects.filter(identifier=name).count():
+            print "The Layer {name} is already integrated into Django.".format(name=name)
+            continue
+        if 'SWOS' in name:
+            print name, asctime()
+            shape_data = {}
+            shape_data['identifier'] = name
+            shape_data['title'] = name.replace('SWOS_-_', '').replace('_', ' ')
 
-        wetland = Wetland.objects.get(short_name=wetland_name)
-        product.wetlands.add(wetland)
-        layer_data['wetland']=wetland
-        contact = Contact(**layer_data['dataset_contact_new'])
-        layer_data['dataset_contact_new'] = contact
-        layer = WetlandLayer(**layer_data)
-        layer.save()
+            workspace_name = gs_resource.workspace.name
+            name = gs_resource.name
+            print workspace_name
+            for prod in ['LST','LULC','LULCC','SWD','SSM','Water_Quality','Watershed']:
+                if prod in name:
+                    product_name=prod
+            xml = os.path.join(settings.DEST_FOLDER,workspace_name,product_name,name)+'.xml'
+            shape_data['epsg'] = '4326'
+            bounding_box = gs_resource.latlon_bbox[:4]
+            if gs_resource.url_part_types == 'featuretypes':
+                type_string = 'wfs'
+            else:
+                type_string = 'wcs'
+            country, wetland_name = workspace_name.split('_')
+            testsite_url = ''.join([url, workspace_name, '/'])
+            wms_url = ''.join([testsite_url, 'wms?'])
+            type_url = ''.join([testsite_url, type_string, '?'])
+
+            shape_data['download_url'] = type_url
+
+            png = 'png/{z}/{x}/{y}.png'
+            tms_url = '{url}gwc/service/tms/1.0.0/{testsite}:{layername}@EPSG:900913@{png}'
+            tms_url = tms_url.format(testsite=workspace_name, layername=name, png=png, url=url)
+            shape_data['ogc_link'] = tms_url
+            shape_data['ogc_type'] = 'TMS'
+            legend_url = ''.join(
+                [wms_url, 'REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=',
+                 workspace_name, ':', name, '&LEGEND_OPTIONS=forceLabels:on'])
+            shape_data['legend_url'] = legend_url
+
+            try:
+                tree = ET.parse(xml)
+            except IOError as e:
+                print e
+                return e
+            root =tree.getroot()
+            abstract = root.find('.//gmd:abstract',namespaces)
+            shape_data['abstract'] = abstract[0].text
+
+            shape_data['west'] = bounding_box[0]
+            shape_data['east'] = bounding_box[1]
+            shape_data['south'] = bounding_box[2]
+            shape_data['north'] = bounding_box[3]
+
+            dataset_contact = root.find('.//gmd:contact',namespaces)
+            dataset_email = dataset_contact.find('.//gmd:electronicMailAddress',namespaces)
+            dataset_email =  dataset_email[0].text
+            try:
+                dataset_contact = Contact.objects.get(email=dataset_email)
+                shape_data['dataset_contact_new'] =dataset_contact
+            except:
+                print 'The contact information for', gs_instance,'is missing.'
+                continue
+            wetland = Wetland.objects.get(short_name=wetland_name)
+            shape_data['wetland'] = wetland
+            product = Product.objects.get(short_name=product_name)
+            product.wetlands.add(wetland)
+            shape_data['product'] = product
+            layer = WetlandLayer(**shape_data)
+            layer.save()
+            print shape_data
+            print asctime()
+            return
 
 
 def add_data_in_django():
@@ -132,7 +203,8 @@ def add_data_in_django():
             print name, asctime()
             product_name = gs_layer.default_style.name
             resource = gs_layer.resource
-            shape_data['epsg'] = resource.projection.replace('EPSG:','')
+            #shape_data['epsg'] = resource.projection.replace('EPSG:','')
+            shape_data['epsg'] = '4326'
             bounding_box = resource.latlon_bbox[:4]
             if resource.url_part_types == 'featuretypes':
                 type_string = 'wfs'
@@ -143,7 +215,6 @@ def add_data_in_django():
             workspace_name = resource.workspace.name
             print workspace_name
             country, wetland_name = workspace_name.split('_')
-            # link_data kommt von gs_instance.metadata
 
             #shape_data.update(link_data)
             testsite_url = ''.join([url, workspace_name, '/'])
@@ -195,9 +266,9 @@ def add_data_in_django():
             layer = WetlandLayer(**shape_data)
             layer.save()
 
-def add_slds():
-    url = settings.GEOSERVER['earthcare']['URL']
-    geoserver_user = settings.GEOSERVER['earthcare']['USER']
-    geoserver_password = settings.GEOSERVER['earthcare']['PASSWORD']
+def add_slds(server_name):
+    url = settings.GEOSERVER[server_name]['URL']
+    geoserver_user = settings.GEOSERVER[server_name]['USER']
+    geoserver_password = settings.GEOSERVER[server_name]['PASSWORD']
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
-    gs_instance.binding.add_styles(cat,settings.DEST_FOLDER,settings.SLD_FOLDER)
+    gs_instance.binding.add_styles(cat,settings.DEST_FOLDER,settings.SLD_FOLDER,reset=True)
