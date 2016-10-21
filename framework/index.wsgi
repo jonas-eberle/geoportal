@@ -3,16 +3,16 @@ import sys
 import site
 
 # Add the site-packages of the chosen virtualenv to work with
-site.addsitedir('/home/sibessc/workspace/swos/venv/local/lib/python2.7/site-packages')
+site.addsitedir('/home/user/swos/venv/local/lib/python2.7/site-packages')
 
 # Add the app's directory to the PYTHONPATH
-sys.path.append('/home/sibessc/workspace/swos/framework')
-sys.path.append('/home/sibessc/workspace/swos/framework/webgis')
+sys.path.append('/home/user/swos/framework')
+sys.path.append('/home/user/swos/framework/webgis')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'webgis.settings'
 
 # Activate your virtual env
-activate_env=os.path.expanduser("/home/sibessc/workspace/swos/venv/bin/activate_this.py")
+activate_env=os.path.expanduser("/home/user/swos/venv/bin/activate_this.py")
 execfile(activate_env, dict(__file__=activate_env))
 
 #import django.core.handlers.wsgi

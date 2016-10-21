@@ -104,14 +104,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+#STATIC_ROOT = os.path.join(BASE_DIR, "static")
 #STATIC_ROOT = '/Users/jonas/Workspaces/webgisDjango/static/'
-SUBDIR = '/swos'
-STATIC_URL = SUBDIR+'/static/'
-#STATIC_URL = '/static/'
+SUBDIR = ''
+#STATIC_URL = SUBDIR+'/static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    #os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 )
 
 #MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'
@@ -183,8 +183,47 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # ie csrf cookie
 
-CSRF_COOKIE_DOMAIN='artemis.geogr.uni-jena.de'
-SESSION_COOKIE_DOMAIN='artemis.geogr.uni-jena.de'
+CSRF_COOKIE_DOMAIN='localhost'
+SESSION_COOKIE_DOMAIN='localhost'
 USE_X_FORWARDED_HOST=True
 #SESSION_COOKIE_SECURE=True
 #CSRF_COOKIE_SECURE=True
+
+#####################################################
+#Settings for the geoserver integration functionality
+# Geoserver Connection
+
+#todo: Save the password somewhere safe.
+GEOSERVER = {'default':{
+        'URL': 'http://localhost:8082/geoserver/rest/',
+        'USER': 'admin',
+        'PASSWORD': 'geoserver'
+    },
+    'earthcare':{
+        'URL': 'http://earthcare.ads.uni-jena.de:8080/geoserver/rest',
+        'USER': 'ANPASSEN',
+        'PASSWORD': 'ANPASSEN'
+    },
+    'artemis':{
+        'URL':'http://artemis.geogr.uni-jena.de/geoserver/rest',
+        'USER': 'ANPASSEN',
+        'PASSWORD': 'ANPASSEN'
+    }
+
+}
+
+#todo: Save the password somewhere safe.
+SFTP = {
+    'FOLDER':'products/',
+    'URL':'swos-data.jena-optronik.de',
+    'USER': 'ANPASSEN',
+    'PASSWORD': 'ANPASSEN'
+}
+
+DEST_FOLDER = '/home/user/swos_data/'
+
+SLD_FOLDER = '/home/user/swos/SLDs'
+
+PYCSW_URL = 'http://localhost:8000'
+
+METADATA_URL = 'http://artemis.geogr.uni-jena.de/geoserver/'
