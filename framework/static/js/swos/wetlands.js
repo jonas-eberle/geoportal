@@ -25,7 +25,7 @@ angular.module('webgisApp')
 						prop['show'] = false;
 					}
 					$scope.wetlands.push(prop);
-                })
+                });
 				
                 vectorSource.addFeatures(features);
                 $scope.olLayer = new ol.layer.Vector({

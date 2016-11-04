@@ -87,11 +87,11 @@ angular.module('webgisApp')
 						new ol.interaction.MouseWheelZoom({duration: 0})
 					])
                 });
-		//console.log(id);
-		//var olMapDiv = document.getElementById(id);
-		//olMapDiv.parentNode.removeChild(olMapDiv);
+                //console.log(id);
+                //var olMapDiv = document.getElementById(id);
+                //olMapDiv.parentNode.removeChild(olMapDiv);
                 //this.gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
-		this.mousePositionControl = new ol.control.MousePosition({
+                this.mousePositionControl = new ol.control.MousePosition({
                       coordinateFormat: ol.coordinate.createStringXY(4),
                       projection: 'EPSG:4326',
                       undefinedHTML: ''
@@ -123,7 +123,7 @@ angular.module('webgisApp')
                     }
                 });
                 this.map.addInteraction(this.selectInteraction);
-                $rootScope.$broadcast('mapviewer.map_created', {})
+                $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
             'setBaseLayer': function(index) {
@@ -157,7 +157,7 @@ angular.module('webgisApp')
                               url: layer.ogc_link,
                               params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true}
                             })
-                        })
+                        });
                         break;
 					case 'TMS':
 						olLayer = new ol.layer.Tile({
@@ -166,7 +166,7 @@ angular.module('webgisApp')
 						  source: new ol.source.XYZ({
 					        url: layer.ogc_link.replace('{y}','{-y}')
 					      })
-					    })
+					    });
 						break;
                     case 'WMTS':
                         if (typeof(layer.capabilities) == 'object') {
@@ -387,7 +387,7 @@ angular.module('webgisApp')
                                     stroke: stroke
                                 })]
                             }
-                        })
+                        });
                         break;
                 }
                 return olLayer;
@@ -588,7 +588,7 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope){
+    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout){
         
 		$scope.legendLayers = [];
 		
@@ -738,6 +738,13 @@ angular.module('webgisApp')
                     //Return true if features in the passed in layer should be considered for selection
                     return true;
                 }, mapviewer);
+            });
+
+            angular.element($window).bind('resize', function () {
+                $timeout(function(){
+                    var center = ol.proj.transform(mapviewer.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
+                    mapviewer.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+                }, 2);
             });
         });
 
