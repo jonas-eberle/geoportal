@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.apps import AppConfig
 from geoserver.catalog import Catalog
+from django.forms.models import model_to_dict
 import xml.etree.ElementTree as ET
 import pysftp
 from django.conf import settings
@@ -9,6 +10,7 @@ import os
 from time import asctime
 from gs_instance.sld import get_rgb_json
 import gs_instance.binding
+from gs_instance.metadata import generate_metadata_template
 
 class LayersConfig(AppConfig):
     name = 'layers'
@@ -164,6 +166,8 @@ def add_data_in_django_xml():
             shape_data['south'] = bounding_box[2]
             shape_data['north'] = bounding_box[3]
 
+            shape_data['date_begin'] = root.find('.//gmd:EX_TemporalExtent.//gml:beginPosition')
+
             dataset_contact = root.find('.//gmd:contact',namespaces)
             dataset_email = dataset_contact.find('.//gmd:electronicMailAddress',namespaces)
             dataset_email =  dataset_email[0].text
@@ -173,6 +177,8 @@ def add_data_in_django_xml():
             except:
                 print 'The contact information for', gs_instance,'is missing.'
                 continue
+
+
             wetland = Wetland.objects.get(short_name=wetland_name)
             shape_data['wetland'] = wetland
             product = Product.objects.get(short_name=product_name)
@@ -277,3 +283,34 @@ def add_slds(server_name):
     geoserver_password = settings.GEOSERVER[server_name]['PASSWORD']
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
     gs_instance.binding.add_styles(cat,settings.DEST_FOLDER,settings.SLD_FOLDER,reset=True)
+
+
+def generate_metadata():
+    """
+    Generate Inspire conform metadata for every WetlandLayer from the data in the django database.
+
+    :return: None
+    """
+    from swos.models import WetlandLayer
+
+    layers = WetlandLayer.objects.all()
+    for layer in layers:
+        meta = model_to_dict(layer)
+        product = layer.product
+        meta['product'] = product.name
+        print layer.title
+
+        data_contact = layer.dataset_contact_new
+        meta['data_contact_org'] = data_contact.organisation
+        meta['data_contact_email'] = data_contact.email
+        meta_contact = layer.meta_contact
+        meta['meta_contact_org'] = 'Friedrich-Schiller University Jena'
+        meta['meta_contact_email'] = 'felix.cremer@uni-jena.de'
+        wetland = layer.wetland
+        meta['wetland_name'] = wetland.name
+        print wetland.short_name
+        if not meta['equi_scale']:
+            meta['equi_scale']="20"
+        template = ''.join([settings.METADATA_TEMPLATES,'template_',product.short_name,'.xml'])
+        outpath = ''.join([settings.METADATA_FOLDER,layer.identifier,'.xml'])
+        generate_metadata_template(meta, outpath, template)

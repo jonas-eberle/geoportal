@@ -222,7 +222,11 @@ SFTP = {
 
 DEST_FOLDER = '/home/user/swos_data/'
 
-SLD_FOLDER = '/home/user/swos/SLDs'
+SLD_FOLDER = '/home/user/swos/SLDs/'
+
+METADATA_TEMPLATES = '/home/user/swos/meta_templates/'
+
+METADATA_FOLDER = '/home/user/swos_data/meta/'
 
 PYCSW_URL = 'http://localhost:8000'
 

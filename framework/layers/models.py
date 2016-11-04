@@ -97,6 +97,8 @@ class Layer(models.Model):
     equi_scale = models.FloatField("Spatial resolution", blank=True, null=True, help_text="Just for metadata")
 
     #Temporal Extent
+    date_begin = models.DateField(blank = True,null=True,verbose_name='Begin temporal extent')
+    date_end = models.DateField(blank=True, null=True, verbose_name='End temporal extent')
 
     #Metadata
     meta_contact = models.ForeignKey(Contact, related_name="meta_contact", blank=True, null=True, verbose_name="Metadata contact")
