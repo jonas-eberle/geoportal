@@ -7,11 +7,13 @@ Should not be used by itself.
 """
 
 import logging
-import xml.etree.ElementTree as ET
-from ancillary import finder
+#import xml.etree.ElementTree as ET
+import lxml.etree as ET
+from ancillary import finder, getNamespaces
 import os.path
 import requests
 from vector import Vector
+from time import strftime
 
 
 def add_linkage(xml, ext, url = 'http://artemis.geogr.uni-jena.de/geoserver/rest/', jpeg_folder='http://artemis.geogr.uni-jena.de/ec/swos/products/'):
@@ -168,7 +170,7 @@ def add_linkage(xml, ext, url = 'http://artemis.geogr.uni-jena.de/geoserver/rest
     data = {'ogc_link':tms_url, 'download_url': type_url, 'representation_type': representation_type,'legend_url':legend_url}
     return data
 
-#todo: Does it need to be an extra function
+
 def upload_cswt(xml, url='http://localhost:8000/'):
     """
     Upload the Metadata in a xml file into the pycsw instance at url.
@@ -257,6 +259,198 @@ def metadata_from_template(shapefile, template_xml):
     # Save the xml tree in shapefile.xml
     xml_path = os.path.splitext(shapefile)[0]+'.xml'
     template_tree.write(xml_path)
+
+def generate_metadata_template(meta, outpath,template, update=True):
+    """
+    Generate metadata from a template, the template folder is defined in the settings.py
+    :param meta: A dictionary with the relevant metadata
+    :param outfile: Where to save the metadata.xml file
+    :return: None
+    """
+
+    namespaces = getNamespaces(template)
+
+    if not update and os.path.isfile(outpath):
+        return
+
+    with open(template, "r") as infile:
+        tree = ET.fromstring(infile.read())
+    #Get the xml elements where to add the metadata
+
+    name = tree.find('.//gmd:fileIdentifier/./', namespaces)
+
+    ###########################################
+    meta_contact = tree.find('.//gmd:contact', namespaces)
+    meta_contact_organization = meta_contact.find('.//gmd:organisationName/./', namespaces)
+    meta_contact_email = meta_contact.find('.//gmd:electronicMailAddress/./', namespaces)
+    ###########################################
+    meta_date = tree.find('.//gmd:dateStamp/gco:Date', namespaces)
+    ###########################################
+    #meta_srs = tree.find('.//gmd:referenceSystemInfo/', namespaces)
+    #meta_srs_url = meta_srs.find('.//gmd:RS_Identifier/gmd:code/./', namespaces)
+
+    ###########################################
+    meta_digital_transfer = tree.find('.//gmd:MD_DigitalTransferOptions', namespaces)
+    ###########################################
+    data = tree.find('.//gmd:MD_DataIdentification', namespaces)
+    data_title = data.find('.//gmd:title/./', namespaces)
+    data_id = data.find('.//gmd:MD_Identifier/gmd:code/gco:CharacterString', namespaces)
+
+    data_date = data.find('.//gmd:date/gco:Date', namespaces)
+    data_date_type = data.find('.//gmd:dateType/gmd:CI_DateTypeCode', namespaces)
+    data_date_value = data.find('.//gmd:dateType/gmd:CI_DateTypeCode', namespaces).text
+
+    data_abstract = data.find('.//gmd:abstract/./', namespaces)
+
+    data_contact_organization = data.find('.//gmd:pointOfContact/.//gmd:organisationName/./', namespaces)
+    data_contact_email = data.find('.//gmd:electronicMailAddress/./', namespaces)
+    ####################
+    keywords = data.findall('.//gmd:descriptiveKeywords', namespaces)
+    # for keyword in keywords:
+    #     print keyword.find('.//gmd:MD_Keywords/gmd:keyword/./', namespaces)
+    ####################
+
+    data_extent = data.find('.//gmd:extent/gmd:EX_Extent', namespaces)
+
+    data_extent_bbox = data_extent.find('.//gmd:geographicElement/gmd:EX_GeographicBoundingBox', namespaces)
+    data_extent_bbox_west = data_extent_bbox.find('.//gmd:westBoundLongitude/./', namespaces)
+    data_extent_bbox_east = data_extent_bbox.find('.//gmd:eastBoundLongitude/./', namespaces)
+    data_extent_bbox_north = data_extent_bbox.find('.//gmd:northBoundLatitude/./', namespaces)
+    data_extent_bbox_south = data_extent_bbox.find('.//gmd:southBoundLatitude/./', namespaces)
+
+    data_res = data.find('.//gmd:spatialResolution/.//gco:Distance', namespaces)
+
+    data_extent_date_begin = data_extent.find(
+        './/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition', namespaces)
+    data_extent_date_end = data_extent.find(
+        './/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition', namespaces)
+
+    #######################################################################################################################################################
+
+    name.text = meta['identifier']
+
+    data_title.text = meta['title']
+
+    meta_contact_organization.text = meta['meta_contact_org']
+    meta_contact_email.text = meta['meta_contact_email']
+
+    #Save the Day of the metadata creation.
+    #todo: Is this really what we should do?
+    meta_date.text = strftime("%Y-%m-%d")
+
+    wms_string = '''
+    <gmd:CI_OnlineResource xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco">
+            <gmd:linkage>
+                <gmd:URL>{url}</gmd:URL>
+            </gmd:linkage>
+            <gmd:protocol>
+                <gco:CharacterString>urn:ogc:serviceType:WebMapService:1.1.1:HTTP</gco:CharacterString>
+            </gmd:protocol>
+            <gmd:name>
+                <gco:CharacterString>{layername}</gco:CharacterString>
+            </gmd:name>
+            <gmd:description>
+                <gco:CharacterString>WMS of the Satellite based Wetlands Observation Services(SWOS) project.</gco:CharacterString>
+            </gmd:description>
+            <gmd:function>
+                <gmd:CI_OnLineFunctionCode
+                    codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download">download</gmd:CI_OnLineFunctionCode>
+            </gmd:function>
+        </gmd:CI_OnlineResource>
+    '''
+    tms_string ='''
+    <gmd:onLine xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco">
+    <gmd:CI_OnlineResource>
+        <gmd:linkage>
+            <gmd:URL>{url}</gmd:URL>
+        </gmd:linkage>
+        <gmd:protocol>
+            <gco:CharacterString>urn:essi:serviceType:TiledMapService:1.0.0:HTTP</gco:CharacterString>
+        </gmd:protocol>
+        <gmd:name>
+            <gco:CharacterString>{layername}</gco:CharacterString>
+        </gmd:name>
+        <gmd:description>
+            <gco:CharacterString>TMS of the Satellite based Wetlands Observation Services(SWOS) project.</gco:CharacterString>
+        </gmd:description>
+        <gmd:function>
+            <gmd:CI_OnLineFunctionCode
+                codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="browseGraphic">browseGraphic</gmd:CI_OnLineFunctionCode>
+        </gmd:function>
+    </gmd:CI_OnlineResource>
+    </gmd:onLine>
+    '''
+    down_string = '''
+    <gmd:onLine>
+    <gmd:CI_OnlineResource xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco">
+            <gmd:linkage>
+                <gmd:URL>{url}</gmd:URL>
+            </gmd:linkage>
+            <gmd:protocol>
+                <gco:CharacterString>urn:ogc:serviceType:Web{type_name}Service:{type_spec}:HTTP</gco:CharacterString>
+            </gmd:protocol>
+            <gmd:name>
+                <gco:CharacterString>{layername}</gco:CharacterString>
+            </gmd:name>
+            <gmd:description>
+                <gco:CharacterString> Web {type_name} Service of the Satellite based Wetlands Observation Services(SWOS) project.</gco:CharacterString>
+            </gmd:description>
+            <gmd:function>
+                <gmd:CI_OnLineFunctionCode
+                    codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download">download</gmd:CI_OnLineFunctionCode>
+            </gmd:function>
+        </gmd:CI_OnlineResource>
+    </gmd:onLine>
+    '''
+
+    #wms_string = wms_string.format(url=wms_url, layername=meta['identifier'])
+
+    png = 'png/{z}/{x}/{y}.png'
+    if meta['ogc_type'] == 'TMS':
+        tms_url =meta['ogc_link']
+        tms_string = tms_string.format(testsite=meta['wetland_name'], layername=meta['identifier'], url=tms_url)
+        meta_digital_transfer.append(ET.XML(tms_string))
+
+
+    if meta['downloadable']:
+        type_url = meta['download_url']
+        down_string = down_string.format(testsite=meta['wetland_name'], layername=meta['identifier'], url=type_url,
+                                         type_name=type_name, type_spec=type_spec)
+        meta_digital_transfer.append(ET.XML(down_string))
+
+
+    data_abstract.text = meta['abstract']
+
+    data_id.text = str(meta['id'])
+
+    data_contact_organization.text = meta['data_contact_org']
+    data_contact_email.text = meta['data_contact_email']
+
+
+    data_extent_bbox_west.text = str(meta['west'])
+    data_extent_bbox_east.text = str(meta['east'])
+    data_extent_bbox_north.text = str(meta['north'])
+    data_extent_bbox_south.text = str(meta['south'])
+
+    data_res.text = meta['equi_scale']
+    data_res.attrib['uom'] = "meter"
+
+    data_date.text = str(meta['date_create'])
+
+    data_date_type.text = "creation"
+    data_date_type.attrib['codeListValue'] = "creation"
+
+
+    data_extent_date_begin.text = meta['date_begin']
+    data_extent_date_end.text = meta['date_end']
+    keywords[1].find(".//gmd:MD_Keywords/gmd:keyword/gco:CharacterString",
+                     namespaces).text = "surface soil moisture"
+
+
+    #todo Add the metadata directly into the pycsw. Only if the data is publishable.
+    with open(outpath, "w") as outfile:
+        outfile.write(ET.tostring(tree))
+
 
 if __name__ == '__main__':
     #Delete duplicates, the other functionality should be accessed as imports

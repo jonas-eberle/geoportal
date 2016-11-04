@@ -31,3 +31,29 @@ def finder(folder, matchlist, foldermode=0, regex=False, recursive=True):
     if foldermode == 2:
         out = [x for x in out if os.path.isdir(x)]
     return sorted(out)
+
+def dictmerge(x, y):
+    """
+    merge two dictionaries
+    """
+    z = x.copy()
+    z.update(y)
+    return z
+
+def getNamespaces(xml):
+    namespaces = {}
+    infile = xml if "readline" in dir(xml) else open(xml, "r")
+    # calling 'for line in infile:' will cause an error later on!
+    namespaces = {}
+    while True:
+        line = infile.readline()
+        if not line:
+            break
+        if "xmlns:" in line:
+            namespaces = dictmerge(namespaces, ([tuple(x.replace("xmlns:", "").replace('"', '').split("=")) for x in line.split() if x.startswith("xmlns")]))
+    # reset file pointer
+    infile.seek(0)
+
+    if isinstance(xml, str):
+        infile.close()
+    return namespaces
