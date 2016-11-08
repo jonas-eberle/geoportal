@@ -289,3 +289,12 @@ button.btn-loadmore:hover {
     	height: -moz-calc(100% - 50px);
 	}
 }
+
+.legend-color {
+    width: 20px;
+}
+
+.legend-label {
+    font-size: 0.9em;
+    padding-left: 5px;
+}

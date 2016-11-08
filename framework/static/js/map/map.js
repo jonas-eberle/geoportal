@@ -424,6 +424,17 @@ angular.module('webgisApp')
                     $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '60px');
                     $('#slider').show();
                 }
+
+                if (mapColors[layer.django_id] === undefined) {
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url'   : '/swos/wetland/layer/' + layer.django_id + '/colors.json'
+                    }).then(function (data) {
+                        mapColors[layer.django_id] = data;
+                        layer.legendColors = data;
+                    });
+                }
+
                 this.layersMeta.unshift(layer);
                 this.data.layersCount = this.data.layersCount+1;
                 olLayer.set('layerObj', layer);
@@ -438,12 +449,12 @@ angular.module('webgisApp')
                 }
 			},
             'removeLayer': function(id, index) {
-                var layer = this.layers[id];
-                var layerIndex = $.inArray(layer, this.map.getLayers().getArray())
+                var olLayer = this.layers[id];
+                var layerIndex = $.inArray(olLayer, this.map.getLayers().getArray())
                 if (layerIndex >= 0) {
+                    mapColors[olLayer.get("layerObj").django_id] = undefined;
                     this.layersMeta.splice(index, 1);
                     this.selectInteraction.getFeatures().clear();
-                    var olLayer = this.map.getLayers().item(layerIndex);
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
                     
@@ -601,25 +612,25 @@ angular.module('webgisApp')
             var element = popup.getElement();
 
             mapviewer.map.on("pointermove", function(e){
-               if (e.dragging) {
-                   return;
-               }
-			   
-			   $scope.legendLayers = [];
-			   $('#map_legend').html('');
-               var layers = mapviewer.map.forEachLayerAtPixel(e.pixel, function(layer){
-			   	   if (layer == null || layer.get('layerObj') == null) return false;
-				   var layerObj = layer.get('layerObj')
-				   
-				   if (layerObj.django_id in mapColors) {
-				   		var context = e.originalEvent.target.getContext("2d");
-						var imagevalue = context.getImageData(e.pixel[0]*ol.has.DEVICE_PIXEL_RATIO,e.pixel[1]*ol.has.DEVICE_PIXEL_RATIO,1,1);
-						var rgba = imagevalue.data;
-						var legend_name = mapColors[layerObj.django_id][rgba[0]+'-'+rgba[1]+'-'+rgba[2]];
-						$('#map_legend').append('<div style="padding: 5px;"><strong>'+layer.get('name')+': </strong><br/><div style="float:left;width:16px;height:16px;background-color: rgba('+rgba[0]+', '+rgba[1]+', '+rgba[2]+', 1); border-color: black;margin-top:2px;"></div>&nbsp;'+legend_name+'</div>')
-						return true;
-				   }		           
-			   });
+                if (e.dragging) {
+                    return;
+                }
+
+                $scope.legendLayers = [];
+                $('#map_legend').html('');
+                var layers = mapviewer.map.forEachLayerAtPixel(e.pixel, function (layer) {
+                    if (layer == null || layer.get('layerObj') == null) return false;
+                    var layerObj = layer.get('layerObj');
+
+                    if (layerObj.django_id in mapColors) {
+                        var context = e.originalEvent.target.getContext("2d");
+                        var imagevalue = context.getImageData(e.pixel[0] * ol.has.DEVICE_PIXEL_RATIO, e.pixel[1] * ol.has.DEVICE_PIXEL_RATIO, 1, 1);
+                        var rgba = imagevalue.data;
+                        var legend_name = mapColors[layerObj.django_id][rgba[0] + '-' + rgba[1] + '-' + rgba[2]];
+                        $('#map_legend').append('<div style="padding: 5px;"><strong>' + layer.get('name') + ': </strong><br/><div style="float:left;width:16px;height:16px;background-color: rgba(' + rgba[0] + ', ' + rgba[1] + ', ' + rgba[2] + ', 1); border-color: black;margin-top:2px;"></div>&nbsp;' + legend_name + '</div>')
+                        return true;
+                    }
+                });
 			   
 			   var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                    if (layer == null || layer.get('layerObj') == null) return false;
@@ -1424,6 +1435,11 @@ angular.module('webgisApp')
           element.slider({})
         }
       };
+    })
+    .filter('colorFilter', function() {
+        return function(input) {
+            return input.replace(/-/g, ',');
+        }
     })
     .filter('reverse', function() {
       return function(items) {

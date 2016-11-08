@@ -3,7 +3,7 @@
 angular.module('webgisApp')
 	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal){
         $scope.wetlands = [];
-		$scope.wetlands_map = {}
+		$scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
             djangoRequests.request({
                 'method': "GET",
@@ -271,16 +271,7 @@ angular.module('webgisApp')
 			
 			var checkbox = $event.target;
             if (checkbox.checked) {
-				var olLayer = mapviewer.addLayer(layer);
-				// load colors
-				if (!(layer.id in mapColors)) {
-					djangoRequests.request({
-						'method': "GET",
-						'url': '/swos/wetland/layer/' + layer.id + '/colors.json'
-					}).then(function(data){
-						mapColors[layer.id] = data;
-					})
-				}
+				mapviewer.addLayer(layer);
 				
 				// check intersection, if no, please zoom to the new layer!
 				var mapExtent = mapviewer.map.getView().calculateExtent(mapviewer.map.getSize());

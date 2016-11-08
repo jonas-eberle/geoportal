@@ -201,7 +201,13 @@
                                     </ul>
                                 </div>
                                 <div class="item_legend" style="margin-left:40px;margin-top:10px;" ng-if="layer.legend" ng-hide="!layer.showLegend">
-                                    <a href="{{layer.legend}}" target="_blank"><img ng-src="{{layer.legend}}" alt="Layer legend" style="max-width:100%" /></a>
+                                    <a ng-if="layer.legendColors === undefined" href="{{layer.legend}}" target="_blank"><img ng-src="{{layer.legend}}" alt="Layer legend" style="max-width:100%" /></a>
+                                    <table ng-if="layer.legendColors">
+                                        <tr ng-repeat="(color, label) in layer.legendColors">
+                                            <td class="legend-color" style="background-color:rgb({{color|colorFilter}});">&nbsp;</td>
+                                            <td class="legend-label">{{label}}</td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
 
