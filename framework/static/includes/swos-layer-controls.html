@@ -1,0 +1,46 @@
+<div class="item_catalog" style="margin-left:0;" ng-controller="MapCurrentLayersCtrl">
+    <div class="item_desc">
+        <input transparency-slider class="slider" ng-model="slider[layer.id]"
+               ng-change="changeOpacity(layer.id, $index)" data-slider-id="slider_{{ layer.id }}" type="text"
+               data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100"/>
+        <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate"
+                                                       ng-change="updateLayer(layer.id, layer.selectedDate)"
+                                                       ng-options="o as o for o in layer.dates"></select></div>
+    </div>
+    <div class="item_icon">
+        <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend"
+                ng-click="toggleLegend(layer)" class="btn btn-default" aria-label="Left Align"><i
+                class="fa fa-list fa-lg"></i></button>
+        <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
+                ng-click="download(layer)" class="btn btn-default" aria-label="Left Align"><i
+                class="fa fa-download fa-lg"></i></button>
+        <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="showMetadata(layer)"
+                class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
+        <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button"
+                ng-if="layer.ogc_type == 'SOS'" ng-click="toggleStations(layer)" class="btn btn-default"
+                aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
+        <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="zoomToLayer(layer.id)"
+                class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
+        <!--<button tooltip-placement="bottom" tooltip="Remove layer" type="button"
+                ng-click="removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default"
+                aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
+    </div>
+</div>
+<div class="item_stations" ng-if="layer.ogc_type == 'SOS'" ng-hide="!layer.showStations">
+    <strong>Available stations:</strong>
+    <ul style="padding-left:20px;">
+        <li ng-repeat="station in layer.stations"><a href="#" ng-click="zoomToStation(station);">{{ station.name }}
+            ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
+    </ul>
+</div>
+<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend" ng-hide="!layer.showLegend">
+    <a ng-if="layer.legendColors === undefined" href="{{ layer.legend }}" target="_blank">
+        <img ng-src="{{ layer.legend }}" alt="Layer legend" style="max-width:100%"/>
+    </a>
+    <table ng-if="layer.legendColors">
+        <tr ng-repeat="(color, label) in layer.legendColors">
+            <td class="legend-color" style="background-color:rgb({{ color|colorFilter }});">&nbsp;</td>
+            <td class="legend-label">{{ label }}</td>
+        </tr>
+    </table>
+</div>

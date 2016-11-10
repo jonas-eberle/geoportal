@@ -439,7 +439,7 @@ angular.module('webgisApp')
                 this.data.layersCount = this.data.layersCount+1;
                 olLayer.set('layerObj', layer);
                 this.map.addLayer(olLayer);
-				return olLayer;
+                return olLayer;
             },
 			'getIndexFromLayer': function(title) {
 				for (var i=0; i<this.layersMeta.length; i++) {
@@ -450,7 +450,7 @@ angular.module('webgisApp')
 			},
             'removeLayer': function(id, index) {
                 var olLayer = this.layers[id];
-                var layerIndex = $.inArray(olLayer, this.map.getLayers().getArray())
+                var layerIndex = $.inArray(olLayer, this.map.getLayers().getArray());
                 if (layerIndex >= 0) {
                     mapColors[olLayer.get("layerObj").django_id] = undefined;
                     this.layersMeta.splice(index, 1);

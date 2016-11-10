@@ -266,12 +266,16 @@ angular.module('webgisApp')
 				alert('No layer found');
 			}
 		}
-		
+
+        // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
+        $scope.layerIdMap = {};
+        $scope.layers = mapviewer.layers;
 		$scope.changeVisibility = function(layer, $event) {
-			
 			var checkbox = $event.target;
             if (checkbox.checked) {
-				mapviewer.addLayer(layer);
+				var layerObj = mapviewer.addLayer(layer).get("layerObj");
+                // store the mapping between django_id and hash-like id
+                $scope.layerIdMap[layerObj.django_id] = layerObj.id;
 				
 				// check intersection, if no, please zoom to the new layer!
 				var mapExtent = mapviewer.map.getView().calculateExtent(mapviewer.map.getSize());
@@ -326,6 +330,9 @@ angular.module('webgisApp')
 						console.log('index: '+index);
 						mapviewer.removeLayer(layerId, index);
 						//this.setVisible(false);
+
+                        // clear the id mapping (layer.id refers to the django_id here)
+                        $scope.layerIdMap[layer.id] = undefined;
 						return true;
 					}
 				})
@@ -337,6 +344,19 @@ angular.module('webgisApp')
         scope.$eval(attrs.repeatDone);
       }
     })
+    .directive('swosLayerControls', function(){
+        return {
+            restrict: "AE",
+            scope: {
+                olLayer: "=olLayer"
+            },
+            controller: function($scope) {
+                // unveil our layer object (as we actually get handed over an ol3 layer object)
+                $scope.layer = $scope.olLayer.get("layerObj");
+            },
+            templateUrl: "../../static/includes/swos-layer-controls.html"
+        }
+    });
 
 
 
