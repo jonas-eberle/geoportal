@@ -230,7 +230,7 @@ angular.module('webgisApp')
 					
 	            }, function(error) {
 	                bootbox.alert('<h1>Error while loading wetland details</h1>');
-	            })
+	            });
 			
 			/*} else {
 				$('.scroller-right').click();
@@ -242,7 +242,7 @@ angular.module('webgisApp')
 			//zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
     		//mapviewer.map.beforeRender(pan, zoom) 
 			mapviewer.map.getView().fitExtent(extent,mapviewer.map.getSize());
-		}
+		};
 		
 		$scope.foo = function(id) {
 			console.log('foo');
