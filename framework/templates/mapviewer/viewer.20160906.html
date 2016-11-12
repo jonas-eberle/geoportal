@@ -159,34 +159,41 @@
 
         </div>
 
-		<div id="current" ng-controller="MapCurrentLayersCtrl">
-             
-			 <!--
-			    <div id="addexternallayer" ng-if="mapviewerdata.addexternallayer">
-                    <hr />
-                    <div align="center"><button type="button" ng-click="addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
-                    <hr />
-                </div>
-				-->
+		<div ng-controller="MapCurrentLayersCtrl">
+            <div id="current" ng-show="wetlandListState">
+
+                <!--
+                   <div id="addexternallayer" ng-if="mapviewerdata.addexternallayer">
+                       <hr />
+                       <div align="center"><button type="button" ng-click="addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
+                       <hr />
+                   </div>
+                   -->
                 <!-- List GROUP -->
-                        <!--<div ng-show="!layersMeta.length">No layers added to the map!</div>-->
-                        <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item, type)">
-                          <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer" dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move">
+                <!--<div ng-show="!layersMeta.length">No layers added to the map!</div>-->
+                <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item, type)">
+                    <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer"
+                         dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move">
 
-                          	<div class="catalog-item">
-                            	<div class="item_left" style="padding-top:12px;">
-                                	<input type="checkbox" ng-click="changeVisibility(layer.id, $event)" id="id_{{layer.id}}" checked="checked" />
-                                    <label for="id_{{layer.id}}"></label>
-                                </div>
-                                <div class="item_catalog">
-                                    <div class="item_title">{{layer.title}}</div>
-                                </div>
+                        <div class="catalog-item">
+                            <div class="item_left" style="padding-top:12px;">
+                                <input type="checkbox" ng-click="changeVisibility(layer.id, $event)"
+                                       id="id_{{ layer.id }}" checked="checked"/>
+                                <label for="id_{{ layer.id }}"></label>
                             </div>
-
-                          </div>
+                            <div class="item_catalog">
+                                <div class="item_title">{{ layer.title }}</div>
+                            </div>
                         </div>
-                        <!-- END List GROUP -->
+
+                    </div>
+                </div>
+                <!-- END List GROUP -->
             </div>
+            <div class="toggle-button-wrapper" ng-class="wetlandListState">
+                <button class="glyphicon" ng-class="wetlandListGlyph" ng-click="toggleWetlandList()"></button>
+            </div>
+        </div>
 
         <div class="col-md-3 sidebar first" id="sidebar" ng-controller="WetlandsCtrl">
           <!-- Nav tabs -->

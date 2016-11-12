@@ -1105,6 +1105,17 @@ angular.module('webgisApp')
                 }
             });
         }
+
+        $scope.wetlandListState = "";
+        $scope.wetlandListGlyph = "glyphicon-chevron-right";
+
+        $scope.toggleWetlandList = function() {
+            if (mapviewer.data.layersCount > 0) {
+                $scope.wetlandListState = $scope.wetlandListState === "" ? "expanded" : "";
+                $scope.wetlandListGlyph = $scope.wetlandListGlyph === "glyphicon-chevron-right" ?
+                    "glyphicon-chevron-left" : "glyphicon-chevron-right";
+            }
+        };
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {
         $scope.title = title;
