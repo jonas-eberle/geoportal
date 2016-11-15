@@ -127,7 +127,7 @@ class CSW(models.Model):
                                 'geo_description': '',
                                 'representation_type': '',
                                 'equi_scale': distance,
-                                'epsg': record.referencesystem.code,
+                                #'epsg': record.referencesystem.code,
                                 'meta_language': record.language,
                                 'meta_characterset': record.charset,
                                 'meta_date': record.datestamp
