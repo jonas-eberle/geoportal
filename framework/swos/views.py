@@ -35,10 +35,8 @@ class WetlandDetail(APIView):
         
         from .models import Product, Indicator, WetlandLayer
         from layers.models import LayerSerializer
-        products = Product.objects.filter(wetlands__id=wetland.id)
-        indicators = Indicator.objects.filter(wetlands__id=wetland.id)
-        layers = WetlandLayer.objects.filter(wetland_id=wetland.id).order_by('title')
-        
+        layers = WetlandLayer.objects.filter(wetland_id=wetland.id,publishable=True).order_by('title')
+
         temp_products_layers = dict()
         temp_indicators_layers = dict()
         temp_products = dict()

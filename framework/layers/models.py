@@ -48,6 +48,7 @@ class Layer(models.Model):
     title = models.CharField(max_length=200)
     abstract = models.TextField()
     topicCategory = models.CharField(max_length=200, blank=True, null=True)
+    publishable = models.BooleanField(default=False)
 
     #Vizualiation services
     ogc_link = models.CharField("OGC service URL", max_length=400, blank=True, null=True)

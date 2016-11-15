@@ -38,7 +38,7 @@ class LayersAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'classes': ('suit-tab', 'suit-tab-general',),
-            'fields': ('identifier', 'title', 'abstract', 'topicCategory', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date')
+            'fields': ('identifier', 'title', 'abstract', 'topicCategory', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'publishable')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-ogc',),
