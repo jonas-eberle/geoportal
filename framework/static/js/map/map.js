@@ -600,7 +600,7 @@ angular.module('webgisApp')
         return service;
     })
     .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout){
-        
+
 		// $scope.legendLayers = [];
 		
 		$scope.$on('mapviewer.map_created', function ($broadCast, data) {

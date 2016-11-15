@@ -321,3 +321,12 @@ button.btn-loadmore:hover {
     background-color: white;
     height: 25px;
 }
+
+.map-controls-wrapper {
+    background-color:rgba(0,0,0,0.5);
+    height: 53px;
+    position: absolute;
+    right: 0;
+    width: 645px;
+    z-index: 1010;
+}
