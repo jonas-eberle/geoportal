@@ -278,7 +278,7 @@ def add_styles(cat, folder, sld_folder,reset=False,individual=True):
         # Check the sld_folder/finals for slds.
         finals = map(os.path.basename, finder(os.path.join(sld_folder, 'finals/'), ['*.sld']))
         finals = [os.path.splitext(temp)[0] for temp in finals]
-        print product_style
+        print product_style.upper()
         # Make a specific .sld file from the template and integrate it into the geoserver
         if product_style in templates:
             log.debug('template')
@@ -286,8 +286,8 @@ def add_styles(cat, folder, sld_folder,reset=False,individual=True):
             if not os.path.isfile(base + '.sld') or reset:
                 log.debug('Start Making the sld')
                 log.debug(str(shape))
-                if product in ['LULC','LULCC']:
-                   sld_version =  crop_sld(shape, os.path.join(sld_folder, 'templates', product_style) + '.sld')
+                if product in ['LULC','LULCC_L']:
+                   sld_version =  crop_sld(shape, os.path.join(sld_folder, 'templates', product_style.upper()) + '.sld')
                 elif product == 'LST':
                     sld_version = make_sld(shape,os.path.join(sld_folder, 'templates',product_style)+'.sld')
             sld = ''.join([base, '.sld'])

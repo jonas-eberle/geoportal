@@ -34,13 +34,22 @@ def finder(folder, matchlist, foldermode=0, regex=False, recursive=True):
 
 def dictmerge(x, y):
     """
-    merge two dictionaries
+    Merge two dictionaries and return the result.
+    :param x: a dictionary
+    :param y: another dictionary
+    :return: The merge of the two dictionaries.
     """
     z = x.copy()
     z.update(y)
     return z
 
 def getNamespaces(xml):
+    """
+    Get the namespace definition of an xml file.
+    :param xml: The path to an xml file
+    :return: A dictionary with (short_name, url) as (key,value pairs.)
+    """
+
     namespaces = {}
     infile = xml if "readline" in dir(xml) else open(xml, "r")
     # calling 'for line in infile:' will cause an error later on!
