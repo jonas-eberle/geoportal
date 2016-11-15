@@ -313,6 +313,7 @@ button.btn-loadmore:hover {
 .toggle-button-wrapper > button {
     background-color: white;
     border: none;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     height: 25px;
     width: 25px;
 }
