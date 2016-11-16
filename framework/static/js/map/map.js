@@ -87,11 +87,11 @@ angular.module('webgisApp')
 						new ol.interaction.MouseWheelZoom({duration: 0})
 					])
                 });
-		//console.log(id);
-		//var olMapDiv = document.getElementById(id);
-		//olMapDiv.parentNode.removeChild(olMapDiv);
+                //console.log(id);
+                //var olMapDiv = document.getElementById(id);
+                //olMapDiv.parentNode.removeChild(olMapDiv);
                 //this.gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
-		this.mousePositionControl = new ol.control.MousePosition({
+                this.mousePositionControl = new ol.control.MousePosition({
                       coordinateFormat: ol.coordinate.createStringXY(4),
                       projection: 'EPSG:4326',
                       undefinedHTML: ''
@@ -123,7 +123,7 @@ angular.module('webgisApp')
                     }
                 });
                 this.map.addInteraction(this.selectInteraction);
-                $rootScope.$broadcast('mapviewer.map_created', {})
+                $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
             'setBaseLayer': function(index) {
@@ -157,7 +157,7 @@ angular.module('webgisApp')
                               url: layer.ogc_link,
                               params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true}
                             })
-                        })
+                        });
                         break;
 					case 'TMS':
 						olLayer = new ol.layer.Tile({
@@ -166,7 +166,7 @@ angular.module('webgisApp')
 						  source: new ol.source.XYZ({
 					        url: layer.ogc_link.replace('{y}','{-y}')
 					      })
-					    })
+					    });
 						break;
                     case 'WMTS':
                         if (typeof(layer.capabilities) == 'object') {
@@ -387,7 +387,7 @@ angular.module('webgisApp')
                                     stroke: stroke
                                 })]
                             }
-                        })
+                        });
                         break;
                 }
                 return olLayer;
@@ -424,11 +424,22 @@ angular.module('webgisApp')
                     $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '60px');
                     $('#slider').show();
                 }
+
+                if (mapColors[layer.django_id] === undefined) {
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url'   : '/swos/wetland/layer/' + layer.django_id + '/colors.json'
+                    }).then(function (data) {
+                        mapColors[layer.django_id] = data;
+                        layer.legendColors = data;
+                    });
+                }
+
                 this.layersMeta.unshift(layer);
                 this.data.layersCount = this.data.layersCount+1;
                 olLayer.set('layerObj', layer);
                 this.map.addLayer(olLayer);
-				return olLayer;
+                return olLayer;
             },
 			'getIndexFromLayer': function(title) {
 				for (var i=0; i<this.layersMeta.length; i++) {
@@ -438,12 +449,12 @@ angular.module('webgisApp')
                 }
 			},
             'removeLayer': function(id, index) {
-                var layer = this.layers[id];
-                var layerIndex = $.inArray(layer, this.map.getLayers().getArray())
+                var olLayer = this.layers[id];
+                var layerIndex = $.inArray(olLayer, this.map.getLayers().getArray());
                 if (layerIndex >= 0) {
+                    mapColors[olLayer.get("layerObj").django_id] = undefined;
                     this.layersMeta.splice(index, 1);
                     this.selectInteraction.getFeatures().clear();
-                    var olLayer = this.map.getLayers().item(layerIndex);
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
                     
@@ -588,9 +599,9 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope){
-        
-		$scope.legendLayers = [];
+    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout){
+
+		// $scope.legendLayers = [];
 		
 		$scope.$on('mapviewer.map_created', function ($broadCast, data) {
             popup = new ol.Overlay({element: document.getElementById('popup')});
@@ -601,25 +612,25 @@ angular.module('webgisApp')
             var element = popup.getElement();
 
             mapviewer.map.on("pointermove", function(e){
-               if (e.dragging) {
-                   return;
-               }
-			   
-			   $scope.legendLayers = [];
-			   $('#map_legend').html('');
-               var layers = mapviewer.map.forEachLayerAtPixel(e.pixel, function(layer){
-			   	   if (layer == null || layer.get('layerObj') == null) return false;
-				   var layerObj = layer.get('layerObj')
-				   
-				   if (layerObj.django_id in mapColors) {
-				   		var context = e.originalEvent.target.getContext("2d");
-						var imagevalue = context.getImageData(e.pixel[0]*ol.has.DEVICE_PIXEL_RATIO,e.pixel[1]*ol.has.DEVICE_PIXEL_RATIO,1,1);
-						var rgba = imagevalue.data;
-						var legend_name = mapColors[layerObj.django_id][rgba[0]+'-'+rgba[1]+'-'+rgba[2]];
-						$('#map_legend').append('<div style="padding: 5px;"><strong>'+layer.get('name')+': </strong><br/><div style="float:left;width:16px;height:16px;background-color: rgba('+rgba[0]+', '+rgba[1]+', '+rgba[2]+', 1); border-color: black;margin-top:2px;"></div>&nbsp;'+legend_name+'</div>')
-						return true;
-				   }		           
-			   });
+                if (e.dragging) {
+                    return;
+                }
+
+                // $scope.legendLayers = [];
+                // $('#map_legend').html('');
+                // var layers = mapviewer.map.forEachLayerAtPixel(e.pixel, function (layer) {
+                //     if (layer == null || layer.get('layerObj') == null) return false;
+                //     var layerObj = layer.get('layerObj');
+                //
+                //     if (layerObj.django_id in mapColors) {
+                //         var context = e.originalEvent.target.getContext("2d");
+                //         var imagevalue = context.getImageData(e.pixel[0] * ol.has.DEVICE_PIXEL_RATIO, e.pixel[1] * ol.has.DEVICE_PIXEL_RATIO, 1, 1);
+                //         var rgba = imagevalue.data;
+                //         var legend_name = mapColors[layerObj.django_id][rgba[0] + '-' + rgba[1] + '-' + rgba[2]];
+                //         $('#map_legend').append('<div style="padding: 5px;"><strong>' + layer.get('name') + ': </strong><br/><div style="float:left;width:16px;height:16px;background-color: rgba(' + rgba[0] + ', ' + rgba[1] + ', ' + rgba[2] + ', 1); border-color: black;margin-top:2px;"></div>&nbsp;' + legend_name + '</div>')
+                //         return true;
+                //     }
+                // });
 			   
 			   var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                    if (layer == null || layer.get('layerObj') == null) return false;
@@ -738,6 +749,13 @@ angular.module('webgisApp')
                     //Return true if features in the passed in layer should be considered for selection
                     return true;
                 }, mapviewer);
+            });
+
+            angular.element($window).bind('resize', function () {
+                $timeout(function(){
+                    var center = ol.proj.transform(mapviewer.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
+                    mapviewer.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+                }, 2);
             });
         });
 
@@ -1087,6 +1105,17 @@ angular.module('webgisApp')
                 }
             });
         }
+
+        $scope.wetlandListState = "";
+        $scope.wetlandListGlyph = "glyphicon-chevron-right";
+
+        $scope.toggleWetlandList = function() {
+            if (mapviewer.data.layersCount > 0) {
+                $scope.wetlandListState = $scope.wetlandListState === "" ? "expanded" : "";
+                $scope.wetlandListGlyph = $scope.wetlandListGlyph === "glyphicon-chevron-right" ?
+                    "glyphicon-chevron-left" : "glyphicon-chevron-right";
+            }
+        };
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {
         $scope.title = title;
@@ -1417,6 +1446,11 @@ angular.module('webgisApp')
           element.slider({})
         }
       };
+    })
+    .filter('colorFilter', function() {
+        return function(input) {
+            return input.replace(/-/g, ',');
+        }
     })
     .filter('reverse', function() {
       return function(items) {

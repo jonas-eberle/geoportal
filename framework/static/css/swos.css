@@ -289,3 +289,45 @@ button.btn-loadmore:hover {
     	height: -moz-calc(100% - 50px);
 	}
 }
+
+.legend-color {
+    width: 20px;
+}
+
+.legend-label {
+    font-size: 0.9em;
+    padding-left: 5px;
+}
+
+.toggle-button-wrapper {
+    display: block;
+    left: 0;
+    position: absolute;
+    top: 75px;
+}
+
+.toggle-button-wrapper.expanded {
+    left: 302px;
+}
+
+.toggle-button-wrapper > button {
+    background-color: white;
+    border: none;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    height: 25px;
+    width: 25px;
+}
+
+.toggle-button-wrapper > .badge-wrapper {
+    background-color: white;
+    height: 25px;
+}
+
+.map-controls-wrapper {
+    background-color:rgba(0,0,0,0.5);
+    height: 53px;
+    position: absolute;
+    right: 0;
+    width: 645px;
+    z-index: 1010;
+}

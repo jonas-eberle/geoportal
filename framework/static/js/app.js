@@ -25,7 +25,7 @@ angular.module('webgisApp', [
                     $http.defaults.headers.common["If-Modified-Since"] = "0";
 
 					// Continue
-					params = args.params || {}
+					params = args.params || {};
 					args = args || {};
 					var deferred = $q.defer(), url = this.API_URL + args.url, method = args.method || "GET", params = params, data = args.data || {};
 					// Fire the request, as configured.
