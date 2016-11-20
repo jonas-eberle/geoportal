@@ -346,7 +346,7 @@ angular.module('webgisApp')
     })
     .directive('swosLayerControls', function(){
         return {
-            restrict: "AE",
+            restrict: "E",
             scope: {
                 olLayer: "=olLayer"
             },

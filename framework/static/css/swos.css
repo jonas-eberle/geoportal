@@ -331,3 +331,8 @@ button.btn-loadmore:hover {
     width: 645px;
     z-index: 1010;
 }
+
+/* extends bootstrap-slider's .tooltip */
+.tooltip {
+    pointer-events: none;
+}
