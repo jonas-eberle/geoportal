@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 
 from django.apps import AppConfig
+from django.contrib.gis.geos import MultiPolygon, GEOSGeometry
 from geoserver.catalog import Catalog
 from django.forms.models import model_to_dict
+from django.core.exceptions import ObjectDoesNotExist
 import xml.etree.ElementTree as ET
 import pysftp
 from django.conf import settings
@@ -11,6 +13,7 @@ from time import asctime
 from gs_instance.sld import get_rgb_json
 import gs_instance.binding
 from gs_instance.metadata import generate_metadata_template
+from osgeo import ogr
 
 
 def check_sftp():
@@ -68,9 +71,7 @@ def add_layers(server_name='default'):
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
     print 'SEttings done'
 
-    data = gs_instance.binding.upload_data(cat, settings.DEST_FOLDER, settings.SLD_FOLDER, settings.PYCSW_URL)
-    for thing in data:
-        print thing['title']
+    data = gs_instance.binding.upload_data(cat, settings.DEST_FOLDER)
 
 
 def add_data_in_django():
@@ -224,3 +225,41 @@ def generate_metadata():
         template = ''.join([settings.METADATA_TEMPLATES,'template_',product.short_name,'.xml'])
         outpath = ''.join([settings.METADATA_FOLDER,layer.identifier,'.xml'])
         generate_metadata_template(meta, outpath, template)
+
+def update_wetland_geom(shapefile):
+
+    from swos.models import Wetland
+    from django.contrib.gis.gdal import DataSource
+    datasource = DataSource(shapefile)
+    print datasource
+    layer = datasource[0]
+    print layer.srs.srid
+    print layer.fields
+    new_wetlands = []
+    for feature in layer:
+        feature_dict = {}
+        feature_dict['name'] = feature.get('Site_Name'.encode('utf-8'))
+        feature_dict['geom'] = feature.geom.geos
+        feature_dict['description'] = feature.get('Wet_Hab'.encode('utf-8'))
+        feature_dict['country'] =  feature.get('Country'.encode('utf-8'))
+        feature_dict['geo_scale'] = feature.get('geo_scale'.encode('utf-8'))
+        feature_dict['size'] = feature.get('Area_Ha'.encode('utf-8'))
+        #short_name = models.CharField(max_length=200, blank=True, null=True)
+        feature_dict['partner'] = feature.get('link_part'.encode('utf-8'))
+        #print feature_dict['geom']
+
+        feature_dict['geom'] = GEOSGeometry(feature_dict['geom'],srid=3975)
+        print feature_dict['geom'].geom_type,feature_dict['name']
+        if not feature_dict['geom'].geom_type=='MultiPolygon':
+            feature_dict['geom'] = MultiPolygon([feature_dict['geom']])
+        print feature_dict['geom']
+        try:
+            print 'try'
+            Wetland.objects.get(name=feature_dict['name'])
+            Wetland.objects.filter(name=feature_dict['name']).update(**feature_dict)
+        except ObjectDoesNotExist:
+            print 'except'
+            new_wetlands.append(feature_dict['name'])
+            wetland = Wetland(**feature_dict)
+            wetland.save()
+    print new_wetlands
