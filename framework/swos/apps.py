@@ -1,16 +1,19 @@
 from __future__ import unicode_literals
 
 from django.apps import AppConfig
+from django.contrib.gis.geos import GEOSGeometry
 from geoserver.catalog import Catalog
 from django.forms.models import model_to_dict
+import datetime
 import xml.etree.ElementTree as ET
 import pysftp
 from django.conf import settings
 import os
 from time import asctime
-from gs_instance.sld import get_rgb_json
+from gs_instance.sld import get_rgb_json, make_sld_wq
 import gs_instance.binding
 from gs_instance.metadata import generate_metadata_template
+from gs_instance.ancillary import getNamespaces, finder
 
 
 def check_sftp():
@@ -68,9 +71,7 @@ def add_layers(server_name='default'):
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
     print 'SEttings done'
 
-    data = gs_instance.binding.upload_data(cat, settings.DEST_FOLDER, settings.SLD_FOLDER, settings.PYCSW_URL)
-    for thing in data:
-        print thing['title']
+    gs_instance.binding.upload_data(cat, settings.DEST_FOLDER)
 
 
 def add_data_in_django():
@@ -106,12 +107,13 @@ def add_data_in_django():
             workspace_name = gs_resource.workspace.name
             name = gs_resource.name
             print workspace_name
-            for (k,v) in {'LST':'LSTT','LULC':'LULC','LULCC':'LULCC','SWD':'SWD','SSM':'SSM','Water_Quality':'WQ','Watershed':'Watershed'}.items():
+            for (k,v) in {'LST':'LSTT','LULC':'_LULC_','LULCC_L':'LULCC','SWD':'SWD','SSM':'SSM','Water_Quality':'WQ','Watershed':'Watershed'}.items():
                 if v in name:
                     product_name = k
             xml = os.path.join(settings.DEST_FOLDER,workspace_name,product_name,name)+'.xml'
             try:
                 tree = ET.parse(xml)
+                #namespaces = getNamespaces(xml)
             except IOError as e:
                 print e
                 missing_meta.append([name, xml, e])
@@ -138,14 +140,16 @@ def add_data_in_django():
             legend_url = ''.join(
                 [wms_url, 'REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=',
                  workspace_name, ':', name, '&LEGEND_OPTIONS=forceLabels:on'])
-            if product_name in ['LULC', 'LULCC_L']:
+            if product_name in ['LULC', 'LULCC']:
                 sld = os.path.join(loc_folder, workspace_name, product_name,name)+'.sld'
                 shape_data['legend_colors'] = get_rgb_json(sld)
             elif product_name =='SWD':
                 sld=os.path.join(settings.SLD_FOLDER,'finals','SWD.sld')
                 shape_data['legend_colors'] =get_rgb_json(sld)
             shape_data['legend_url'] = legend_url
-
+            if product_name == 'Water_Quality':
+                wq_type = name.split('_')[2]
+            else: wq_type = ''
 
             root =tree.getroot()
             abstract = root.find('.//gmd:abstract',namespaces)
@@ -156,7 +160,20 @@ def add_data_in_django():
             shape_data['south'] = bounding_box[2]
             shape_data['north'] = bounding_box[3]
 
-            shape_data['date_begin'] = root.find('.//gmd:EX_TemporalExtent.//gml:beginPosition')
+            date_begin = root.find('.//gmd:EX_TemporalExtent//gml:beginPosition', namespaces).text
+            date_end = root.find('.//gmd:EX_TemporalExtent//gml:endPosition', namespaces).text
+            print date_begin, date_end
+            shape_data['date_begin'] = datetime.datetime.strptime(date_begin, '%Y-%m-%d').date()
+            shape_data['date_end'] = datetime.datetime.strptime(date_end, '%Y-%m-%d').date()
+
+            if product_name == 'Watershed':
+                date_string =''
+            elif product_name in ['LULC','SWD']:
+                date_string = str(shape_data['date_begin'].year)
+            elif product_name in ['LULCC_L','LST']:
+                date_string = ' '.join([str(shape_data['date_begin'].year), 'to', str(shape_data['date_end'].year)])
+            elif product_name in ['Water_Quality', 'SSM']:
+                date_string = shape_data['date_begin'].strftime('%Y %m')
 
             dataset_contact = root.find('.//gmd:contact',namespaces)
             dataset_email = dataset_contact.find('.//gmd:electronicMailAddress',namespaces)
@@ -168,18 +185,38 @@ def add_data_in_django():
                 print 'The contact information for', gs_instance,'is missing.'
                 continue
 
+            try:
+                wetland = Wetland.objects.get(short_name=wetland_name)
+            except Wetland.DoesNotExist as e:
+                missing_meta.append([name, wetland_name, e])
+                continue
 
-            wetland = Wetland.objects.get(short_name=wetland_name)
             shape_data['wetland'] = wetland
             product = Product.objects.get(short_name=product_name)
+            print product
+            print product_name
+            print product.name
+            print shape_data['date_begin']
             product.wetlands.add(wetland)
             shape_data['product'] = product
+            shape_data['title'] = ' '.join([product.name, wq_type, date_string, wetland.name, country])
+            print 'Title:', shape_data['title']
             layer = WetlandLayer(**shape_data)
             layer.save()
             print shape_data
             print asctime()
-    print missing_meta
+    for thing in missing_meta:
+        print thing
+    print len(missing_meta)
     return
+
+def slds_wq():
+
+    folders =finder(settings.DEST_FOLDER, ['*/Water_Quality*'],foldermode=2)
+    sld = os.path.join(settings.SLD_FOLDER,'WQ.sld')
+    for folder in folders:
+        for wq_type in ['CDOM','CHL','TSM','num']:
+            make_sld_wq(folder,wq_type,sld)
 
 def add_slds(server_name):
     """
@@ -192,7 +229,7 @@ def add_slds(server_name):
     geoserver_user = settings.GEOSERVER[server_name]['USER']
     geoserver_password = settings.GEOSERVER[server_name]['PASSWORD']
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
-    gs_instance.binding.add_styles(cat,settings.DEST_FOLDER,settings.SLD_FOLDER,reset=True)
+    gs_instance.binding.add_styles(cat,settings.DEST_FOLDER,settings.SLD_FOLDER,reset=False)
 
 
 def generate_metadata():
@@ -224,3 +261,50 @@ def generate_metadata():
         template = ''.join([settings.METADATA_TEMPLATES,'template_',product.short_name,'.xml'])
         outpath = ''.join([settings.METADATA_FOLDER,layer.identifier,'.xml'])
         generate_metadata_template(meta, outpath, template)
+
+def update_wetland_geom(shapefile):
+
+    from swos.models import Wetland
+    from django.contrib.gis.gdal import DataSource
+    from django.contrib.gis.geos import MultiPolygon, GEOSGeometry
+
+    datasource = DataSource(shapefile)
+    print datasource
+    layer = datasource[0]
+    print layer.srs
+    print layer.fields
+    new_wetlands = []
+    for feature in layer:
+        feature_dict = {}
+        feature_dict['name'] = feature.get('Site_Name'.encode('utf-8'))
+        feature_dict['geom'] = feature.geom.geos
+        feature_dict['description'] = feature.get('Wet_Hab'.encode('utf-8'))
+        feature_dict['country'] =  feature.get('Country'.encode('utf-8'))
+        feature_dict['geo_scale'] = feature.get('geo_scale'.encode('utf-8'))
+        feature_dict['size'] = feature.get('Area_Ha'.encode('utf-8'))
+        #short_name = models.CharField(max_length=200, blank=True, null=True)
+        feature_dict['partner'] = feature.get('link_part'.encode('utf-8'))
+        #print feature_dict['geom']
+
+        #print feature_dict['geom'].geom_type,feature_dict['name']
+        print feature_dict['geom']
+
+        feature_dict['geom'] = GEOSGeometry(feature_dict['geom'],srid=3975)
+        print feature_dict['geom']
+        if not feature_dict['geom'].geom_type=='MultiPolygon':
+            feature_dict['geom'] = MultiPolygon([feature_dict['geom']], srid=3975)
+        #feature_dict['geom'].srid = 3975
+        print feature_dict['geom']
+        if Wetland.objects.filter(name=feature_dict['name']):
+            Wetland.objects.filter(name=feature_dict['name']).update(**feature_dict)
+        else:
+            new_wetlands.append(feature_dict['name'])
+            wetland = Wetland(**feature_dict)
+            wetland.save()
+    print new_wetlands
+
+def month_publicable(month, product):
+    from swos.models import WetlandLayer, Product
+    prod = Product.objects.get(short_name=product)
+    layers = WetlandLayer.objects.filter(date_begin__month=month,product=prod)
+    layers.update(publishable=True)

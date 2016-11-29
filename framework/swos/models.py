@@ -317,15 +317,20 @@ class Wetland(models.Model):
         # Create grass mapset and location
         #subprocess.call('grass70 -e -c %s /home/ANPASSEN/grassdata/wetland_%s' % (files[0], self.id), shell=True)
         #subprocess.call('grass70 -e -c /home/ANPASSEN/grassdata/wetland_%s/landsat' % (self.id), shell=True) 
-    
+
     def geoss(self, start=1, max=10):
-        ex = self.geom.extent
-        query = {"where":{"south":ex[1],"west":ex[0],"north":ex[3],"east":ex[2]},"when":{"from":"1990-01-01","to":"2016-12-31"},"what":"","who":[],"sources":[],"searchId":"","start":start,"pageSize":max,"timeout":10000,"searchFields":"title,keyword","spatialRelation":"CONTAINS","termFrequency":"keyword,format,protocol,source","extensionRelation":""}
-        
-        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-        response = requests.post('http://api.eurogeoss-broker.eu/dab/services/api-rest/datasets', data=json.dumps(query), headers=headers)
-        #content = response.content
-        return response.json()
+        if os.path.isfile(settings.MEDIA_ROOT+'cache/geoss_'+str(self.id)+'.json') and forceUpdate == False:
+            with open(settings.MEDIA_ROOT+'cache/geoss_'+str(self.id)+'.json', 'r') as f:
+                layers = json.load(f)
+        else:
+            ex = self.geom.extent
+            query = {"where":{"south":ex[1],"west":ex[0],"north":ex[3],"east":ex[2]},"when":{"from":"1990-01-01","to":"2016-12-31"},"what":"","who":[],"sources":[],"searchId":"","start":start,"pageSize":max,"timeout":10000,"searchFields":"title,keyword","spatialRelation":"CONTAINS","termFrequency":"keyword,format,protocol,source","extensionRelation":""}
+
+            headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+            layers = requests.post('http://api.eurogeoss-broker.eu/dab/services/api-rest/datasets', data=json.dumps(query), headers=headers)
+            with open(settings.MEDIA_ROOT+'cache/geoss_'+str(self.id)+'.json','w') as f:
+                json.dump(layers, f)
+        return layers
     
     def panoramio(self, start=0, max=-1, forceUpdate=False):
         if os.path.isfile(settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json') and forceUpdate == False:
