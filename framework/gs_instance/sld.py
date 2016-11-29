@@ -11,6 +11,8 @@ import os.path
 import json
 import logging
 import csv
+from ancillary import finder
+import numpy as np
 
 
 log = logging.getLogger(__name__)
@@ -37,7 +39,52 @@ def get_distinct(shape, column):
         distincts.add(str(feature.GetField(column)))
     return distincts
 
-def make_sld(raster, sld):
+def make_sld_wq(folder, wq_type, sld):
+    temp_tree = ET.parse(sld)
+    root = temp_tree.getroot()
+    namespaces = {'se': 'http://www.opengis.net/se', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance', \
+                  'xlink': 'http://www.w3.org/1999/xlink', 'ogc': 'http://www.opengis.net/ogc',
+                  'sld': 'http://www.opengis.net/sld'}
+    raster_exts = ['*.tif', '*.tiff', '*.geotiff', '*.geotif']
+    unit={'CDOM':'m/l','CHL':'µg/l','TSM':'mg/l', 'num':'Observations'}
+    files = finder(folder, ['*'.join(['',wq_type,ext]) for ext in raster_exts])
+    maximum = 0
+    minimum = 500
+    for raster in files:
+
+        data = gdal.Open(raster)
+        #print dir(data)
+        maximum = max(data.GetRasterBand(1).GetMaximum(), maximum)
+        #print data.GetRasterBand(1).ComputeStatistics(False)
+        loc_min = data.GetRasterBand(1).GetMinimum()
+        if loc_min:
+            minimum = min(loc_min, minimum)
+    wetland = folder.split('/')[-2]
+    raster_name = ' '.join(['Water_Quality', wetland, wq_type])
+    print minimum,maximum
+    if root.attrib['version'] == '1.0.0':
+        sld_version = 'sld10'
+    elif root.attrib['version'] == '1.1.0':
+        sld_version = 'sld11'
+    print sld_version
+    userstyle_name = root.find('.//sld:UserStyle/sld:Name', namespaces)
+    userstyle_name.text = raster_name
+    color_map = root.find('.//sld:ColorMap', namespaces)
+
+    color_map[1].attrib['quantity'] = str(round(minimum,2))
+    color_map[1].attrib['label'] = ' '.join([str(round(minimum,2)),unit[wq_type].decode('utf-8')])
+    color_map[2].attrib['quantity'] = str(round((minimum+maximum)/2,2))
+    color_map[2].attrib['label'] = ' '.join([str(round((minimum+maximum)/2,2)),unit[wq_type].decode('utf-8')])
+    color_map[3].attrib['quantity'] = str(round(maximum,2))
+    color_map[3].attrib['label'] = ' '.join([str(round(maximum,2)),unit[wq_type].decode('utf-8')])
+
+    new_path = os.path.join(os.path.dirname(sld), '_'.join(['Water_Quality',wq_type,wetland,'.sld']))
+    temp_tree.write(new_path)
+
+    return sld_version
+
+
+def make_sld_lst(raster, sld):
     temp_tree = ET.parse(sld)
     root = temp_tree.getroot()
     namespaces = {'se': 'http://www.opengis.net/se', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance', \
@@ -59,16 +106,21 @@ def make_sld(raster, sld):
     print sld_version
     userstyle_name = root.find('.//sld:UserStyle/sld:Name', namespaces)
     userstyle_name.text = raster_name
+    color_map = root.find('.//sld:ColorMap', namespaces)
+    if os.path.basename(sld) == 'LST.sld':
+        print dir(color_map[0])
+        for i,color in enumerate(color_map[0:3]):
+            color.attrib['quantity'] = str(round(minimum/(i+1),2))
+            color.attrib['label'] = str(round(minimum/(i+1),2))+"°C".decode('utf-8')
 
-    color_map = root.find('.//sld:ColorMap',namespaces)
-    print dir(color_map[0])
-    for i,color in enumerate(color_map[0:3]):
-        color.attrib['quantity'] = str(round(minimum/(i+1),2))
-        color.attrib['label'] = str(round(minimum/(i+1),2))
-
-    for i, color in enumerate(color_map[4:8]):
-        color.attrib['quantity'] = str(round(maximum/(3-i),2))
-        color.attrib['label'] = str(round(maximum/(3-i),2))
+        for i, color in enumerate(color_map[4:8]):
+            color.attrib['quantity'] = str(round(maximum/(3-i),2))
+            color.attrib['label'] = str(round(maximum/(3-i),2))+"°C".decode('utf-8')
+    elif os.path.basename(sld) == 'WQ_num':
+        color_map[1].attrib[quantity]=str(round(maximum,2))
+        color_map[1].attrib['label'] =str(round(maximum,2)+ 'Observations')
+        color_map[2].attrib[quantity]=str(round(minimum,2))
+        color_map[2].attrib['label'] =str(round(minimum,2)+ 'Observations')
     new_path = os.path.splitext(raster)[0] + '.sld'
     temp_tree.write(new_path)
 
@@ -258,7 +310,7 @@ def sld_from_csv(csvpath, column_name, outfile):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    make_sld('/home/user/swos/data/Spain_Fuente-de-Piedra/LST/SWOS_LSTtrend_Spain_FtedePiedra_JJA_2000_2015.tif','/home/user/swos/SLDs/finals/LST.sld')
+    make_sld_lst('/home/user/swos/data/Spain_Fuente-de-Piedra/LST/SWOS_LSTtrend_Spain_FtedePiedra_JJA_2000_2015.tif', '/home/user/swos/SLDs/finals/LST.sld')
     exit()
 
     path = "/home/user/swos/MAES_legend_fix.csv"

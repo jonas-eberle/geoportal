@@ -11,7 +11,7 @@ import requests
 import argparse
 from metadata import add_linkage, upload_cswt
 import xml.etree.ElementTree as ET
-from sld import crop_sld, get_rgb_json, make_sld
+from sld import crop_sld, get_rgb_json, make_sld_lst
 import getpass
 from ancillary import finder
 import logging
@@ -76,7 +76,8 @@ def upload_data(cat, folder):
             if product in ['LULC','LULCC','LST']:
                 style = name
             elif product == 'Water_Quality':
-                style = '_'.join([product,wetland])
+                wq_type = name.split('_')[2]
+                style = '_'.join([product, wq_type, wetland])
             else:
                 style = product
 
@@ -264,13 +265,12 @@ def add_styles(cat, folder, sld_folder,reset=False,individual=True):
         name = os.path.basename(base)
         dirs = os.path.dirname(base).split('/')
         product = dirs[-1]
-        if product == 'LULC':
+        if product in ['LULC','Water_Quality']:
             name_list = name.split('_')
             product_style = '_'.join([name_list[1], name_list[2]])
         else:
             product_style = product
         country_wetland = dirs[-2]
-
         # Check the sld_templates folder for products
         templates = map(os.path.basename, finder(os.path.join(sld_folder, 'templates/'), ['*.sld']))
         templates = [os.path.splitext(temp)[0] for temp in templates]
@@ -278,7 +278,6 @@ def add_styles(cat, folder, sld_folder,reset=False,individual=True):
         # Check the sld_folder/finals for slds.
         finals = map(os.path.basename, finder(os.path.join(sld_folder, 'finals/'), ['*.sld']))
         finals = [os.path.splitext(temp)[0] for temp in finals]
-        print product_style.upper()
         # Make a specific .sld file from the template and integrate it into the geoserver
         if product_style in templates:
             log.debug('template')
@@ -288,8 +287,8 @@ def add_styles(cat, folder, sld_folder,reset=False,individual=True):
                 log.debug(str(shape))
                 if product in ['LULC','LULCC_L']:
                    sld_version =  crop_sld(shape, os.path.join(sld_folder, 'templates', product_style.upper()) + '.sld')
-                elif product == 'LST':
-                    sld_version = make_sld(shape,os.path.join(sld_folder, 'templates',product_style)+'.sld')
+                elif product_style in ['LST']:
+                    sld_version = make_sld_lst(shape, os.path.join(sld_folder, 'templates', product_style) + '.sld')
             sld = ''.join([base, '.sld'])
             root = ET.parse(sld).getroot()
             if root.attrib['version'] == '1.0.0':
