@@ -429,4 +429,11 @@ $(document).ready(function() {
 		openEffect	: 'none',
 		closeEffect	: 'none'
 	});
+	bootbox.dialog({
+		title:'Welcome to the SWOS Geoportal', 
+		message: $('#welcome_text').html(), 
+		backdrop: true, 
+		onEscape:true, 
+		buttons: {close:{label:'Close'}}
+	});
 });

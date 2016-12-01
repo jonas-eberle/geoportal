@@ -336,3 +336,28 @@ button.btn-loadmore:hover {
 .tooltip {
     pointer-events: none;
 }
+
+.ol-scale-line {
+	right: 0 !important;
+    left: auto !important;
+    bottom: 18px !important;
+}
+
+.ol-mouse-position {
+	right: 100px !important;
+    left: auto;
+    bottom: 19px;
+    height: 20px;
+    padding-top: 3px;
+    font-size: 0.8em;
+}
+
+#disclaimer {
+	bottom: 40px;
+    height: auto;
+    padding: 5px;
+    color: white;
+    text-align: center;
+    width: 100%;
+	font-size: 1.1em;
+}

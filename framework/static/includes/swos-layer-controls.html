@@ -38,8 +38,8 @@
         <img ng-src="{{ layer.legend }}" alt="Layer legend" style="max-width:100%"/>
     </a>
     <table ng-if="layer.legendColors">
-        <tr ng-repeat="(color, label) in layer.legendColors">
-            <td class="legend-color" style="background-color:rgb({{ color|colorFilter }});">&nbsp;</td>
+        <tr ng-repeat="(label, color) in layer.legendColors">
+            <td class="legend-color" style="background-color: {{color}}; /*rgb({{ color|colorFilter }});*/">&nbsp;</td>
             <td class="legend-label">{{ label }}</td>
         </tr>
     </table>

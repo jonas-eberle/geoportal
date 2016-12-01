@@ -145,10 +145,12 @@ class LayerColors(APIView):
         layer = self.get_object(pk)
         import json
         data = json.loads(layer.legend_colors)
-        rgbData = dict()
-        for key in data:
-            rgbData[self.hex_to_rgb(key)] = data[key]
-        return Response(rgbData)
+        return Response(data)
+        # old
+        #rgbData = dict()
+        #for key in data:
+        #    rgbData[self.hex_to_rgb(key)] = data[key]
+        #return Response(rgbData)
     
     
     

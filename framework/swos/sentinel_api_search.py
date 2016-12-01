@@ -50,7 +50,7 @@ class SentinelDownloader(object):
 
         """
         print('Set geometries:')
-        print(geometries)
+        #print(geometries)
         if isinstance(geometries, list):
             self.__geometries = geometries
 
@@ -120,9 +120,18 @@ class SentinelDownloader(object):
 
         for geom in self.__geometries:
             print('===========================================================')
-            url = self._format_url(geom, platform, date_filtering, **keywords)
-            print('Search URL: %s' % url)
-            scenes = self._search_request(url)
+            index = 0
+            scenes = []
+            while True:
+                url = self._format_url(index, geom, platform, date_filtering, **keywords)
+                print('Search URL: %s' % url)
+                subscenes = self._search_request(url)
+                if len(subscenes) > 0:
+                    print('found %s scenes on page %s' % (len(subscenes), index//100+1))
+                    scenes += subscenes
+                    index += 100
+                if len(subscenes) < 100:
+                    break
             print '%s scenes after initial search' % len(scenes)
             if len(scenes) > 0:
                 #scenes = self._filter_existing(scenes, self.__download_dir)
@@ -139,6 +148,8 @@ class SentinelDownloader(object):
         dates = []
         for scene in self.__scenes:
             dates.append(int(scene['beginposition'][0:4]))
+        if len(dates) == 0:
+            return {'count': count, 'begindate': 0, 'enddate': 0}
         return {'count': count, 'begindate': min(dates), 'enddate': max(dates)}
     
     def get_summary_by_year(self):
@@ -167,7 +178,7 @@ class SentinelDownloader(object):
         for scene in self.__scenes:
             print(scene['title'])
 
-    def _format_url(self, wkt_geometry, platform, date_filtering, **keywords):
+    def _format_url(self, startindex, wkt_geometry, platform, date_filtering, **keywords):
         """Format the search URL based on the arguments
 
         Args:
@@ -189,8 +200,8 @@ class SentinelDownloader(object):
             filters += ' AND (%s:%s)' % (kw, keywords[kw])
 
         url = os.path.join(self.__esa_api_url,
-                           'search?format=json&rows=100000&q=%s%s%s%s' %
-                           (platform, date_filtering, query_area, filters))
+                           'search?format=json&rows=100&start=%s&q=%s%s%s%s' %
+                           (startindex, platform, date_filtering, query_area, filters))
         return url
 
     def _search_request(self, url):
@@ -213,6 +224,11 @@ class SentinelDownloader(object):
 
         except requests.exceptions.RequestException as exc:
             print('Error: {}'.format(exc))
+            return []
+        
+        except ValueError as exc:
+            print('Error: {}'.format(exc))
+            print(content.text)
             return []
 
     def _parse_json(self, obj):

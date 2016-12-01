@@ -337,6 +337,7 @@ class Wetland(models.Model):
             with open(settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json', 'r') as f:
                 photos = json.load(f)
         else:
+            return {'photos':[]}
             ex = self.geom.extent
             import pynoramio as py
             photos = py.Pynoramio().get_from_area(ex[1], ex[0], ex[3], ex[2], 'square')
