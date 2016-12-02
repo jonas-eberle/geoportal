@@ -34,13 +34,13 @@
     </ul>
 </div>
 <div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend" ng-hide="!layer.showLegend">
-    <a ng-if="layer.legendColors === undefined" href="{{ layer.legend }}" target="_blank">
+    <a ng-if="!layer.legend_colors" href="{{ layer.legend }}" target="_blank">
         <img ng-src="{{ layer.legend }}" alt="Layer legend" style="max-width:100%"/>
     </a>
-    <table ng-if="layer.legendColors">
-        <tr ng-repeat="(label, color) in layer.legendColors">
-            <td class="legend-color" style="background-color: {{color}}; /*rgb({{ color|colorFilter }});*/">&nbsp;</td>
-            <td class="legend-label">{{ label }}</td>
+    <table ng-if="layer.legend_colors">
+        <tr ng-repeat="item in layer.legend_colors">
+            <td class="legend-color" style="background-color:{{item.color}};opacity:{{item.opacity}};">&nbsp;</td>
+            <td class="legend-label">{{ item.label }}</td>
         </tr>
     </table>
 </div>
