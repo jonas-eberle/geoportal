@@ -12,6 +12,7 @@ import json
 import logging
 import csv
 from ancillary import finder
+from operator import itemgetter
 import numpy as np
 
 
@@ -46,7 +47,7 @@ def make_sld_wq(folder, wq_type, sld):
                   'xlink': 'http://www.w3.org/1999/xlink', 'ogc': 'http://www.opengis.net/ogc',
                   'sld': 'http://www.opengis.net/sld'}
     raster_exts = ['*.tif', '*.tiff', '*.geotiff', '*.geotif']
-    unit={'CDOM':'m/l','CHL':'µg/l','TSM':'mg/l', 'num':'Observations'}
+    unit={'CDOM':'m⁻¹','CHL':'µg/l','TSM':'mg/l', 'num':'Observations'}
     files = finder(folder, ['*'.join(['',wq_type,ext]) for ext in raster_exts])
     maximum = 0
     minimum = 500
@@ -222,26 +223,42 @@ def add_sld(sld, cat):
     layer._set_default_style(name)
     cat.save(layer)
 
-def get_rgb_json(sld):
+def get_rgb_json(sld,product_name):
     namespaces = {'se': 'http://www.opengis.net/se', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance', \
                   'xlink': 'http://www.w3.org/1999/xlink', 'ogc': 'http://www.opengis.net/ogc', 'sld': 'http://www.opengis.net/sld'}
     tree = ET.parse(sld)
     root = tree.getroot()
-    rgbs={}
+    rgbs=[]
     print sld
     for rule in root.findall('.//se:Rule', namespaces):
-        print rule[0].tag
+        rgb_dict={}
         if 'RasterSymbolizer' in rule[0].tag:
             print 'r'
-            color_map = rule.find('.//se:ColorMap',namespaces)
+            color_map = rule.find('.//sld:ColorMap',namespaces)
+            #print color_map
             if color_map.attrib['type'] == 'values':
                 for entry in color_map:
-                    rgbs[entry.attrib['label']] = entry.attrib['color']
+                    rgb_dict = {}
+                    rgb_dict['label'] = entry.attrib['label']
+                    rgb_dict['color'] = entry.attrib['color']
+                    rgb_dict['opacity'] = entry.attrib['opacity']
+                    if rgb_dict['opacity']!='0':
+                        rgbs.append(rgb_dict)
         else:
-            title = rule.find('.//se:Title', namespaces).text
-            print title
-            rgbs[title] = rule.find('.//se:Fill/se:SvgParameter', namespaces).text
-    print rgbs
+            #print 'else'
+            rgb_dict['label'] = rule.find('.//se:Title', namespaces).text.replace(':','')
+            svgs = rule.findall('.//se:Fill/se:SvgParameter', namespaces)
+            #print svgs
+            rgb_dict['opacity'] = '1'
+            for svg in svgs:
+                if svg.attrib['name'] == 'fill':
+                    rgb_dict['color'] = svg.text
+                elif svg.attrib['name'] == 'fill-opacity':
+                    rgb_dict['opacity'] = svg.text
+            rgbs.append(rgb_dict)
+
+    if product_name in ['LULC','LULCC']:
+        rgbs.sort(key=itemgetter('label'))
     return json.dumps(rgbs)
 
 def sld_from_csv(csvpath, column_name, outfile):
