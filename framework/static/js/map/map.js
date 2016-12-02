@@ -457,6 +457,7 @@ angular.module('webgisApp')
                     this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
+                    $rootScope.$broadcast("wetlandList.changed");
                     
                     var timeIndex = jQuery.inArray(id, this.layersTime);
                     if (timeIndex > -1) {
@@ -1031,10 +1032,11 @@ angular.module('webgisApp')
         }
         $scope.removeLayer = function(id, index, django_id) {
             mapviewer.removeLayer(id, index);
-			if (django_id !== null) {
-				document.getElementById("layer_vis_"+django_id).checked = "";
-			}
-        }
+            if (django_id !== null) {
+                document.getElementById("layer_vis_"+django_id).checked = "";
+            }
+            $scope.toggleWetlandList();
+        };
         $scope.zoomToLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             var layerObj = olLayer.get('layerObj');
@@ -1110,12 +1112,19 @@ angular.module('webgisApp')
         $scope.wetlandListGlyph = "glyphicon-chevron-right";
 
         $scope.toggleWetlandList = function() {
-            if (mapviewer.data.layersCount > 0) {
-                $scope.wetlandListState = $scope.wetlandListState === "" ? "expanded" : "";
-                $scope.wetlandListGlyph = $scope.wetlandListGlyph === "glyphicon-chevron-right" ?
-                    "glyphicon-chevron-left" : "glyphicon-chevron-right";
+            // expand list if, and only if, there are layers on the map and the list is collapsed
+            if ((mapviewer.data.layersCount > 0) && ($scope.wetlandListState === "")) {
+                $scope.wetlandListState = "expanded";
+                $scope.wetlandListGlyph = "glyphicon-chevron-left";
+            } else {
+                $scope.wetlandListState = "";
+                $scope.wetlandListGlyph = "glyphicon-chevron-right";
             }
         };
+
+        $scope.$on("mapviewer.layerremoved", function() {
+            $scope.toggleWetlandList();
+        });
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {
         $scope.title = title;
