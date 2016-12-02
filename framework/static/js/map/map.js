@@ -900,7 +900,13 @@ angular.module('webgisApp')
         });
 
         $scope.addLayerToMap = function(layer) {
-            mapviewer.addLayer(layer);
+            var olLayer = mapviewer.addLayer(layer);
+            var layerObj = olLayer.get('layerObj');
+            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
+            if (layerObj.epsg > 0) {
+                extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
+            }
+            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
         }
 
         $scope.showMetadata = function(layer) {
@@ -1040,12 +1046,15 @@ angular.module('webgisApp')
         $scope.zoomToLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             var layerObj = olLayer.get('layerObj');
-            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
-            if (layerObj.epsg > 0) {
+            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north].map(parseFloat);
+            if (layerObj["epsg"] && layerObj.epsg > 0) {
                 extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
+            } else {
+                extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
             }
+
             mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
-        }
+        };
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
                 $('#loading-div').show();
