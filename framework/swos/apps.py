@@ -12,7 +12,7 @@ import os
 from time import asctime
 from gs_instance.sld import get_rgb_json, make_sld_wq
 import gs_instance.binding
-from gs_instance.metadata import generate_metadata_template
+from gs_instance.metadata import generate_metadata_template, upload_cswt
 from gs_instance.ancillary import getNamespaces, finder
 
 
@@ -74,7 +74,7 @@ def add_layers(server_name='default'):
     gs_instance.binding.upload_data(cat, settings.DEST_FOLDER)
 
 
-def add_data_in_django():
+def add_data_in_django(workspace=None):
     """
     Add the layer in the earthcare geoserver into the Django instance.
     This function assumes, that the data is also on the local machine in the DEST_FOLDER
@@ -91,7 +91,7 @@ def add_data_in_django():
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
     loc_folder = settings.DEST_FOLDER
     url = settings.METADATA_URL
-    gs_resources = cat.get_resources()
+    gs_resources = cat.get_resources(workspace=None)
     missing_meta = []
     for gs_resource in gs_resources:
         name = gs_resource.name
@@ -142,12 +142,12 @@ def add_data_in_django():
                  workspace_name, ':', name, '&LEGEND_OPTIONS=forceLabels:on'])
             if product_name in ['LULC', 'LULCC']:
                 sld = os.path.join(loc_folder, workspace_name, product_name,name)+'.sld'
-                shape_data['legend_colors'] = get_rgb_json(sld)
+                shape_data['legend_colors'] = get_rgb_json(sld,product_name)
             elif product_name =='SWD':
                 sld=os.path.join(settings.SLD_FOLDER,'finals','SWD.sld')
-                shape_data['legend_colors'] =get_rgb_json(sld)
+                shape_data['legend_colors'] =get_rgb_json(sld,product_name)
             shape_data['legend_url'] = legend_url
-            if product_name == 'Water_Quality':
+            if product_name in ['Water_Quality', 'LULC']:
                 wq_type = name.split('_')[2]
             else: wq_type = ''
 
@@ -181,8 +181,9 @@ def add_data_in_django():
             try:
                 dataset_contact = Contact.objects.get(email=dataset_email)
                 shape_data['dataset_contact_new'] =dataset_contact
-            except:
+            except Contact.DoesNotExist as e:
                 print 'The contact information for', gs_instance,'is missing.'
+                missing_meta.append([name, dataset_email,e])
                 continue
 
             try:
@@ -240,13 +241,15 @@ def generate_metadata():
     """
     from swos.models import WetlandLayer
 
-    layers = WetlandLayer.objects.all()
+    layers = WetlandLayer.objects.filter(publishable=True)
+    print len(layers)
     for layer in layers:
         meta = model_to_dict(layer)
         product = layer.product
         meta['product'] = product.name
         print layer.title
-
+        meta['date_begin'] = str(meta['date_begin'])
+        meta['date_end'] = str(meta['date_end'])
         data_contact = layer.dataset_contact_new
         meta['data_contact_org'] = data_contact.organisation
         meta['data_contact_email'] = data_contact.email
@@ -260,7 +263,9 @@ def generate_metadata():
             meta['equi_scale']="20"
         template = ''.join([settings.METADATA_TEMPLATES,'template_',product.short_name,'.xml'])
         outpath = ''.join([settings.METADATA_FOLDER,layer.identifier,'.xml'])
-        generate_metadata_template(meta, outpath, template)
+        meta = generate_metadata_template(meta, outpath, template,save=True)
+        print meta
+        #upload_cswt(outpath,settings.PYCSW_URL)
 
 def update_wetland_geom(shapefile):
 

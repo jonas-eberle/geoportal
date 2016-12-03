@@ -11,7 +11,7 @@ var fill = new ol.style.Fill({
 var popup;
 var stationPopup;
 
-var mapColors = {};
+//var mapColors = {};
 
 angular.module('webgisApp')
     .service('mapviewer', function mapviewer(djangoRequests, $rootScope, $modal) {
@@ -425,15 +425,15 @@ angular.module('webgisApp')
                     $('#slider').show();
                 }
 
-                if (mapColors[layer.django_id] === undefined) {
-                    djangoRequests.request({
-                        'method': "GET",
-                        'url'   : '/swos/wetland/layer/' + layer.django_id + '/colors.json'
-                    }).then(function (data) {
-                        mapColors[layer.django_id] = data;
-                        layer.legendColors = data;
-                    });
-                }
+                // if (mapColors[layer.django_id] === undefined) {
+                //     djangoRequests.request({
+                //         'method': "GET",
+                //         'url'   : '/swos/wetland/layer/' + layer.django_id + '/colors.json'
+                //     }).then(function (data) {
+                //         mapColors[layer.django_id] = data;
+                //         layer.legendColors = data;
+                //     });
+                // }
 
                 this.layersMeta.unshift(layer);
                 this.data.layersCount = this.data.layersCount+1;
@@ -452,7 +452,7 @@ angular.module('webgisApp')
                 var olLayer = this.layers[id];
                 var layerIndex = $.inArray(olLayer, this.map.getLayers().getArray());
                 if (layerIndex >= 0) {
-                    mapColors[olLayer.get("layerObj").django_id] = undefined;
+                    //mapColors[olLayer.get("layerObj").django_id] = undefined;
                     this.layersMeta.splice(index, 1);
                     this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);

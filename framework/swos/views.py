@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.http import Http404
 
@@ -46,11 +47,14 @@ class WetlandDetail(APIView):
         
         for layer in layers:
             if layer.product:
+                layer_data = LayerSerializer(layer).data
+                if layer_data['legend_colors']:
+                    layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
                 if layer.product.id not in temp_products_layers:
                     temp_products[layer.product.id] = layer.product
-                    temp_products_layers[layer.product.id] = [LayerSerializer(layer).data]
+                    temp_products_layers[layer.product.id] = [layer_data]
                 else:
-                    temp_products_layers[layer.product.id].append(LayerSerializer(layer).data)
+                    temp_products_layers[layer.product.id].append(layer_data)
             if layer.indicator:
                 if layer.indicator.id not in temp_indicators_layers:
                     temp_indicators[layer.indicator.id] = layer.indicator

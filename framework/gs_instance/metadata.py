@@ -188,8 +188,10 @@ def upload_cswt(xml, url='http://localhost:8000/'):
     with open(xml) as f:
         metadata = f.read()
         input = input.format(metadata=metadata)
+
         # todo: Why doesn't it need authentification?
         r=requests.post(url, input)
+        print r.text
 
 
 def delete_duplicate_link(xml):
@@ -260,7 +262,7 @@ def metadata_from_template(shapefile, template_xml):
     xml_path = os.path.splitext(shapefile)[0]+'.xml'
     template_tree.write(xml_path)
 
-def generate_metadata_template(meta, outpath,template, update=True):
+def generate_metadata_template(meta, outpath,template, update=True,save=False):
     """
     Generate metadata from a template, the template folder is defined in the settings.py
     :param meta: A dictionary with the relevant metadata
@@ -446,10 +448,11 @@ def generate_metadata_template(meta, outpath,template, update=True):
     keywords[1].find(".//gmd:MD_Keywords/gmd:keyword/gco:CharacterString",
                      namespaces).text = "surface soil moisture"
 
+    if save:
+        with open(outpath, "w") as outfile:
+            outfile.write(ET.tostring(tree))
 
-    #todo Add the metadata directly into the pycsw. Only if the data is publishable.
-    with open(outpath, "w") as outfile:
-        outfile.write(ET.tostring(tree))
+    return tree
 
 
 if __name__ == '__main__':
