@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webgisApp')
-	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal){
+	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope){
         $scope.wetlands = [];
 		$scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
@@ -329,6 +329,7 @@ angular.module('webgisApp')
 						var index = mapviewer.getIndexFromLayer(layer.title);
 						console.log('index: '+index);
 						mapviewer.removeLayer(layerId, index);
+						$rootScope.$broadcast("mapviewer.layerremoved");
 						//this.setVisible(false);
 
                         // clear the id mapping (layer.id refers to the django_id here)

@@ -196,6 +196,10 @@
                             </div>
                             <div class="item_catalog">
                                 <div class="item_title">{{ layer.title }}</div>
+								<div ng-if="!layer.django_id" class="item_icon">
+									<button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
+									<button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="removeLayer(layer.id, $index, null)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
+								</div>
                             </div>
                         </div>
 

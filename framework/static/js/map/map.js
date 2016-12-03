@@ -457,6 +457,7 @@ angular.module('webgisApp')
                     this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
+                    $rootScope.$broadcast("wetlandList.changed");
                     
                     var timeIndex = jQuery.inArray(id, this.layersTime);
                     if (timeIndex > -1) {
@@ -899,7 +900,13 @@ angular.module('webgisApp')
         });
 
         $scope.addLayerToMap = function(layer) {
-            mapviewer.addLayer(layer);
+            var olLayer = mapviewer.addLayer(layer);
+            var layerObj = olLayer.get('layerObj');
+            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
+            if (layerObj.epsg > 0) {
+                extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
+            }
+            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
         }
 
         $scope.showMetadata = function(layer) {
@@ -1031,19 +1038,23 @@ angular.module('webgisApp')
         }
         $scope.removeLayer = function(id, index, django_id) {
             mapviewer.removeLayer(id, index);
-			if (django_id !== null) {
-				document.getElementById("layer_vis_"+django_id).checked = "";
-			}
-        }
+            if (django_id !== null) {
+                document.getElementById("layer_vis_"+django_id).checked = "";
+            }
+            $scope.toggleWetlandList();
+        };
         $scope.zoomToLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             var layerObj = olLayer.get('layerObj');
-            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
-            if (layerObj.epsg > 0) {
+            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north].map(parseFloat);
+            if (layerObj["epsg"] && layerObj.epsg > 0) {
                 extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
+            } else {
+                extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
             }
+
             mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
-        }
+        };
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
                 $('#loading-div').show();
@@ -1110,12 +1121,19 @@ angular.module('webgisApp')
         $scope.wetlandListGlyph = "glyphicon-chevron-right";
 
         $scope.toggleWetlandList = function() {
-            if (mapviewer.data.layersCount > 0) {
-                $scope.wetlandListState = $scope.wetlandListState === "" ? "expanded" : "";
-                $scope.wetlandListGlyph = $scope.wetlandListGlyph === "glyphicon-chevron-right" ?
-                    "glyphicon-chevron-left" : "glyphicon-chevron-right";
+            // expand list if, and only if, there are layers on the map and the list is collapsed
+            if ((mapviewer.data.layersCount > 0) && ($scope.wetlandListState === "")) {
+                $scope.wetlandListState = "expanded";
+                $scope.wetlandListGlyph = "glyphicon-chevron-left";
+            } else {
+                $scope.wetlandListState = "";
+                $scope.wetlandListGlyph = "glyphicon-chevron-right";
             }
         };
+
+        $scope.$on("mapviewer.layerremoved", function() {
+            $scope.toggleWetlandList();
+        });
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {
         $scope.title = title;
