@@ -457,7 +457,7 @@ angular.module('webgisApp')
                     this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
-                    $rootScope.$broadcast("wetlandList.changed");
+                    $rootScope.$broadcast("mapviewer.layerremoved");
                     
                     var timeIndex = jQuery.inArray(id, this.layersTime);
                     if (timeIndex > -1) {
@@ -958,7 +958,7 @@ angular.module('webgisApp')
             window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
         }
     })
-    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests) {
+    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope) {
         $scope.layersMeta = mapviewer.layersMeta;
         $scope.slider = []
         $scope.newLayerIndex = -1;
@@ -1042,6 +1042,16 @@ angular.module('webgisApp')
                 document.getElementById("layer_vis_"+django_id).checked = "";
             }
             $scope.toggleWetlandList();
+        };
+        $scope.removeAllLayers = function () {
+            while (mapviewer.layersMeta.length > 0) {
+                var layer = mapviewer.layersMeta[0];
+                mapviewer.removeLayer(layer.id, 0);
+                if (layer["django_id"] !== undefined && layer.django_id !== null) {
+                    document.getElementById("layer_vis_"+layer.django_id).checked = "";
+                }
+            }
+            $rootScope.$broadcast("mapviewer.alllayersremoved");
         };
         $scope.zoomToLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
