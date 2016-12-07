@@ -171,7 +171,7 @@
 
         </div>
 
-		<div ng-controller="MapCurrentLayersCtrl">
+		<div class="layer-list" ng-controller="MapCurrentLayersCtrl">
             <div id="current" ng-show="wetlandListState">
 
                 <!--
@@ -183,6 +183,12 @@
                    -->
                 <!-- List GROUP -->
                 <!--<div ng-show="!layersMeta.length">No layers added to the map!</div>-->
+                <div class="layer-list-top-bar">
+                    <div class="div-button" ng-click="removeAllLayers()">
+                        <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                        <div class="div-button-text">Remove all layers</div>
+                    </div>
+                </div>
                 <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item, type)">
                     <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer"
                          dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move">
@@ -312,6 +318,10 @@
 					<!-- Products -->
 					<tab class="flaticon-layers" heading="">
 						<div ng-if="value.data.products.length == 0">No products available!</div>
+                        <div class="div-button" style="margin-bottom: 5px;margin-top: 5px;" ng-click="removeAllLayers()">
+                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                            <div class="div-button-text">Remove all layers</div>
+                        </div>
 			            <ul class="items products">
 			            	
 							<accordion close-others="false">
