@@ -19,7 +19,7 @@
 	<!-- Jonas CSS -->
 	<link href="{% static "css/jonas.css" %}" rel="stylesheet">
 	<link href="{% static "lib/nsPopover.css" %}" rel="stylesheet">
-	<link href="{% static "css/swos.css" %}?v=20161130" rel="stylesheet">
+	<link href="{% static "css/swos.css" %}?v=20161207" rel="stylesheet">
 	<link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -260,9 +260,9 @@
 
             </div>
 			
-			<div role="tabpanel" class="tab-pane geospatial_data" ng-if="value!=null" ng-class="{active: activeTab==1, noImage: value.data.image == ''}" id="wetland_opened">
+			<div role="tabpanel" class="tab-pane geospatial_data" ng-if="value!=null" ng-class="{active: activeTab==1, noImage: value.data.image == null}" id="wetland_opened">
 				<!--<h2>{{value.name}}</h2>-->
-				<div ng-if="value.data.image!=''" class="wetland-image">
+				<div ng-if="value.data.image!=null" class="wetland-image">
 				  <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}"><img src="{{value.data.image}}" width="100%"/></a>
 				  <div class="panoramio-wapi-tos wetland_image">
 						<div class="desc">{{value.data.image_desc}}</div>
@@ -381,7 +381,7 @@
 						
 						<div class="note">
 							<strong>Please note: </strong><br />
-							Official satellite data archives have been queried once on 2016-09-08. Regular updates are planned. 
+							Official satellite data archives have been queried once on 2016-11-30. Regular updates are planned. 
 							<br /><br />
 							So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!
 							<br /><br /> 
@@ -484,9 +484,9 @@
 
     <script src="{% static "js/app.js" %}"></script>
     <script src="{% static "js/auth/auth.js" %}"></script>
-    <script src="{% static "js/map/map.js" %}?v=20161204"></script>
-    <script src="{% static "js/csw/csw.js" %}?v=20161204"></script>
-	<script src="{% static "js/swos/wetlands.js" %}?v=20161204"></script>
+    <script src="{% static "js/map/map.js" %}?v=20161207"></script>
+    <script src="{% static "js/csw/csw.js" %}?v=20161207"></script>
+	<script src="{% static "js/swos/wetlands.js" %}?v=20161207"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 
