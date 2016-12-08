@@ -282,6 +282,7 @@ def update_wetland_geom(shapefile):
     for feature in layer:
         feature_dict = {}
         feature_dict['name'] = feature.get('Site_Name'.encode('utf-8'))
+        feature_dict['short_name'] = feature.get('Short_Name'.encode('utf-8'))
         feature_dict['geom'] = feature.geom.geos
         feature_dict['description'] = feature.get('Wet_Hab'.encode('utf-8'))
         feature_dict['country'] =  feature.get('Country'.encode('utf-8'))
@@ -300,8 +301,8 @@ def update_wetland_geom(shapefile):
             feature_dict['geom'] = MultiPolygon([feature_dict['geom']], srid=3975)
         #feature_dict['geom'].srid = 3975
         print feature_dict['geom']
-        if Wetland.objects.filter(name=feature_dict['name']):
-            Wetland.objects.filter(name=feature_dict['name']).update(**feature_dict)
+        if Wetland.objects.filter(short_name=feature_dict['short_name']):
+            Wetland.objects.filter(short_name=feature_dict['name']).update(**feature_dict)
         else:
             new_wetlands.append(feature_dict['name'])
             wetland = Wetland(**feature_dict)
