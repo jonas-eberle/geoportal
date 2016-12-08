@@ -20,6 +20,10 @@ log = logging.getLogger(__name__)
 # todo: Add this function into Vector?
 
 
+def clamp(x):
+  return max(0, min(x, 255))
+
+
 def get_distinct(shape, column):
     """
     Get the distinct entries in the column of the shape.
@@ -219,6 +223,7 @@ def add_sld(sld, cat):
 
     with open(sld) as f:
         cat.create_style(name, f.read(), overwrite=False, style_format="sld11")
+    #todo: Why do I do this?
     layer = cat.get_layer(name)
     layer._set_default_style(name)
     cat.save(layer)
@@ -313,30 +318,39 @@ def sld_from_csv(csvpath, column_name, outfile):
         reader = csv.DictReader(csvfile, delimiter=';')
         for row in reader:
             print row
-            red = hex(int(row['Red']))[2:]
-            green = hex(int(row['Green']))[2:]
-            blue = hex(int(row['Blue']))[2:]
-
-            rgb_code = ''.join(['#',red,green,blue])
-            ruletext_row = ruletext.format(class_name=row['Class Name'],column_value=row['Class ID'],rgb_code=rgb_code,column=column_name)
+            red = int(row['Red'])
+            green = int(row['Green'])
+            blue = int(row['Blue'])
+            column=column_name+str(max_mod(int(row['Class ID'])))
+            rgb_code = "#{0:02x}{1:02x}{2:02x}".format(clamp(red), clamp(green), clamp(blue))
+            ruletext_row = ruletext.format(class_name=row['Class Name'],column_value=row['Class ID'],rgb_code=rgb_code,column=column)
+            ruletext_row = ruletext_row.decode('utf_8')
             print ruletext_row
             rule = ET.fromstring(ruletext_row)
             featureStyle.append(rule)
-
+    print outfile
     new_sld.write(outfile)
+
+def max_mod(number):
+    exp=0
+    while number:
+        exp+=1
+        number=number//10
+    return exp
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    make_sld_lst('/home/user/swos/data/Spain_Fuente-de-Piedra/LST/SWOS_LSTtrend_Spain_FtedePiedra_JJA_2000_2015.tif', '/home/user/swos/SLDs/finals/LST.sld')
-    exit()
+    #make_sld_lst('/home/user/swos/data/Spain_Fuente-de-Piedra/LST/SWOS_LSTtrend_Spain_FtedePiedra_JJA_2000_2015.tif', '/home/user/swos/SLDs/finals/LST.sld')
+    #exit()
 
-    path = "/home/user/swos/MAES_legend_fix.csv"
+    path = "/home/user/swos/MAES_legend_fix_and.csv"
     sld_vec = "/home/user/swos/SLDs/templates/LULC_MAES.sld"
     out_ras = '/home/user/swos/SLDs/finals/SWD.sld'
     out = '/home/user/swos/LULC_MAES.sld'
     #print get_rgb_json(out_ras)
     #print get_rgb_json(sld_vec)
-    column = "MAES_L2"
+    column = "MAES_L"
     sld_from_csv(path, column, out)
     exit()
     sld = '/home/user/swos/data/Spain_Fuente-de-Piedra/LULCC_L/SWOS_LULCC_L_Fuente-de-Piedra_1975-1989.shp'
