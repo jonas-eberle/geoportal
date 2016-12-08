@@ -3,7 +3,7 @@ import django
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','webgis.settings')
 from apps import add_layers, check_sftp, add_data_in_django,add_slds, generate_metadata
-from apps import update_wetland_geom,slds_wq, month_publicable
+from apps import update_wetland_geom,slds_wq, month_publicable,set_default_style
 import logging
 from gs_instance.sld import get_rgb_json
 from gs_instance.ancillary import finder
@@ -18,8 +18,8 @@ django.setup()
 #slds_wq()
 #month_publicable('08','Water_Quality')
 #check_sftp()
-#add_slds('earthcare')
-add_data_in_django()
+#add_slds('default')
+add_data_in_django('Spain_Fuente-de-Piedra')
 #add_slds('default')
 #add_layers('default')
 #generate_metadata()

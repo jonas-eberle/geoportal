@@ -91,7 +91,7 @@ def add_data_in_django(workspace=None):
     cat = Catalog(url, username=geoserver_user, password=geoserver_password)
     loc_folder = settings.DEST_FOLDER
     url = settings.METADATA_URL
-    gs_resources = cat.get_resources(workspace=None)
+    gs_resources = cat.get_resources(workspace=workspace)
     missing_meta = []
     for gs_resource in gs_resources:
         name = gs_resource.name
@@ -140,7 +140,7 @@ def add_data_in_django(workspace=None):
             legend_url = ''.join(
                 [wms_url, 'REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=',
                  workspace_name, ':', name, '&LEGEND_OPTIONS=forceLabels:on'])
-            if product_name in ['LULC', 'LULCC']:
+            if product_name in ['LULC', 'LULCC_L']:
                 sld = os.path.join(loc_folder, workspace_name, product_name,name)+'.sld'
                 shape_data['legend_colors'] = get_rgb_json(sld,product_name)
             elif product_name =='SWD':
@@ -313,3 +313,16 @@ def month_publicable(month, product):
     prod = Product.objects.get(short_name=product)
     layers = WetlandLayer.objects.filter(date_begin__month=month,product=prod)
     layers.update(publishable=True)
+
+def set_default_style(server_name, filelist, style_name):
+    url = settings.GEOSERVER[server_name]['URL']
+    geoserver_user = settings.GEOSERVER[server_name]['USER']
+    geoserver_password = settings.GEOSERVER[server_name]['PASSWORD']
+    cat = Catalog(url, username=geoserver_user, password=geoserver_password)
+    for shape in filelist:
+        base, type = os.path.splitext(shape)
+        name = os.path.basename(base)
+        layer = cat.get_layer(name)
+        print layer, style_name
+        layer._set_default_style(style_name)
+        cat.save(layer)
