@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webgisApp')
-	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope){
+	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies){
         $scope.wetlands = [];
 		$scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
@@ -320,6 +320,21 @@ angular.module('webgisApp')
 		            }
 					mapviewer.map.getView().fitExtent(layerExtent, mapviewer.map.getSize());
 				}
+
+                // if this the first time the user added a second layer to map, notify them
+                // about it. using cookies to prevent the dialog from popping up everytime.
+                if (Object.keys($scope.layerIdMap).length > 1
+                    && ! $cookies.hasNotifiedAboutLayers
+                ) {
+                    bootbox.alert({
+                        message: "More than one layer has been added to the map. This means " +
+                        "that layers are visualized in combination, i.e. the layer added most " +
+                        "recently is displayed on top.",
+                        callback: function() {
+                            $cookies.hasNotifiedAboutLayers = true;
+                        }
+                    });
+                }
             } else {
 				var layers = mapviewer.map.getLayers().getArray();
 				$.each(layers, function(){
