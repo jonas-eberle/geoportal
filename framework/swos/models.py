@@ -407,6 +407,21 @@ class WetlandLayer(Layer):
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
     indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
 
+    @property
+    def alternate_title(self):
+        if self.product.short_name in ['Water_Quality', 'LULC']:
+            wq_type = self.identifier.split('_')[2]
+        else:
+            wq_type = ''
+        if self.product.short_name == 'Watershed':
+            date_string = ''
+        elif self.product.short_name in ['LULC', 'SWD']:
+            date_string = str(self.date_begin.year)
+        elif self.product.short_name in ['LULCC_L', 'LST']:
+            date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
+        elif self.product.short_name in ['Water_Quality', 'SSM']:
+            date_string = self.date_begin.strftime('%Y/%m')
+        return ' '.join([self.product.name,wq_type, date_string])
 #import layers
 #layers.models.Layer = WetlandLayer
 
