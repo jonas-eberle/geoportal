@@ -123,6 +123,10 @@ class Layer(models.Model):
     def __unicode__(self):
         return u"%s" %(self.identifier)
 
+    @property
+    def alternate_title(self):
+        return self.title
+
     def cache(self):
         if self.ogc_type == 'SOS':
             from owslib.sos import SensorObservationService
@@ -216,7 +220,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
 
 
 # Metadata serializer to output metadata related information from a given layer
