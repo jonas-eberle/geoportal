@@ -335,7 +335,7 @@
 											<div ng-repeat="layer in product.layers">
 												<input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="changeVisibility(layer, $event);" id="layer_vis_{{layer.id}}" />
 												<input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="changeVisibility(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
-                                                <label for="layer_vis_{{layer.id}}"> {{layer.title}}</label>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
                                                 <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" ol-layer="layers[layerIdMap[layer.id]]"></swos-layer-controls>
 											</div>
 										</div>
