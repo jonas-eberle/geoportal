@@ -343,8 +343,12 @@ angular.module('webgisApp')
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
                 mapviewer.removeLayer(layer.id, 0);
-                if (layer["django_id"] !== undefined && layer.django_id !== null) {
-                    document.getElementById("layer_vis_"+layer.django_id).checked = "";
+                var checkbox = undefined;
+                if (layer["django_id"] !== undefined
+                    && layer.django_id !== null
+                    && (checkbox = document.getElementById("layer_vis_"+layer.django_id))
+                ) {
+                    checkbox.checked = "";
                 }
             }
             $scope.layerIdMap = {};
