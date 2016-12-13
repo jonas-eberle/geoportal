@@ -600,12 +600,16 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout){
+    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies){
 
 		// $scope.legendLayers = [];
 		
 		$scope.$on('mapviewer.map_created', function ($broadCast, data) {
-            popup = new ol.Overlay({element: document.getElementById('popup')});
+            if ($cookies.hideCookieNote) {
+				$scope.hideCookieNote =  true;
+			}
+			
+			popup = new ol.Overlay({element: document.getElementById('popup')});
             mapviewer.map.addOverlay(popup);
             stationPopup = new ol.Overlay({element: document.getElementById('stationPopup'),offset: [0, -5]});
             mapviewer.map.addOverlay(stationPopup);
@@ -763,6 +767,12 @@ angular.module('webgisApp')
         $scope.$on('djangoAuth.logged_in', function ($broadCast, data) {
             mapviewer.initialize(mapId, 'map', false);
         });
+		
+		$scope.hideCookieNote = false;
+		$scope.closeCookieNote = function() {
+			$cookies.hideCookieNote = true;
+			$scope.hideCookieNote =  true;
+		}
 
         $scope.zoomIn = function() {
             //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() / 2);

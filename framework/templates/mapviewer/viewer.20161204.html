@@ -19,7 +19,7 @@
 	<!-- Jonas CSS -->
 	<link href="{% static "css/jonas.css" %}" rel="stylesheet">
 	<link href="{% static "lib/nsPopover.css" %}" rel="stylesheet">
-	<link href="{% static "css/swos.css" %}?v=20161207" rel="stylesheet">
+	<link href="{% static "css/swos.css" %}?v=20161213" rel="stylesheet">
 	<link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -160,6 +160,8 @@
             </div>
 			
 			<div id="disclaimer" class="map-controls-wrapper"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
+			
+			<div id="cookienote" class="map-controls-wrapper" ng-hide="hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="closeCookieNote()">Okay</button></div>
 			
 			<div id="map_legend">
 				
@@ -484,9 +486,9 @@
 
     <script src="{% static "js/app.js" %}"></script>
     <script src="{% static "js/auth/auth.js" %}"></script>
-    <script src="{% static "js/map/map.js" %}?v=20161207"></script>
+    <script src="{% static "js/map/map.js" %}?v=20161214"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20161207"></script>
-	<script src="{% static "js/swos/wetlands.js" %}?v=20161207"></script>
+	<script src="{% static "js/swos/wetlands.js" %}?v=20161213"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 
