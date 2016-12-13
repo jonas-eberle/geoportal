@@ -326,12 +326,19 @@ angular.module('webgisApp')
                 if (Object.keys($scope.layerIdMap).length > 1
                     && ! $cookies.hasNotifiedAboutLayers
                 ) {
-                    bootbox.alert({
+                    bootbox.dialog({
+                        title: "Warning",
                         message: "More than one layer has been added to the map. This means " +
                         "that layers are visualized in combination, i.e. the layer added most " +
                         "recently is displayed on top.",
-                        callback: function() {
-                            $cookies.hasNotifiedAboutLayers = true;
+                        closeButton: false,
+                        buttons: {
+                            "Do not show again": function() {
+                                $cookies.hasNotifiedAboutLayers = true;
+                            },
+                            cancel: {
+                                label: "Close"
+                            }
                         }
                     });
                 }
