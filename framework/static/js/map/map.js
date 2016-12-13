@@ -457,7 +457,7 @@ angular.module('webgisApp')
                     this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
-                    $rootScope.$broadcast("mapviewer.layerremoved");
+                    $rootScope.$broadcast("mapviewer.layerremoved", olLayer.get("layerObj")["django_id"] || null);
                     
                     var timeIndex = jQuery.inArray(id, this.layersTime);
                     if (timeIndex > -1) {
@@ -1038,10 +1038,13 @@ angular.module('webgisApp')
         }
         $scope.removeLayer = function(id, index, django_id) {
             mapviewer.removeLayer(id, index);
-            if (django_id !== null) {
-                document.getElementById("layer_vis_"+django_id).checked = "";
+            var checkbox = undefined;
+            if (django_id !== undefined
+                && django_id !== null
+                && (checkbox = document.getElementById("layer_vis_"+django_id))
+            ) {
+                checkbox.checked = "";
             }
-            $scope.toggleWetlandList();
         };
         $scope.removeAllLayers = function () {
             while (mapviewer.layersMeta.length > 0) {
@@ -1134,19 +1137,27 @@ angular.module('webgisApp')
         $scope.wetlandListState = "";
         $scope.wetlandListGlyph = "glyphicon-chevron-right";
 
-        $scope.toggleWetlandList = function() {
-            // expand list if, and only if, there are layers on the map and the list is collapsed
-            if ((mapviewer.data.layersCount > 0) && ($scope.wetlandListState === "")) {
-                $scope.wetlandListState = "expanded";
-                $scope.wetlandListGlyph = "glyphicon-chevron-left";
-            } else {
+        $scope.toggleWetlandList = function(action) {
+            /*
+            close the list, when:
+            - there are no layers in the map
+            - OR user clicked the arrow-button to close the list
+            - OR the list was closed and a layer has been removed
+             */
+            if ((mapviewer.data.layersCount < 1)
+                || (($scope.wetlandListState === "expanded") && (action === "click"))
+                || (($scope.wetlandListState === "") && (action === "change"))
+            ) {
                 $scope.wetlandListState = "";
                 $scope.wetlandListGlyph = "glyphicon-chevron-right";
+            } else {
+                $scope.wetlandListState = "expanded";
+                $scope.wetlandListGlyph = "glyphicon-chevron-left";
             }
         };
 
         $scope.$on("mapviewer.layerremoved", function() {
-            $scope.toggleWetlandList();
+            $scope.toggleWetlandList("change");
         });
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {

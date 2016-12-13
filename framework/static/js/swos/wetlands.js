@@ -342,6 +342,7 @@ angular.module('webgisApp')
                 }
             } else {
 				var layers = mapviewer.map.getLayers().getArray();
+                // NOTE: iterating over an array here whilst deleting elements from this array!
 				$.each(layers, function(){
 					if (layer.title == this.get('name')) {
 						var layerId = this.get('layerObj').id;
@@ -349,14 +350,12 @@ angular.module('webgisApp')
 						var index = mapviewer.getIndexFromLayer(layer.title);
 						console.log('index: '+index);
 						mapviewer.removeLayer(layerId, index);
-						$rootScope.$broadcast("mapviewer.layerremoved");
 						//this.setVisible(false);
 
-                        // clear the id mapping (layer.id refers to the django_id here)
-                        $scope.layerIdMap[layer.id] = undefined;
-						return true;
+                        // stop iterating over all the layers
+                        return false;
 					}
-				})
+				});
             }
 		};
 		$scope.removeAllLayers = function () {
@@ -376,6 +375,12 @@ angular.module('webgisApp')
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             $scope.layerIdMap = {};
+        });
+
+        $scope.$on("mapviewer.layerremoved", function($broadcast, id) {
+            if (id !== undefined && id !== null) {
+                $scope.layerIdMap[id] = undefined;
+            }
         });
 	})
 	.directive('repeatDone', function() {
