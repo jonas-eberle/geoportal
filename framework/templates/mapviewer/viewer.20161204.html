@@ -59,6 +59,20 @@
 <!--      <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>-->
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>
 
+<script type="text/javascript">
+  var _paq = _paq || [];
+  // tracker methods like "setCustomDimension" should be called before "trackPageView"
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//portal.swos-service.eu/piwik/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+
   </head>
   <body>
 
@@ -277,7 +291,7 @@
 						
 				<tabset justified="true">
 					<!-- Overview -->
-					<tab class="flaticon-bars" heading="" tooltop="Overview" tooltip-append-to-body="true">
+					<tab class="flaticon-bars" heading="" tooltop="Overview" tooltip-append-to-body="true" select="trackWetlandTab('overview')">
 						<h4>Wetland specifications</h4>
 						<div class="properties">
 							<strong>Country: </strong>{{value.country}}<br>
@@ -297,7 +311,7 @@
 					</tab>
 					
 					<!-- Indicators -->
-					<tab class="flaticon-business" heading="">
+					<tab class="flaticon-business" heading="" select="trackWetlandTab('indicators')">
 			            <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
 						<!--
 						<ul class="items indicators">
@@ -318,7 +332,7 @@
 			        </tab>
 					
 					<!-- Products -->
-					<tab class="flaticon-layers" heading="">
+					<tab class="flaticon-layers" heading="" select="trackWetlandTab('products')">
 						<div ng-if="value.data.products.length == 0">No products available!</div>
                         <div class="div-button" style="margin-bottom: 5px;margin-top: 5px;" ng-click="removeAllLayers()">
                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
@@ -327,8 +341,11 @@
 			            <ul class="items products">
 			            	
 							<accordion close-others="false">
-							 <accordion-group ng-repeat="product in value.data.products"  heading="{{product.name}}">
-							 	
+							 <accordion-group ng-repeat="product in value.data.products"  heading="{{product.name}}" is-open="product.open">
+							 	<accordion-heading ng-click="trackProduct(product.name, product.open);">
+							 		{{product.name}}
+									<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+								</accordion-heading>
 								<div class="options">
 									{{product.description}}<br /><br />
 									<div class="products_datasets">
@@ -353,13 +370,21 @@
 			        </tab>
 					
 					<!-- Data -->
-					<tab class="flaticon-space-satellite-station" heading="">
+					<tab class="flaticon-space-satellite-station" heading="" select="trackWetlandTab('satellitedata')">
 						<accordion close-others="false">
-							 <accordion-group heading="Yearly coverage by sensor" is-open="true">
-							 	<a href="/swos/swos/media/cache/satdata_{{value.id}}.png" class="fancybox"><img src="/swos/swos/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
+							 <accordion-group is-open="satdata_image">
+							 	<accordion-heading>
+							 		Yearly coverage by sensor
+									<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_image, 'glyphicon-chevron-right': !satdata_image}"></i>
+								</accordion-heading>
+								<a href="/swos/swos/media/cache/satdata_{{value.id}}.png" ng-click="trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img src="/swos/swos/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
 							 </accordion-group>
-							 <accordion-group heading="Total amount by sensor">
-							 	<table class="table data">
+							 <accordion-group is-open="satdata_table">
+							 	<accordion-heading>
+							 		Total amount by sensor
+									<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_table, 'glyphicon-chevron-right': !satdata_table}"></i>
+								</accordion-heading>
+								<table class="table data">
 									<tr>
 										<!--<th>&nbsp;</th>-->
 										<th>Sensor</th>
@@ -392,10 +417,10 @@
 			        </tab>
 					
 					<!-- Photos -->
-					<tab class="flaticon-technology-1" heading="">
+					<tab class="flaticon-technology-1" heading="" select="trackWetlandTab('photos')">
 						<div style="/*height: 185px;overflow-y: auto;*/">
 							<span ng-if="!value.pictures">Loading...</span>
-							<a ng-repeat="picture in value.pictures.photos" class="fancybox" rel="gallery1" data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg" data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)" href="{{picture.photo_url}}" target="_blank"><img src="{{picture.photo_file_url}}" alt="{{picture.photo_title}} ({{picture.owner_name}})" title="{{picture.photo_title}} ({{picture.owner_name}})" style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
+							<a ng-repeat="picture in value.pictures.photos" ng-click="trackShowImage('http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg', '{{picture.photo_title}')" class="fancybox" rel="gallery1" data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg" data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)" href="{{picture.photo_url}}" target="_blank"><img src="{{picture.photo_file_url}}" alt="{{picture.photo_title}} ({{picture.owner_name}})" title="{{picture.photo_title}} ({{picture.owner_name}})" style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
 						</div>
 						<div class="panoramio-wapi-tos" style="width: 396px; color: black !important; background-color: white !important;">
 							<a href="http://www.panoramio.com" target="_top"><img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
@@ -408,16 +433,16 @@
 					</tab>
 					
 					<!-- Videos -->
-					<tab class="flaticon-technology" heading="">
+					<tab class="flaticon-technology" heading="" select="trackWetlandTab('videos')">
 						<div>
 							<span ng-if="!value.videos">Loading...</span>
-							<a ng-repeat="video in value.videos" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
+							<a ng-repeat="video in value.videos" ng-click="trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
 						</div>
 						<button ng-if="!allVideos" type="button" class="btn btn-loadmore" ng-click="loadMoreVideos()">Load more videos</button>						
 					</tab>
 					
 					<!-- External databases -->
-					<tab class="flaticon-technology-2" heading="">
+					<tab class="flaticon-technology-2" heading="" select="trackWetlandTab('databases')">
 						No external databases registered to this portal
 					</tab>
 			    </tabset>
@@ -488,7 +513,7 @@
     <script src="{% static "js/auth/auth.js" %}"></script>
     <script src="{% static "js/map/map.js" %}?v=20161214"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20161207"></script>
-	<script src="{% static "js/swos/wetlands.js" %}?v=20161213"></script>
+	<script src="{% static "js/swos/wetlands.js" %}?v=20161214"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 

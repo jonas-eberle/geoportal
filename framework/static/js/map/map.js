@@ -1084,7 +1084,11 @@ angular.module('webgisApp')
         };
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
-                $('#loading-div').show();
+                try {
+					_paq.push(['trackEvent', 'Show Metadata', layer.title]);
+				} catch (err) {}
+				
+				$('#loading-div').show();
                 djangoRequests.request({
                     'method': "GET",
                     'url': '/layers/detail/' + layer.django_id + '.json'

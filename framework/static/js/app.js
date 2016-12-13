@@ -107,6 +107,11 @@ angular.module('webgisApp', [
     })
     .controller('InfoCtrl', function ($scope, $modal) {
         $scope.info = function () {
+			try {
+				_paq.push(['setCustomUrl', '/info']);
+				_paq.push(['setDocumentTitle', 'Info']);
+				_paq.push(['trackPageView']);
+			} catch (err) {}
            var modalInstance = $modal.open({
 				controller: 'ModalInstanceCtrl',
 				template: $('#info_text').html(),
@@ -119,7 +124,12 @@ angular.module('webgisApp', [
 			});
         };
 		$scope.help = function () {
-           var modalInstance = $modal.open({
+           try {
+				_paq.push(['setCustomUrl', '/help']);
+				_paq.push(['setDocumentTitle', 'Help']);
+				_paq.push(['trackPageView']);
+		   } catch (err) {}
+		   var modalInstance = $modal.open({
 				controller: 'ModalInstanceCtrl',
 				templateUrl: subdir+'/static/help/help.html',
 				backdrop: 'static',
@@ -128,6 +138,13 @@ angular.module('webgisApp', [
                         title: function() {return '';}
                 }
 			});
+        };
+		$scope.imprint = function () {
+           try {
+				_paq.push(['setCustomUrl', '/imprint']);
+				_paq.push(['setDocumentTitle', 'Imprint']);
+				_paq.push(['trackPageView']);
+		   } catch (err) {}
         };
     })
 	.directive('modalDraggable', function () {

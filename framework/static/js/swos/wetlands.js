@@ -175,8 +175,61 @@ angular.module('webgisApp')
 		}
 		
 		$scope.value = null;
+		$scope.satdata_table = false;
+		$scope.satdata_image = true;
+		
+		$scope.trackWetlandTab = function(type) {
+			try {
+				_paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);
+				_paq.push(['setDocumentTitle', $scope.value.name+'/'+type]);
+				_paq.push(['trackPageView']);
+			} catch (err) {}
+		}
+		
+		$scope.trackProduct = function(product, open) {
+			if (open) {
+				try {
+					_paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/products/'+product]);
+					_paq.push(['setDocumentTitle', $scope.value.name+'/products/'+product]);
+					_paq.push(['trackPageView']);
+				} catch (err) {}
+			}
+		}
+		
+		$scope.trackAddLayer = function(layer) {
+			try {
+				_paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/products/'+layer.product_name+'/'+layer.alternate_title]);
+				_paq.push(['setDocumentTitle', 'Map: '+layer.title]);
+				_paq.push(['trackPageView']);
+			} catch (err) {}
+		}
+		
+		$scope.trackShowSatdataImage = function(image) {
+			try {
+				_paq.push(['trackEvent', 'Show Satdata Image', $scope.value.name, image]);
+			} catch (err) {}
+		}
+		
+		$scope.trackShowImage = function(url, title) {
+			try {
+				_paq.push(['trackEvent', 'Show Photo', $scope.value.name, url]);
+			} catch (err) {}
+		}
+		
+		$scope.trackShowVideo = function(url) {
+			try {
+				_paq.push(['trackEvent', 'Show Video', $scope.value.name, url]);
+			} catch (err) {}
+		}
 		
 		$scope.selectWetland = function(wetland) {
+			/*
+			try {
+				_paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
+				_paq.push(['setDocumentTitle', wetland.name]);
+				_paq.push(['trackPageView']);
+			} catch (err) {}
+			*/
 			$scope.activeTab = 1; //wetland.id;
 			//$('#sidebar-tabs li').removeClass('active');
 			//$('#sidebar .tab-content .tab-pane').removeClass('active');
@@ -261,7 +314,7 @@ angular.module('webgisApp')
 		
 		$scope.addLayer = function(product) {
 			if (product.layers.length > 0) {
-				mapviewer.addLayer(product.layers[0])
+				mapviewer.addLayer(product.layers[0]);
 			} else {
 				alert('No layer found');
 			}
@@ -273,6 +326,7 @@ angular.module('webgisApp')
 		$scope.changeVisibility = function(layer, $event) {
 			var checkbox = $event.target;
             if (checkbox.checked) {
+				$scope.trackAddLayer(layer);
 				var layerObj = mapviewer.addLayer(layer).get("layerObj");
                 // store the mapping between django_id and hash-like id
                 $scope.layerIdMap[layerObj.django_id] = layerObj.id;
@@ -312,7 +366,6 @@ angular.module('webgisApp')
 				};
 				
 				var intersection = turf.intersect(mapJSON, layerJSON);
-				console.log(intersection);
 				if (typeof(intersection) == 'undefined') {
 					// zoom to new layer
 					if (layer.epsg > 0) {

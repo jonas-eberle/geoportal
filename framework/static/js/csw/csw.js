@@ -24,6 +24,18 @@ angular.module('webgisApp')
                     bootbox.alert('No search text given!');
                     return false;
                 }
+				
+				try {
+					_paq.push(['trackSiteSearch',
+					    // Search keyword searched for
+					    text,
+					    // Search category selected in your search engine. If you do not need this, set to false
+					    "Mapsearch",
+					    // Number of results on the Search results page. Zero indicates a 'No Result Search Keyword'. Set to false if you don't know
+					    false
+					]);
+				} catch(err) {}
+				
                 var searchData = {"text":text};
                 $('#loading-div').show();
                 djangoRequests.request({
