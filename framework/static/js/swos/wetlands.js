@@ -323,9 +323,7 @@ angular.module('webgisApp')
 
                 // if this the first time the user added a second layer to map, notify them
                 // about it. using cookies to prevent the dialog from popping up everytime.
-                if (Object.keys($scope.layerIdMap).length > 1
-                    && ! $cookies.hasNotifiedAboutLayers
-                ) {
+                if (mapviewer.layersMeta.length > 1 && ! $cookies.hasNotifiedAboutLayers) {
                     bootbox.dialog({
                         title: "Warning",
                         message: "More than one layer has been added to the map. This means " +
