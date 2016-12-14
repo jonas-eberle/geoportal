@@ -384,7 +384,7 @@ button.btn-loadmore:hover {
     font-size: 0.8em;
 }
 
-#disclaimer {
+#disclaimer, #cookienote {
 	bottom: 40px;
     height: auto;
     padding: 5px;
@@ -392,4 +392,15 @@ button.btn-loadmore:hover {
     text-align: center;
     width: 100%;
 	font-size: 1.1em;
+}
+
+#cookienote {
+	bottom: 0;
+}
+
+#cookienote button {
+	height: 21px;
+    font-size: 0.8em;
+    background-color: #336a5c;
+    margin-left: 10px;
 }
