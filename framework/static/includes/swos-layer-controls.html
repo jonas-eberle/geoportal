@@ -39,7 +39,7 @@
     </a>
     <table ng-if="layer.legend_colors">
         <tr ng-repeat="item in layer.legend_colors">
-            <td class="legend-color" style="background-color:{{item.color}};opacity:{{item.opacity}};">&nbsp;</td>
+            <td class="legend-color" ng-attr-style="background-color:{{item.color}};opacity:{{item.opacity}};">&nbsp;</td>
             <td class="legend-label">{{ item.label }}</td>
         </tr>
     </table>
