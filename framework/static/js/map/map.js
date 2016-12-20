@@ -1173,6 +1173,10 @@ angular.module('webgisApp')
         $scope.$on("mapviewer.layerremoved", function() {
             $scope.toggleWetlandList("change");
         });
+
+        $scope.toggleLayerControls = function($event) {
+            $(".layer-control-wrapper").toggle();
+        };
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {
         $scope.title = title;
@@ -1500,6 +1504,7 @@ angular.module('webgisApp')
       return {
         restrict: 'A',
         link: function(scope, element) {
+          // create the slider (i.e. turn the associated input into a slider)
           element.slider({})
         }
       };
