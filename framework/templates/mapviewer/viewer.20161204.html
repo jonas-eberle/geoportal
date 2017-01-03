@@ -214,7 +214,7 @@
                                 </div>
                                 <div class="layer-control-wrapper" style="display: none;">
                                     <div class="item_desc">
-                                        <input transparency-slider class="slider slider-{{layer.id}}" ng-model="mapviewer.data.slider[layer.id]" ng-change="changeOpacity(layer.id, $index)" data-slider-id="slider_left_{{layer.id}}" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100"/>
+                                        <slider class="slider" ng-model="sliderValues[layer.id]" min="0" max="100" step="1" on-slide="changeOpacity(layer.id)" on-stop-slide="changeOpacity(layer.id)" style="width:95%;"></slider>
                                         <div  ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate" ng-change="updateLayer(layer.id, layer.selectedDate)" ng-options="o as o for o in layer.dates"></select></div>
                                     </div>
                                     <div class="item_icon">
@@ -527,6 +527,7 @@
 	<script src="{% static "lib/nsPopover.js" %}"></script>
     <script src="{% static "lib/bootbox.min.js" %}"></script>
     <script src="{% static "lib/bootstrap-slider.min.js" %}"></script>
+    <script src="{% static "lib/angular-bootstrap-slider.js" %}"></script>
 	<script src="{% static "lib/jquery-drags.js" %}"></script>
 
 	<!-- Add fancyBox -->

@@ -21,6 +21,7 @@ angular.module('webgisApp')
             'layersTime': [],
             'layersMeta': [],
             'datacatalog': [],
+            'sliderValues': {},
 
             'currentBaseLayerIndex': -1,
             'center': null,
@@ -413,6 +414,7 @@ angular.module('webgisApp')
                 }
                 layer.name = layer.title;
                 layer.id = Math.random().toString(36).substring(2, 15);
+                this.sliderValues[layer.id] = 100;
 				layer.showLegend = true;
                 this.layers[layer.id] = olLayer;
                 if (layer.ogc_time == true) {
@@ -970,9 +972,8 @@ angular.module('webgisApp')
     })
     .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope) {
         $scope.layersMeta = mapviewer.layersMeta;
-        $scope.slider = []
         $scope.newLayerIndex = -1;
-        $scope.mapviewerdata = mapviewer.data
+        $scope.sliderValues = mapviewer.sliderValues;
         $scope.prepareIndex = function(event, index, item, type) {
             $scope.newLayerIndex = index;
             return item;
@@ -1042,10 +1043,10 @@ angular.module('webgisApp')
                 olLayer.setVisible(false);
             }
         }
-        $scope.changeOpacity = function(id, index) {
+        $scope.changeOpacity = function(id) {
             var olLayer = mapviewer.getLayerById(id);
-            olLayer.setOpacity(parseFloat($scope.slider[id])/100);
-        }
+            olLayer.setOpacity(parseInt($scope.sliderValues[id])/100);
+        };
         $scope.removeLayer = function(id, index, django_id) {
             mapviewer.removeLayer(id, index);
             var checkbox = undefined;
@@ -1087,7 +1088,7 @@ angular.module('webgisApp')
                 try {
 					_paq.push(['trackEvent', 'Show Metadata', layer.title]);
 				} catch (err) {}
-				
+
 				$('#loading-div').show();
                 djangoRequests.request({
                     'method': "GET",
@@ -1499,15 +1500,6 @@ angular.module('webgisApp')
             });
         }
 
-    })
-    .directive('transparencySlider', function () {
-      return {
-        restrict: 'A',
-        link: function(scope, element) {
-          // create the slider (i.e. turn the associated input into a slider)
-          element.slider({})
-        }
-      };
     })
     .filter('colorFilter', function() {
         return function(input) {

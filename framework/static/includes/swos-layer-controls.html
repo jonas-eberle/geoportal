@@ -1,8 +1,6 @@
 <div class="item_catalog" style="margin-left:0;" ng-controller="MapCurrentLayersCtrl">
     <div class="item_desc">
-        <input transparency-slider class="slider" ng-model="slider[layer.id]"
-               ng-change="changeOpacity(layer.id, $index)" data-slider-id="slider_{{ layer.id }}" type="text"
-               data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100" style="width:95%;"/>
+        <slider class="slider" ng-model="sliderValues[layer.id]" min="0" max="100" step="1" style="width:95%;" on-slide="changeOpacity(layer.id)" on-stop-slide="changeOpacity(layer.id)"></slider>
         <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate"
                                                        ng-change="updateLayer(layer.id, layer.selectedDate)"
                                                        ng-options="o as o for o in layer.dates"></select></div>
