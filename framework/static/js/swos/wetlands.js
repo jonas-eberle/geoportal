@@ -323,7 +323,7 @@ angular.module('webgisApp')
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
         $scope.layerIdMap = {};
         $scope.layers = mapviewer.layers;
-		$scope.changeVisibility = function(layer, $event) {
+		$scope.addLayerToMap = function(layer, $event) {
 			var checkbox = $event.target;
             if (checkbox.checked) {
 				$scope.trackAddLayer(layer);
@@ -447,9 +447,11 @@ angular.module('webgisApp')
             scope: {
                 olLayer: "=olLayer"
             },
+            transclude: true,
             controller: function($scope) {
                 // unveil our layer object (as we actually get handed over an ol3 layer object)
                 $scope.layer = $scope.olLayer.get("layerObj");
+                $scope.mcl = $scope.$parent.$parent;
             },
             templateUrl: "../../static/includes/swos-layer-controls.html"
         }
