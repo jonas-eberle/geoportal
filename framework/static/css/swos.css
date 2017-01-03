@@ -335,7 +335,7 @@ button.btn-loadmore:hover {
     display: block;
     left: 0;
     position: absolute;
-    top: 75px;
+    top: 74px;
 }
 
 .toggle-button-wrapper.expanded {
@@ -353,6 +353,16 @@ button.btn-loadmore:hover {
 .toggle-button-wrapper > .badge-wrapper {
     background-color: white;
     height: 25px;
+}
+
+.layer-title-wrapper .glyphicon {
+    float:right;
+    height: 100%;
+    padding-left: 20px;
+    position: relative;
+    text-align:center;
+    vertical-align:middle;
+    width: 25px;
 }
 
 .map-controls-wrapper {

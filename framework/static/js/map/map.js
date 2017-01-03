@@ -1154,7 +1154,7 @@ angular.module('webgisApp')
 
         $scope.toggleWetlandList = function(action) {
             /*
-            close the list, when:
+            close the list, if:
             - there are no layers in the map
             - OR user clicked the arrow-button to close the list
             - OR the list was closed and a layer has been removed
@@ -1175,8 +1175,9 @@ angular.module('webgisApp')
             $scope.toggleWetlandList("change");
         });
 
-        $scope.toggleLayerControls = function($event) {
-            $(".layer-control-wrapper").toggle();
+        $scope.toggleLayerControls = function(id, event) {
+            $(".layer-control-wrapper."+id).toggle();
+            $(event.target).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
         };
     })
     .controller('MapAddOwnLayer', function($scope, $modalInstance, djangoRequests, mapviewer, title) {
