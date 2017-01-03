@@ -208,7 +208,7 @@
                             </div>
                             <div class="item_catalog">
                                 <div class="layer-title-wrapper">
-                                    <div class="item_title" style="float: left;width:206px;">{{ layer.title }}</div>
+                                    <div class="item_title" style="float: left;width:206px;" ng-click="zoomToLayer(layer.id)">{{ layer.title }}</div>
                                     <div class="glyphicon glyphicon-chevron-down" ng-click="toggleLayerControls(layer.id, $event)">
                                         &nbsp;
                                     </div>
