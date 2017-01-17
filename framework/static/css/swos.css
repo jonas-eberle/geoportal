@@ -314,6 +314,13 @@ button.btn-loadmore:hover {
     width: 145px;
 }
 
+.remove-button-wrapper .div-button {
+    float: left;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 .div-button-icon {
     float:left;
     margin-top: 4px;

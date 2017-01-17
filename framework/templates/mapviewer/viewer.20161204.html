@@ -361,9 +361,16 @@
 					<!-- Products -->
 					<tab class="flaticon-layers" heading="" select="trackWetlandTab('products')">
 						<div ng-if="value.data.products.length == 0">No products available!</div>
-                        <div class="div-button" style="margin-bottom: 5px;margin-top: 5px;" ng-click="removeAllLayers()">
-                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
-                            <div class="div-button-text">Remove all layers</div>
+                        <div class="remove-button-wrapper">
+                            <div class="div-button" ng-click="removeAllLayers()">
+                                <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                                <div class="div-button-text">Remove all layers</div>
+                            </div>
+                            <div class="div-button" style="width: 225px;" ng-click="removeLayersByWetland(value.id)">
+                                <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                                <div class="div-button-text">Remove layers of this Wetland</div>
+                            </div>
+                            <div style="clear:both;"></div>
                         </div>
 			            <ul class="items products">
 			            	

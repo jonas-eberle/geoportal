@@ -49,6 +49,7 @@ class WetlandDetail(APIView):
             if layer.product:
                 layer_data = LayerSerializer(layer).data
                 layer_data['product_name'] = layer.product.name
+                layer_data['wetland_id'] = wetland.id
                 if layer_data['legend_colors']:
                     layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
                 if layer.product.id not in temp_products_layers:
