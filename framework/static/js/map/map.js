@@ -22,6 +22,7 @@ angular.module('webgisApp')
             'layersMeta': [],
             'datacatalog': [],
             'sliderValues': {},
+            'currentFeature': null,
 
             'currentBaseLayerIndex': -1,
             'center': null,
@@ -117,9 +118,9 @@ angular.module('webgisApp')
                                 stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.5)'})
                             }),
                             */
-                            fill: new ol.style.Fill({
-                                color: 'rgba(255,255,255,0.5)'
-                            })
+                            // fill: new ol.style.Fill({
+                            //     color: 'rgba(255,255,255,0.5)'
+                            // })
                         })]
                     }
                 });
@@ -456,7 +457,7 @@ angular.module('webgisApp')
                 if (layerIndex >= 0) {
                     //mapColors[olLayer.get("layerObj").django_id] = undefined;
                     this.layersMeta.splice(index, 1);
-                    this.selectInteraction.getFeatures().clear();
+                    //this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
                     $rootScope.$broadcast("mapviewer.layerremoved", olLayer.get("layerObj")["django_id"] || null);
@@ -675,18 +676,38 @@ angular.module('webgisApp')
                }
             });
 
+            // get selectInteraction from map
+            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function(interaction) {
+                return interaction instanceof ol.interaction.Select;
+            });
+            // add event handler for select-event, i.e. when a feature is selected
+            selectInteraction[0].on("select", function() {
+                var feature = selectInteraction[0].getFeatures().getArray()[0];
+                if (feature) {
+                    selectInteraction[0].getFeatures().clear();
+                    if(mapviewer.currentFeature !== null) {
+                        mapviewer.currentFeature.setStyle(null);
+                    }
+                    console.log('Selected wetland: '+feature.get('id'));
+                    feature.setStyle(new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255,255,255,0.5)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: "#4B94B6",
+                            width: 5
+                        })
+                    }));
+                    mapviewer.currentFeature = feature;
+                    $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
+                }
+            });
 
             mapviewer.map.on("click", function(e) {
                 //mapviewer.selectPointerMove.getFeatures().clear();
                 var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
-                    if (layer == null) return false;
-					
-					if (layer.get('name') == 'Wetlands' && feature != null) {
-						console.log('Selected wetland: '+feature.get('id'));
-						$rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
-						return true;
-					}
-					
+                    if (layer === null || layer.get('name') === 'Wetlands') return false;
+
 					if (layer.get('layerObj') == null) return false;
 					switch(layer.get('layerObj').ogc_type) {
                         case 'SOS':
