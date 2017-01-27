@@ -53,6 +53,10 @@ class LayersAdmin(admin.ModelAdmin):
             'fields': ('west', 'east', 'north', 'south', 'epsg', 'geo_description')
         }),
         (None, {
+            'classes': ('suit-tab', 'suit-tab-temporalextent',),
+            'fields': ('date_begin', 'date_end')
+        }),
+        (None, {
             'classes': ('suit-tab', 'suit-tab-download',),
             'fields': ('downloadable', 'download_url', 'download_file')
         }),
@@ -62,7 +66,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
     )
     save_as = True
-    suit_form_tabs = (('general', 'General'), ('ogc', 'Data'), ('dataset', 'Dataset'), ('location', 'Location'), ('download', 'Download'), ('permissions', 'Permissions'))
+    suit_form_tabs = (('general', 'General'), ('ogc', 'Data'), ('dataset', 'Dataset'), ('location', 'Location'), ('temporalextent','Temporal Extent'),('download', 'Download'), ('permissions', 'Permissions'))
 
 
 # For Layergroup we need to specify the layers inline and make them sortable
