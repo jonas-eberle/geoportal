@@ -426,6 +426,20 @@ angular.module('webgisApp')
             $scope.layerIdMap = {};
         };
 
+        $scope.removeLayersByWetland = function(wetlandId) {
+            // get layers of opened wetland
+            var layersToRemove = mapviewer.layersMeta.filter(function(layer) {
+                return layer.wetland_id === wetlandId;
+            });
+
+            // remove layers of opened wetland
+            // NOTE: never iterate over layersMeta while manipulating layersMeta
+            $.each(layersToRemove, function() {
+                var layersMetaIndex = mapviewer.getIndexFromLayer(this.title);
+                mapviewer.removeLayer(this.id, layersMetaIndex);
+            });
+        };
+
         $scope.$on("mapviewer.alllayersremoved", function () {
             $scope.layerIdMap = {};
         });
