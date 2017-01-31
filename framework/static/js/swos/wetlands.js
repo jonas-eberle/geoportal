@@ -13,6 +13,7 @@ angular.module('webgisApp')
 				$scope.wetlands = [];
 				var vectorSource = new ol.source.Vector();
 				var features = (new ol.format.GeoJSON()).readFeatures(data);
+
                 $.each(features, function(){
 					var centroid = ol.extent.getCenter(this.getGeometry().getExtent());
 					this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
@@ -221,8 +222,41 @@ angular.module('webgisApp')
 				_paq.push(['trackEvent', 'Show Video', $scope.value.name, url]);
 			} catch (err) {}
 		}
-		
-		$scope.selectWetland = function(wetland) {
+
+        $scope.selectFeature = function(wetland) {
+            var extent = wetland.geometry.getExtent();
+            //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
+            //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
+            //mapviewer.map.beforeRender(pan, zoom)
+            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
+
+            var wetlandFeature = $scope.olLayer.getSource().getFeatureById(wetland.id);
+            wetlandFeature.setStyle(new ol.style.Style({
+                fill  : new ol.style.Fill({
+                    color: 'rgba(255,255,255,0.5)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: "#4B94B6",
+                    width: 5
+                })
+            }));
+
+            // get selectInteraction from map
+            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
+                return interaction instanceof ol.interaction.Select;
+            });
+            selectInteraction[0].getFeatures().clear();
+            selectInteraction[0].getFeatures().push(wetlandFeature);
+
+            // reset style of previously selected feature
+            if (mapviewer.currentFeature !== null) {
+                mapviewer.currentFeature.setStyle(null);
+            }
+            // save the currently selected feature
+            mapviewer.currentFeature = wetlandFeature;
+        };
+
+        $scope.selectWetland = function(wetland) {
 			/*
 			try {
 				_paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
@@ -289,12 +323,8 @@ angular.module('webgisApp')
 				$('.scroller-right').click();
 				$('#link_wetland_'+wetland.id).click();	
 			}*/
-			
-			var extent = wetland.geometry.getExtent();
-			//pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
-			//zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
-    		//mapviewer.map.beforeRender(pan, zoom) 
-			mapviewer.map.getView().fitExtent(extent,mapviewer.map.getSize());
+
+            $scope.selectFeature(wetland);
 		};
 		
 		$scope.foo = function(id) {

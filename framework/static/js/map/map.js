@@ -684,21 +684,7 @@ angular.module('webgisApp')
             selectInteraction[0].on("select", function() {
                 var feature = selectInteraction[0].getFeatures().getArray()[0];
                 if (feature) {
-                    selectInteraction[0].getFeatures().clear();
-                    if(mapviewer.currentFeature !== null) {
-                        mapviewer.currentFeature.setStyle(null);
-                    }
                     console.log('Selected wetland: '+feature.get('id'));
-                    feature.setStyle(new ol.style.Style({
-                        fill: new ol.style.Fill({
-                            color: 'rgba(255,255,255,0.5)'
-                        }),
-                        stroke: new ol.style.Stroke({
-                            color: "#4B94B6",
-                            width: 5
-                        })
-                    }));
-                    mapviewer.currentFeature = feature;
                     $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
                 }
             });
