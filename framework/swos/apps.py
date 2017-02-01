@@ -267,6 +267,7 @@ def generate_metadata():
         print meta
         #upload_cswt(outpath,settings.PYCSW_URL)
 
+# please check line 305/306
 def update_wetland_geom(shapefile):
 
     from swos.models import Wetland
@@ -302,6 +303,7 @@ def update_wetland_geom(shapefile):
         #feature_dict['geom'].srid = 3975
         print feature_dict['geom']
         if Wetland.objects.filter(short_name=feature_dict['short_name']):
+            # ??? short_name=feature_dict['name'] or short_name=feature_dict['short_name']???
             Wetland.objects.filter(short_name=feature_dict['name']).update(**feature_dict)
         else:
             new_wetlands.append(feature_dict['name'])
