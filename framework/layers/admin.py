@@ -42,7 +42,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-ogc',),
-            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_getfeatureinfo', 'ogc_time', 'legend_graphic', 'legend_url', 'legend_colors', 'wmts_matrixset', 'wmts_resolutions', 'sos_default_field')
+            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'ogc_getfeatureinfo', 'ogc_time', 'legend_graphic', 'legend_url', 'legend_colors', 'wmts_matrixset', 'wmts_resolutions', 'sos_default_field')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-dataset',),

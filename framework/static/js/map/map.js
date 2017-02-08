@@ -80,7 +80,7 @@ angular.module('webgisApp')
                     layers: baseLayers,
                     target: id,
                     view: view,
-                    controls: [new ol.control.ScaleLine()],
+                    controls: [new ol.control.ScaleLine(), new ol.control.Attribution()],
 					interactions: ol.interaction.defaults({
 						dragPan: false,
 						mouseWheelZoom: false
@@ -118,8 +118,8 @@ angular.module('webgisApp')
                                 stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.5)'})
                             }),
                             */
-                            // fill: new ol.style.Fill({
-                            //     color: 'rgba(255,255,255,0.5)'
+                            //fill: new ol.style.Fill({
+                            //    color: 'rgba(255,255,255,0.5)'
                             // })
                         })]
                     }
@@ -157,7 +157,10 @@ angular.module('webgisApp')
                             layerObj: layer,
                             source: new ol.source.TileWMS({
                               url: layer.ogc_link,
-                              params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true}
+                              params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true},
+                              attributions: [new ol.Attribution({
+                                    html: layer.ogc_attribution
+                                })]
                             })
                         });
                         break;
@@ -166,7 +169,10 @@ angular.module('webgisApp')
 					      name: layer.title,
 						  layerObj: layer,
 						  source: new ol.source.XYZ({
-					        url: layer.ogc_link.replace('{y}','{-y}')
+					        url: layer.ogc_link.replace('{y}','{-y}'),
+                            attributions: [new ol.Attribution({
+                                    html: layer.ogc_attribution
+                            })]
 					      })
 					    });
 						break;
@@ -205,7 +211,10 @@ angular.module('webgisApp')
                                         resolutions: resolutions,
                                         matrixIds: matrixIds,
                                         tileSize: layer.wmts_tilesize
-                                    })
+                                    }),
+                                    attributions: [new ol.Attribution({
+                                        html: layer.ogc_attribution
+                                    })]
                                 })
                             });
                         }
@@ -266,7 +275,10 @@ angular.module('webgisApp')
                                     $('#loading-div').hide();
                                 })
                             },
-                            projection: _this.displayProjection
+                            projection: _this.displayProjection,
+                            attributions: [new ol.Attribution({
+                                    html: layer.ogc_attribution
+                            })]
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -295,7 +307,10 @@ angular.module('webgisApp')
                             strategy: ol.loadingstrategy.createTile(
                                 new ol.tilegrid.XYZ({maxZoom: 19})
                             ),
-                            projection: _this.displayProjection
+                            projection: _this.displayProjection,
+                            attributions: [new ol.Attribution({
+                                    html: layer.ogc_attribution
+                            })]
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -320,7 +335,10 @@ angular.module('webgisApp')
                                     $('#loading-div').hide();
                                 })
                             },
-                            projection: 'EPSG:4326'
+                            projection: 'EPSG:4326',
+                            attributions: [new ol.Attribution({
+                                    html: layer.ogc_attribution
+                            })]
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -333,7 +351,10 @@ angular.module('webgisApp')
                             name: layer.title,
                             layerObj: layer,
                             source: new ol.source.XYZ({
-                                url: layer.ogc_link
+                                url: layer.ogc_link,
+                                attributions: [new ol.Attribution({
+                                    html: layer.ogc_attribution
+                                })]
                             })
                         });
                         break;
@@ -359,7 +380,10 @@ angular.module('webgisApp')
                                     $('#loading-div').hide();
                                 })
                             },
-                            projection: 'EPSG:4326'
+                            projection: 'EPSG:4326',
+                            attributions: [new ol.Attribution({
+                                html: layer.ogc_attribution
+                            })]
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,

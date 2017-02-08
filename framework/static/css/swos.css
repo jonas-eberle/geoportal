@@ -387,7 +387,7 @@ button.btn-loadmore:hover {
 }
 
 .ol-scale-line {
-	right: 0 !important;
+	right: 10px !important;
     left: auto !important;
     bottom: 18px !important;
 }
@@ -399,6 +399,28 @@ button.btn-loadmore:hover {
     height: 20px;
     padding-top: 3px;
     font-size: 0.8em;
+}
+
+/* hide openlayers icon and link in front of attribution */
+.ol-attribution li a img{
+    display: none !important;
+}
+
+.ol-attribution{
+    bottom: 18px !important;
+    right: 0 !important;
+    border-radius: 4px !important;
+    padding: 0 !important;
+}
+
+.ol-attribution button{
+    background: rgba(0,60,136,.3);
+    border-radius: 4px;
+    padding: 2px !important;
+    height: 17px !important;
+    width: 8px !important;
+    font-size: 1em !important;
+    font-weight: normal !important;
 }
 
 #disclaimer, #cookienote {
@@ -421,3 +443,4 @@ button.btn-loadmore:hover {
     background-color: #336a5c;
     margin-left: 10px;
 }
+

@@ -57,6 +57,7 @@ class Layer(models.Model):
     ogc_time = models.BooleanField("WMS/WMTS Time", default=False, help_text="Time enabled?")
     ogc_imageformat = models.CharField("Image format", max_length=100, blank=True, null=True, help_text="For WMS/WMTS, e.g., image/png, image/jpeg")
     ogc_getfeatureinfo = models.CharField("OGC WMS GetFeatureInfo URL", max_length=200, blank=True, null=True)
+    ogc_attribution = models.CharField("Attribution", max_length=200, blank=True, null=True, help_text="Attribution / Copyright")
 
     #Download services
     downloadable = models.BooleanField(default=False, help_text="Define whether layer can be downloaded")
@@ -86,12 +87,12 @@ class Layer(models.Model):
     dataset_epsg = models.IntegerField("EPSG code from the dataset", blank=True, null=True, help_text="Just the projection code/number")
 
     #Geographic location
-    west = models.FloatField("BBOX west coordinate")
-    east = models.FloatField("BBOX east coordinate")
-    north = models.FloatField("BBOX north coordinate")
-    south = models.FloatField("BBOX south coordinate")
+    west = models.FloatField("BBOX west coordinate", help_text="e.g. -180")
+    east = models.FloatField("BBOX east coordinate", help_text="e.g. 180")
+    north = models.FloatField("BBOX north coordinate", help_text="e.g. 90")
+    south = models.FloatField("BBOX south coordinate", help_text="e.g. -90")
     geo_description = models.CharField("Location description", max_length=200, blank=True, null=True)
-    epsg = models.IntegerField("EPSG code for the coordinates", blank=True, null=True, help_text="Just the projection code/number")
+    epsg = models.IntegerField("EPSG code for the coordinates", blank=True, null=True, help_text="Just the projection code/number (e.g. 4326)")
 
     #Spatial resolution
     representation_type = models.CharField("Type of dataset", max_length=200, blank=True, null=True, help_text="e.g., raster or vector")
@@ -220,7 +221,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
 
 
 # Metadata serializer to output metadata related information from a given layer
