@@ -58,21 +58,58 @@ angular.module('webgisApp')
 				}
 			})
 		}
+		$scope.pictures_is_open = true
+		$scope.external_pictures_is_open = true
 		$scope.imagesCurrentPage = 1;
+		$scope.imagesCurrentPage_external = 1;
 		$scope.allImages = false;
+		$scope.allImages_external = false;
 		$scope.imagesMaxPage = 24;
 		$scope.loadMoreImages = function() {
 			$scope.imagesCurrentPage += 1;
 			var start = $scope.imagesCurrentPage*$scope.imagesMaxPage - $scope.imagesMaxPage;
 			djangoRequests.request({
 				'method': "GET",
-				'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
+				'url': '/swos/wetland/'+$scope.value.id+'/images.json?start='+start+'&max='+$scope.imagesMaxPage
 			}).then(function(data){
 				$scope.value['pictures']['photos'].push.apply($scope.value['pictures']['photos'], data['photos']);
 				if (data['photos'].length < $scope.imagesMaxPage) {
 					$scope.allImages = true;
 				}
 			})
+		}
+		$scope.loadMoreImages_external = function() {
+			$scope.imagesCurrentPage_external += 1;
+			var start = $scope.imagesCurrentPage_external*$scope.imagesMaxPage - $scope.imagesMaxPage;
+			djangoRequests.request({
+				'method': "GET",
+				'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
+			}).then(function(data){
+				$scope.value['external_pictures']['photos'].push.apply($scope.value['external_pictures']['photos'], data['photos']);
+				if (data['photos'].length < $scope.imagesMaxPage) {
+					$scope.allImages_external = true;
+				}
+			})
+		}
+		$scope.moreImages_external = function(action) {
+			if (action == 'prev') {
+				$scope.imagesCurrentPage_external -= 1;
+			} else {
+				$scope.imagesCurrentPage_external += 1;
+			}
+			var start = $scope.imagesCurrentPage_external*$scope.imagesMaxPage - $scope.imagesMaxPage;
+			djangoRequests.request({
+				'method': "GET",
+				'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
+			}).then(function(data){
+				$scope.value['external_pictures']['photos'] = data['photos'];
+				if (data['photos'].length < $scope.imagesMaxPage) {
+					$scope.allImages_external = true;
+				} else {
+					$scope.allImages_external = false;
+				}
+			})
+			
 		}
 		$scope.moreImages = function(action) {
 			if (action == 'prev') {
@@ -92,9 +129,8 @@ angular.module('webgisApp')
 					$scope.allImages = false;
 				}
 			})
-			
+
 		}
-		
 		$scope.showFoto = function(picture) {
 			console.log(picture);
 			return false;
@@ -286,15 +322,28 @@ angular.module('webgisApp')
 					$scope.imagesCurrentPage = 1;
 					$scope.allVideos = false;
 					$scope.allImages = false;
-					
+					$scope.allImages_external = false;
+
 					djangoRequests.request({
 						'method': "GET",
-						'url': '/swos/wetland/'+wetland.id+'/panoramio.json?start=0&max=24'
+						'url': '/swos/wetland/'+wetland.id+'/images.json?start=0&max=24'
 					}).then(function(data){
 						//$scope.wetlands_opened[wetland.id]['pictures'] = data;
 						$scope.value['pictures'] = data;
 						if (data['photos'].length < $scope.imagesMaxPage) {
 							$scope.allImages = true;
+						}
+					})
+
+
+					djangoRequests.request({
+						'method': "GET",
+						'url': '/swos/wetland/'+wetland.id+'/panoramio.json?start=0&max=24'
+					}).then(function(data){
+						//$scope.wetlands_opened[wetland.id]['pictures'] = data;
+						$scope.value['external_pictures'] = data;
+						if (data['photos'].length < $scope.imagesMaxPage) {
+							$scope.allImages_external = true;
 						}
 					})				
 					

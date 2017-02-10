@@ -51,8 +51,8 @@ class CountryAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'continent')
 
 class WetlandImageAdmin(admin.OSMGeoAdmin):
-    list_display = ('name', 'image_tag', 'image_size', 'description', 'wetland' )
-    fields = ('name', 'description', 'image', 'image_tag', 'image_size', 'wetland')
+    list_display = ('name', 'image_tag', 'date', 'description', 'wetland' )
+    fields = ('name', 'description', 'date', 'copyright', 'image', 'image_tag', 'image_size', 'wetland')
     readonly_fields = ('image_tag','image_size' )
     list_filter = ('wetland', )
 

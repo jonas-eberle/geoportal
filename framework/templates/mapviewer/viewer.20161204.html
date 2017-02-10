@@ -44,8 +44,7 @@
     {% verbatim %}
 	<script type="text/ng-template" id="close">
 	    <div class="triangle"></div>
-	    <div class="ns-popover-tooltip">
-	        {{layer.title}}
+	    <div class="ns-popover-tooltip" ng_bind="layer.title">
 	      <button ng-click="hidePopover()">Close</button>
 	    </div>
 	</script>
@@ -210,7 +209,7 @@
                             </div>
                             <div class="item_catalog">
                                 <div class="layer-title-wrapper">
-                                    <div class="item_title" style="float: left;width:206px;" ng-click="zoomToLayer(layer.id)">{{ layer.title }}</div>
+                                    <div class="item_title" style="float: left;width:206px;" ng-click="zoomToLayer(layer.id)" ng-bind="layer.title"></div>
                                     <div class="glyphicon glyphicon-chevron-down" ng-click="toggleLayerControls(layer.id, $event)">
                                         &nbsp;
                                     </div>
@@ -454,18 +453,67 @@
 					
 					<!-- Photos -->
 					<tab class="flaticon-technology-1" heading="" select="trackWetlandTab('photos')">
-						<div style="/*height: 185px;overflow-y: auto;*/">
-							<span ng-if="!value.pictures">Loading...</span>
-							<a ng-repeat="picture in value.pictures.photos" ng-click="trackShowImage('http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg', '{{picture.photo_title}')" class="fancybox" rel="gallery1" data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg" data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)" href="{{picture.photo_url}}" target="_blank"><img src="{{picture.photo_file_url}}" alt="{{picture.photo_title}} ({{picture.owner_name}})" title="{{picture.photo_title}} ({{picture.owner_name}})" style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
-						</div>
-						<div class="panoramio-wapi-tos" style="width: 396px; color: black !important; background-color: white !important;">
-							<a href="http://www.panoramio.com" target="_top"><img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
-							<span style="font-size:12px;">
+                        <accordion ng-if="value.pictures.photos.length != 0">
+                            <accordion-group is-open="pictures_is_open">
+                                <accordion-heading>Images
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pictures_is_open, 'glyphicon-chevron-right': !pictures_is_open}"></i>
+                                </accordion-heading>
+                                <div style="/*height: 185px;overflow-y: auto;*/">
+                                    <!--<span ng-if="!value.pictures">Loading...</span>-->
+                                    <a ng-repeat="picture in value.pictures.photos"
+                                       ng-click="trackShowImage('http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg', '{{picture.photo_title}')"
+                                       class="fancybox" rel="gallery1" data-fancybox-href="{{picture.photo_url}}"
+                                       data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) <a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> ({{picture.owner_name}})"
+                                       href="{{picture.photo_url}}" target="_blank"><img
+                                            src="{{picture.photo_url_thumb}}"
+                                            alt="{{picture.photo_title}} ({{picture.owner_name}})"
+                                            title="{{picture.photo_title}} ({{picture.owner_name}})"
+                                            style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
+                                </div>
+                                <button style="margin-left: 5px;" ng-if="imagesCurrentPage > 1" type="button"
+                                        class="btn btn-prev" ng-click="moreImages('prev')">Previous
+                                </button>
+                                <button style="float:right;margin-right: 10px;" ng-if="!allImages" type="button"
+                                        class="btn btn-next" ng-click="moreImages('next')">Next
+                                </button>
+                            </accordion-group>
+                        </accordion>
+                        <accordion ng-if="value.external_pictures.photos.length != 0">
+                            <accordion-group is-open="external_pictures_is_open">
+                                <accordion-heading>Panoramio images
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': external_pictures_is_open, 'glyphicon-chevron-right': !external_pictures_is_open}"></i>
+                                </accordion-heading>
+                                <div style="/*height: 185px;overflow-y: auto;*/">
+                                    <!--<span ng-if="!value.external_pictures">Loading...</span>-->
+                                    <a ng-repeat="picture in value.external_pictures.photos"
+                                       ng-click="trackShowImage('http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg', '{{picture.photo_title}')"
+                                       class="fancybox" rel="gallery1"
+                                       data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg"
+                                       data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)"
+                                       href="{{picture.photo_url}}" target="_blank"><img
+                                            src="{{picture.photo_file_url}}"
+                                            alt="{{picture.photo_title}} ({{picture.owner_name}})"
+                                            title="{{picture.photo_title}} ({{picture.owner_name}})"
+                                            style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
+                                </div>
+                                <div class="panoramio-wapi-tos"
+                                     style="width: 396px; color: black !important; background-color: white !important;">
+                                    <a href="http://www.panoramio.com" target="_top"><img
+                                            src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
+                                    <span style="font-size:12px;">
 							  The copyright of the photos hold their owners!
 							</span>
-						</div>
-						<button style="margin-left: 5px;" ng-if="imagesCurrentPage > 1" type="button" class="btn btn-prev" ng-click="moreImages('prev')">Previous</button>
-						<button style="float:right;margin-right: 10px;" ng-if="!allImages" type="button" class="btn btn-next" ng-click="moreImages('next')">Next</button>
+                                </div>
+                                <button style="margin-left: 5px;" ng-if="imagesCurrentPage_external > 1" type="button"
+                                        class="btn btn-prev" ng-click="moreImages_external('prev')">Previous
+                                </button>
+                                <button style="float:right;margin-right: 10px;" ng-if="!allImages_external"
+                                        type="button" class="btn btn-next" ng-click="moreImages_external('next')">Next
+                                </button>
+                            </accordion-group>
+                        </accordion>
+
+
 					</tab>
 					
 					<!-- Videos -->

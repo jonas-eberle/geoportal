@@ -156,6 +156,33 @@ class Panoramio(APIView):
         photos = wetland.panoramio(start=start, max=max)
         return Response(photos);
 
+class WetlandImages(APIView):
+
+    def get_object(self, wetland_id):
+        from .models import WetlandImage
+
+        try:
+            return WetlandImage.objects.filter(wetland_id=wetland_id)
+        except WetlandImage.DoesNotExist:
+            raise Http404
+
+    # provide HTTP GET method
+    def get(self, request, pk, format=None):
+        wetland_images = self.get_object(pk)
+        start = int(request.query_params.get('start', 0))
+        max = int(request.query_params.get('max', -1))
+        finalJSON = {'photos': []}
+
+        for images in wetland_images:
+            finalJSON['photos'].append({'photo_title': images.name, 'photo_url': images.image.url, 'photo_url_thumb': images.image.url_52x52, 'owner_name': images.copyright, 'description': images.description, 'date': images.date})
+
+        images = finalJSON['photos']
+        if max > -1 and (start + max) < len(images):
+            finalJSON['photos'] = images[start:start + max]
+        else:
+            finalJSON['photos'] = images[start:]
+        return Response(finalJSON);
+
 class YouTube(APIView):
     def get_object(self, pk):
         try:
