@@ -178,7 +178,9 @@ angular.module('webgisApp')
 		$scope.value = null;
 		$scope.satdata_table = false;
 		$scope.satdata_image = true;
-		
+
+		$scope.externaldb_search = {'searchText':  "", 'layer_exist': ""}
+
 		$scope.trackWetlandTab = function(type) {
 			try {
 				_paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);

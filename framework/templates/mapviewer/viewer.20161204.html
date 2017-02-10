@@ -19,7 +19,7 @@
 	<!-- Jonas CSS -->
 	<link href="{% static "css/jonas.css" %}" rel="stylesheet">
 	<link href="{% static "lib/nsPopover.css" %}" rel="stylesheet">
-	<link href="{% static "css/swos.css" %}?v=20161213" rel="stylesheet">
+
 	<link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -35,6 +35,8 @@
 	<script src="{% static "lib/turf.min.js" %}""></script>
 	<script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
+
+    <link href="{% static "css/swos.css" %}?v=20161213" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -270,7 +272,7 @@
 	          <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
 	            <li role="presentation"  ng-class="{active: activeTab==-1}"><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="activeTab = -1">Wetlands</a></li>
 				<!--<li role="presentation"><a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current</a></li>-->
-				<li role="presentation" ng-if="value!=null" ng-class="{active: activeTab==1}"><a id="link_wetland_opened" href="#wetland_opened" aria-controls="wetland_opened" role="tab" data-toggle="tab">{{value.name}}</a></li>
+				<li role="presentation" ng-if="value!=null" ng-class="{active: activeTab==1}"><a id="link_wetland_opened" href="#wetland_opened" aria-controls="wetland_opened" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
 				<!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo(value.id)" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
 	          </ul>
 
@@ -474,16 +476,63 @@
 						</div>
 						<button ng-if="!allVideos" type="button" class="btn btn-loadmore" ng-click="loadMoreVideos()">Load more videos</button>						
 					</tab>
-					
-					<!-- External databases -->
-					<tab class="flaticon-technology-2" heading="" select="trackWetlandTab('databases')">
-						No external databases registered to this portal
-					</tab>
-			    </tabset>
-				
-			</div>
+
+                    <!-- External databases -->
+                    <tab class="flaticon-technology-2" heading="" select="trackWetlandTab('databases')">
+                        <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
+                        <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external
+                            databases registered!-->
+                            <br /><div ><input ng-model="externaldb_search.searchText" placeholder="Search for ..."><input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
+                                <label for="only_layer" style="margin-top: 8px;" ><div class="flaticon-layers" style="display: inline-block;"></div> Only</label></div><br /><br />
+                        </div>
+
+                        <accordion>
+                            <accordion-group ng-repeat="externaldb_group in value.data.externaldb" is-open="externaldb.open">
+                                <accordion-heading>
+                                    {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ).length }})
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open, 'glyphicon-chevron-right': !externaldb.open}"></i>
+                                </accordion-heading>
+                                <accordion>
+                                    <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ">
+                                        <accordion-heading>
+                                            <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </accordion-heading>
+
+                                        {{externaldb.description}}
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong> {{ externaldb.provided_info }}</div>
+                                        <br />
+                                        <strong>Link:</strong>
+                                        <div><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a></div>
+                                        <br />
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Datasets:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl">
+                                                <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" ol-layer="layers[layerIdMap[layer.id]]"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </accordion-group>
+                                </accordion>
+                            </accordion-group>
+                        </accordion>
+                        </accordion>
+                        </accordion-group>
+                        </accordion>
+            </div>
+
+
+              </tab>
+              </tabset>
 
           </div>
+
+        </div>
           
 		  {% endverbatim %}
           

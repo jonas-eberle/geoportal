@@ -34,16 +34,18 @@ class WetlandDetail(APIView):
     def get(self, request, pk, format=None):
         wetland = self.get_object(pk)
         
-        from .models import Product, Indicator, WetlandLayer
+        from .models import Product, Indicator, WetlandLayer, ExternalDatabase, ExternalLayer, Country
         from layers.models import LayerSerializer
         layers = WetlandLayer.objects.filter(wetland_id=wetland.id,publishable=True).order_by('title')
 
+
         temp_products_layers = dict()
         temp_indicators_layers = dict()
+        temp_external_layers = dict()
         temp_products = dict()
         temp_indicators = dict()
-        
-        finalJSON = {'id':wetland.id, 'title':wetland.name, 'image': wetland.image_url, 'image_desc': wetland.image_desc, 'products':[], 'indicators':[]}
+
+        finalJSON = {'id':wetland.id, 'title':wetland.name, 'image': wetland.image_url, 'image_desc': wetland.image_desc, 'products':[], 'indicators':[], 'externaldb': [], 'externaldb_layer': []}
         
         for layer in layers:
             if layer.product:
@@ -63,7 +65,7 @@ class WetlandDetail(APIView):
                     temp_indicators_layers[layer.indicator.id] = [LayerSerializer(layer).data]
                 else:
                     temp_indicators_layers[layer.indicator.id].append(LayerSerializer(layer).data)
-        
+
         for product in temp_products:
             product = temp_products[product]
             layers = temp_products_layers[product.id]
@@ -72,7 +74,56 @@ class WetlandDetail(APIView):
             indicator = temp_indicators[indicator]
             layers = temp_indicators_layers[indicator.id]
             finalJSON['indicators'].append({'id': indicator.id, 'name': indicator.name, 'layers': layers})
-        
+
+
+#get wetland country --> find continent and add to list
+        country_continent = Country.objects.get(name=wetland.country)
+        extdata = ExternalDatabase.objects.filter(country__name=wetland.country) | ExternalDatabase.objects.filter(continent="Global") | ExternalDatabase.objects.filter(continent=country_continent.continent) | ExternalDatabase.objects.filter(wetland_id=wetland.id)
+
+        extdb_grouped_list = {'local':[], 'national': [], 'continent': [], 'global': []}
+        extdb_grouped_name ={'local': wetland.name, 'national': wetland.country, 'continent': country_continent.continent, 'global': "Global"}
+
+        for extdb in extdata:
+
+            country = extdb.country.filter(name=wetland.country)
+            if country:
+                country_found = True
+            else:
+                country_found = False
+
+            if extdb.wetland_id == wetland.id:
+                extdb_grouped_list['local'].append(extdb)
+            elif country_found== True and not extdb.wetland_id:
+                extdb_grouped_list['national'].append(extdb)
+            elif extdb.continent == country_continent.continent:
+                extdb_grouped_list['continent'].append(extdb)
+            elif extdb.continent == "Global":
+                extdb_grouped_list['global'].append(extdb)
+
+            del(country)
+
+
+        #add external datasets starting from local and add all linked layer for each dataset
+        for index in ['local', 'national', 'continent', 'global']:
+            datasets = []
+            for extdb in extdb_grouped_list[index]:
+                layer_extern = ExternalLayer.objects.filter(datasource_id=extdb.id,publishable=True)
+                if layer_extern:
+                    for ex_layer in layer_extern:
+                        layer_data = LayerSerializer(ex_layer).data
+                        if extdb.id not in temp_external_layers:
+                            temp_external_layers[extdb.id] = [layer_data]
+                        else:
+                            temp_external_layers[extdb.id].append(layer_data)
+                    layers = temp_external_layers[extdb.id]
+                    datasets.append({'name': extdb.name, 'description': extdb.description,'provided_info': extdb.provided_information,'online_link': extdb.online_link, 'layers': layers, 'layer_exist': "True"})
+                else:
+                    datasets.append({'name': extdb.name, 'description': extdb.description,'provided_info': extdb.provided_information,'online_link': extdb.online_link, 'layer_exist': "False"})
+
+            if extdb_grouped_list[index]:
+                finalJSON['externaldb'].append({'group': extdb_grouped_name[index], 'datasets': datasets })
+
+
         # sort the products according to the order attribute
         finalJSON['products'] = sorted(finalJSON['products'], key=lambda x: x['order'], reverse=False)
         finalJSON['indicators'] = sorted(finalJSON['indicators'], key=lambda x: x['order'], reverse=False)
@@ -85,8 +136,9 @@ class WetlandDetail(APIView):
         finalJSON['count']['products_layers'] = len(temp_products_layers)
         finalJSON['count']['indicators'] = len(finalJSON['indicators'])
         finalJSON['count']['indicators_layers'] = len(temp_indicators_layers)
-        finalJSON['count']['externaldb'] = 0
-        
+        finalJSON['count']['externaldb'] =len(extdata)
+
+
         return Response(finalJSON)
 
 class Panoramio(APIView):
