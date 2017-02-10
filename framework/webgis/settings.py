@@ -149,7 +149,7 @@ SUIT_CONFIG = {
         {'app': 'mapviewer', 'label': 'Mapviewer', 'models': ('mapviewer', 'baselayer')},
         {'app': 'layers', 'label': 'Layers', 'models': ('layergroup', 'layer', 'contact')},
         {'app': 'csw', 'label': 'Search', 'models': ('csw')},
-        {'app': 'swos', 'label': 'SWOS', 'models': ('wetland', 'product', 'indicator', 'wetlandlayer')},
+        {'app': 'swos', 'label': 'SWOS', 'models': ('wetland', 'wetlandimage', 'product', 'indicator', 'wetlandlayer', 'externaldatabase', 'externallayer')},
     )
 }
 
