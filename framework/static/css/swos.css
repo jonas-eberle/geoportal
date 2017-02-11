@@ -165,6 +165,15 @@ h4 {
     z-index: 1022;
 }
 
+#wetland_attribution {
+    position: absolute;
+    right: 8px;
+    top: 55px;
+    color: white;
+    z-index: 1022;
+    float: right;
+}
+
 #wetland_opened .accordion .panel-body {
 	padding: 0;
 }
@@ -374,7 +383,7 @@ button.btn-loadmore:hover {
 
 .map-controls-wrapper {
     background-color:rgba(0,0,0,0.5);
-    height: 53px;
+    height: 82px;
     position: absolute;
     right: 0;
     width: 645px;

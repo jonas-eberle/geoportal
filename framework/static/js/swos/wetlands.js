@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('webgisApp')
-	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies){
+	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution){
         $scope.wetlands = [];
 		$scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
@@ -491,7 +491,27 @@ angular.module('webgisApp')
 					}
 				});
             }
+            $scope.attributionList();
 		};
+
+		$scope.attributionList = function() {
+			var layers = mapviewer.map.getLayers().getArray();
+			var attribution_arr = [];
+			$.each(layers, function() {
+					var layer = this.get('layerObj');
+
+					if(typeof(layer) !== 'undefined') {
+                        if (attribution_arr.indexOf(layer.ogc_attribution) == -1  ) {
+                                if(layer.ogc_attribution != 'null') {
+                                    attribution_arr.push(layer.ogc_attribution);
+                                }
+                        }
+                    }
+                });
+				var attr_list = attribution_arr.join(' | \u00A9 ');
+				Attribution.setList(attr_list);
+		}
+
 		$scope.removeAllLayers = function () {
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
@@ -505,6 +525,7 @@ angular.module('webgisApp')
                 }
             }
             $scope.layerIdMap = {};
+
         };
 
         $scope.removeLayersByWetland = function(wetlandId) {
@@ -519,16 +540,21 @@ angular.module('webgisApp')
                 var layersMetaIndex = mapviewer.getIndexFromLayer(this.title);
                 mapviewer.removeLayer(this.id, layersMetaIndex);
             });
+
         };
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             $scope.layerIdMap = {};
+            $scope.attributionList()
+
         });
 
         $scope.$on("mapviewer.layerremoved", function($broadcast, id) {
             if (id !== undefined && id !== null) {
                 $scope.layerIdMap[id] = undefined;
+                $scope.attributionList()
             }
+
         });
 	})
 	.directive('repeatDone', function() {

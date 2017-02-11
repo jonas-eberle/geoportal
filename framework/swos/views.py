@@ -174,7 +174,7 @@ class WetlandImages(APIView):
         finalJSON = {'photos': []}
 
         for images in wetland_images:
-            finalJSON['photos'].append({'photo_title': images.name, 'photo_url': images.image.url, 'photo_url_thumb': images.image.url_52x52, 'owner_name': images.copyright, 'description': images.description, 'date': images.date})
+            finalJSON['photos'].append({'photo_title': images.name, 'photo_url': images.image.url_125x125, 'photo_url_thumb': images.image.url_52x52, 'owner_name': images.copyright, 'description': images.description, 'date': images.date})
 
         images = finalJSON['photos']
         if max > -1 and (start + max) < len(images):

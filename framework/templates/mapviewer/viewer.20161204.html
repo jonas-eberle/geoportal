@@ -128,10 +128,12 @@
 
         <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
         <div ng-controller="MapViewerCtrl" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
+
             <div class="map-controls-wrapper">
+
                 <div id="wetland_sites">
                     <input type="checkbox" ng-click="changeSitesVisibility(1, $event)" id="layer_sites"
-                           checked="checked"/><label for="layer_sites">Show Wetland sites</label>
+                           checked="checked"/><label for="layer_sites">Show Wetland sites </label>
                 </div>
                 <div id="map_icons">
                     <button type="button" ng-click="zoomIn()" class="btn btn-default btn-circle hidden-xs"><i
@@ -162,7 +164,10 @@
                         </div>
 
                     </form>
-                </div><!-- /input-group -->
+                </div>
+
+                <div id="wetland_attribution" ng-bind="layer_attribution"></div>
+                <!-- /input-group -->
             </div>
 			
 			<div id="disclaimer" class="map-controls-wrapper"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
@@ -530,6 +535,7 @@
                         <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
                         <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external
                             databases registered!-->
+
                             <br /><div ><input ng-model="externaldb_search.searchText" placeholder="Search for ..."><input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
                                 <label for="only_layer" style="margin-top: 8px;" ><div class="flaticon-layers" style="display: inline-block;"></div> Only</label></div><br /><br />
                         </div>
