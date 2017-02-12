@@ -453,8 +453,6 @@ angular.module('webgisApp')
 					// zoom to new layer
 					var layerExtent = [layer.west, layer.south, layer.east, layer.north];
 					if (layer.epsg > 0) {
-
-		                cosole.log(layerExtent);
 						layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:'+layer.epsg, mapviewer.map.getView().getProjection().getCode());
 		            }
 					mapviewer.map.getView().fitExtent(layerExtent, mapviewer.map.getSize());
