@@ -605,11 +605,9 @@ angular.module('webgisApp')
     })
     .service('Attribution', function () {
         var list = "";
-
         var setList = function(newList) {
             list = newList;
         };
-
         var getList = function(){
             return list;
         };
@@ -815,6 +813,7 @@ angular.module('webgisApp')
             //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() * 2);
             mapviewer.map.getView().setZoom(mapviewer.map.getView().getZoom()-1);
         }
+
 
         $scope.zoomMaxExtent = function() {
             mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection), mapviewer.map.getSize())
@@ -1104,13 +1103,43 @@ angular.module('webgisApp')
         $scope.zoomToLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             var layerObj = olLayer.get('layerObj');
-            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north].map(parseFloat);
+
+            var west = layerObj.west;
+            var south = layerObj.south;
+            var east = layerObj.east;
+            var north = layerObj.north;
+
+            var map_epsg = mapviewer.map.getView().getProjection().getCode();
+
+            //reduce extent to fit to mercator projection (Google)
+            if (layerObj["epsg"] == 4326 &&  (map_epsg == "EPSG:3857" || map_epsg == "EPSG:900913")) {
+                if (south < -85) {
+                    south = -85
+                }
+                if (north > 85) {
+                    north = 85
+                }
+            }
+
+            var extent = [west, south, east, north].map(parseFloat);
+
             if (layerObj["epsg"] && layerObj.epsg > 0) {
                 extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
             } else {
                 extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
             }
-            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
+
+
+            if(layerObj.west == -180 && layerObj.south == -90 && layerObj.east == 180 && layerObj.north == 90){
+                //Zoom to max extent (should be equal to MapViewerCtrl $scope.zoomMaxExtent )
+                mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.map.getView().getProjection().getCode()), mapviewer.map.getSize());
+            }
+            else{
+                mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
+            }
+
+
+
         };
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
