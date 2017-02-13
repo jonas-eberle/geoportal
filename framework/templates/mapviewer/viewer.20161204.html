@@ -365,8 +365,8 @@
 			        </tab>
 					
 					<!-- Products -->
-					<tab class="flaticon-layers" heading="" select="trackWetlandTab('products')">
-						<div ng-if="value.data.products.length == 0">No products available!</div>
+					<tab class="flaticon-layers"  heading="" select="trackWetlandTab('products')" id="product">
+                        <div ng-if="value.data.products.length == 0">No products available!</div>
                         <div class="remove-button-wrapper">
                             <div class="div-button" ng-click="removeAllLayers()">
                                 <div class="glyphicon glyphicon-remove div-button-icon"></div>
@@ -556,10 +556,11 @@
                                         </accordion-heading>
 
                                         {{externaldb.description}}
-                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong> {{ externaldb.provided_info }}</div>
+                                        <br />
+                                        <div ng-if="externaldb.provided_info"><br /><strong>Provided data:</strong><div> {{ externaldb.provided_info }} </div></div>
                                         <br />
                                         <strong>Link:</strong>
-                                        <div><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a></div>
+                                        <div><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></div>
                                         <br />
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Datasets:</strong>

@@ -382,7 +382,9 @@ class Wetland(models.Model):
             return videos[start:start+max]
         else:
             return videos[start:]
-            
+
+    class Meta:
+        ordering = ['name']
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -651,6 +653,9 @@ class ExternalDatabase(models.Model):
     class Meta:
         ordering = ['name']
 
+    def __unicode__(self):
+        return u"%s" %(self.name)
+
 class ExternalLayer(Layer):
     datasource = models.ForeignKey(ExternalDatabase, related_name="layer_datasource", verbose_name="External Datasbase", blank=True, null=True)
 
@@ -660,7 +665,7 @@ class ExternalLayer(Layer):
 
 class WetlandImage(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField(null=True)
+    description = models.TextField(null=True, blank=True)
     copyright = models.CharField("Copyright / Owner", max_length=200, blank=True)
     date = models.DateField (blank=True, null=True)
     image = ImageWithThumbsField(upload_to='images/',  sizes=((125,125),(52,52)))

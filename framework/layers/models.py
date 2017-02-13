@@ -202,6 +202,8 @@ class Layer(models.Model):
 
         return link
 
+    class Meta:
+        ordering = ['title']
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -215,8 +217,8 @@ def post_save_layer_sos(sender, instance, **kwargs):
 # Layer serializer used when add layer to map to retrieve fields needed for frontend (e.g., legend, downloadable)
 # Also used in MapViewerDetail view
 class LayerSerializer(serializers.ModelSerializer):
-    #legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
-    legend = serializers.CharField(source='legend_url')
+    legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
+  #  legend = serializers.CharField(source='legend_url')
     download = serializers.FileField(source='download_file') or serializers.CharField(source='download_url')
 
     class Meta:
