@@ -603,10 +603,11 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .service('Attribution', function () {
+    .service('Attribution', function ($rootScope) {
         var list = "";
         var setList = function(newList) {
             list = newList;
+            $rootScope.$broadcast("attribution_list_new")
         };
         var getList = function(){
             return list;
@@ -622,9 +623,7 @@ angular.module('webgisApp')
 
 		// $scope.legendLayers = [];
 
-        $scope.$watch(function(){
-            return Attribution.getList();
-            }, function (newValue) {
+        $scope.$on('attribution_list_new', function ($broadCast){
             $scope.layer_attribution = Attribution.getList();
         });
 
