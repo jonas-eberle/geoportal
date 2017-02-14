@@ -1,8 +1,19 @@
 'use strict';
 
 angular.module('webgisApp')
-	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution){
-        $scope.wetlands = [];
+
+	.config(['$routeProvider', function($routeProvider) {
+    	$routeProvider
+			.when('/wetland/:wetland_id', {controller: 'WetlandsCtrl'})
+			.when('/wetland/:wetland_id/:type_name', {controller: 'WetlandsCtrl'})
+			.when('/wetland/:wetland_id/:type_name/:layer_id', {controller: 'WetlandsCtrl'})
+		;
+
+	}])
+
+	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout){
+
+		$scope.wetlands = [];
 		$scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
             djangoRequests.request({
@@ -27,13 +38,16 @@ angular.module('webgisApp')
 					}
 					$scope.wetlands.push(prop);
                 });
-				
+
                 vectorSource.addFeatures(features);
                 $scope.olLayer = new ol.layer.Vector({
                     name: 'Wetlands',
                     source: vectorSource
                 });
 				mapviewer.map.addLayer($scope.olLayer);
+
+				load_wetland();
+
             }, function(error) {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
             })
@@ -46,7 +60,7 @@ angular.module('webgisApp')
 		$scope.loadMoreVideos = function() {
 			$scope.videosCurrentPage += 1;
 			var start = $scope.videosCurrentPage*$scope.videosMaxPage - $scope.videosMaxPage;
-			console.log('start = '+start);
+			//console.log('start = '+start);
 			djangoRequests.request({
 				'method': "GET",
 				'url': '/swos/wetland/'+$scope.value.id+'/youtube.json?start='+start+'&max='+$scope.videosMaxPage
@@ -153,7 +167,7 @@ angular.module('webgisApp')
 				}
 			})
 			$scope.filtered_geo_scale = '';
-			console.log($scope.filtered_country);
+			//console.log($scope.filtered_country);
 			if ($scope.filtered_country == null) {
 				$scope.filterReset();
 			}
@@ -204,11 +218,16 @@ angular.module('webgisApp')
 		});
 		
 		$scope.selectWetlandFromId = function(id) {
+			var wetland = null;
 			$.each($scope.wetlands, function() {
 				if (this['id'] == id) {
-					$scope.selectWetland(this);
+					wetland = this;
+					return false;
 				}
 			});
+			if (wetland)
+				return $scope.selectWetland(wetland);
+			return $q.reject();
 		}
 		
 		$scope.value = null;
@@ -234,7 +253,7 @@ angular.module('webgisApp')
 				} catch (err) {}
 			}
 		}
-		
+
 		$scope.trackAddLayer = function(layer) {
 			try {
 				_paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/products/'+layer.product_name+'/'+layer.alternate_title]);
@@ -295,7 +314,7 @@ angular.module('webgisApp')
         };
 
         $scope.selectWetland = function(wetland) {
-			/*
+        	/*
 			try {
 				_paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
 				_paq.push(['setDocumentTitle', wetland.name]);
@@ -308,7 +327,7 @@ angular.module('webgisApp')
 			
 			//if (!(wetland.id in $scope.wetlands_opened)) {
 			
-				djangoRequests.request({
+				return djangoRequests.request({
 	                'method': "GET",
 	                'url': '/swos/wetland/'+wetland.id
 	            }).then(function(data){
@@ -316,7 +335,7 @@ angular.module('webgisApp')
 					//$scope.wetlands_opened[wetland.id] = wetland;
 					$scope.value = wetland;
 					$scope.data_count = data['count'];
-					console.log($scope.data_count);
+					//console.log($scope.data_count);
 					
 					$scope.videosCurrentPage = 1;
 					$scope.imagesCurrentPage = 1;
@@ -365,7 +384,9 @@ angular.module('webgisApp')
 						//$scope.wetlands_opened[wetland.id]['satdata'] = data;
 						$scope.value['satdata'] = data;
 					})
-					
+
+					$scope.selectFeature(wetland);
+
 	            }, function(error) {
 	                bootbox.alert('<h1>Error while loading wetland details</h1>');
 	            });
@@ -375,11 +396,10 @@ angular.module('webgisApp')
 				$('#link_wetland_'+wetland.id).click();	
 			}*/
 
-            $scope.selectFeature(wetland);
 		};
 		
 		$scope.foo = function(id) {
-			console.log('foo');
+			//console.log('foo');
 			reAdjust();
 			$('.scroller-right').click();
 			//$('#sidebar-tabs a:last').tab('show')
@@ -406,8 +426,10 @@ angular.module('webgisApp')
         $scope.layers = mapviewer.layers;
 		$scope.addLayerToMap = function(layer, $event) {
 			var checkbox = $event.target;
+
             if (checkbox.checked) {
 				$scope.trackAddLayer(layer);
+
 				var layerObj = mapviewer.addLayer(layer).get("layerObj");
                 // store the mapping between django_id and hash-like id
                 $scope.layerIdMap[layerObj.django_id] = layerObj.id;
@@ -483,9 +505,9 @@ angular.module('webgisApp')
 				$.each(layers, function(){
 					if (layer.title == this.get('name')) {
 						var layerId = this.get('layerObj').id;
-						console.log('LayerId: '+layerId);
+						//console.log('LayerId: '+layerId);
 						var index = mapviewer.getIndexFromLayer(layer.title);
-						console.log('index: '+index);
+						//console.log('index: '+index);
 						mapviewer.removeLayer(layerId, index);
 						//this.setVisible(false);
 
@@ -559,6 +581,60 @@ angular.module('webgisApp')
             }
 
         });
+
+		var load_wetland = function () {
+        	if ($routeParams.wetland_id){
+        		$scope.selectWetlandFromId($routeParams.wetland_id).then(function(){
+        			var target = "overview";
+        			if ($routeParams.type_name)
+        				switch ($routeParams.type_name){
+							case "product":
+								target = 'li.flaticon-layers a';
+								break;
+							case "indicator":
+								target = 'li.flaticon-business a';
+								break;
+							case "satdata":
+								target = 'li.flaticon-space-satellite-station a';
+								break;
+							case "images":
+								target = 'li.flaticon-technology-1 a';
+								break;
+							case "video":
+								target = 'li.flaticon-technology a';
+								break;
+							case "externaldb":
+								target = 'li.flaticon-technology-2 a';
+								break;
+						}
+
+        				$timeout(function(){
+        					$(target).click(); // open tab
+
+							var layer_ids = $routeParams.layer_id.split("_");
+
+							$.each(layer_ids, function(i, value) {
+                                var layer_id = "#layer_vis_" + value; // create layer id
+                                $(layer_id).attr('checked', 'checked'); // mark as checked
+                                angular.element(layer_id).triggerHandler('click'); // add layer to map
+                            });
+
+							var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
+
+							//open menu according to the last layer id
+							if($routeParams.type_name == "product"){
+								$(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+							}
+							if($routeParams.type_name == "externaldb"){
+								$(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
+								$(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+							}
+
+        			});
+
+				});
+			}
+		};
 	})
 	.directive('repeatDone', function() {
       return function(scope, element, attrs) {
