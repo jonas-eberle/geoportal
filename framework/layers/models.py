@@ -217,13 +217,14 @@ def post_save_layer_sos(sender, instance, **kwargs):
 # Layer serializer used when add layer to map to retrieve fields needed for frontend (e.g., legend, downloadable)
 # Also used in MapViewerDetail view
 class LayerSerializer(serializers.ModelSerializer):
-    legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
-  #  legend = serializers.CharField(source='legend_url')
+
+    #legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
     download = serializers.FileField(source='download_file') or serializers.CharField(source='download_url')
+
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
 
 
 # Metadata serializer to output metadata related information from a given layer
