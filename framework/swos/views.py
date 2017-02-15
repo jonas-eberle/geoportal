@@ -111,6 +111,8 @@ class WetlandDetail(APIView):
                 if layer_extern:
                     for ex_layer in layer_extern:
                         layer_data = LayerSerializer(ex_layer).data
+                        if layer_data['legend_colors']:
+                            layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
                         if extdb.id not in temp_external_layers:
                             temp_external_layers[extdb.id] = [layer_data]
                         else:

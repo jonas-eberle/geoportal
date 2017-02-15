@@ -32,7 +32,7 @@
             ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
     </ul>
 </div>
-<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic" ng-hide="!layer.showLegend">
+<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
     <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
         <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
     </a>
@@ -40,7 +40,7 @@
         <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
     </a>
     <table ng-if="layer.legend_colors">
-        <tr ng-repeat="item in layer.legend_colors">
+        <tr ng-repeat="item in layer.legend_colors track by $index">
             <td class="legend-color" ng-attr-style="background-color:{{item.color}};opacity:{{item.opacity}};">&nbsp;</td>
             <td class="legend-label">{{ item.label }}</td>
         </tr>

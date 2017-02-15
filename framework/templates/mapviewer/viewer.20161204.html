@@ -243,12 +243,15 @@
                                             ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
                                     </ul>
                                 </div>
-                                <div class="item_legend" style="margin-left:40px;margin-top:5px;" ng-if="layer.legend" ng-hide="!layer.showLegend">
-                                    <a ng-if="!layer.legend_colors" href="{{ layer.legend }}" target="_blank">
-                                        <img ng-src="{{ layer.legend }}" alt="Layer legend" style="max-width:100%"/>
+                                <div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
+                                    <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
+                                        <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
+                                     </a>
+                                    <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" target="_blank">
+                                        <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
                                     </a>
                                     <table ng-if="layer.legend_colors">
-                                        <tr ng-repeat="item in layer.legend_colors">
+                                        <tr ng-repeat="item in layer.legend_colors track by $index">
                                             <td class="legend-color" ng-attr-style="background-color:{{item.color}};opacity:{{item.opacity}};">&nbsp;</td>
                                             <td class="legend-label">{{ item.label }}</td>
                                         </tr>
@@ -387,7 +390,7 @@
 									<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
 								</accordion-heading>
 								<div class="options">
-									{{product.description}}<br /><br />
+                                    <p>{{product.description}}</p>
 									<div class="products_datasets">
 										<strong>Datasets:</strong>
 										<div class="select" ng-if="product.layers.length > 0">
@@ -447,12 +450,10 @@
 						</accordion>
 						
 						<div class="note">
-							<strong>Please note: </strong><br />
-							Official satellite data archives have been queried once on 2016-11-30. Regular updates are planned. 
-							<br /><br />
-							So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!
-							<br /><br /> 
-							Further satellite data discovery and processing tools are planned within the SWOS project. 
+							<strong>Please note: </strong>
+                            <p>Official satellite data archives have been queried once on 2016-11-30. Regular updates are planned.</p>
+                            <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
+                            <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
 						</div>
 			        </tab>
 					
@@ -535,9 +536,8 @@
                         <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
                         <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external
                             databases registered!-->
-
-                            <br /><div ><input ng-model="externaldb_search.searchText" placeholder="Search for ..."><input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
-                                <label for="only_layer" style="margin-top: 8px;" ><div class="flaticon-layers" style="display: inline-block;"></div> Only</label></div><br /><br />
+                            <div ><input ng-model="externaldb_search.searchText" placeholder="Search for ..."><input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
+                                <label for="only_layer" style="margin-top: 8px;" ><div class="flaticon-layers" style="display: inline-block;"></div> Only</label></div>
                         </div>
 
                         <accordion>
@@ -554,14 +554,10 @@
                                             <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
                                         </accordion-heading>
-
-                                        {{externaldb.description}}
-                                        <br />
-                                        <div ng-if="externaldb.provided_info"><br /><strong>Provided data:</strong><div> {{ externaldb.provided_info }} </div></div>
-                                        <br />
+                                        <p>{{externaldb.description}}</p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p>{{ externaldb.provided_info }}</p></div>
                                         <strong>Link:</strong>
-                                        <div><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></div>
-                                        <br />
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Datasets:</strong>
                                             <div ng-repeat="layer in externaldb.layers"
