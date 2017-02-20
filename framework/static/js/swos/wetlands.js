@@ -11,9 +11,11 @@ angular.module('webgisApp')
 
 	}])
 
+
 	.controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout){
 
 		$scope.wetlands = [];
+		$scope.wetlands_without_geom = [];
 		$scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function ($broadCast, data) {
             djangoRequests.request({
@@ -23,20 +25,25 @@ angular.module('webgisApp')
 				//$scope.wetlands = data.features;
 				$scope.wetlands = [];
 				var vectorSource = new ol.source.Vector();
+				//var features = (new ol.format.GeoJSON()).readFeatures(data.data);
 				var features = (new ol.format.GeoJSON()).readFeatures(data);
-
                 $.each(features, function(){
 					var centroid = ol.extent.getCenter(this.getGeometry().getExtent());
 					this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
 					var prop = this.getProperties();
-					
+
+
 					$scope.filtered_testmapping = true;
 					if (prop['id'] <= 9) {
 						prop['show'] = true;
 					} else {
 						prop['show'] = false;
 					}
+
 					$scope.wetlands.push(prop);
+					var without_geom = { "name": prop["name"], "country": prop["country"], "id": prop["id"], "show":prop["show"], "geo_scale":prop["geo_scale"]};
+
+					$scope.wetlands_without_geom.push(without_geom);
                 });
 
                 vectorSource.addFeatures(features);
@@ -52,7 +59,7 @@ angular.module('webgisApp')
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
             })
         });
-		
+
 		$scope.data_count = {};
 		$scope.videosCurrentPage = 1;
 		$scope.allVideos = false;
@@ -72,6 +79,7 @@ angular.module('webgisApp')
 				}
 			})
 		}
+
 		$scope.pictures_is_open = true
 		$scope.external_pictures_is_open = true
 		$scope.imagesCurrentPage = 1;
@@ -153,30 +161,27 @@ angular.module('webgisApp')
 		$scope.filtered_country = '';
 		$scope.filtered_geo_scale = '';
 		$scope.filtered_testmapping = false;
-		$scope.countries = ['Spain', 'Greece', 'Sweden', 'France', 'Jordan', 'Tanzania', 'United Arab Emirates', 'Iraq', 'Latvia', 'Bosnia and Herzegovina', 'Algeria', 'Tunisia', 'Estonia', 'Lithuania', 'Senegal', 'Egypt', 'Slovenia', 'Montenegro-Albania', 'Italy', 'Finland', 'Morocco'];
-		$scope.countries.sort();
-		$scope.geo_scale = ['Small Wetland Site', 'Large Wetland Site', 'Medium Wetland Site', 'River Basin'];
-		
 		$scope.filterCountry = function() {
 			$scope.filtered_testmapping = false;
-			$.each($scope.wetlands, function(){
-				if (this['country'] == $scope.filtered_country) {
+			$scope.sortByCountryName = false;
+			$.each($scope.wetlands_without_geom, function(){
+				if (this['country'] == $scope.filtered_country || $scope.filtered_country== '') {
 					this['show'] = true;
 				} else {
 					this['show'] = false;
 				}
 			})
+
 			$scope.filtered_geo_scale = '';
-			//console.log($scope.filtered_country);
 			if ($scope.filtered_country == null) {
 				$scope.filterReset();
 			}
 		}
-		
 		$scope.filterScale = function() {
 			$scope.filtered_testmapping = false;
-			$.each($scope.wetlands, function(){
-				if (this['geo_scale'] == $scope.filtered_geo_scale) {
+			$scope.sortByCountryName = false;
+			$.each($scope.wetlands_without_geom, function(){
+				if (this['geo_scale'] == $scope.filtered_geo_scale || $scope.filtered_geo_scale== '') {
 					this['show'] = true;
 				} else {
 					this['show'] = false;
@@ -187,14 +192,13 @@ angular.module('webgisApp')
 				$scope.filterReset();
 			}
 		}
-		
 		$scope.filterTestmapping = function() {
 			$scope.filtered_country = '';
 			$scope.filtered_geo_scale = '';
 			if ($scope.filtered_testmapping == false) {
 				$scope.filterReset();
 			} else {
-				$.each($scope.wetlands, function(){
+				$.each($scope.wetlands_without_geom, function(){
 					if (this['id'] <= 9) {
 						this['show'] = true;
 					} else {
@@ -203,12 +207,22 @@ angular.module('webgisApp')
 				})
 			}
 		}
-		
 		$scope.filterReset = function() {
-			$.each($scope.wetlands, function(){
+			$.each($scope.wetlands_without_geom, function(){
 				this['show'] = true;
 			})
 		}
+
+		$scope.sortByCountryName = false;
+    	$scope.sortOrder = 'name';
+        $scope.setSortOrder = function () {
+            if ($scope.sortByCountryName) {
+                $scope.sortOrder = ['country', 'name'];
+            }
+            else {
+                $scope.sortOrder = 'name';
+            }
+        }
 		
 		$scope.wetlands_opened = {}
 		$scope.activeTab = -1;
@@ -331,7 +345,7 @@ angular.module('webgisApp')
 	                'method': "GET",
 	                'url': '/swos/wetland/'+wetland.id
 	            }).then(function(data){
-					wetland['data'] = data;
+	            	wetland['data'] = data;
 					//$scope.wetlands_opened[wetland.id] = wetland;
 					$scope.value = wetland;
 					$scope.data_count = data['count'];
@@ -385,7 +399,15 @@ angular.module('webgisApp')
 						$scope.value['satdata'] = data;
 					})
 
-					$scope.selectFeature(wetland);
+
+					$.each($scope.wetlands, function(){
+						if (this['id'] == wetland.id) {
+							$scope.wetland_found = this;
+							return false;
+						}
+					});
+
+					$scope.selectFeature($scope.wetland_found);
 
 	            }, function(error) {
 	                bootbox.alert('<h1>Error while loading wetland details</h1>');

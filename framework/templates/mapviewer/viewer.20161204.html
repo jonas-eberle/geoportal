@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="webgisApp">
+<html lang="en" ng-app="webgisApp" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -287,17 +287,31 @@
 
           <!-- Tab panes -->
 
-          <div class="tab-content" style="top:93px">
-            <div role="tabpanel" class="tab-pane" ng-class="{active: activeTab==-1}" id="catalog">
-              <div class="filter" style="padding: 10px;padding-bottom: 0;">
-			  	<select ng-model="filtered_country" ng-options="o as o for o in countries" ng-change="filterCountry()"><option value="">- Filter by country -</option></select>
-			  	<select ng-model="filtered_geo_scale" ng-options="o as o for o in geo_scale" ng-change="filterScale()"><option value="">- Filter by scale -</option></select>
-			  	<br />
-			  	<input type="checkbox" ng-model="filtered_testmapping" ng-change="filterTestmapping()" id="cb_testmapping" /><label for="cb_testmapping" style="margin-top: 8px;">Show only testmapping wetlands</label>
-			  </div>
-			  <hr />
-  		<div ng-if="wetlands.length==0">Loading wetlands... please wait</div>
-              <div ng-repeat="layer in wetlands" ng-if="layer.show" class="list-group-item clearfix" ng-click="selectWetland(layer)" ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
+            <div class="tab-content" style="top:93px">
+                <div role="tabpanel" class="tab-pane" ng-class="{active: activeTab==-1}" id="catalog">
+                    <div class="filter" style="padding: 10px;padding-bottom: 0;">
+                        <select ng-model="filtered_country" ng-change="filterCountry()">
+                            <option value="">- Filter by country -</option>
+                             <option ng-repeat="option in wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
+                        </select>
+                        <select ng-model="filtered_geo_scale" ng-change="filterScale()">
+                            <option value="">- Filter by scale -</option>
+                            <option ng-repeat="option in wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>
+                        </select>
+                    </div>
+                    <div style="padding: 10px;padding-bottom: 0;">
+                        <input type="checkbox" ng-model="filtered_testmapping" ng-change="filterTestmapping()"
+                               id="cb_testmapping"/><label for="cb_testmapping" style="margin-top: 8px;">Show only testmapping wetlands</label>
+                    </div>
+                    <div style="padding: 10px;padding-bottom: 0;padding-top: 0;">
+                        <input type="checkbox" ng-model="sortByCountryName" ng-change="setSortOrder()"
+                               id="cb_groupbycountry"><label for="cb_groupbycountry" style="margin-top: 8px;">Sort by country</label>
+                    </div>
+                    <div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>
+                    <hr/>
+                    <div ng-if="wetlands_without_geom==0">Loading wetlands... please wait </div>
+
+              <div ng-repeat="layer in wetlands_without_geom | filter:search | orderBy: sortOrder " ng-if="layer.show" class="list-group-item clearfix" ng-click="selectWetland(layer)" ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
               	<div class="catalog-item">
                     <div class="item_center">
                         <div class="item_title">{{layer.name}}</div>
@@ -632,6 +646,7 @@
     <script src="{% static "lib/angular-cookies.min.js" %}"></script>
     <script src="{% static "lib/angular-route.min.js" %}"></script>
 	<script src="{% static "lib/angular-drag-and-drop-lists.min.js" %}"></script>
+    <script src="{% static "lib/angular-filter.min.js" %}"></script>
     <script src="{% static "lib/ui-bootstrap-tpls-0.12.0.min.js" %}"></script>
 	<script src="{% static "lib/nsPopover.js" %}"></script>
     <script src="{% static "lib/bootbox.min.js" %}"></script>

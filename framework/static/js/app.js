@@ -7,7 +7,8 @@ angular.module('webgisApp', [
     'ui.bootstrap',
 	'dndLists',
 	'nsPopover',
-	'ui.bootstrap-slider'
+	'ui.bootstrap-slider',
+	'angular.filter'
 ])
 	.service('djangoRequests', function djangoRequests($q, $http, $cookies, $rootScope) {
 
