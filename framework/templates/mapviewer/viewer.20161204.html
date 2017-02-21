@@ -243,7 +243,7 @@
                                             ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
                                     </ul>
                                 </div>
-                                <div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
+                                <div class="item_legend" style="margin-left:40px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
                                     <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
                                         <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
                                      </a>
@@ -641,7 +641,7 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static "assets/js/ie10-viewport-bug-workaround.js" %}"></script>
 
-    <script src="{% static "lib/angular.min.js" %}"></script>
+    <script src="{% static "lib/angular.min.js" %}" type="text/javascript"></script>
     <script src="{% static "lib/angular-resource.min.js" %}"></script>
     <script src="{% static "lib/angular-cookies.min.js" %}"></script>
     <script src="{% static "lib/angular-route.min.js" %}"></script>
