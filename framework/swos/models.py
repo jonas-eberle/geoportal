@@ -668,7 +668,7 @@ class WetlandImage(models.Model):
     description = models.TextField(null=True, blank=True)
     copyright = models.CharField("Copyright / Owner", max_length=200, blank=True)
     date = models.DateField (blank=True, null=True)
-    image = ImageWithThumbsField(upload_to='images/',  sizes=((125,125),(52,52)))
+    image = ImageWithThumbsField(upload_to='images/',  sizes=((125,125), (52, 52), (1300,1000), (1000, 1300)))
     wetland = models.ForeignKey(Wetland, related_name="image_wetland", verbose_name="Wetland", blank=True, null=True)
 
     @property

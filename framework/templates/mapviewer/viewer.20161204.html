@@ -481,10 +481,10 @@
                                 <div style="/*height: 185px;overflow-y: auto;*/">
                                     <!--<span ng-if="!value.pictures">Loading...</span>-->
                                     <a ng-repeat="picture in value.pictures.photos"
-                                       ng-click="trackShowImage('http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg', '{{picture.photo_title}')"
-                                       class="fancybox" rel="gallery1" data-fancybox-href="{{picture.photo_url}}"
-                                       data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) <a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> ({{picture.owner_name}})"
-                                       href="{{picture.photo_url}}" target="_blank"><img
+                                       ng-click="'{{picture.photo_title}}'"
+                                       class="fancybox" rel="gallery1" data-fancybox-href="{{ picture.photo_show_url }}"
+                                       data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) <a href='{{picture.photo_url_orig}}' target='_blank'>{{picture.photo_title}}</a> ({{picture.owner_name}})"
+                                       href="{{picture.photo_url_thumb}}" target="_blank"><img
                                             src="{{picture.photo_url_thumb}}"
                                             alt="{{picture.photo_title}} ({{picture.owner_name}})"
                                             title="{{picture.photo_title}} ({{picture.owner_name}})"
