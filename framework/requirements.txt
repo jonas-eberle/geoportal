@@ -52,5 +52,4 @@ rsa==3.4.2
 Shapely==1.5.15
 simplejson==3.8.2
 six==1.10.0
-statprof==0.1.2
 uritemplate==0.6
