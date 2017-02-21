@@ -630,28 +630,30 @@ angular.module('webgisApp')
 								break;
 						}
 
-        				$timeout(function(){
-        					$(target).click(); // open tab
+                    $timeout(function () {
+                        $(target).click(); // open tab
 
-							var layer_ids = $routeParams.layer_id.split("_");
+                        if ($routeParams.layer_id) {
+                            var layer_ids = $routeParams.layer_id.split("_");
 
-							$.each(layer_ids, function(i, value) {
+
+                            $.each(layer_ids, function (i, value) {
                                 var layer_id = "#layer_vis_" + value; // create layer id
                                 $(layer_id).attr('checked', 'checked'); // mark as checked
                                 angular.element(layer_id).triggerHandler('click'); // add layer to map
                             });
 
-							var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
+                            var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
 
-							//open menu according to the last layer id
-							if($routeParams.type_name == "product"){
-								$(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
-							}
-							if($routeParams.type_name == "externaldb"){
-								$(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
-								$(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
-							}
-
+                            //open menu according to the last layer id
+                            if ($routeParams.type_name == "product") {
+                                $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                            }
+                            if ($routeParams.type_name == "externaldb") {
+                                $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
+                                $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                            }
+                        }
         			});
 
 				});
