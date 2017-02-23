@@ -1075,6 +1075,7 @@ angular.module('webgisApp')
         };
         $scope.removeLayer = function(id, index, django_id) {
             mapviewer.removeLayer(id, index);
+            var checkbox;
             if (django_id !== undefined
                 && django_id !== null
                 && (checkbox = document.getElementById("layer_vis_"+django_id))
