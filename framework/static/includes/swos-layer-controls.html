@@ -7,7 +7,7 @@
                                                        ng-options="o as o for o in layer.dates"></select></div>
     </div>
     <div class="item_icon">
-        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
         <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
