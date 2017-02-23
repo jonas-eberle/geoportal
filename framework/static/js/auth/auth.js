@@ -274,11 +274,11 @@ angular.module('webgisApp')
                     var modalInstance = $modal.open({
                         controller: 'ModalInstanceCtrl',
                         template: '<div modal-draggable class="modal-header"><h1>Error while logging in!</h1></div><div class="modal-body">' + errors + '</div><div class="modal-footer"><button class="btn btn-primary" ng-click="close()">Close</button></div>',
-					    resolve: {
-		                        data: function() {return {};},
-		                        title: function() {return '';}
-		                }
-					});
+                        resolve: {
+                                data: function() {return {};},
+                                title: function() {return '';}
+                        }
+                    });
                 });
         }
 
@@ -292,21 +292,21 @@ angular.module('webgisApp')
         $scope.editProfileForm = function () {
             var modalInstance = $modal.open({
                 controller: 'EditProfileCtrl',
-				templateUrl: subdir+'/static/includes/auth-edit-profile.html'
+                templateUrl: subdir+'/static/includes/auth-edit-profile.html'
             })
         }
 
         $scope.registerForm = function () {
             var modalInstance = $modal.open({
                 controller: 'RegisterUserCtrl',
-				templateUrl: subdir+'/static/includes/auth-register.html'
+                templateUrl: subdir+'/static/includes/auth-register.html'
             });
         }
 
         $scope.resetPasswordForm = function () {
             var modalInstance = $modal.open({
                 controller: 'ResetPasswordCtrl',
-				templateUrl: subdir+'/static/includes/auth-reset-password.html'
+                templateUrl: subdir+'/static/includes/auth-reset-password.html'
             });
         }
 
@@ -382,11 +382,11 @@ angular.module('webgisApp')
                 }
             },
             templateUrl: subdir+'/static/includes/auth-new-password.html',
-			controller: 'NewPasswordInstanceCtrl'
+            controller: 'NewPasswordInstanceCtrl'
         });
-		
-		$scope.submit
-		
+        
+        $scope.submit
+        
     })
     .controller('NewPasswordInstanceCtrl', function ($scope, $modalInstance, uid, token, djangoAuth, AlertService) {
         $scope.uid = uid;
@@ -401,7 +401,7 @@ angular.module('webgisApp')
             djangoAuth.confirmReset($scope.uid, $scope.token, $scope.password1, $scope.password2).then(function (data) {
                 $scope.uid, $scope.token, $scope.password1, $scope.password2 = '';
                 $modalInstance.close();
-				AlertService.addAlert({'type': 'success', 'msg': 'Password has been reset with the new password.'});
+                AlertService.addAlert({'type': 'success', 'msg': 'Password has been reset with the new password.'});
             }, function (error) {
                 bootbox.alert(error);
             })

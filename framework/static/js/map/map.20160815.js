@@ -88,7 +88,7 @@ angular.module('webgisApp')
 
                 this.selectInteraction = new ol.interaction.Select({
                     style: function (feat, res) {
-						return [new ol.style.Style({
+                        return [new ol.style.Style({
                             image: new ol.style.Circle({
                                 fill: new ol.style.Fill({ color: 'rgba(255,255,255,0.5)'}),
                                 stroke: stroke,
@@ -146,15 +146,15 @@ angular.module('webgisApp')
                             })
                         })
                         break;
-					case 'TMS':
-						olLayer = new ol.layer.Tile({
-					      name: layer.title,
-						  layerObj: layer,
-						  source: new ol.source.XYZ({
-					        url: layer.ogc_link.replace('{y}','{-y}')
-					      })
-					    })
-						break;
+                    case 'TMS':
+                        olLayer = new ol.layer.Tile({
+                          name: layer.title,
+                          layerObj: layer,
+                          source: new ol.source.XYZ({
+                            url: layer.ogc_link.replace('{y}','{-y}')
+                          })
+                        })
+                        break;
                     case 'WMTS':
                         if (typeof(layer.capabilities) == 'object') {
                             // does not work with NASA WMTS!
@@ -309,7 +309,7 @@ angular.module('webgisApp')
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
-							layerObj: layer,
+                            layerObj: layer,
                             source: vectorSource
                         })
                         break;
@@ -414,15 +414,15 @@ angular.module('webgisApp')
                 this.data.layersCount = this.data.layersCount+1;
                 olLayer.set('layerObj', layer);
                 this.map.addLayer(olLayer);
-				return olLayer;
+                return olLayer;
             },
-			'getIndexFromLayer': function(title) {
-				for (var i=0; i<this.layersMeta.length; i++) {
+            'getIndexFromLayer': function(title) {
+                for (var i=0; i<this.layersMeta.length; i++) {
                     if (title == this.layersMeta[i].name) {
                         return i;
                     }
                 }
-			},
+            },
             'removeLayer': function(id, index) {
                 var layer = this.layers[id];
                 var layerIndex = $.inArray(layer, this.map.getLayers().getArray())
@@ -488,7 +488,7 @@ angular.module('webgisApp')
                     mapviewer.data.addexternallayer = data.addexternallayer;
 
                     mapviewer.displayProjection = data.map_proj;
-					if (data.map_resolutions != null && data.map_resolutions != '') {
+                    if (data.map_resolutions != null && data.map_resolutions != '') {
                         //TODO: change map(Number) to something that works with older browsers!
                         mapviewer.resolutions = data.map_resolutions.split(' ').map(Number);
                     }
@@ -526,7 +526,7 @@ angular.module('webgisApp')
                     }
                     $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
                     $('#loading-div').hide();
-					
+                    
                     if (data.time_slider == true) {
                         var times = data.time_slider_dates.split(',')
                         var noLabels = parseInt($("#slider").width()/80);
@@ -588,11 +588,11 @@ angular.module('webgisApp')
                if (e.dragging) {
                    return;
                }
-		/*
-	       var context = e.originalEvent.target.getContext("2d");
+        /*
+           var context = e.originalEvent.target.getContext("2d");
                var imagevalue = context.getImageData(e.pixel[0],e.pixel[1],1,1);
                console.log(imagevalue.data);
-		*/
+        */
                var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                    if (layer == null || layer.get('layerObj') == null) return false;
                    if (layer.get('layerObj').ogc_type == 'SOS') {
@@ -634,15 +634,15 @@ angular.module('webgisApp')
                 //mapviewer.selectPointerMove.getFeatures().clear();
                 var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                     if (layer == null) return false;
-					
-					if (layer.get('name') == 'Wetlands' && feature != null) {
-						console.log('Selected wetland: '+feature.get('id'));
-						$rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
-						return true;
-					}
-					
-					if (layer.get('layerObj') == null) return false;
-					switch(layer.get('layerObj').ogc_type) {
+                    
+                    if (layer.get('name') == 'Wetlands' && feature != null) {
+                        console.log('Selected wetland: '+feature.get('id'));
+                        $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
+                        return true;
+                    }
+                    
+                    if (layer.get('layerObj') == null) return false;
+                    switch(layer.get('layerObj').ogc_type) {
                         case 'SOS':
                             if (feature.get('features').length > 1) {
                                 var options = '';
@@ -730,9 +730,9 @@ angular.module('webgisApp')
         $scope.zoomMaxExtent = function() {
             mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection), mapviewer.map.getSize())
         }
-		
+        
         $scope.changeSitesVisibility = function(id, $event) {
-			var olLayer = mapviewer.map.getLayers().getArray()[1];
+            var olLayer = mapviewer.map.getLayers().getArray()[1];
             var checkbox = $event.target;
             if (checkbox.checked) {
                 olLayer.setVisible(true);

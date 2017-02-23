@@ -81,13 +81,13 @@ angular.module('webgisApp')
                     target: id,
                     view: view,
                     controls: [new ol.control.ScaleLine()],
-					interactions: ol.interaction.defaults({
-						dragPan: false,
-						mouseWheelZoom: false
-					}).extend([
-						new ol.interaction.DragPan({kinetic: null}),
-						new ol.interaction.MouseWheelZoom({duration: 0})
-					])
+                    interactions: ol.interaction.defaults({
+                        dragPan: false,
+                        mouseWheelZoom: false
+                    }).extend([
+                        new ol.interaction.DragPan({kinetic: null}),
+                        new ol.interaction.MouseWheelZoom({duration: 0})
+                    ])
                 });
                 //console.log(id);
                 //var olMapDiv = document.getElementById(id);
@@ -103,7 +103,7 @@ angular.module('webgisApp')
 
                 this.selectInteraction = new ol.interaction.Select({
                     style: function (feat, res) {
-						return [new ol.style.Style({
+                        return [new ol.style.Style({
                             image: new ol.style.Circle({
                                 fill: new ol.style.Fill({ color: 'rgba(255,255,255,0.5)'}),
                                 stroke: stroke,
@@ -161,15 +161,15 @@ angular.module('webgisApp')
                             })
                         });
                         break;
-					case 'TMS':
-						olLayer = new ol.layer.Tile({
-					      name: layer.title,
-						  layerObj: layer,
-						  source: new ol.source.XYZ({
-					        url: layer.ogc_link.replace('{y}','{-y}')
-					      })
-					    });
-						break;
+                    case 'TMS':
+                        olLayer = new ol.layer.Tile({
+                          name: layer.title,
+                          layerObj: layer,
+                          source: new ol.source.XYZ({
+                            url: layer.ogc_link.replace('{y}','{-y}')
+                          })
+                        });
+                        break;
                     case 'WMTS':
                         if (typeof(layer.capabilities) == 'object') {
                             // does not work with NASA WMTS!
@@ -324,7 +324,7 @@ angular.module('webgisApp')
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
-							layerObj: layer,
+                            layerObj: layer,
                             source: vectorSource
                         })
                         break;
@@ -416,7 +416,7 @@ angular.module('webgisApp')
                 layer.name = layer.title;
                 layer.id = Math.random().toString(36).substring(2, 15);
                 this.sliderValues[layer.id] = 100;
-				layer.showLegend = true;
+                layer.showLegend = true;
                 this.layers[layer.id] = olLayer;
                 if (layer.ogc_time == true) {
                     this.layersTime.push(layer.id);
@@ -444,13 +444,13 @@ angular.module('webgisApp')
                 this.map.addLayer(olLayer);
                 return olLayer;
             },
-			'getIndexFromLayer': function(title) {
-				for (var i=0; i<this.layersMeta.length; i++) {
+            'getIndexFromLayer': function(title) {
+                for (var i=0; i<this.layersMeta.length; i++) {
                     if (title == this.layersMeta[i].name) {
                         return i;
                     }
                 }
-			},
+            },
             'removeLayer': function(id, index) {
                 var olLayer = this.layers[id];
                 var layerIndex = $.inArray(olLayer, this.map.getLayers().getArray());
@@ -517,7 +517,7 @@ angular.module('webgisApp')
                     mapviewer.data.addexternallayer = data.addexternallayer;
 
                     mapviewer.displayProjection = data.map_proj;
-					if (data.map_resolutions != null && data.map_resolutions != '') {
+                    if (data.map_resolutions != null && data.map_resolutions != '') {
                         //TODO: change map(Number) to something that works with older browsers!
                         mapviewer.resolutions = data.map_resolutions.split(' ').map(Number);
                     }
@@ -621,18 +621,18 @@ angular.module('webgisApp')
 
     .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
 
-		// $scope.legendLayers = [];
+        // $scope.legendLayers = [];
 
         $scope.$on('attribution_list_new', function ($broadCast){
             $scope.layer_attribution = Attribution.getList();
         });
 
-		$scope.$on('mapviewer.map_created', function ($broadCast, data) {
+        $scope.$on('mapviewer.map_created', function ($broadCast, data) {
             if ($cookies.hideCookieNote) {
-				$scope.hideCookieNote =  true;
-			}
+                $scope.hideCookieNote =  true;
+            }
 
-			popup = new ol.Overlay({element: document.getElementById('popup')});
+            popup = new ol.Overlay({element: document.getElementById('popup')});
             mapviewer.map.addOverlay(popup);
             stationPopup = new ol.Overlay({element: document.getElementById('stationPopup'),offset: [0, -5]});
             mapviewer.map.addOverlay(stationPopup);
@@ -660,9 +660,9 @@ angular.module('webgisApp')
                 //     }
                 // });
 
-			   var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
+               var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                    if (layer == null || layer.get('layerObj') == null) return false;
-				   if (layer.get('layerObj').ogc_type == 'SOS') {
+                   if (layer.get('layerObj').ogc_type == 'SOS') {
                        var feats = feature.get('features');
                        var content = '<ul style="margin: 0;padding:0;list-style-type: none;">';
                        $.each(feats, function () {
@@ -714,8 +714,8 @@ angular.module('webgisApp')
                 var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                     if (layer === null || layer.get('name') === 'Wetlands') return false;
 
-					if (layer.get('layerObj') == null) return false;
-					switch(layer.get('layerObj').ogc_type) {
+                    if (layer.get('layerObj') == null) return false;
+                    switch(layer.get('layerObj').ogc_type) {
                         case 'SOS':
                             if (feature.get('features').length > 1) {
                                 var options = '';
@@ -797,11 +797,11 @@ angular.module('webgisApp')
             mapviewer.initialize(mapId, 'map', false);
         });
 
-		$scope.hideCookieNote = false;
-		$scope.closeCookieNote = function() {
-			$cookies.hideCookieNote = true;
-			$scope.hideCookieNote =  true;
-		}
+        $scope.hideCookieNote = false;
+        $scope.closeCookieNote = function() {
+            $cookies.hideCookieNote = true;
+            $scope.hideCookieNote =  true;
+        }
 
         $scope.zoomIn = function() {
             //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() / 2);
@@ -819,7 +819,7 @@ angular.module('webgisApp')
         }
 
         $scope.changeSitesVisibility = function(id, $event) {
-			var olLayer = mapviewer.map.getLayers().getArray()[1];
+            var olLayer = mapviewer.map.getLayers().getArray()[1];
             var checkbox = $event.target;
             if (checkbox.checked) {
                 olLayer.setVisible(true);
@@ -1143,10 +1143,10 @@ angular.module('webgisApp')
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
                 try {
-					_paq.push(['trackEvent', 'Show Metadata', layer.title]);
-				} catch (err) {}
+                    _paq.push(['trackEvent', 'Show Metadata', layer.title]);
+                } catch (err) {}
 
-				$('#loading-div').show();
+                $('#loading-div').show();
                 djangoRequests.request({
                     'method': "GET",
                     'url': '/layers/detail/' + layer.django_id + '.json'
