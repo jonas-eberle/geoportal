@@ -1,7 +1,7 @@
 /* Alte Popups ausblenden, bevor ein neues eingeblendet wird */
 $(this).on('show.bs.popover', function () {
   $('.popover').popover('hide')
-})
+});
 
 /* Used for mobile version */
 $('#toggle-sidebar').on('click', function() {
@@ -18,7 +18,7 @@ $('#toggle-sidebar').on('click', function() {
 /* When a form element is being focused, the dropdown-menu is closed, with this code we prevent this behaviour */
 $('.dropdown-menu select, .dropdown-menu textearea').click(function(e) {
     e.stopPropagation();
-})
+});
 
 /* Additional JavaScript for search box */
 function opensearchextend() {
@@ -35,9 +35,9 @@ function closesearchextend() {
 
 $('#map_search').click(function(e) {
     opensearchextend();
-})
+});
 
 $('#map_search').mouseleave(function(e) {
     closesearchextend();
-})
+});
 /* End additional JavaScript for search box */

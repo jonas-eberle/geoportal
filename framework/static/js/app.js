@@ -10,7 +10,7 @@ angular.module('webgisApp', [
     'ui.bootstrap-slider',
     'angular.filter'
 ])
-    .service('djangoRequests', function djangoRequests($q, $http, $cookies, $rootScope) {
+    .service('djangoRequests', function djangoRequests($q, $http, $cookies) {
 
             var service = {
                 'API_URL': '',
@@ -40,7 +40,7 @@ angular.module('webgisApp', [
                         },
                         params: params,
                         data: data
-                    }).success(angular.bind(this, function(data, status, headers, config){
+                    }).success(angular.bind(this, function(data, status){
                         deferred.resolve(data, status);
                     })).error(angular.bind(this, function(data, status, headers, config){
                         // Set request status
@@ -83,7 +83,7 @@ angular.module('webgisApp', [
                 this.alert = alert;
                 $rootScope.$broadcast('alert.added');
             }
-        }
+        };
         return sharedService;
     })
     .controller('AlertCtrl', function ($scope, AlertService) {
@@ -93,7 +93,7 @@ angular.module('webgisApp', [
             $scope.alerts = [AlertService.alert];
         });
 
-        $scope.closeAlert = function (index) {
+        $scope.closeAlert = function () {
             $scope.alerts = [];
         };
     })
@@ -114,7 +114,7 @@ angular.module('webgisApp', [
                 _paq.push(['setDocumentTitle', 'Info']);
                 _paq.push(['trackPageView']);
             } catch (err) {}
-           var modalInstance = $modal.open({
+           $modal.open({
                 controller: 'ModalInstanceCtrl',
                 template: $('#info_text').html(),
                 //templateUrl: subdir+'/static/includes/window_info.html?v=3',
@@ -131,7 +131,7 @@ angular.module('webgisApp', [
                 _paq.push(['setDocumentTitle', 'Help']);
                 _paq.push(['trackPageView']);
            } catch (err) {}
-           var modalInstance = $modal.open({
+           $modal.open({
                 controller: 'ModalInstanceCtrl',
                 templateUrl: subdir+'/static/help/help.html',
                 backdrop: 'static',

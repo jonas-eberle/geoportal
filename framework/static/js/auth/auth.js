@@ -25,7 +25,7 @@ angular.module('webgisApp')
                     'password1': password1,
                     'password2': password2,
                     'email': email
-                }
+                };
                 data = angular.extend(data, more);
                 return djangoRequests.request({
                     'method': "POST",
@@ -50,14 +50,14 @@ angular.module('webgisApp')
                     }
                     djangoAuth.authenticated = true;
                     djangoAuth.profile().then(function (data) {
-                        if (data.first_name != "" && data.last_name != "") {
+                        if ((data.first_name != /** @type {boolean} **/"") && (data.last_name != /** @type {boolean} **/"")) {
                             djangoAuth.user = data.first_name + ' ' + data.last_name;
                         } else {
                             djangoAuth.user = data.username;
                         }
                         djangoAuth.userData = data;
                         $rootScope.$broadcast("djangoAuth.logged_in", data);
-                    })
+                    });
                     $('#loading-div').hide();
                 });
             },
@@ -66,7 +66,7 @@ angular.module('webgisApp')
                 return djangoRequests.request({
                     'method': "POST",
                     'url': this.API_URL+"/logout/"
-                }).then(function (data) {
+                }).then(function () {
                     delete $http.defaults.headers.common.Authorization;
                     delete $cookies.token;
                     djangoAuth.authenticated = false;
@@ -132,7 +132,7 @@ angular.module('webgisApp')
                 return djangoRequests.request({
                     'method': "DELETE",
                     'url': this.API_URL+"/user/delete/"
-                }).then(function (data) {
+                }).then(function () {
                     djangoAuth.logout();
                 });
             },
@@ -148,7 +148,7 @@ angular.module('webgisApp')
                         'method': "GET",
                         'url': this.API_URL+"/user/"
                     }).then(function (data) {
-                        if (data.first_name != "" && data.last_name != "") {
+                        if (data.first_name != /** @type {boolean} **/"" && data.last_name != /** @type {boolean} **/"") {
                             da.user = data.first_name + ' ' + data.last_name;
                         } else {
                             da.user = data.username;
@@ -156,7 +156,7 @@ angular.module('webgisApp')
                         da.userData = data;
                     })
                 }
-                var da = this;
+                da = this;
                 var getAuthStatus = $q.defer();
                 if (this.authenticated != null && !force) {
                     // We have a stored value which means we can pass it back right away.
@@ -188,7 +188,7 @@ angular.module('webgisApp')
                 return this.authenticationStatus();
             }
 
-        }
+        };
         return service;
     })
     .config(function ($routeProvider) {
@@ -214,7 +214,7 @@ angular.module('webgisApp')
         $scope.isCollapsed = true;
         $scope.authenticated = false;
         $scope.user = '';
-        $scope.userData = {}
+        $scope.userData = {};
 
         djangoAuth.authenticationStatus(true).then(function () {
             $scope.authenticated = true;
@@ -241,12 +241,12 @@ angular.module('webgisApp')
 
         $scope.model = {'username': '', 'password': ''};
         $scope.complete = false;
-        $scope.login = function (formData) {
+        $scope.login = function () {
             djangoAuth.login($scope.model.username, $scope.model.password)
-                .then(function (data) {
+                .then(function () {
                     // success case
                     $scope.authenticated = true;
-                }, function (data, status) {
+                }, function (data) {
                     $('#loading-div').hide();
 
                     // error case
@@ -271,7 +271,7 @@ angular.module('webgisApp')
                         errors = data;
                     }
 
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         controller: 'ModalInstanceCtrl',
                         template: '<div modal-draggable class="modal-header"><h1>Error while logging in!</h1></div><div class="modal-body">' + errors + '</div><div class="modal-footer"><button class="btn btn-primary" ng-click="close()">Close</button></div>',
                         resolve: {
@@ -280,31 +280,31 @@ angular.module('webgisApp')
                         }
                     });
                 });
-        }
+        };
 
         $scope.logout = function () {
             djangoAuth.logout().then(function () {
-            }, function (error) {
+            }, function () {
                 bootbox.alert('Error while logging out...');
             });
-        }
+        };
 
         $scope.editProfileForm = function () {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: 'EditProfileCtrl',
                 templateUrl: subdir+'/static/includes/auth-edit-profile.html'
             })
-        }
+        };
 
         $scope.registerForm = function () {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: 'RegisterUserCtrl',
                 templateUrl: subdir+'/static/includes/auth-register.html'
             });
-        }
+        };
 
         $scope.resetPasswordForm = function () {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: 'ResetPasswordCtrl',
                 templateUrl: subdir+'/static/includes/auth-reset-password.html'
             });
@@ -321,7 +321,7 @@ angular.module('webgisApp')
 
         $scope.register = function() {
             djangoAuth.register($scope.model.username, $scope.model.password1, $scope.model.password2, $scope.model.email, {'organization': $scope.model.organization})
-                .then(function (data) {
+                .then(function () {
                     bootbox.alert('Please check your emails for verfication!');
                     $scope.model.password1, $scope.model.password2, $scope.model.email, $scope.model.organization = '';
                     $scope.close();
@@ -372,7 +372,7 @@ angular.module('webgisApp')
     .controller('NewPasswordCtrl', function ($scope, $modal, $routeParams) {
         $scope.uid = $routeParams.uid;
         $scope.token = $routeParams.token;
-        var modalInstance = $modal.open({
+        $modal.open({
             resolve: {
                 uid: function () {
                     return $scope.uid
@@ -398,7 +398,7 @@ angular.module('webgisApp')
                 bootbox.alert('Passwords are not correct or empty, please check!');
                 return false;
             }
-            djangoAuth.confirmReset($scope.uid, $scope.token, $scope.password1, $scope.password2).then(function (data) {
+            djangoAuth.confirmReset($scope.uid, $scope.token, $scope.password1, $scope.password2).then(function () {
                 $scope.uid, $scope.token, $scope.password1, $scope.password2 = '';
                 $modalInstance.close();
                 AlertService.addAlert({'type': 'success', 'msg': 'Password has been reset with the new password.'});
@@ -419,7 +419,7 @@ angular.module('webgisApp')
             bootbox.confirm('Really delete your account? (Cannot be undone!)', function (result) {
 
                 if (result == true) {
-                    djangoAuth.delete().then(function (data) {
+                    djangoAuth.delete().then(function () {
                         $scope.close();
                         djangoAuth.profile();
                     }, function (error) {
@@ -428,10 +428,10 @@ angular.module('webgisApp')
                     })
                 }
             })
-        }
+        };
 
         $scope.save = function () {
-            djangoAuth.updateProfile($scope.userdata).then(function (data) {
+            djangoAuth.updateProfile($scope.userdata).then(function () {
                 $modalInstance.close();
                 AlertService.addAlert({'type': 'success', 'msg': 'Profile updated!'});
             }, function (error) {
@@ -443,7 +443,7 @@ angular.module('webgisApp')
                     bootbox.alert('Given passwords are not equal!');
                     return false;
                 }
-                djangoAuth.changePassword($scope.userdata.password1, $scope.userdata.password2).then(function (data) {
+                djangoAuth.changePassword($scope.userdata.password1, $scope.userdata.password2).then(function () {
                     bootbox.alert('Successfully changed password.')
                 }, function (error) {
                     bootbox.alert('An error occurred');

@@ -32,7 +32,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <script src="{% static "lib/turf.min.js" %}""></script>
+    <script src="{% static "lib/turf.min.js" %}"></script>
     <script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
 
@@ -70,7 +70,7 @@
 
     {% verbatim %}
     <div id="alerts" ng-controller="AlertCtrl">
-        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
     </div>
     {% endverbatim %}
 
@@ -82,7 +82,7 @@
 
 
 
-            <!-- TOOLBAR in Navigation für Tablett und Desktop -->
+            <!-- TOOLBAR in Navigation für Tablet und Desktop -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl" style="padding-right:0;">
                     <li>
@@ -193,9 +193,9 @@
                             <div class="div-button-text">Remove all layers</div>
                         </div>
                     </div>
-                    <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item, type)">
+                    <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item)">
                         <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer"
-                             dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move" style="border-radius:0;">
+                             dnd-moved="changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
 
                             <div class="catalog-item">
                                 <div class="item_left" style="padding-top:12px;">
@@ -214,7 +214,7 @@
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
                                         <div class="item_desc">
                                             <slider class="slider" ng-model="sliderValues[layer.id]" min="0" max="100" step="1" on-slide="changeOpacity(layer.id)" on-stop-slide="changeOpacity(layer.id)" style="width:95%;"></slider>
-                                            <div  ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate" ng-change="updateLayer(layer.id, layer.selectedDate)" ng-options="o as o for o in layer.dates"></select></div>
+                                            <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate" ng-change="updateLayer(layer.id, layer.selectedDate)" ng-options="o as o for o in layer.dates"></select></div>
                                         </div>
                                         <div class="item_icon">
                                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend" ng-click="toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
@@ -271,7 +271,7 @@
                         <li role="presentation"  ng-class="{active: activeTab==-1}"><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="activeTab = -1">Wetlands</a></li>
                         <!--<li role="presentation"><a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current</a></li>-->
                         <li role="presentation" ng-if="value!=null" ng-class="{active: activeTab==1}"><a id="link_wetland_opened" href="#wetland_opened" aria-controls="wetland_opened" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
-                        <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo(value.id)" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
+                        <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo()" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
                     </ul>
 
                 </div>
@@ -332,7 +332,7 @@
 
                         <tabset justified="true">
                             <!-- Overview -->
-                            <tab class="flaticon-bars" heading="" tooltop="Overview" tooltip-append-to-body="true" select="trackWetlandTab('overview')">
+                            <tab class="flaticon-bars" heading="" tooltip="Overview" tooltip-append-to-body="true" select="trackWetlandTab('overview')">
                                 <h4>Wetland specifications</h4>
                                 <div class="properties">
                                     <strong>Country: </strong>{{value.country}}<br>

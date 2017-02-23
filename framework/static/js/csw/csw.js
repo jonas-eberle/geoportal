@@ -17,7 +17,7 @@ angular.module('webgisApp')
             },
             'search': function(text) {
                 if (parseInt(this.server) === 0) {
-                    bootbox.alert('Server ID is not valid!')
+                    bootbox.alert('Server ID is not valid!');
                     return false;
                 }
                 if (text == '') {
@@ -46,7 +46,7 @@ angular.module('webgisApp')
                     console.log(data);
                     //self.results.totalCount = data.totalCount
                     $('#loading-div').hide();
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         controller: 'SearchResultsModalCtrl',
                         templateUrl: subdir+'/static/includes/searchresults.html',
                         backdrop: 'static',
@@ -61,7 +61,7 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .controller('SearchBoxCtrl', function($scope, csw, djangoRequests, $modal){
+    .controller('SearchBoxCtrl', function($scope, csw){
 
         $scope.text = '';
 
@@ -85,7 +85,7 @@ angular.module('webgisApp')
         };
 
         $scope.showMetadata = function(layer) {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: 'ModalInstanceCtrl',
                 templateUrl: subdir+'/static/includes/metadata.html',
                 resolve: {
@@ -93,11 +93,11 @@ angular.module('webgisApp')
                     title: function() {return layer.title;}
                 }
             });
-        }
+        };
 
 
-        $scope.currentPage = 1
-        $scope.maxSize = 10
+        $scope.currentPage = 1;
+        $scope.maxSize = 10;
         $scope.page_changed = function() {
             $scope.searchData.start = $scope.currentPage*$scope.maxSize - $scope.maxSize;
             $('#loading-div').show();
@@ -110,9 +110,9 @@ angular.module('webgisApp')
                 $('#loading-div').hide();
             });
 
-        }
+        };
 
         $scope.close = function () {
             $modalInstance.close();
         };
-    })
+    });
