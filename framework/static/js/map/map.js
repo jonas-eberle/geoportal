@@ -625,6 +625,7 @@ angular.module('webgisApp')
     .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
 
         // $scope.legendLayers = [];
+        $scope.selectedFeature = null;
 
         $scope.$on('attribution_list_new', function (){
             $scope.layer_attribution = Attribution.getList();
@@ -824,10 +825,17 @@ angular.module('webgisApp')
         $scope.changeSitesVisibility = function(id, $event) {
             var olLayer = mapviewer.map.getLayers().getArray()[1];
             var checkbox = $event.target;
+
+            // get selectInteraction from map
+            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function(interaction) {
+                return interaction instanceof ol.interaction.Select;
+            });
             if (checkbox.checked) {
                 olLayer.setVisible(true);
+                selectInteraction[0].getFeatures().getArray().push($scope.selectedFeature);
             } else {
                 olLayer.setVisible(false);
+                $scope.selectedFeature = selectInteraction[0].getFeatures().getArray().pop();
             }
         };
 
