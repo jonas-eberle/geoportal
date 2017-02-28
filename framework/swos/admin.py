@@ -40,9 +40,9 @@ class ExternalLayerAdmin(LayersAdmin):
 
 
 class Wetlands(admin.OSMGeoAdmin):
-    list_display = ('name', 'country', 'identifier', 'geo_scale', 'partner')
+    list_display = ('name', 'country', 'identifier', 'geo_scale', 'partner', 'ecoregion', 'site_type', 'wetland_type' , 'service_case')
     ordering = ['name']
-    list_filter = ('country', 'geo_scale', 'partner')
+    list_filter = ('country', 'geo_scale', 'partner', 'ecoregion', 'site_type','wetland_type')
 
 class ExternalDatabaseAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'description')

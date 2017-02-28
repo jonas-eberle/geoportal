@@ -267,7 +267,7 @@ def generate_metadata():
         print meta
         #upload_cswt(outpath,settings.PYCSW_URL)
 
-# please check line 305/306
+
 def update_wetland_geom(shapefile):
 
     from swos.models import Wetland
@@ -275,7 +275,7 @@ def update_wetland_geom(shapefile):
     from django.contrib.gis.geos import MultiPolygon, GEOSGeometry
 
     datasource = DataSource(shapefile)
-    print datasource
+    #print datasource
     layer = datasource[0]
     print layer.srs
     print layer.fields
@@ -289,27 +289,32 @@ def update_wetland_geom(shapefile):
         feature_dict['country'] =  feature.get('Country'.encode('utf-8'))
         feature_dict['geo_scale'] = feature.get('geo_scale'.encode('utf-8'))
         feature_dict['size'] = feature.get('Area_Ha'.encode('utf-8'))
-        #short_name = models.CharField(max_length=200, blank=True, null=True)
         feature_dict['partner'] = feature.get('link_part'.encode('utf-8'))
-        #print feature_dict['geom']
+        feature_dict['site_type'] = feature.get('Site_Type'.encode('utf-8'))
+        feature_dict['ecoregion'] = feature.get('EcoRegion'.encode('utf-8'))
+        feature_dict['wetland_type'] = feature.get('Wet_Type'.encode('utf-8'))
+        feature_dict['service_case'] = feature.get('Serv_Case'.encode('utf-8'))
 
         #print feature_dict['geom'].geom_type,feature_dict['name']
-        print feature_dict['geom']
+        #print feature_dict['geom']
 
         feature_dict['geom'] = GEOSGeometry(feature_dict['geom'],srid=3975)
-        print feature_dict['geom']
+        #print feature_dict['geom']
         if not feature_dict['geom'].geom_type=='MultiPolygon':
             feature_dict['geom'] = MultiPolygon([feature_dict['geom']], srid=3975)
         #feature_dict['geom'].srid = 3975
-        print feature_dict['geom']
+        #print feature_dict['geom']
         if Wetland.objects.filter(short_name=feature_dict['short_name']):
-            # ??? short_name=feature_dict['name'] or short_name=feature_dict['short_name']???
-            Wetland.objects.filter(short_name=feature_dict['name']).update(**feature_dict)
+            print feature_dict['short_name']
+            print "short_name"
+            Wetland.objects.filter(short_name=feature_dict['short_name']).update(**feature_dict)
         else:
+            print feature_dict['name']
+            print "new name"
             new_wetlands.append(feature_dict['name'])
             wetland = Wetland(**feature_dict)
             wetland.save()
-    print new_wetlands
+    #print new_wetlands
 
 def month_publicable(month, product):
     from swos.models import WetlandLayer, Product

@@ -23,6 +23,10 @@ class Wetland(models.Model):
     size = models.FloatField(blank=True)
     short_name = models.CharField(max_length=200, blank=True, null=True)
     partner = models.CharField(max_length=200, blank=True, null=True)
+    site_type = models.CharField(max_length=200, blank=True, null=True)
+    ecoregion = models.CharField(max_length=200, blank=True, null=True)
+    wetland_type = models.CharField(max_length=200, blank=True, null=True)
+    service_case = models.CharField(max_length=200, blank=True, null=True)
     image_url = models.CharField(max_length=200, blank=True, null=True)
     image_desc = models.TextField(blank=True, null=True)
     
