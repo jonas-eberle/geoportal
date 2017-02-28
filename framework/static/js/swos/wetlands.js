@@ -37,11 +37,15 @@ angular.module('webgisApp')
 
                     $scope.wetlands.push(prop);
                     var without_geom = {
-                        "name":      prop["name"],
-                        "country":   prop["country"],
-                        "id":        prop["id"],
-                        "show":      prop["show"],
-                        "geo_scale": prop["geo_scale"]
+                        "name":         prop["name"],
+                        "country":      prop["country"],
+                        "id":           prop["id"],
+                        "show":         prop["show"],
+                        "geo_scale":    prop["geo_scale"],
+                        "size":         prop["size"],
+                        "ecoregion":    prop["ecoregion"],
+                        "wetland_type": prop["wetland_type"],
+                        "site_type":    prop["site_type"]
                     };
 
                     $scope.wetlands_without_geom.push(without_geom);
