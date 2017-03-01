@@ -287,6 +287,18 @@
                                 <option value="">- Filter by scale -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>
                             </select>
+                            <select ng-model="filtered_wetland_type" ng-change="filterWetlandType()">
+                                <option value="">- Filter by wetland type -</option>
+                                <option ng-repeat="option in wetlands_without_geom | unique:'wetland_type'" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
+                            </select>
+                            <select ng-model="filtered_site_type" ng-change="filterSiteType()">
+                                <option value="">- Filter by site type -</option>
+                                <option ng-repeat="option in wetlands_without_geom | unique:'site_type'" value="{{option.site_type}}">{{option.site_type}}</option>
+                            </select>
+                            <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 90%">
+                                <option value="">- Filter by ecoregion -</option>
+                                <option ng-repeat="option in wetlands_without_geom | unique:'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
+                            </select>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
                             <input type="checkbox" ng-model="filtered_testmapping" ng-change="filterTestmapping()"
@@ -296,7 +308,7 @@
                             <input type="checkbox" ng-model="sortByCountryName" ng-change="setSortOrder()"
                                    id="cb_groupbycountry"><label for="cb_groupbycountry" style="margin-top: 8px;">Sort by country</label>
                         </div>
-                        <div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>
+                        <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
                         <div ng-if="wetlands_without_geom==0">Loading wetlands... please wait </div>
 
@@ -354,6 +366,7 @@
                             <!-- Indicators -->
                             <tab class="flaticon-business" heading="" select="trackWetlandTab('indicators')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
+
                                 <!--
                                 <ul class="items indicators">
                                     <li>
@@ -634,6 +647,8 @@
     <script src="{% static "lib/bootstrap-slider.min.js" %}"></script>
     <script src="{% static "lib/angular-bootstrap-slider.js" %}"></script>
     <script src="{% static "lib/jquery-drags.js" %}"></script>
+    <script src="{% static "lib/Chart.min.js" %}"></script>
+    <script src="{% static "lib/angular-chart.min.js" %}"></script>
 
     <!-- Add fancyBox -->
     <link rel="stylesheet" href="{% static "lib/fancybox/source/jquery.fancybox.css" %}" type="text/css" media="screen" />
