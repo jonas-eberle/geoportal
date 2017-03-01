@@ -77,7 +77,15 @@ class WetlandDetail(APIView):
 
 
 #get wetland country --> find continent and add to list
-        country_continent = Country.objects.get(name=wetland.country)
+
+        #use first country of country list to find the continent
+        if("-" in wetland.country):
+            countries = wetland.country.split('-')
+            country_continent = Country.objects.get(name=countries[1])
+        else:
+            country_continent = Country.objects.get(name=wetland.country)
+
+
         extdata = ExternalDatabase.objects.filter(country__name=wetland.country) | ExternalDatabase.objects.filter(continent="Global") | ExternalDatabase.objects.filter(continent=country_continent.continent) | ExternalDatabase.objects.filter(wetland_id=wetland.id)
 
         extdb_grouped_list = {'local':[], 'national': [], 'continent': [], 'global': []}
