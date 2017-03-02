@@ -366,6 +366,8 @@
                             <!-- Indicators -->
                             <tab class="flaticon-business" heading="" select="trackWetlandTab('indicators')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
+                                                        <div class="row" ng-controller="LineCtrl">
+
 
                                 <!--
                                 <ul class="items indicators">
@@ -571,8 +573,8 @@
                                                     <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
                                                 </accordion-heading>
-                                                <p>{{externaldb.description}}</p>
-                                                <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p>{{ externaldb.provided_info }}</p></div>
+                                                <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                                <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
                                                 <strong>Link:</strong>
                                                 <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                                 <div class="select" ng-if="externaldb.layers.length > 0">
