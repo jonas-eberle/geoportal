@@ -278,35 +278,35 @@
 
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: activeTab==-1}" id="catalog">
-                        <div class="filter" style="padding: 10px;padding-bottom: 0;">
-                            <select ng-model="filtered_country" ng-change="filterCountry()">
+                        <div class="filter" style="padding: 10px;padding-bottom: 0px;">
+                            <select ng-model="filtered_country" ng-change="filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
                             </select>
-                            <select ng-model="filtered_geo_scale" ng-change="filterScale()">
+                            <select ng-model="filtered_geo_scale" ng-change="filterScale()" style="width: 40%; margin-bottom: 10px;">
                                 <option value="">- Filter by scale -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>
                             </select>
-                            <select ng-model="filtered_wetland_type" ng-change="filterWetlandType()">
+                            <select ng-model="filtered_wetland_type" ng-change="filterWetlandType()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by wetland type -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'wetland_type'" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
                             </select>
-                            <select ng-model="filtered_site_type" ng-change="filterSiteType()">
+                            <select ng-model="filtered_site_type" ng-change="filterSiteType()" style="width: 40%;margin-bottom: 10px;">
                                 <option value="">- Filter by site type -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'site_type'" value="{{option.site_type}}">{{option.site_type}}</option>
                             </select>
-                            <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 90%">
+                            <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 91%">
                                 <option value="">- Filter by ecoregion -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
                             </select>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
                             <input type="checkbox" ng-model="filtered_testmapping" ng-change="filterTestmapping()"
-                                   id="cb_testmapping"/><label for="cb_testmapping" style="margin-top: 8px;">Show only testmapping wetlands</label>
+                                   id="cb_testmapping"/><label for="cb_testmapping">Show only testmapping wetlands</label>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;padding-top: 0;">
                             <input type="checkbox" ng-model="sortByCountryName" ng-change="setSortOrder()"
-                                   id="cb_groupbycountry"><label for="cb_groupbycountry" style="margin-top: 8px;">Sort by country</label>
+                                   id="cb_groupbycountry"><label for="cb_groupbycountry">Sort by country</label>
                         </div>
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
@@ -366,7 +366,7 @@
                             <!-- Indicators -->
                             <tab class="flaticon-business" heading="" select="trackWetlandTab('indicators')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
-                                                        <div class="row" ng-controller="LineCtrl">
+
 
 
                                 <!--
