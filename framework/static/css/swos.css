@@ -299,15 +299,6 @@ button.btn-loadmore:hover {
 	}
 }
 
-.legend-color {
-    width: 20px;
-}
-
-.legend-label {
-    font-size: 0.9em;
-    padding-left: 5px;
-}
-
 .layer-list-top-bar {
     background-color: white;
     border-top: lightgrey solid 1px;

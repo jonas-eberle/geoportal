@@ -1,3 +1,4 @@
+import json
 from django.http import Http404
 from rest_framework import serializers
 from rest_framework.views import APIView
@@ -107,6 +108,8 @@ class MapViewerDetail(APIView):
                     inline.layer.title = inline.title
                 layer = layers.LayerSerializer(inline.layer)
                 layerdata = layer.data
+                if layerdata['legend_colors']:
+                    layerdata['legend_colors'] = json.loads(layerdata['legend_colors'])
                 if download_perm == False:
                     layerdata['downloadable'] = False
                 layergroup['layers'].append(layerdata)

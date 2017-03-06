@@ -224,7 +224,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'legend_colors')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize')
 
 
 # Metadata serializer to output metadata related information from a given layer
