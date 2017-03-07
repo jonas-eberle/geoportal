@@ -356,6 +356,26 @@ class Wetland(models.Model):
         else:
             photos['photos'] = images[start:]
         return photos
+    
+    def clean_panoramio(self):
+        pano_file = settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json'
+        if os.path.exists(pano_file):
+            data = json.loads(open(pano_file).read())
+            import copy
+            data_new = copy.deepcopy(data)
+            data_new['photos'] = []
+            
+            import urllib
+            for image in data['photos']:
+                code = urllib.urlopen(image['photo_url']).getcode()
+                print image['photo_url']+': '+str(code)
+                if code == 200:
+                    data_new['photos'].append(image)
+            
+            data_new['count'] = len(data_new['photos'])
+            f = open(pano_file,'w')
+            f.write(json.dumps(data_new))
+            f.close()
 
     def youtube(self, start=0, max=-1, forceUpdate=False):
         if os.path.isfile(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json') and forceUpdate == False:
@@ -363,7 +383,7 @@ class Wetland(models.Model):
                 videos = json.load(f)
         else:
             from apiclient.discovery import build
-            DEVELOPER_KEY = "ANPASSEN"
+            DEVELOPER_KEY = "AIzaSyA_DlmClJEVqjroE5VWgWmtLR5RaKIfK68"
             PRE_URL = "https://www.youtube.com/watch?v="
             youtube = build('youtube', 'v3', developerKey=DEVELOPER_KEY)
             videos = []
