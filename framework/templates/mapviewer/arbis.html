@@ -148,10 +148,10 @@
                 <!-- Tab panes -->
 
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="catalog" ng-controller="MapCatalogCtrl">
+                    <div role="tabpanel" class="tab-pane active" id="catalog" ng-controller="MapCatalogCtrl as mapCatalog">
                         <!-- ACCORDION -->
 
-                        <div ng-repeat="group in layerTree" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div ng-repeat="group in mapCatalog.layerTree" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="panel_{{group.groupid}}">
                                     <h4 class="panel-title">
@@ -160,21 +160,21 @@
                                         </a>
                                     </h4>
                                 </div>
-                                <div id="coll_{{group.groupid}}" ng-mouseleave="hidePopover()" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="panel_{{group.groupid}}">   <!--ng-class='{in:$first}'-->
+                                <div id="coll_{{group.groupid}}" ng-mouseleave="mapCatalog.hidePopover()" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="panel_{{group.groupid}}">   <!--ng-class='{in:$first}'-->
                                     <div class="panel-body">
                                         <!-- List GROUP -->
                                         <div class="list-group">
 
-                                            <div ng-repeat="layer in group.layers" class="list-group-item clearfix" ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
+                                            <div ng-repeat="layer in group.layers" class="list-group-item clearfix" ng-mouseenter="mapCatalog.hoverLayer(this, layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
                                                 <div class="catalog-item">
                                                     <div class="item_center">
                                                         <div class="item_title">{{layer.title}}</div>
                                                         <!--<div class="item_desc">Desc</div>-->
                                                     </div>
                                                     <div class="item_right">
-                                                        <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="download(layer)" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
-                                                        <button tooltip-placement="bottom" tooltip="Show metadata" ng-click="showMetadata(layer)" type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" ><i class="fa fa-file-text-o fa-lg "></i></button>
-                                                        <button tooltip-placement="bottom" tooltip="Add layer to map" ng-click="addLayerToMap(layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg "></i></button>
+                                                        <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mapCatalog.download(layer)" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
+                                                        <button tooltip-placement="bottom" tooltip="Show metadata" ng-click="mapCatalog.showMetadata(layer)" type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" ><i class="fa fa-file-text-o fa-lg "></i></button>
+                                                        <button tooltip-placement="bottom" tooltip="Add layer to map" ng-click="mapCatalog.addLayerToMap(layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg "></i></button>
                                                     </div>
                                                 </div>
 

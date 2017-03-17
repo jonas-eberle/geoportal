@@ -2,11 +2,11 @@
 
 var fill = new ol.style.Fill({
    color: 'rgba(12, 216, 247, 1)'
- });
- var stroke = new ol.style.Stroke({
+});
+var stroke = new ol.style.Stroke({
    color: 'rgba(0, 0, 204, 1)',
    width: 1.25
- });
+});
 
 var popup;
 var stationPopup;
@@ -945,12 +945,21 @@ angular.module('webgisApp')
         });
     })
     .controller('MapCatalogCtrl', function($scope, mapviewer, djangoRequests, $modal){
+        $scope.activeLayer = -1;
+        $scope.addLayerToMap = addLayerToMap;
+        $scope.download = function(layer) {
+            window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
+        }
+        $scope.hidePopover = hidePopover;
+        $scope.hoverLayer = hoverLayer;
         $scope.layerTree = mapviewer.datacatalog;
+        $scope.showMetadata = showMetadata;
+        
         $scope.$on('mapviewer.catalog_loaded', function () {
             $scope.layerTree = mapviewer.datacatalog;
         });
 
-        $scope.addLayerToMap = function(layer) {
+        function addLayerToMap(layer) {
             var olLayer = mapviewer.addLayer(layer);
             var layerObj = olLayer.get('layerObj');
             var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
@@ -959,8 +968,33 @@ angular.module('webgisApp')
             }
             mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
         };
+        
+        function hidePopover() {
+            setTimeout(function () {
+                if (!$(".popover:hover").length) {
+                   $('body .popover').popover('hide');
+                }
+            }, 300);
+        };
 
-        $scope.showMetadata = function(layer) {
+        function hoverLayer(elem, layerID, $event) {
+            var $popover = $('body .popover');
+            if ($scope.activeLayer == layerID && $popover.length > 0) {
+                return false;
+            }
+            $scope.activeLayer = layerID;
+            $($event.target).popover('show');
+            $popover.on('mouseleave', function(){
+                var _this = this;
+                setTimeout(function () {
+                    if (!$($event.target).parent().is(':hover')) {
+                        $(_this).popover('hide');
+                    }
+                }, 300)
+            })
+        };
+
+        function showMetadata(layer) {
             $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
@@ -980,35 +1014,6 @@ angular.module('webgisApp')
             })
         };
 
-        $scope.activeLayer = -1;
-        $scope.hoverLayer = function(elem, layerID, $event) {
-            var $popover = $('body .popover');
-            if ($scope.activeLayer == layerID && $popover.length > 0) {
-                return false;
-            }
-            $scope.activeLayer = layerID;
-            $($event.target).popover('show');
-            $popover.on('mouseleave', function(){
-                var _this = this;
-                setTimeout(function () {
-                    if (!$($event.target).parent().is(':hover')) {
-                        $(_this).popover('hide');
-                    }
-                }, 300)
-            })
-        };
-
-        $scope.hidePopover = function() {
-            setTimeout(function () {
-                if (!$(".popover:hover").length) {
-                   $('body .popover').popover('hide');
-                }
-            }, 300);
-        };
-
-        $scope.download = function(layer) {
-            window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
-        }
     })
     .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope) {
         $scope.layersMeta = mapviewer.layersMeta;
