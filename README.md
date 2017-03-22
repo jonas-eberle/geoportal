@@ -30,3 +30,11 @@ Restart apache "gracefully"
 
 ## Django Configuration
 Prior to any mapviewer request you need to edit the mapviewer and adjust the template selection, because complete path is stored in the database!
+
+## Main frontend libraries
+
+* Bootstrap v3.3.1
+* OpenLayers v3.4.0
+* jQuery v1.11.1
+* AngularJS v1.3.10
+* bootbox.js v4.3.0
