@@ -874,9 +874,66 @@ angular.module('webgisApp')
                        }
                        // Works only for WMS layers
                        try {
-                           var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapviewer.displayProjection, {'INFO_FORMAT': 'text/html'});
-                           urls.push(encodeURIComponent(url));
-                           names.push(encodeURIComponent(layer.get('name')));
+                           var source = layer.getSource();
+						   var url = '';
+						   if (source.constructor == ol.source.TileWMS) {
+							   	url = source.getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapviewer.displayProjection, {
+							   		'INFO_FORMAT': 'text/html'
+							   	});
+						   } else if(source.constructor == ol.source.WMTS) {
+								var resolution= viewResolution;
+								var tilegrid= source.getTileGrid();
+								var tileResolutions= tilegrid.getResolutions();
+								var zoomIdx, diff=Infinity;
+								
+								for(var i=0; i<tileResolutions.length; i++){
+								    var tileResolution= tileResolutions[i];
+								    var diffP= Math.abs(resolution-tileResolution);
+								
+								    if(diffP<diff){
+								        diff=diffP;
+								        zoomIdx=i;
+								    }
+								
+								    if(tileResolution<resolution) break;
+								}
+								
+								//Getting parameters
+								//Reference: OpenLayers.Layer.WMTS.getTileInfo
+								var tileSize= tilegrid.getTileSize(zoomIdx);
+								var tileOrigin= tilegrid.getOrigin(zoomIdx);
+								
+								var fx = (evt.coordinate[0] - tileOrigin[0]) / (resolution * tileSize);
+								var fy = (tileOrigin[1] - evt.coordinate[1]) / (resolution * tileSize);
+								var tileCol = Math.floor(fx);
+								var tileRow = Math.floor(fy);
+								var tileI= Math.floor((fx - tileCol) * tileSize);
+								var tileJ= Math.floor((fy - tileRow) * tileSize);
+								var matrixIds= tilegrid.getMatrixIds()[zoomIdx];
+								var matrixSet= source.getMatrixSet();
+								
+								var params = {
+							        SERVICE: 'WMTS',
+							        REQUEST: 'GetFeatureInfo',
+							        VERSION: source.getVersion(),
+							        LAYER: source.getLayer(),
+							        INFOFORMAT: 'text/html',
+							        STYLE: source.getStyle(),
+							        FORMAT: source.getFormat(),
+							        TileCol: tileCol,
+							        TileRow: tileRow,
+							        TileMatrix: matrixIds,
+							        TileMatrixSet: matrixSet,
+							        I: tileI,
+							        J: tileJ
+							    }
+								console.log(params);
+								url = layer.get('layerObj').ogc_link+'?'+jQuery.param(params);
+						   }
+						   if (url != '') {
+							   	urls.push(encodeURIComponent(url));
+							   	names.push(encodeURIComponent(layer.get('name')));
+						   }
                        } catch(e) {}
                     });
                     if (urls.length > 0) {
