@@ -438,18 +438,15 @@ class WetlandLayer(Layer):
 
     @property
     def alternate_title(self):
-        if self.product.short_name in ['Water_Quality', 'LULC']:
-            wq_type = self.identifier.split('_')[2]
-        else:
-            wq_type = ''
-        if self.product.short_name == 'Watershed':
-            date_string = ''
+        wq_type = ''
+        date_string = ''
+        if self.product.short_name in ['WQ']:
+            wq_type = ' '.join(self.identifier.split('_')[2:5])
         elif self.product.short_name in ['LULC', 'SWD']:
+            wq_type = self.identifier.split('_')[2]
             date_string = str(self.date_begin.year)
         elif self.product.short_name in ['LULCC_L', 'LST']:
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-        elif self.product.short_name in ['Water_Quality', 'SSM']:
-            date_string = self.date_begin.strftime('%Y/%m')
         return ' '.join([self.product.name,wq_type, date_string])
 
 

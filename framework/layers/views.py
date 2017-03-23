@@ -387,7 +387,13 @@ class GetWMTSCapabilities(APIView):
             if len(time) > 0:
                 time = time[0]
                 layerObj['selectedDate'] = time.find('./wmts:Default', namespaces=ns).text
-                layerObj['timeRange'] = time.find('./wmts:Value', namespaces=ns).text
+                times_xml = time.findall('./wmts:Value', namespaces=ns)
+                
+                if len(times_xml) > 0:
+                    times = []
+                    for time in times_xml:
+                        times.append(time.text)
+                    layerObj['timeRange'] = ','.join(times) 
 
             # Get TileMatrix set
             matrixset = xml.xpath('//wmts:TileMatrixSet/ows:Identifier[text()="'+layerObj['wmts_matrixset']+'"]/parent::node()', namespaces=ns)
