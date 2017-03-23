@@ -72,6 +72,8 @@ class Layer(models.Model):
     wmts_resolutions = models.TextField("WMTS resolutions", blank=True, null=True, help_text="Separated by space/blank character")
     wmts_tilesize = models.IntegerField("WMTS tile size", blank=True, null=True, help_text="e.g., 256 or 512")
     wmts_projection = models.CharField("WMTS projection", max_length=200, blank=True, null=True)
+    wmts_multiply = models.BooleanField(default=False, help_text="Define wether multiplication is needed for WMTS resolutions")
+    wmts_prefix_matrix_ids = models.CharField("WMTS prefix matrix ids", max_length=200, blank=True, null=True)
 
     # SOS settings
     sos_default_field = models.CharField("SOS default field", max_length=100, null=True, blank=True, help_text="If blank, the first field from SOS service will be used as default field")
@@ -224,7 +226,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids')
 
 
 # Metadata serializer to output metadata related information from a given layer

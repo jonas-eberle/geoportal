@@ -184,7 +184,7 @@ angular.module('webgisApp')
                             var resolutions = [];
                             var proj = ol.proj.get(layer.wmts_projection);
                             var multiply = 1;
-                            if (layer.multiply) {
+                            if (layer.wmts_multiply) {
                                 var metersperUnit = proj.getMetersPerUnit();
                                 multiply = 0.28E-3 / metersperUnit;
                             }
@@ -192,7 +192,11 @@ angular.module('webgisApp')
                                 resolutions.push(parseFloat(this)* multiply)
                             });
                             var matrixIds = [];
-                            for (var i=0; i<resolutions.length; i++) { matrixIds.push(i); }
+                            var wmts_prefix_matrix_ids = '';
+							if (layer.wmts_prefix_matrix_ids) {
+								wmts_prefix_matrix_ids = layer.wmts_prefix_matrix_ids;
+							}
+                            for (var i=0; i<resolutions.length; i++) { matrixIds.push(wmts_prefix_matrix_ids+i); }
                             olLayer = new ol.layer.Tile({
                                 name: layer.title,
                                 layerObj: layer,
