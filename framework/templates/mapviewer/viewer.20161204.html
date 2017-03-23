@@ -36,7 +36,7 @@
     <script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
 
-    <link href="{% static "css/swos.css" %}?v=20161213" rel="stylesheet">
+    <link href="{% static "css/swos.css" %}?v=20170323_1" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -134,7 +134,7 @@
                         <button type="button" ng-click="zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <!--<button type="button" ng-click="requestInfo()" ng-class="{'btn-active': infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button> -->
+                        <button type="button" ng-click="requestInfo()" ng-class="{'btn-active': infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl">
@@ -167,7 +167,7 @@
 
                 <div id="map_legend"></div>
 
-                <div id="slider">
+                <div id="slider" style="display:none">
                     <div class="input"><input type="text" /></div>
                 </div>
 
@@ -268,7 +268,7 @@
                     <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
                         <li role="presentation"  ng-class="{active: activeTab==-1}"><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="activeTab = -1">Wetlands</a></li>
                         <!--<li role="presentation"><a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current</a></li>-->
-                        <li role="presentation" ng-if="value!=null" ng-class="{active: activeTab==1}"><a id="link_wetland_opened" href="#wetland_opened" aria-controls="wetland_opened" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
+                        <li role="presentation" ng-if="value!=null" ng-class="{active: activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
                         <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo()" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
                     </ul>
 
@@ -327,7 +327,7 @@
 
                     </div>
 
-                    <div role="tabpanel" class="tab-pane geospatial_data" ng-if="value!=null" ng-class="{active: activeTab==1, noImage: value.data.image == null}" id="wetland_opened">
+                    <div role="tabpanel" class="tab-pane geospatial_data" ng-if="value!=null" ng-class="{active: activeTab==1, noImage: value.data.image == null}" id="wetland_{{value.id}}">
                         <!--<h2>{{value.name}}</h2>-->
                         <div ng-if="value.data.image!=null" class="wetland-image">
                             <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}"><img src="{{value.data.image}}" width="100%"/></a>
@@ -364,7 +364,7 @@
                             </tab>
 
                             <!-- Indicators -->
-                            <tab class="flaticon-business" heading="" select="trackWetlandTab('indicators')">
+                            <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true"  select="trackWetlandTab('indicator')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
                                 <!--
                                 <ul class="items indicators">
@@ -385,7 +385,7 @@
                             </tab>
 
                             <!-- Products -->
-                            <tab class="flaticon-layers"  heading="" select="trackWetlandTab('products')" id="product">
+                            <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="trackWetlandTab('product')" id="product">
                                 <div ng-if="value.data.products.length == 0">No products available!</div>
                                 <div class="remove-button-wrapper">
                                     <div class="div-button" ng-click="removeAllLayers()">
@@ -430,7 +430,7 @@
                             </tab>
 
                             <!-- Data -->
-                            <tab class="flaticon-space-satellite-station" heading="" select="trackWetlandTab('satellitedata')">
+                            <tab class="flaticon-space-satellite-station" heading="" tooltip="Satellite data" tooltip-append-to-body="true"  select="trackWetlandTab('satdata')">
                                 <accordion close-others="false">
                                     <accordion-group is-open="satdata_image">
                                         <accordion-heading>
@@ -475,7 +475,7 @@
                             </tab>
 
                             <!-- Photos -->
-                            <tab class="flaticon-technology-1" heading="" select="trackWetlandTab('photos')">
+                            <tab class="flaticon-technology-1" heading="" tooltip="Photos" tooltip-append-to-body="true"  select="trackWetlandTab('images')">
                                 <accordion ng-if="value.pictures.photos.length != 0">
                                     <accordion-group is-open="pictures_is_open">
                                         <accordion-heading>Images
@@ -485,10 +485,10 @@
                                             <!--<span ng-if="!value.pictures">Loading...</span>-->
                                             <a ng-repeat="picture in value.pictures.photos"
                                                ng-click="'{{picture.photo_title}}'"
-                                               class="fancybox" rel="gallery1" data-fancybox-href="{{ picture.photo_show_url }}"
-                                               data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) <a href='{{picture.photo_url_orig}}' target='_blank'>{{picture.photo_title}}</a> ({{picture.owner_name}})"
-                                               href="{{picture.photo_url_thumb}}" target="_blank"><img
-                                                    src="{{picture.photo_url_thumb}}"
+                                               class="fancybox" rel="gallery1" data-fancybox-href="/swos{{ picture.photo_show_url }}"
+                                               data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) {{picture.photo_title}} ({{picture.owner_name}})"
+                                               href="/swos{{picture.photo_url_thumb}}" target="_blank"><img
+                                                    src="/swos{{picture.photo_url_thumb}}"
                                                     alt="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     title="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
@@ -536,7 +536,7 @@
                             </tab>
 
                             <!-- Videos -->
-                            <tab class="flaticon-technology" heading="" select="trackWetlandTab('videos')">
+                            <tab class="flaticon-technology" heading="" tooltip="Videos" tooltip-append-to-body="true"  select="trackWetlandTab('video')">
                                 <div>
                                     <span ng-if="!value.videos">Loading...</span>
                                     <a ng-repeat="video in value.videos" ng-click="trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
@@ -545,7 +545,7 @@
                             </tab>
 
                             <!-- External databases -->
-                            <tab class="flaticon-technology-2" heading="" select="trackWetlandTab('databases')">
+                            <tab class="flaticon-technology-2" heading="" tooltip="External data" tooltip-append-to-body="true" select="trackWetlandTab('externaldb')">
                                 <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
                                 <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external databases registered!-->
                                     <div ><input ng-model="externaldb_search.searchText" placeholder="Search for ...">
@@ -656,9 +656,9 @@
 
     <script src="{% static "js/app.js" %}"></script>
     <script src="{% static "js/auth/auth.js" %}"></script>
-    <script src="{% static "js/map/map.js" %}?v=20161214"></script>
-    <script src="{% static "js/csw/csw.js" %}?v=20161207"></script>
-    <script src="{% static "js/swos/wetlands.js" %}?v=20161214"></script>
+    <script src="{% static "js/map/map.js" %}?v=20170323"></script>
+    <script src="{% static "js/csw/csw.js" %}?v=20170313"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170323"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 

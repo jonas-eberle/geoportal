@@ -149,7 +149,7 @@ h4 {
 #map_icons {
 	top: 13px;
     width: 140px;
-    right: 304px;
+    right: 325px;
 	left: auto;
 }
 
@@ -251,12 +251,17 @@ button.btn-loadmore:hover {
 .panoramio-wapi-tos.wetland_image {
 	width: 396px;
     position: absolute;
-    top: 209px;
+    top: 190px;
     font-size: 12px;
     color: white;
     padding-left: 3px;
 }
 
+.wetland-image>a>img {
+    height: 225px;
+}
+
+/*
 .geospatial_data .wetland-image:hover .panoramio-wapi-tos.wetland_image {
 	top: 190px;
 }
@@ -268,6 +273,7 @@ button.btn-loadmore:hover {
 .geospatial_data .wetland-image:hover .panoramio-wapi-tos.wetland_image .desc {
 	display:block;
 }
+*/
 
 @media (min-width: 992px){
 	.col-md-3 {

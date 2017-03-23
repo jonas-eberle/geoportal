@@ -292,7 +292,8 @@ angular.module('webgisApp')
         $scope.externaldb_search = {'searchText':  "", 'layer_exist': ""};
 
         $scope.trackWetlandTab = function(type) {
-            try {
+			window.location.hash = '#/wetland/'+$scope.value.id+'/'+type;
+			try {
                 _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);
                 _paq.push(['setDocumentTitle', $scope.value.name+'/'+type]);
                 _paq.push(['trackPageView']);
@@ -369,18 +370,9 @@ angular.module('webgisApp')
         };
 
         $scope.selectWetland = function(wetland) {
-            /*
-            try {
-                _paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
-                _paq.push(['setDocumentTitle', wetland.name]);
-                _paq.push(['trackPageView']);
-            } catch (err) {}
-            */
-            $scope.activeTab = 1; //wetland.id;
-            //$('#sidebar-tabs li').removeClass('active');
-            //$('#sidebar .tab-content .tab-pane').removeClass('active');
-            
-            //if (!(wetland.id in $scope.wetlands_opened)) {
+            window.location.hash = '#/wetland/'+wetland.id;
+			$('#loading-div').css('background', 'none');
+			$('#loading-div').show();
             
                 return djangoRequests.request({
                     'method': "GET",
@@ -397,6 +389,10 @@ angular.module('webgisApp')
                     $scope.allVideos = false;
                     $scope.allImages = false;
                     $scope.allImages_external = false;
+					
+					$('#loading-div').hide();
+					$('#loading-div').css('background', 'rgba(255,255,255,0.8)');
+					$scope.activeTab = 1;
 
                     djangoRequests.request({
                         'method': "GET",
