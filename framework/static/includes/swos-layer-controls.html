@@ -2,9 +2,9 @@
     <div class="item_desc">
         <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" style="width:95%;"
                 on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)"></slider>
-        <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate"
+        <div ng-if="layer.ogc_times">Specify date: <select ng-model="layer.selectedDate"
                                                        ng-change="mcl.updateLayer(layer.id, layer.selectedDate)"
-                                                       ng-options="o as o for o in layer.dates"></select></div>
+                                                       ng-options="o as o for o in layer.ogc_times"></select></div>
     </div>
     <div class="item_icon">
         <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"

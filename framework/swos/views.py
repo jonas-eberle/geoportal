@@ -54,6 +54,9 @@ class WetlandDetail(APIView):
                 layer_data['wetland_id'] = wetland.id
                 if layer_data['legend_colors']:
                     layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                if layer_data['ogc_times'] != None:
+                     layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
+                     layer_data['selectedDate'] = layer_data['ogc_times'] [-1] 
                 if layer.product.id not in temp_products_layers:
                     temp_products[layer.product.id] = layer.product
                     temp_products_layers[layer.product.id] = [layer_data]
