@@ -447,7 +447,7 @@
                                             Yearly coverage by sensor
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_image, 'glyphicon-chevron-right': !satdata_image}"></i>
                                         </accordion-heading>
-                                        <a href="/swos/swos/media/cache/satdata_{{value.id}}.png" ng-click="trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img src="/swos/swos/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
+                                        <a href="/swos/swos/media/cache/satdata_{{value.id}}.png" ng-click="trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img ng-src="/swos/swos/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
                                     </accordion-group>
                                     <accordion-group is-open="satdata_table">
                                         <accordion-heading>
@@ -498,7 +498,7 @@
                                                class="fancybox" rel="gallery1" data-fancybox-href="/swos{{ picture.photo_show_url }}"
                                                data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) {{picture.photo_title}} ({{picture.owner_name}})"
                                                href="/swos{{picture.photo_url_thumb}}" target="_blank"><img
-                                                    src="/swos{{picture.photo_url_thumb}}"
+                                                    ng-src="/swos{{picture.photo_url_thumb}}"
                                                     alt="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     title="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
@@ -524,7 +524,7 @@
                                                data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg"
                                                data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)"
                                                href="{{picture.photo_url}}" target="_blank"><img
-                                                    src="{{picture.photo_file_url}}"
+                                                    ng-src="{{picture.photo_file_url}}"
                                                     alt="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     title="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
@@ -549,7 +549,7 @@
                             <tab class="flaticon-technology" heading="" tooltip="Videos" tooltip-append-to-body="true"  select="trackWetlandTab('video')">
                                 <div>
                                     <span ng-if="!value.videos">Loading...</span>
-                                    <a ng-repeat="video in value.videos" ng-click="trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
+                                    <a ng-repeat="video in value.videos" ng-click="trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
                                 </div>
                                 <button ng-if="!allVideos" type="button" class="btn btn-loadmore" ng-click="loadMoreVideos()">Load more videos</button>
                             </tab>
