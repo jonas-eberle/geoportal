@@ -12,7 +12,7 @@ from .models import Wetland
 class WetlandsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wetland
-        fields = ('id', 'name', 'description', 'country', 'geo_scale', 'ecoregion', 'site_type', 'wetland_type', 'geom')
+        fields = ('id', 'name', 'description', 'country', 'geo_scale', 'ecoregion', 'site_type', 'wetland_type', 'products', 'geom')
 
 
 class WetlandsList(APIView):

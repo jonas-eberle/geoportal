@@ -38,6 +38,14 @@ class Wetland(models.Model):
         return "%s_%s" % (self.country.replace(' ', '-'), self.short_name)
     
     @property
+    def products(self):
+        layers = WetlandLayer.objects.filter(wetland_id=self.id)
+        products = set()
+        for l in layers:
+            products.add(l.product.short_name)
+        return list(products)
+    
+    @property
     def count_images(self):
         return len(self.panoramio()['photos'])
     

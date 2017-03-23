@@ -44,7 +44,8 @@ angular.module('webgisApp')
                         "size":         prop["size"],
                         "ecoregion":    prop["ecoregion"],
                         "wetland_type": prop["wetland_type"],
-                        "site_type":    prop["site_type"]
+                        "site_type":    prop["site_type"],
+                        "products":    prop["products"]
                     };
 
                     $scope.wetlands_without_geom.push(without_geom);
@@ -160,6 +161,7 @@ angular.module('webgisApp')
         $scope.filtered_ecoregion = '';
         $scope.filtered_wetland_type = '';
         $scope.filtered_site_type = '';
+        $scope.filtered_products = '';
         $scope.filtered_testmapping = false;
         $scope.filterCountry = function() {
             $scope.filtered_testmapping = false;
@@ -172,6 +174,7 @@ angular.module('webgisApp')
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
+        	$scope.filtered_products = '';
             if ($scope.filtered_country == null) {
                 $scope.filterReset();
             }
@@ -186,6 +189,7 @@ angular.module('webgisApp')
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
+        	$scope.filtered_products = '';
             if ($scope.filtered_geo_scale == null) {
                 $scope.filterReset();
             }
@@ -200,6 +204,7 @@ angular.module('webgisApp')
             $scope.filtered_geo_scale = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
+        	$scope.filtered_products = '';
             if ($scope.filtered_ecoregion == null) {
                 $scope.filterReset();
             }
@@ -214,6 +219,7 @@ angular.module('webgisApp')
             $scope.filtered_geo_scale = '';
             $scope.filtered_ecoregion = '';
             $scope.filtered_site_type = '';
+        	$scope.filtered_products = '';
             if ($scope.filtered_wetland_type == null) {
                 $scope.filterReset();
             }
@@ -228,7 +234,23 @@ angular.module('webgisApp')
             $scope.filtered_geo_scale = '';
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
+        	$scope.filtered_products = '';
             if ($scope.filtered_site_type == null) {
+                $scope.filterReset();
+            }
+        };
+        $scope.filterProduct = function() {
+            $scope.filtered_testmapping = false;
+            $scope.sortByCountryName = false;
+            $.each($scope.wetlands_without_geom, function(){
+                this['show'] = ((jQuery.inArray($scope.filtered_products, this['products']) > -1) || ($scope.filtered_products == ''));
+            });
+            $scope.filtered_country = '';
+            $scope.filtered_geo_scale = '';
+            $scope.filtered_ecoregion = '';
+            $scope.filtered_wetland_type = '';
+        	scope.filtered_site_type = '';
+            if ($scope.filtered_products == null) {
                 $scope.filterReset();
             }
         };
@@ -238,6 +260,7 @@ angular.module('webgisApp')
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
+        	$scope.filtered_products = '';
 
             if ($scope.filtered_testmapping == false) {
                 $scope.filterReset();

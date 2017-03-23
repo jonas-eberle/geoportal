@@ -5,7 +5,7 @@ from . import models, views
 # register URLs for each app + media URLs
 urlpatterns = patterns('',
     url(r'^wetlands.json$', views.WetlandsList.as_view(), name='wetland_list'),
-    url(r'^wetlands.geojson$', GeoJSONLayerView.as_view(model=models.Wetland, properties=('id', 'name', 'country', 'geo_scale', 'size', 'description','ecoregion', 'wetland_type', 'site_type')), name='wetlands'),
+    url(r'^wetlands.geojson$', GeoJSONLayerView.as_view(model=models.Wetland, properties=('id', 'name', 'country', 'geo_scale', 'size', 'description','ecoregion', 'wetland_type', 'site_type', 'products')), name='wetlands'),
     url(r'^wetland/(?P<pk>[0-9]+)$', views.WetlandDetail.as_view(), name='wetland_detail'),
     url(r'^wetland/(?P<pk>[0-9]+)/panoramio.json$', views.Panoramio.as_view(), name='wetland_panoramio'),
     url(r'^wetland/(?P<pk>[0-9]+)/images.json$', views.WetlandImages.as_view(), name='wetland_images'),

@@ -295,9 +295,19 @@
                                 <option value="">- Filter by site type -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'site_type'" value="{{option.site_type}}">{{option.site_type}}</option>
                             </select>
-                            <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 91%">
+                            <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 91%;margin-bottom: 10px;">
                                 <option value="">- Filter by ecoregion -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
+                            </select>
+                            <select ng-model="filtered_products" ng-change="filterProduct()" style="width: 91%">
+                                <option value="">- Filter by product -</option>
+								<!-- products is an array for each wetland, thus first of all manual list of products -->
+                                <!--<option ng-repeat="option in wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
+								<option value="LULC">Land Use Land Cover</option>
+								<option value="LULCC_L">Land Use Land Cover Change</option>
+								<option value="WQ">Water Quality</option>
+								<option value="LST">Land Surface Temperature Trend</option>
+								<option value="SWD">Surface Water Dynamics</option>
                             </select>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
