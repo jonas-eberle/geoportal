@@ -395,7 +395,9 @@ angular.module('webgisApp')
         };
 
         $scope.selectWetland = function(wetland) {
-            window.location.hash = '#/wetland/'+wetland.id;
+            if (window.location.hash == '#/catalog') {
+				window.location.hash = '#/wetland/' + wetland.id;
+			}
 			$('#loading-div').css('background', 'none');
 			$('#loading-div').show();
             
