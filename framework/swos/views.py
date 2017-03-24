@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render
 from django.http import Http404
 
+
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -34,19 +35,73 @@ class WetlandDetail(APIView):
     def get(self, request, pk, format=None):
         wetland = self.get_object(pk)
         
-        from .models import Product, Indicator, WetlandLayer, ExternalDatabase, ExternalLayer, Country
+        from .models import Product, Indicator,IndicatorSerializer, IndicatorValue,IndicatorValueSerializer, WetlandLayer, ExternalDatabase, ExternalLayer, Country
         from layers.models import LayerSerializer
+
+
+
         layers = WetlandLayer.objects.filter(wetland_id=wetland.id,publishable=True).order_by('title')
-
-
         temp_products_layers = dict()
         temp_indicators_layers = dict()
         temp_external_layers = dict()
         temp_products = dict()
         temp_indicators = dict()
 
-        finalJSON = {'id':wetland.id, 'title':wetland.name, 'image': wetland.image_url, 'image_desc': wetland.image_desc, 'products':[], 'indicators':[], 'externaldb': [], 'externaldb_layer': []}
-        
+
+        finalJSON = {'id':wetland.id, 'title':wetland.name, 'image': wetland.image_url, 'image_desc': wetland.image_desc, 'products':[], 'indicators':[], 'externaldb': [], 'externaldb_layer': [], 'indicator_values': [], 'indicator_descr': []}
+
+        #indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id)
+
+        # Get description for all registered Indicator
+        indicator_description = IndicatorSerializer(Indicator.objects.all(), many=True).data
+
+
+        ind_descr = dict() # Indicator description: key = indicator_id
+        ind_list = dict()  # Indicator values foreach Indicator : key = indicator_id
+
+        # Fill ind_descr and ind_list
+        for ind in indicator_description:
+            ind_descr[ind["id"]] = ind
+            ind_list[ind["id"]] = IndicatorValueSerializer(IndicatorValue.objects.filter(wetland_id=wetland.id, indicator=ind["id"]).order_by('time'), many=True).data;
+
+        # Add total reference value and calculate percent for given values and calculated values
+        for ind_id in ind_descr:
+            # Add total reference value and percent to given values
+            if ind_list[ind_id]:
+                for index, val in enumerate(ind_list[ind_id]):
+                    if (ind_descr[ind_id]["caluculation_reference_100_percent"] != None):
+                        ind_list[ind_id][index]["total"] = ind_list[ind_descr[ind_id]["caluculation_reference_100_percent"]][index]["value"]
+                        ind_list[ind_id][index]["percent"] = "%.2f" % ((ind_list[ind_id][index]["value"] * 100) / ind_list[ind_id][index]["total"])
+            # Add values for aggregated indicators
+            elif ind_descr[ind_id]["calculation"] == True:
+                new_values = dict()
+                for ind in ind_descr[ind_id]["calculation_input"]:
+                    for index, val in enumerate(ind_list[ind]):
+                        if not index in new_values:
+                            new_values[index] = dict()
+                        if "value" in new_values[index]:
+                            new_values[index]["value"] += val["value"]
+                        else:
+                            new_values[index]["value"] = val["value"]
+                        new_values[index]["time"] = val["time"]
+                        new_values[index]["total"] = ind_list[ind_descr[ind_id]["caluculation_reference_100_percent"]][index]["value"]
+                        new_values[index]["percent"] = "%.2f" % ((new_values[index]["value"] * 100) / new_values[index]["total"])
+                        ind_descr[ind]["sub_cat"] = "True"
+
+                # Add new values in the same format as existing values
+                ind_list[ind_id] = dict()
+                for i in new_values:
+                    if (ind_list[ind_id]):
+                        ind_list[ind_id].append(new_values[i])
+                    else:
+                        ind_list[ind_id] = [new_values[i]]
+
+
+        finalJSON['indicator_values'] = ind_list
+        finalJSON['indicator_descr'] = ind_descr
+
+
+        # create product and indicator layer
         for layer in layers:
             if layer.product:
                 layer_data = LayerSerializer(layer).data
@@ -79,9 +134,10 @@ class WetlandDetail(APIView):
             finalJSON['indicators'].append({'id': indicator.id, 'name': indicator.name, 'layers': layers})
 
 
+
 #get wetland country --> find continent and add to list
 
-        #use first country of country list to find the continent
+        #use first country of country list to find the continent #todo handel country list
         if("-" in wetland.country):
             countries = wetland.country.split('-')
             country_continent = Country.objects.get(name=countries[1])
@@ -147,7 +203,7 @@ class WetlandDetail(APIView):
         finalJSON['count']['satdata'] = wetland.count_satdata
         finalJSON['count']['products'] = len(finalJSON['products'])
         finalJSON['count']['products_layers'] = len(temp_products_layers)
-        finalJSON['count']['indicators'] = len(finalJSON['indicators'])
+        finalJSON['count']['indicators'] = len(finalJSON['indicators'])  # todo add count number of indicator or values?
         finalJSON['count']['indicators_layers'] = len(temp_indicators_layers)
         finalJSON['count']['externaldb'] =len(extdata)
 

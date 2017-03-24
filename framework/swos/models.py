@@ -364,24 +364,24 @@ class Wetland(models.Model):
         else:
             photos['photos'] = images[start:]
         return photos
-    
+
     def clean_panoramio(self):
-        pano_file = settings.MEDIA_ROOT+'cache/panoramio_'+str(self.id)+'.json'
+        pano_file = settings.MEDIA_ROOT + 'cache/panoramio_' + str(self.id) + '.json'
         if os.path.exists(pano_file):
             data = json.loads(open(pano_file).read())
             import copy
             data_new = copy.deepcopy(data)
             data_new['photos'] = []
-            
+
             import urllib
             for image in data['photos']:
                 code = urllib.urlopen(image['photo_url']).getcode()
-                print image['photo_url']+': '+str(code)
+                print image['photo_url'] + ': ' + str(code)
                 if code == 200:
                     data_new['photos'].append(image)
-            
+
             data_new['count'] = len(data_new['photos'])
-            f = open(pano_file,'w')
+            f = open(pano_file, 'w')
             f.write(json.dumps(data_new))
             f.close()
 
@@ -429,20 +429,51 @@ class Product(models.Model):
         return u"%s" %(self.name)
 
 class Indicator(models.Model):
+    UNIT = (
+        ('%', 'Percent'),
+        ('sqkm', 'sqkm'),
+    )
+
     name = models.CharField(max_length=200)
-    description = models.TextField()
-    wetlands = models.ManyToManyField(Wetland, blank=True, related_name='swos_indicator_wetlands', verbose_name="Wetlands")
-    products = models.ManyToManyField(Product, blank=True, related_name='swos_indicator_products', verbose_name="Products")
+    description = models.TextField(blank=True,)
+    unit = models.CharField(max_length=200, choices=UNIT, blank=True,)
+    shape_ident = models.CharField(max_length=200, null=True)
+    csv_ident = models.CharField(max_length=200, null=True)
+    calculation = models.BooleanField(default=False)
+    calculation_input = models.ManyToManyField("self", related_name="input_indicator", verbose_name="Input Indicator for Calculation", blank=True,)
+    caluculation_reference_100_percent = models.ForeignKey('self', related_name="100_indicator", verbose_name="100% Reference", null=True, blank=True)
     order = models.PositiveIntegerField(default=0)
-    
+
     def __unicode__(self):
         return u"%s" %(self.name)
+
+    class Meta:
+        ordering = ['order']
+
+class IndicatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Indicator
+        fields = ( 'id', 'name', 'description', 'unit', 'calculation', 'calculation_input','caluculation_reference_100_percent', 'order' )
+
+
+class IndicatorValue(models.Model):
+    name = models.CharField(max_length=200, null=True)
+    value = models.FloatField()
+    time = models.DateField (blank=True, null=True, verbose_name="Time 1")
+    time_2  = models.DateField (blank=True, null=True, verbose_name="Time 2")
+    indicator = models.ForeignKey(Indicator, related_name="value_indicator", verbose_name="Indicator")
+    wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
+
+class IndicatorValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndicatorValue
+        fields = ('name', 'value', 'time', 'time_2', 'indicator')
 
 
 class WetlandLayer(Layer):
     wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
-    indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
+    indicator = models.ForeignKey(IndicatorValue, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
 
     @property
     def alternate_title(self):

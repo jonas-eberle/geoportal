@@ -1,6 +1,6 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
-from .models import Wetland, Product, Indicator, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage
+from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage
 
 from layers.admin import LayersAdmin
 
@@ -15,13 +15,13 @@ make_unpublishable.short_description = "Mark selected layers as unfit for public
 class WetlandLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
             'classes': ('suit-tab', 'suit-tab-swos',),
-            'fields': ('wetland', 'product', 'indicator')
+            'fields': ('wetland', 'product')
         }),)
-    list_display=('title','publishable', 'wetland', 'product', 'indicator')
+    list_display=('title','publishable', 'wetland', 'product')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
     search_fields=('title','abstract','wetland__name', 'product__name')
     ordering =['title']
-    list_filter=('publishable', 'wetland','product', 'indicator')
+    list_filter=('publishable', 'wetland','product')
 
     actions=[make_publishable,make_unpublishable]
 
@@ -60,17 +60,19 @@ from suit.admin import SortableModelAdmin
 class ProductAdmin(SortableModelAdmin):
     sortable = 'order'
     filter_horizontal = ('wetlands',)
-    
+
 class IndicatorAdmin(SortableModelAdmin):
     sortable = 'order'
-    filter_horizontal = ('wetlands',)
+    list_display = ('name', 'calculation', 'caluculation_reference_100_percent')
 
-
+class IndicatorValuesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'value', 'time', 'time_2', 'indicator', 'wetland')
 
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Indicator, IndicatorAdmin)
+admin.site.register(IndicatorValue, IndicatorValuesAdmin)
 admin.site.register(WetlandLayer, WetlandLayerAdmin)
 admin.site.register(ExternalDatabase, ExternalDatabaseAdmin)
 admin.site.register(ExternalLayer, ExternalLayerAdmin)
