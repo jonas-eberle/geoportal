@@ -212,7 +212,7 @@
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
                                         <div class="item_desc">
                                             <slider class="slider" ng-model="sliderValues[layer.id]" min="0" max="100" step="1" on-slide="changeOpacity(layer.id)" on-stop-slide="changeOpacity(layer.id)" style="width:95%;"></slider>
-                                            <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate" ng-change="updateLayer(layer.id, layer.selectedDate)" ng-options="o as o for o in layer.dates"></select></div>
+                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="layer.selectedDate" ng-change="updateLayer(layer.id, layer.selectedDate)" ng-options="o as o for o in layer.ogc_times"></select></div>
                                         </div>
                                         <div class="item_icon">
                                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
@@ -241,7 +241,7 @@
                                         </a>
                                         <table ng-if="layer.legend_colors">
                                             <tr ng-repeat="item in layer.legend_colors track by $index">
-                                                <td class="legend-color" ng-attr-style="background-color:{{item.color}};opacity:{{item.opacity}};">&nbsp;</td>
+                                                <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
                                                 <td class="legend-label">{{ item.label }}</td>
                                             </tr>
                                         </table>
@@ -374,7 +374,7 @@
                             </tab>
 
                             <!-- Indicators -->
-                            <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true"  select="trackWetlandTab('indicator')">
+                            <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="trackWetlandTab('indicator')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
                                 <!--
                                 <ul class="items indicators">
@@ -668,7 +668,7 @@
     <script src="{% static "js/auth/auth.js" %}"></script>
     <script src="{% static "js/map/map.js" %}?v=20170323"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20170313"></script>
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170323"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170324"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 
