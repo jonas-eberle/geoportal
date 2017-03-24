@@ -681,7 +681,7 @@ angular.module('webgisApp')
             if (wetland_id){
                 $scope.selectWetlandFromId(wetland_id).then(function(){
                     var target = "overview";
-                    if (type_name)
+                    if (type_name) {
                         switch (type_name){
                             case "product":
                                 target = 'li.flaticon-layers a';
@@ -702,7 +702,7 @@ angular.module('webgisApp')
                                 target = 'li.flaticon-technology-2 a';
                                 break;
                         }
-                    $timeout(function () {
+                      $timeout(function () {
                         try {
                             $(target).click(); // open tab
                         } catch(e) {}
@@ -729,8 +729,8 @@ angular.module('webgisApp')
                                 $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
                             }
                         }
-                    });
-
+                      });
+                    }
                 });
             }
         };
