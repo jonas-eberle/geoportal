@@ -675,11 +675,14 @@ angular.module('webgisApp')
         });
 
         var load_wetland = function () {
-            if ($routeParams.wetland_id){
-                $scope.selectWetlandFromId($routeParams.wetland_id).then(function(){
+            var wetland_id = $routeParams.wetland_id;
+            var type_name = $routeParams.type_name;
+            var layer_id = $routeParams.layer_id;
+            if (wetland_id){
+                $scope.selectWetlandFromId(wetland_id).then(function(){
                     var target = "overview";
-                    if ($routeParams.type_name)
-                        switch ($routeParams.type_name){
+                    if (type_name)
+                        switch (type_name){
                             case "product":
                                 target = 'li.flaticon-layers a';
                                 break;
@@ -700,10 +703,13 @@ angular.module('webgisApp')
                                 break;
                         }
                     $timeout(function () {
-                        $(target).click(); // open tab
+                        try {
+                            $(target).click(); // open tab
+                        } catch(e) {}
 
-                        if ($routeParams.layer_id) {
-                            var layer_ids = $routeParams.layer_id.split("_");
+                        if (layer_id) {
+                            window.location.hash = '#/wetland/'+wetland_id+'/product/'+layer_id;
+                            var layer_ids = layer_id.split("_");
 
 
                             $.each(layer_ids, function (i, value) {
