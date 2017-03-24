@@ -140,21 +140,37 @@ h4 {
 }
 
 #current {
-	width: 307px;
+    width: 307px;
     position: absolute;
-    top: 65px;
+    top: 97px;
     left: -3px;
-	/*
-    background-color: white;
-    border: 1px solid #dddddd;
-    */
+    z-index: 1020;
+}
+
+@media (min-width: 1070px) {
+    #current {
+        top: 65px;
+    }
 }
 
 #map_icons {
-	top: 13px;
-    width: 140px;
-    right: 325px;
-	left: auto;
+    left: auto;
+    float: left;
+    margin-right: 20px;
+    top: auto; 
+    width: auto; 
+    position: relative; 
+    z-index: 1001; 
+    left: auto; 
+}
+
+#map_search {
+    position: relative;
+    right: auto;
+    top: auto;
+    width: calc(100% - 350px);
+    max-width: 300px;
+    z-index: 1025;
 }
 
 #title-left {
@@ -162,10 +178,11 @@ h4 {
 }
 
 #wetland_sites {
-	position: absolute;
-    right: 480px;
-    top: 17px;
     color: white;
+    float: left;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-left: 13px;
     z-index: 1022;
 }
 
@@ -279,7 +296,7 @@ button.btn-loadmore:hover {
 }
 */
 
-@media (min-width: 992px){
+@media (min-width: 768px){
 	.col-md-3 {
 	    width: 405px;
 	}
@@ -292,7 +309,7 @@ button.btn-loadmore:hover {
 	}
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
 	.col-md-9 {
 	    width: calc(100% - 405px);
 		width: -moz-calc(100% - 405px);
@@ -352,7 +369,14 @@ button.btn-loadmore:hover {
     display: block;
     left: 0;
     position: absolute;
-    top: 74px;
+    top: 106px;
+    z-index: 1020;
+}
+
+@media (min-width: 1070px) {
+    .toggle-button-wrapper {
+        top: 74px;
+    }
 }
 
 .toggle-button-wrapper.expanded {
@@ -387,8 +411,21 @@ button.btn-loadmore:hover {
     height: 53px;
     position: absolute;
     right: 0;
-    width: 645px;
+    width: 100%;
     z-index: 1010;
+    padding-top: 20px;
+}
+
+@media (min-width: 1050px) {
+    .map-controls-wrapper {
+        width: 645px;
+    }
+}
+
+@media (min-width: 1360px) {
+    .map-controls-wrapper {
+        padding-top: 10px;
+    }
 }
 
 /* extends bootstrap-slider's .tooltip */
@@ -434,13 +471,17 @@ button.btn-loadmore:hover {
 }
 
 #disclaimer, #cookienote {
-	bottom: 40px;
+    bottom: 40px;
     height: auto;
     padding: 5px;
     color: white;
     text-align: center;
     width: 100%;
-	font-size: 1.1em;
+    font-size: 1.1em;
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    right: 0;
+    z-index: 1010;
 }
 
 #cookienote {
