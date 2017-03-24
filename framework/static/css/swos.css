@@ -144,6 +144,7 @@ h4 {
     position: absolute;
     top: 97px;
     left: -3px;
+    z-index: 1020;
 }
 
 @media (min-width: 1070px) {
@@ -368,6 +369,7 @@ button.btn-loadmore:hover {
     left: 0;
     position: absolute;
     top: 106px;
+    z-index: 1020;
 }
 
 @media (min-width: 1070px) {
