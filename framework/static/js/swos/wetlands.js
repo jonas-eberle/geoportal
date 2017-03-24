@@ -249,7 +249,7 @@ angular.module('webgisApp')
             $scope.filtered_geo_scale = '';
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
-        	scope.filtered_site_type = '';
+            $scope.filtered_site_type = '';
             if ($scope.filtered_products == null) {
                 $scope.filterReset();
             }
@@ -309,6 +309,8 @@ angular.module('webgisApp')
         };
         
         $scope.value = null;
+
+
         $scope.satdata_table = false;
         $scope.satdata_image = true;
 
@@ -412,7 +414,7 @@ angular.module('webgisApp')
                     $scope.allVideos = false;
                     $scope.allImages = false;
                     $scope.allImages_external = false;
-					
+
 					$('#loading-div').hide();
 					$('#loading-div').css('background', 'rgba(255,255,255,0.8)');
 					$scope.activeTab = 1;
@@ -616,6 +618,12 @@ angular.module('webgisApp')
                     }
                 });
                 var attr_list = attribution_arr.join(' | \u00A9 ');
+                if(attr_list.length > 0){
+                    $('.map-controls-wrapper').css('height', '82px');
+                }
+                else{
+                    $('.map-controls-wrapper').css('height', '53px');
+                }
                 Attribution.setList(attr_list);
         };
 
@@ -689,7 +697,6 @@ angular.module('webgisApp')
                                 target = 'li.flaticon-technology-2 a';
                                 break;
                         }
-
                     $timeout(function () {
                         $(target).click(); // open tab
 
@@ -719,7 +726,8 @@ angular.module('webgisApp')
                 });
             }
         };
-    })
+})
+
     .directive('repeatDone', function() {
       return function(scope, element, attrs) {
         scope.$eval(attrs.repeatDone);
