@@ -11,6 +11,7 @@ angular.module('webgisApp')
 
     }])
 
+
     .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout){
 
         $scope.wetlands = [];
@@ -316,9 +317,11 @@ angular.module('webgisApp')
 
         $scope.externaldb_search = {'searchText':  "", 'layer_exist': ""};
 
-        $scope.trackWetlandTab = function(type) {
-			window.location.hash = '#/wetland/'+$scope.value.id+'/'+type;
-			try {
+        $scope.trackWetlandTab = function(type, $location) {
+
+            window.location.hash = '#/wetland/'+$scope.value.id+'/'+type;
+
+        try {
                 _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);
                 _paq.push(['setDocumentTitle', $scope.value.name+'/'+type]);
                 _paq.push(['trackPageView']);
@@ -396,10 +399,10 @@ angular.module('webgisApp')
 
         $scope.selectWetland = function(wetland) {
             if (window.location.hash == '#/catalog') {
-				window.location.hash = '#/wetland/' + wetland.id;
-			}
-			$('#loading-div').css('background', 'none');
-			$('#loading-div').show();
+                window.location.hash = '#/wetland/' + wetland.id;
+            }
+            $('#loading-div').css('background', 'none');
+            $('#loading-div').show();
             
                 return djangoRequests.request({
                     'method': "GET",
@@ -417,9 +420,9 @@ angular.module('webgisApp')
                     $scope.allImages = false;
                     $scope.allImages_external = false;
 
-					$('#loading-div').hide();
-					$('#loading-div').css('background', 'rgba(255,255,255,0.8)');
-					$scope.activeTab = 1;
+                    $('#loading-div').hide();
+                    $('#loading-div').css('background', 'rgba(255,255,255,0.8)');
+                    $scope.activeTab = 1;
 
                     djangoRequests.request({
                         'method': "GET",
@@ -674,6 +677,7 @@ angular.module('webgisApp')
 
         });
 
+
         var load_wetland = function () {
             var wetland_id = $routeParams.wetland_id;
             var type_name = $routeParams.type_name;
@@ -702,13 +706,14 @@ angular.module('webgisApp')
                                 target = 'li.flaticon-technology-2 a';
                                 break;
                         }
+
                       $timeout(function () {
                         try {
                             $(target).click(); // open tab
                         } catch(e) {}
 
                         if (layer_id) {
-                            window.location.hash = '#/wetland/'+wetland_id+'/product/'+layer_id;
+
                             var layer_ids = layer_id.split("_");
 
 
@@ -721,10 +726,12 @@ angular.module('webgisApp')
                             var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
 
                             //open menu according to the last layer id
-                            if ($routeParams.type_name == "product") {
+                            if (type_name == "product") {
+                                window.location.hash = '#/wetland/'+wetland_id+'/product/'+layer_id;
                                 $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
                             }
-                            if ($routeParams.type_name == "externaldb") {
+                            if (type_name == "externaldb") {
+                                window.location.hash = '#/wetland/'+wetland_id+'/externaldb/'+layer_id;
                                 $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
                                 $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
                             }
@@ -734,6 +741,7 @@ angular.module('webgisApp')
                 });
             }
         };
+
 })
 
     .directive('repeatDone', function() {
