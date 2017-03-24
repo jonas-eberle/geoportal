@@ -170,6 +170,7 @@ h4 {
     top: auto;
     width: calc(100% - 350px);
     max-width: 300px;
+    z-index: 1025;
 }
 
 #title-left {
