@@ -468,13 +468,17 @@ button.btn-loadmore:hover {
 }
 
 #disclaimer, #cookienote {
-	bottom: 40px;
+    bottom: 40px;
     height: auto;
     padding: 5px;
     color: white;
     text-align: center;
     width: 100%;
-	font-size: 1.1em;
+    font-size: 1.1em;
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    right: 0;
+    z-index: 1010;
 }
 
 #cookienote {
