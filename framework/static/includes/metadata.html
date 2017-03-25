@@ -26,7 +26,7 @@
 	        {{value_passed.abstract}}
 	    </div>
 	</div>
-	<div class="item">
+	<div class="item" ng-if="value_passed.topicCategory">
 	    <div class="headline">
 	        Category
 	    </div>
@@ -56,12 +56,12 @@
 	        East: {{value_passed.east}}
 	    </div>
 	</div>
-	<div class="item" ng-if="value_passed.lineage">
+	<div class="item" ng-if="value_passed.meta_lineage">
 	    <div class="headline">
 	        Lineage
 	    </div>
 	    <div class="description">
-	        {{value_passed.lineage}}
+	        {{value_passed.meta_lineage}}
 	    </div>
 	</div>
 	<div class="item" ng-if="value_passed.equi_scale > 0">
@@ -69,7 +69,7 @@
 	        Resolution
 	    </div>
 	    <div class="description">
-	        {{value_passed.equi_scale}}
+	        {{value_passed.equi_scale}} meter
 	    </div>
 	</div>
 	<!--

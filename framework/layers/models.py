@@ -110,6 +110,7 @@ class Layer(models.Model):
     meta_language = models.CharField(max_length=200, default="English", blank=True, verbose_name="Metadata language")
     meta_characterset = models.CharField(max_length=200, blank=True, null=True, verbose_name="Metadata character set")
     meta_date = models.DateField(blank=True, null=True, verbose_name="Metadata date")
+    meta_lineage = models.TextField("Lineage information", blank=True, default="")
 
     #Legend
     legend_graphic = models.FileField("Legend graphic file", upload_to='legend', null=True, blank=True)
@@ -237,7 +238,7 @@ class MetadataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'dataset_contact_new', 'date_create', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date')
+        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'dataset_contact_new', 'date_create', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage')
 
 
 # Layergroup model to group layers, just title is needed, the layers were referenced in the LayerInline model

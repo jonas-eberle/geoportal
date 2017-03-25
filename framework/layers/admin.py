@@ -46,7 +46,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-dataset',),
-            'fields': ('dataset_contact_new', 'date_create', 'language', 'characterset', 'dataset_epsg', 'format', 'equi_scale', 'representation_type')
+            'fields': ('dataset_contact_new', 'date_create', 'language', 'characterset', 'dataset_epsg', 'format', 'equi_scale', 'representation_type', 'meta_lineage')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-location',),
