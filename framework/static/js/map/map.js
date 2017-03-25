@@ -1081,7 +1081,7 @@ angular.module('webgisApp')
         };
 
     })
-    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope) {
+    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams) {
         $scope.layersMeta = mapviewer.layersMeta;
         $scope.newLayerIndex = -1;
         $scope.sliderValues = mapviewer.sliderValues;
@@ -1217,6 +1217,14 @@ angular.module('webgisApp')
 
 
         };
+
+        $scope.shareLink = function(id) {
+            var host = document.location.protocol +"//"+ document.location.hostname + document.location.pathname;
+            var hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;
+            var url = host+hash;
+            bootbox.alert('<h4>Share dataset link</h4><div class="share_link">Please use the following link to share the dataset: <br /><a href="'+url+'" target="_blank">'+url+'</a></div>'); 
+        };
+
         $scope.showMetadata = function(layer) {
             if (parseInt(layer.django_id) > 0) {
                 try {
