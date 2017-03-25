@@ -36,7 +36,7 @@
     <script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
 
-    <link href="{% static "css/swos.css" %}?v=20170323_1" rel="stylesheet">
+    <link href="{% static "css/swos.css" %}?v=20170325" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -301,13 +301,13 @@
                             </select>
                             <select ng-model="filtered_products" ng-change="filterProduct()" style="width: 91%">
                                 <option value="">- Filter by product -</option>
-								<!-- products is an array for each wetland, thus first of all manual list of products -->
+                                <!-- products is an array for each wetland, thus first of all manual list of products -->
                                 <!--<option ng-repeat="option in wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
-								<option value="LULC">Land Use Land Cover</option>
-								<option value="LULCC_L">Land Use Land Cover Change</option>
-								<option value="WQ">Water Quality</option>
-								<option value="LST">Land Surface Temperature Trend</option>
-								<option value="SWD">Surface Water Dynamics</option>
+                                <option value="LST">Land Surface Temperature Trend</option>
+                                <option value="LULC">Land Use Land Cover</option>
+                                <option value="LULCC_L">Land Use Land Cover Change</option>
+                                <option value="SWD">Surface Water Dynamics</option>
+                                <option value="WQ">Water Quality</option>
                             </select>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
@@ -666,7 +666,7 @@
 
     <script src="{% static "js/app.js" %}"></script>
     <script src="{% static "js/auth/auth.js" %}"></script>
-    <script src="{% static "js/map/map.js" %}?v=20170323"></script>
+    <script src="{% static "js/map/map.js" %}?v=20170325"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20170313"></script>
     <script src="{% static "js/swos/wetlands.js" %}?v=20170324"></script>
 

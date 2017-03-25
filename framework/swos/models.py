@@ -39,7 +39,7 @@ class Wetland(models.Model):
     
     @property
     def products(self):
-        layers = WetlandLayer.objects.filter(wetland_id=self.id)
+        layers = WetlandLayer.objects.filter(wetland_id=self.id,publishable=True)
         products = set()
         for l in layers:
             products.add(l.product.short_name)
