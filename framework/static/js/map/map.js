@@ -711,6 +711,10 @@ angular.module('webgisApp')
             });
             // add event handler for select-event, i.e. when a feature is selected
             selectInteraction[0].on("select", function() {
+                // if requestInfo button is active, do not execute wetland selection
+                if ($scope.infoStatus == true) {
+                    return false;
+                }
                 var feature = selectInteraction[0].getFeatures().getArray()[0];
                 if (feature) {
                     console.log('Selected wetland: '+feature.get('id'));
@@ -938,7 +942,7 @@ angular.module('webgisApp')
                        } catch(e) {}
                     });
                     if (urls.length > 0) {
-                        $('#loading-div').show();
+                        $('#loading-div').addClass('nobg').show();
                         djangoRequests.request({
                             url: '/layers/info?url='+urls.join('||')+'&names='+names.join('||'),
                             method: 'GET'
@@ -948,9 +952,9 @@ angular.module('webgisApp')
                             var width = $(document).width()/2-300;
                             if (width < 0) {width='2%';}
                             $('.modal-content', dialog).css('left', width);
-                            $('#loading-div').hide();
+                            $('#loading-div').removeClass('nobg').hide();
                          }, function(err){
-                            $('#loading-div').hide();
+                            $('#loading-div').removeClass('nobg').hide();
                             bootbox.alert('An error occurred while loading data: '+err.error);
                         });
 

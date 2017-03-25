@@ -558,6 +558,10 @@ padding-bottom: 0;}
   z-index: 9000;
 }
 
+#loading-div.nobg {
+  background: none !important;
+}
+
 #loading-div .loading {
   position: absolute;
   width: 60px;
