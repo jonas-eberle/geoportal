@@ -447,6 +447,7 @@ angular.module('webgisApp')
                 this.data.layersCount = this.data.layersCount+1;
                 olLayer.set('layerObj', layer);
                 this.map.addLayer(olLayer);
+                $rootScope.$broadcast("mapviewer.layeradded", olLayer);
                 return olLayer;
             },
             'getIndexFromLayer': function(title) {
@@ -1279,9 +1280,11 @@ angular.module('webgisApp')
         };
 
         $scope.wetlandListState = "";
-        $scope.wetlandListGlyph = "glyphicon-chevron-right";
+        $scope.showToggleButton = false;
+        //$scope.wetlandListGlyph = "glyphicon-chevron-right";
 
         $scope.toggleWetlandList = function(action) {
+            $('.toggle-button-wrapper > button').blur();
             /*
             close the list, if:
             - there are no layers in the map
@@ -1293,15 +1296,21 @@ angular.module('webgisApp')
                 || (($scope.wetlandListState === "") && (action === "change"))
             ) {
                 $scope.wetlandListState = "";
-                $scope.wetlandListGlyph = "glyphicon-chevron-right";
+                //$scope.wetlandListGlyph = "glyphicon-chevron-right";
             } else {
                 $scope.wetlandListState = "expanded";
-                $scope.wetlandListGlyph = "glyphicon-chevron-left";
+                //$scope.wetlandListGlyph = "glyphicon-chevron-left";
             }
         };
 
         $scope.$on("mapviewer.layerremoved", function() {
             $scope.toggleWetlandList("change");
+            if (mapviewer.data.layersCount < 1) {
+              $scope.showToggleButton = false;
+            }
+        });
+        $scope.$on("mapviewer.layeradded", function() {
+            $scope.showToggleButton = true;
         });
 
         $scope.toggleLayerControls = function(id, event) {
