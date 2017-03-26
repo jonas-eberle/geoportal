@@ -1652,11 +1652,6 @@ angular.module('webgisApp')
         }
 
     })
-    .filter('colorFilter', function() {
-        return function(input) {
-            return input.replace(/-/g, ',');
-        }
-    })
     .filter('reverse', function() {
       return function(items) {
         return items.slice().reverse();
@@ -1666,4 +1661,3 @@ angular.module('webgisApp')
         mapviewer.initialize(mapId, 'map', true); //id of mapviewer
     })
 ;
-
