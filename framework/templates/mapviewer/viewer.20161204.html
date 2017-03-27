@@ -285,7 +285,12 @@
                             </select>
                             <select ng-model="filtered_geo_scale" ng-change="filterScale()" style="width: 40%; margin-bottom: 10px;">
                                 <option value="">- Filter by scale -</option>
-                                <option ng-repeat="option in wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>
+                               <!-- <option ng-repeat="option in wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>-->
+                                <option value="Small Wetland Site">Small Wetland Site</option>
+                                <option value="Medium Wetland Site">Medium Wetland Site</option>
+                                <option value="Large Wetland Site">Large Wetland Site</option>
+                                <option value="River Basin">River Basin</option>
+                                <option value="Region">Region</option>
                             </select>
                             <select ng-model="filtered_wetland_type" ng-change="filterWetlandType()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by wetland type -</option>
@@ -376,6 +381,7 @@
                             <!-- Indicators -->
                             <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="trackWetlandTab('indicator')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
+
                                 <!--
                                 <ul class="items indicators">
                                     <li>
