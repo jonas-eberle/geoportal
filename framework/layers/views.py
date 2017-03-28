@@ -86,11 +86,18 @@ class LayerInfo(APIView):
         htmloutput = ''
         for index, url in enumerate(urls):
             try:
+                #url = url.replace('text%2Fhtml', 'text%2Fplain')
                 f = urllib2.urlopen(url)
+                code = f.code
                 output = f.read()
+            except Exception as e:
+                code = e.code
+                output = e.read()
 
+            htmloutput += '<p><strong>'+names[index]+'</strong><br/>'
+
+            try:
                 if '<ServiceExceptionReport' in output:
-                    htmloutput += '<p><strong>'+names[index]+'</strong><br/>'
                     xml = etree.fromstring(output)
                     code = xml.getchildren()[0].attrib['code']
                     if code == 'LayerNotQueryable':
@@ -98,13 +105,27 @@ class LayerInfo(APIView):
                     else:
                         htmloutput += xml.getchildren()[0].text.strip()
                     htmloutput += '</p>'
-                elif output == '':
-                    htmloutput += '<p><strong>'+names[index]+'</strong><br/>No further data available</p>'
+                elif '<ExceptionReport' in output:
+                    xml = etree.fromstring(output)
+                    code = xml.getchildren()[0].attrib['exceptionCode']
+                    if code == 'TileOutOfRange':
+                        htmloutput += "No data available at this location"
+                    else:
+                        htmloutput += xml.getchildren()[0].getchildren()[0].text.strip()
+                    htmloutput += '</p>'
+                elif output == '' or code >= 400:
+                    htmloutput += 'No further data available'
                 else:
+                    if 'GRAY_INDEX' in output:
+                        if 'SWOS LSTT' in names[index]:
+                            output = output.replace('GRAY_INDEX', 'Surface Temperature (deg C)')
+                        else:
+                            output = output.replace('GRAY_INDEX', 'Value')
                     htmloutput += output
 
             except Exception as e:
-                return Response({'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                htmloutput += 'An error occurred while requesting data'
+            htmloutput += '</p>'
 
         return HttpResponse(htmloutput)
 

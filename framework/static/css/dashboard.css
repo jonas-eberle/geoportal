@@ -685,3 +685,12 @@ form table td {padding: 5px 10px;}
 .nav-tabs > li {
 	cursor: pointer;
 }
+
+caption.featureInfo {
+    display: none !important;
+}
+
+.modal-dialog .modal-body .bootbox-body table {
+    overflow: auto;
+    display: block;
+}
