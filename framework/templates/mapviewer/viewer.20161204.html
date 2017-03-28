@@ -85,7 +85,7 @@
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl" style="padding-right:0;">
                     <li>
                         <p style="margin-top: 3px;font-size: 0.8em;padding-left: 10px;">
-                            <img src="http://www.swos-service.eu/eu.png" alt="EU Logo" align="right" style="height: 45px;">
+                            <img src="/swos/static/img/eu.png" alt="EU Logo" align="right" style="height: 45px;">
                             This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.
                         </p>
                     </li>
@@ -234,10 +234,10 @@
                                     </div>
                                     <div class="item_legend" style="margin-left:40px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
                                         <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
-                                            <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
+                                            <img ng-src="/swos{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
                                         </a>
                                         <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" target="_blank">
-                                            <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
+                                            <img ng-src="/swos{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
                                         </a>
                                         <table ng-if="layer.legend_colors">
                                             <tr ng-repeat="item in layer.legend_colors track by $index">
