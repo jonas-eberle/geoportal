@@ -11,8 +11,8 @@ angular.module('webgisApp')
 
     }])
 
-
     .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout){
+
 
         $scope.wetlands = [];
         $scope.wetlands_without_geom = [];
@@ -365,6 +365,7 @@ angular.module('webgisApp')
         };
 
         $scope.selectFeature = function(wetland) {
+
             var extent = wetland.geometry.getExtent();
             //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
             //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
@@ -373,9 +374,7 @@ angular.module('webgisApp')
 
             var wetlandFeature = $scope.olLayer.getSource().getFeatureById(wetland.id);
             wetlandFeature.setStyle(new ol.style.Style({
-                fill  : new ol.style.Fill({
-                    color: 'rgba(255,255,255,0.5)'
-                }),
+
                 stroke: new ol.style.Stroke({
                     color: "#4B94B6",
                     width: 5
@@ -398,12 +397,15 @@ angular.module('webgisApp')
         };
 
         $scope.selectWetland = function(wetland) {
+
             if (window.location.hash == '#/catalog') {
                 window.location.hash = '#/wetland/' + wetland.id;
             }
+
             $('#loading-div').css('background', 'none');
             $('#loading-div').show();
-            
+
+            $rootScope.$broadcast('current_wetland_id', wetland.id);
                 return djangoRequests.request({
                     'method': "GET",
                     'url': '/swos/wetland/'+wetland.id
@@ -411,9 +413,10 @@ angular.module('webgisApp')
                     wetland['data'] = data;
                     //$scope.wetlands_opened[wetland.id] = wetland;
                     $scope.value = wetland;
+
                     $scope.data_count = data['count'];
                     //console.log($scope.data_count);
-                    
+
                     $scope.videosCurrentPage = 1;
                     $scope.imagesCurrentPage = 1;
                     $scope.allVideos = false;
@@ -515,6 +518,8 @@ angular.module('webgisApp')
         $scope.layers = mapviewer.layers;
         $scope.addLayerToMap = function(layer, $event) {
             var checkbox = $event.target;
+
+            //changeWetlandFeatureStyle(); // change Style (remove fill)
 
             if (checkbox.checked) {
                 $scope.trackAddLayer(layer);
@@ -678,6 +683,8 @@ angular.module('webgisApp')
         });
 
 
+
+
         var load_wetland = function () {
             var wetland_id = $routeParams.wetland_id;
             var type_name = $routeParams.type_name;
@@ -742,7 +749,25 @@ angular.module('webgisApp')
             }
         };
 
-})
+        var changeWetlandFeatureStyle = function () {
+
+            var wetlandFeatureNewStyle = mapviewer.currentFeature
+
+            wetlandFeatureNewStyle.setStyle(new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: "#4B94B6",
+                    width: 5
+                })
+            }));
+
+            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
+                return interaction instanceof ol.interaction.Select;
+            });
+            selectInteraction[0].getFeatures().clear();
+            selectInteraction[0].getFeatures().push(wetlandFeatureNewStyle);
+        }
+
+        })
 
     .directive('repeatDone', function() {
       return function(scope, element, attrs) {
