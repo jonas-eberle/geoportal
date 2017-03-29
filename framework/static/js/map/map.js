@@ -505,6 +505,7 @@ angular.module('webgisApp')
                     'method': "GET",
                     'url': '/mapviewer/detail/'+id+'.json'
                 }).then(function(data){
+
                     if (data.error != '') {
                         $('#center').hide();
                         $('#nav-top-right2').hide();
@@ -636,6 +637,10 @@ angular.module('webgisApp')
             $scope.layer_attribution = Attribution.getList();
         });
 
+        $scope.$on('current_wetland_id', function ($broadCast, id) {
+            $scope.currentSelectWetland = id
+        });
+
         $scope.$on('mapviewer.map_created', function () {
             if ($cookies.hideCookieNote) {
                 $scope.hideCookieNote =  true;
@@ -712,12 +717,14 @@ angular.module('webgisApp')
             // add event handler for select-event, i.e. when a feature is selected
             selectInteraction[0].on("select", function() {
                 // if requestInfo button is active, do not execute wetland selection
-                if ($scope.infoStatus == true) {
+
+                if ($scope.infoStatus == true && $scope.visibility_state_wetland_layer == false ) {
                     return false;
                 }
+
                 var feature = selectInteraction[0].getFeatures().getArray()[0];
-                if (feature) {
-                    console.log('Selected wetland: '+feature.get('id'));
+
+                if (feature && $scope.currentSelectWetland != feature.get('id') && $scope.visibility_state_wetland_layer == true ) {
                     $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
                 }
             });
@@ -726,7 +733,6 @@ angular.module('webgisApp')
                 //mapviewer.selectPointerMove.getFeatures().clear();
                 mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
                     if (layer === null || layer.get('name') === 'Wetlands') return false;
-
                     if (layer.get('layerObj') == null) return false;
                     switch(layer.get('layerObj').ogc_type) {
                         case 'SOS':
@@ -831,6 +837,8 @@ angular.module('webgisApp')
             mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection), mapviewer.map.getSize())
         };
 
+        $scope.visibility_state_wetland_layer = true;
+
         $scope.changeSitesVisibility = function(id, $event) {
             var olLayer = mapviewer.map.getLayers().getArray()[1];
             var checkbox = $event.target;
@@ -839,12 +847,18 @@ angular.module('webgisApp')
             var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function(interaction) {
                 return interaction instanceof ol.interaction.Select;
             });
+
             if (checkbox.checked) {
                 olLayer.setVisible(true);
-                selectInteraction[0].getFeatures().getArray().push($scope.selectedFeature);
+
+                if($scope.selectedFeature){
+                   selectInteraction[0].getFeatures().getArray().push($scope.selectedFeature);
+                }
+                $scope.visibility_state_wetland_layer = true;
             } else {
                 olLayer.setVisible(false);
                 $scope.selectedFeature = selectInteraction[0].getFeatures().getArray().pop();
+                $scope.visibility_state_wetland_layer = false;
             }
         };
 
