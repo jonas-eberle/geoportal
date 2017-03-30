@@ -1,6 +1,6 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
-from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage
+from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo
 
 from layers.admin import LayersAdmin
 
@@ -56,6 +56,13 @@ class WetlandImageAdmin(admin.OSMGeoAdmin):
     readonly_fields = ('image_tag','image_size' )
     list_filter = ('wetland', )
 
+class WetlandVideoAdmin(admin.OSMGeoAdmin):
+    list_per_page = 100
+    list_display = ('name', 'source', 'image_tag', 'date', 'description', 'youtube_cat_name', 'wetland' )
+    fields = ('name', 'description', 'date', 'copyright', 'source', 'link', 'thumb_link', 'wetland')
+    list_filter = ('wetland', 'source')
+    search_fields=('name',)
+
 from suit.admin import SortableModelAdmin
 class ProductAdmin(SortableModelAdmin):
     sortable = 'order'
@@ -78,3 +85,4 @@ admin.site.register(ExternalDatabase, ExternalDatabaseAdmin)
 admin.site.register(ExternalLayer, ExternalLayerAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(WetlandImage, WetlandImageAdmin)
+admin.site.register(WetlandVideo, WetlandVideoAdmin)

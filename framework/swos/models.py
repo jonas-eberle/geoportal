@@ -29,6 +29,7 @@ class Wetland(models.Model):
     service_case = models.CharField(max_length=200, blank=True, null=True)
     image_url = models.CharField(max_length=200, blank=True, null=True)
     image_desc = models.TextField(blank=True, null=True)
+    video_keywords = models.CharField(max_length=200, blank=True, null=True)
     
     def __unicode__(self):
         return u"%s" %(self.name)
@@ -385,30 +386,58 @@ class Wetland(models.Model):
             f.write(json.dumps(data_new))
             f.close()
 
-    def youtube(self, start=0, max=-1, forceUpdate=False):
+    def youtube(self, start=0, max=-1, forceUpdate=False, writeResults=True):
         if os.path.isfile(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json') and forceUpdate == False:
             with open(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json', 'r') as f:
                 videos = json.load(f)
         else:
+            if self.video_keywords != None and self.video_keywords != '':
+                keyword = self.video_keywords
+            else:
+                keyword = self.name+' wetland'
+            
+            keyword += ' '+self.country+' -Sale -Business -Sex'
+            
             from apiclient.discovery import build
-            DEVELOPER_KEY = "AIzaSyA_DlmClJEVqjroE5VWgWmtLR5RaKIfK68"
+            DEVELOPER_KEY = "ANPASSEN"
             PRE_URL = "https://www.youtube.com/watch?v="
             youtube = build('youtube', 'v3', developerKey=DEVELOPER_KEY)
             videos = []
-            i=0
-            while True:
-                if i==0:
-                    response = youtube.search().list(q=self.name+' wetland',type="video",part="id,snippet",maxResults=50).execute()
-                else:
-                    response = youtube.search().list(q=self.name+' wetland',type="video",part="id,snippet",maxResults=50,pageToken=response['nextPageToken']).execute()
-                for vid in response['items']:
-                    video = {'id': vid['id']['videoId'], 'img': vid['snippet']['thumbnails']['default']['url'], 'title': vid['snippet']['title'], 'url': PRE_URL+vid['id']['videoId']}
-                    videos.append(video)
-                if 'nextPageToken' not in response:
-                    break
-                i = i+1
-            with open(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json','w') as f:
-                json.dump(videos, f)
+            
+            #1 - Film & Animation (e.g., motion picture)
+            #15 - Pets & Animals
+            #19 - Travel & Events
+            #22 - People & Blogs
+            #25 - News & Politics
+            #27 - Education
+            #28 - Science & Technology
+            #29 - Non-profits & Activism
+            categories = [15,19,22,25,27,28,29]
+            for cat in categories:
+                cat = str(cat)
+                i=0
+                while True:
+                    if i==0:
+                        response = youtube.search().list(q=keyword,type="video",videoCategoryId=cat,part="id,snippet",maxResults=50).execute()
+                        #if len(response['items']) == 0:
+                        #    keyword = self.name.replace(' ', '+')
+                        #    response = youtube.search().list(q=keyword,type="video",videoCategoryId=cat,part="id,snippet",maxResults=50).execute()
+                    else:
+                        response = youtube.search().list(q=keyword,type="video",videoCategoryId=cat,part="id,snippet",maxResults=50,pageToken=response['nextPageToken']).execute()
+                    for vid in response['items']:
+                        video = {'id': vid['id']['videoId'], 'date': vid['snippet']['publishedAt'], 'cat': cat, 'img': vid['snippet']['thumbnails']['default']['url'], 'title': vid['snippet']['title'], 'url': PRE_URL+vid['id']['videoId']}
+                        videos.append(video)
+                        video_obj = WetlandVideo(name=video['title'], description=vid['snippet']['description'], date=video['date'], source='YouTube', link=video['url'], thumb_link=video['img'], youtube_id=video['id'], youtube_cat=int(cat), wetland=self)
+                        if 'channelTitle' in vid['snippet']:
+                            video_obj.copyright = vid['snippet']['channelTitle']
+                        video_obj.save()
+                    if 'nextPageToken' not in response:
+                        break
+                    i = i+1
+                    
+            if writeResults:
+                with open(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json','w') as f:
+                    json.dump(videos, f)
         
         if max > -1 and (start+max) < len(videos):
             return videos[start:start+max]
@@ -748,6 +777,45 @@ class WetlandImage(models.Model):
         return '%s %s' % (f, suffixes[i])
 
 
+class WetlandVideo(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField(null=True, blank=True)
+    copyright = models.CharField("Copyright / Owner", max_length=200, blank=True)
+    date = models.DateTimeField(blank=True, null=True)
+    source = models.CharField("Source", max_length=30, choices=(('YouTube','YouTube'),('Upload','Upload')))
+    link = models.CharField("Link to external video", max_length=200, blank=True, null=True)
+    thumb_link = models.CharField("Link to external thumbnail", max_length=200, blank=True, null=True)
+    youtube_id = models.CharField("YouTube ID", max_length=20, blank=True, null=True)
+    youtube_cat = models.IntegerField(blank=True, null=True)
+    wetland = models.ForeignKey(Wetland, related_name="video_wetland", verbose_name="Wetland")
+    
+    categories = dict()
+    categories[2] ='Cars & Vehicles'
+    categories[23] ='Comedy'
+    categories[27] ='Education'
+    categories[24] ='Entertainment'
+    categories[1] ='Film & Animation'
+    categories[20] ='Gaming'
+    categories[26] ='How-to & Style'
+    categories[10] ='Music'
+    categories[25] ='News & Politics'
+    categories[29] ='Non-profits & Activism'
+    categories[22] ='People & Blogs'
+    categories[15] ='Pets & Animals'
+    categories[28] ='Science & Technology'
+    categories[17] ='Sport'
+    categories[19] ='Travel & Events'
+    
+    @property
+    def youtube_cat_name(self):
+        return self.categories[self.youtube_cat]
+
+    @property
+    def image_tag(self):
+        return format_html('<a href="{}" target="_blank"><img src="{}" width="200" border="0" /></a>'.format(self.link, self.thumb_link))
+    
+    def __unicode__(self):
+        return self.name
 
 
 
