@@ -387,9 +387,11 @@ class Wetland(models.Model):
             f.close()
 
     def youtube(self, start=0, max=-1, forceUpdate=False, writeResults=True):
-        if os.path.isfile(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json') and forceUpdate == False:
-            with open(settings.MEDIA_ROOT+'cache/youtube_'+str(self.id)+'.json', 'r') as f:
-                videos = json.load(f)
+        videos = []
+        if forceUpdate == False:
+            videos_obj = WetlandVideo.objects.filter(wetland=self)
+            for vid in videos_obj:
+                videos.append({'id': vid.youtube_id, 'img': vid.thumb_link, 'title': vid.name, 'url': vid.link})
         else:
             if self.video_keywords != None and self.video_keywords != '':
                 keyword = self.video_keywords
@@ -402,7 +404,6 @@ class Wetland(models.Model):
             DEVELOPER_KEY = "ANPASSEN"
             PRE_URL = "https://www.youtube.com/watch?v="
             youtube = build('youtube', 'v3', developerKey=DEVELOPER_KEY)
-            videos = []
             
             #1 - Film & Animation (e.g., motion picture)
             #15 - Pets & Animals
