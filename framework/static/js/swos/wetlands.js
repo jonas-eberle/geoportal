@@ -55,7 +55,31 @@ angular.module('webgisApp')
                 vectorSource.addFeatures(features);
                 $scope.olLayer = new ol.layer.Vector({
                     name: 'Wetlands',
-                    source: vectorSource
+                    source: vectorSource,
+                    style: function(feature, res) {
+                        var style = new ol.style.Style({
+                            fill: fill,
+                            stroke: stroke
+                        });
+                        var textStyleConfig = {
+                            text:new ol.style.Text({
+                                text:res < 1230 ? feature.get('name') : '' ,
+                                fill: new ol.style.Fill({ color: "#000000" }),
+                                stroke: new ol.style.Stroke({ color: "#FFFFFF", width: 2 })
+                            }),
+                            geometry: function(feature){   
+                                var retPoint;
+                                if (feature.getGeometry().getType() === 'MultiPolygon') {
+                                    retPoint = feature.getGeometry().getPolygons()[0].getInteriorPoint();
+                                } else if (feature.getGeometry().getType() === 'Polygon') {
+                                    retPoint = feature.getGeometry().getInteriorPoint();
+                                }
+                                return retPoint;
+                            }
+                        }
+                        var textStyle = new ol.style.Style(textStyleConfig);
+                        return [style,textStyle];
+                    }
                 });
                 mapviewer.map.addLayer($scope.olLayer);
 
@@ -376,7 +400,7 @@ angular.module('webgisApp')
             wetlandFeature.setStyle(new ol.style.Style({
 
                 stroke: new ol.style.Stroke({
-                    color: "#4B94B6",
+                    color: "#000000",
                     width: 5
                 })
             }));

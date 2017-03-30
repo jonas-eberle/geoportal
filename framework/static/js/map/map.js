@@ -1,10 +1,12 @@
 'use strict';
 
 var fill = new ol.style.Fill({
-   color: 'rgba(12, 216, 247, 1)'
+   //color: 'rgba(12, 216, 247, 1)'
+   color: 'rgba(255, 255, 255, 0.6)'
 });
 var stroke = new ol.style.Stroke({
-   color: 'rgba(0, 0, 204, 1)',
+   //color: 'rgba(0, 0, 204, 1)',
+   color: '#319FD3',
    width: 1.25
 });
 
@@ -723,6 +725,10 @@ angular.module('webgisApp')
                 }
 
                 var feature = selectInteraction[0].getFeatures().getArray()[0];
+                if (!feature){
+                    selectInteraction[0].getFeatures().clear();
+                    selectInteraction[0].getFeatures().push(mapviewer.currentFeature);
+                }
 
                 if (feature && $scope.currentSelectWetland != feature.get('id') && $scope.visibility_state_wetland_layer == true ) {
                     $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
