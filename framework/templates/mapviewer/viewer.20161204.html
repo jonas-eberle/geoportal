@@ -573,10 +573,10 @@
                                 </div>
 
                                 <accordion>
-                                    <accordion-group ng-repeat="externaldb_group in value.data.externaldb" is-open="externaldb.open">
+                                    <accordion-group ng-repeat="externaldb_group in value.data.externaldb" is-open="externaldb_group.open">
                                         <accordion-heading>
                                             {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ).length }})
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open, 'glyphicon-chevron-right': !externaldb.open}"></i>
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
                                         </accordion-heading>
                                         <accordion>
                                             <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ">
