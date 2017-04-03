@@ -858,8 +858,7 @@ angular.module('webgisApp')
 
         $scope.zoomMaxExtent = function() {
             mapviewer.map.getView().fit(
-                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection),
-                { size: mapviewer.map.getSize() }
+                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection)
             );
         };
 
@@ -1072,12 +1071,17 @@ angular.module('webgisApp')
 
         function addLayerToMap(layer) {
             var olLayer = mapviewer.addLayer(layer);
-            var layerObj = olLayer.get('layerObj');
-            var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
-            if (layerObj.epsg > 0) {
-                extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
+            if (olLayer instanceof ol.layer.Layer) {
+                var layerObj = olLayer.get('layerObj');
+                var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north];
+                if (layerObj["epsg"] && layerObj.epsg > 0) {
+                    extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
+                } else {
+                    extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
+                }
+
+                mapviewer.map.getView().fit(extent);
             }
-            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
         }
         
         function hidePopover() {
@@ -1157,7 +1161,7 @@ angular.module('webgisApp')
         $scope.zoomToStation = function(station) {
             var extent = [station.lat, station.lon, station.lat, station.lon];
             extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
-            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
+            mapviewer.map.getView().fit(extent);
             mapviewer.map.getView().setZoom(10);
 
             var element = stationPopup.getElement();
@@ -1254,12 +1258,11 @@ angular.module('webgisApp')
             if(layerObj.west == -180 && layerObj.south == -90 && layerObj.east == 180 && layerObj.north == 90){
                 //Zoom to max extent (should be equal to MapViewerCtrl $scope.zoomMaxExtent )
                 mapviewer.map.getView().fit(
-                    ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.map.getView().getProjection().getCode()),
-                    { size: mapviewer.map.getSize() }
+                    ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.map.getView().getProjection().getCode())
                 );
             }
             else{
-                mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
+                mapviewer.map.getView().fit(extent);
             }
         };
 

@@ -394,7 +394,7 @@ angular.module('webgisApp')
             //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
             //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
             //mapviewer.map.beforeRender(pan, zoom)
-            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
+            mapviewer.map.getView().fit(extent);
 
             var wetlandFeature = $scope.olLayer.getSource().getFeatureById(wetland.id);
             wetlandFeature.setStyle(new ol.style.Style({
@@ -595,7 +595,7 @@ angular.module('webgisApp')
                     if (layer.epsg > 0) {
                         layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:'+layer.epsg, mapviewer.map.getView().getProjection().getCode());
                     }
-                    mapviewer.map.getView().fit(layerExtent, { size: mapviewer.map.getSize() });
+                    mapviewer.map.getView().fit(layerExtent);
                 }
 
                 // if this the first time the user added a second layer to map, notify them
