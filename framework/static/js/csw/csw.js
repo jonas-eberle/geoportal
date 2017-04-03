@@ -81,7 +81,7 @@ angular.module('webgisApp')
             var layerObj = olLayer.get('layerObj');
             var extent = [layerObj.west, layerObj.south, layerObj.east, layerObj.north].map(parseFloat);
             extent = ol.proj.transformExtent(extent, "EPSG:4326", mapviewer.map.getView().getProjection().getCode());
-            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
+            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
         };
 
         $scope.showMetadata = function(layer) {

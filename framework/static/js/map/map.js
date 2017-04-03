@@ -175,9 +175,12 @@ angular.module('webgisApp')
                         });
                         break;
                     case 'WMTS':
-                        if (typeof(layer.capabilities) == 'object') {
+                        if (typeof layer.capabilities === 'object') {
                             // does not work with NASA WMTS!
-                            var options = ol.source.WMTS.optionsFromCapabilities(layer.capabilities, {layer: layer.ogc_layer, matrixSet: layer.wmts_matrixset});
+                            var options = ol.source.WMTS.optionsFromCapabilities(layer.capabilities, {
+                                layer: layer.ogc_layer,
+                                matrixSet: layer.wmts_matrixset
+                            });
                             olLayer = new ol.layer.Tile({
                                 source: new ol.source.WMTS(options)
                             });
@@ -235,17 +238,17 @@ angular.module('webgisApp')
                             layerObj: layer
                         });
                         break;
-                    case 'MapQuest':
-                        olLayer = new ol.layer.Tile({
-                            name: layer.title,
-                            layerObj: layer,
-                            minResolution: 76.43702828517625,
-                            source: new ol.source.MapQuest({layer: layer.ogc_layer})
-                        });
-                        break;
+                    // case 'MapQuest':
+                    //     olLayer = new ol.layer.Tile({
+                    //         name: layer.title,
+                    //         layerObj: layer,
+                    //         minResolution: 76.43702828517625,
+                    //         source: new ol.source.MapQuest({layer: layer.ogc_layer})
+                    //     });
+                    //     break;
                     case 'OSM':
                         var osmSource = null;
-                        if (layer.ogc_link != '') {
+                        if (layer.ogc_link !== '') {
                             osmSource = new ol.source.OSM({url: layer.ogc_link});
                         } else {
                             osmSource = new ol.source.OSM();
@@ -301,7 +304,7 @@ angular.module('webgisApp')
                                 })
                             },
                             strategy: ol.loadingstrategy.createTile(
-                                new ol.tilegrid.XYZ({maxZoom: 19})
+                                ol.tilegrid.createXYZ({maxZoom: 19})
                             ),
                             projection: _this.displayProjection
                         });
@@ -347,7 +350,7 @@ angular.module('webgisApp')
                         break;
                     case 'SOS':
                         var layerID = layer.id;
-                        if (typeof(layer.django_id) == 'number') {
+                        if (typeof layer.django_id === 'number') {
                             layerID = layer.django_id;
                         }
                         var url = '/layers/sos/'+layerID+'/stations?format=json';
@@ -645,17 +648,17 @@ angular.module('webgisApp')
 
         $scope.$on('mapviewer.map_created', function () {
             if ($cookies.hideCookieNote) {
-                $scope.hideCookieNote =  true;
+                $scope.hideCookieNote = true;
             }
 
             popup = new ol.Overlay({element: document.getElementById('popup')});
             mapviewer.map.addOverlay(popup);
-            stationPopup = new ol.Overlay({element: document.getElementById('stationPopup'),offset: [0, -5]});
+            stationPopup = new ol.Overlay({element: document.getElementById('stationPopup'), offset: [0, -5]});
             mapviewer.map.addOverlay(stationPopup);
 
             var element = popup.getElement();
 
-            mapviewer.map.on("pointermove", function(e){
+            mapviewer.map.on("pointermove", function (e) {
                 if (e.dragging) {
                     return;
                 }
@@ -676,142 +679,157 @@ angular.module('webgisApp')
                 //     }
                 // });
 
-               var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
-                   if (layer == null || layer.get('layerObj') == null) return false;
-                   if (layer.get('layerObj').ogc_type == 'SOS') {
-                       var feats = feature.get('features');
-                       var content = '<ul style="margin: 0;padding:0;list-style-type: none;">';
-                       $.each(feats, function () {
-                           content += '<li style="white-space: nowrap">' + this.get('description') + '</li>';
-                       });
-                       content += '</ul>';
+                var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) { //Feature callback
+                    if (layer === null || layer.get('layerObj') === undefined) {
+                        return false;
+                    } else if (layer.get('layerObj').ogc_type !== 'SOS') {
+                        return true;
+                    }
 
-                       var title = '';
-                       if (feats.length > 1) {
-                           title = '<strong>'+feats.length+' stations</strong>';
-                       }
+                    var feats = feature.get('features');
+                    var content = '<ul style="margin: 0;padding:0;list-style-type: none;">';
+                    $.each(feats, function () {
+                        content += '<li style="white-space: nowrap">' + this.get('description') + '</li>';
+                    });
+                    content += '</ul>';
 
-                       popup.setPosition(e.coordinate);
-                       //$(element).popover('destroy');
-                       $(element).popover({
-                           'placement': 'top',
-                           'animation': false,
-                           'html': true,
-                           'title': title,
-                           'content': content
-                       });
-                       $(element).popover('show');
-                       //$('.popover-title', $('#'+element.getAttribute('aria-describedby'))).append('<button id="popovercloseid" type="button" onclick="$(\'#popup\').popover(\'destroy\');" class="close">&times;</button>');
-                   }
-                   return true;
+                    var title = '';
+                    if (feats.length > 1) {
+                        title = '<strong>' + feats.length + ' stations</strong>';
+                    }
 
-               });
-               if (typeof(matches) == 'undefined') {
-                   $(element).popover('destroy');
-                   //mapviewer.selectInteraction.getFeatures().clear();
-               }
+                    popup.setPosition(e.coordinate);
+                    //$(element).popover('destroy');
+                    $(element).popover({
+                        'placement': 'top',
+                        'animation': false,
+                        'html'     : true,
+                        'title'    : title,
+                        'content'  : content
+                    });
+                    $(element).popover('show');
+                    //$('.popover-title', $('#'+element.getAttribute('aria-describedby'))).append('<button id="popovercloseid" type="button" onclick="$(\'#popup\').popover(\'destroy\');" class="close">&times;</button>');
+                    return true;
+                });
+
+                if (typeof matches === 'undefined') {
+                    $(element).popover('destroy');
+                    //mapviewer.selectInteraction.getFeatures().clear();
+                }
             });
 
-            // get selectInteraction from map
-            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function(interaction) {
-                return interaction instanceof ol.interaction.Select;
-            });
             // add event handler for select-event, i.e. when a feature is selected
-            selectInteraction[0].on("select", function() {
-                // if requestInfo button is active, do not execute wetland selection
-
-                if ($scope.infoStatus == true && $scope.visibility_state_wetland_layer == false ) {
-                    return false;
+            mapviewer.selectInteraction.on("select", function () {
+                var feature = mapviewer.selectInteraction.getFeatures().item(0);
+                if (!feature) {
+                    mapviewer.selectInteraction.getFeatures().clear();
+                    mapviewer.selectInteraction.getFeatures().push(mapviewer.currentFeature);
+                    return;
                 }
 
-                var feature = selectInteraction[0].getFeatures().getArray()[0];
-                if (!feature){
-                    selectInteraction[0].getFeatures().clear();
-                    selectInteraction[0].getFeatures().push(mapviewer.currentFeature);
-                }
-
-                if (feature && $scope.currentSelectWetland != feature.get('id') && $scope.visibility_state_wetland_layer == true ) {
+                if (feature && $scope.currentSelectWetland !== feature.get('id')
+                    && $scope.visibility_state_wetland_layer === true) {
                     $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
                 }
             });
 
-            mapviewer.map.on("click", function(e) {
+            mapviewer.map.on("click", function (e) {
                 //mapviewer.selectPointerMove.getFeatures().clear();
-                mapviewer.map.forEachFeatureAtPixel(e.pixel, function(feature, layer) { //Feature callback
-                    if (layer === null || layer.get('name') === 'Wetlands') return false;
-                    if (layer.get('layerObj') == null) return false;
-                    switch(layer.get('layerObj').ogc_type) {
-                        case 'SOS':
-                            if (feature.get('features').length > 1) {
-                                var options = '';
-                                $.each(feature.get('features'), function(index, feat){
-                                   options += '<option value="'+index+'">'+feat.get('description')+'</option>';
-                                });
-                                bootbox.dialog({
-                                    title: 'Please select a station',
-                                    message: '<select id="select_station" name="select_station">'+options+'</select>',
-                                    buttons: {
-                                        success: {
-                                            label: 'Show chart',
-                                            callback: function () {
-                                                var station = $('#select_station').val();
-                                                var feat = feature.get('features')[station];
-                                                $modal.open({
-                                                    controller: 'ClimateChartCtrl',
-                                                    templateUrl: subdir+'/static/includes/climatechart.html',
-                                                    backdrop: 'static',
-                                                    resolve: {
-                                                        layer: function() {return layer.get('layerObj');},
-                                                        feature: function() { return feat; },
-                                                        title: function() {return feat.get('description');}
-                                                    }
-                                                });
-
-                                            }
-                                        }
-                                    }
-                                });
-                            } else {
-                                var feat = feature.get('features')[0];
-                                $modal.open({
-                                    controller: 'ClimateChartCtrl',
-                                    templateUrl: subdir+'/static/includes/climatechart.html',
-                                    backdrop: 'static',
-                                    resolve: {
-                                        layer: function() {return layer.get('layerObj');},
-                                        feature: function() { return feat; },
-                                        title: function() {return feat.get('description');}
-                                    }
-                                });
-                            }
-                            break;
-                        default:
-                            var output = '<h2>Properties</h2><ul>';
-                            $.each(feature.getKeys(), function(){
-                                if (this != 'geometry') {
-                                    output += '<li><strong>' + this + ': </strong>' + feature.get(this) + '</li>';
-                                }
-                            });
-                            output += '</ul>';
-                            bootbox.dialog({title:'Feature info', message: output, backdrop: false});
-                            break;
-                    }
-                    //feature is the selected feature
-                    //layer is the layer it belongs to
-                    //
-                    //handle the your selected feature here
-                    //
-                    //Return a truthy value to stop processing, otherwise forEachFeatureAtPixel will continue with the next matching feature
-                    //and this callback will be invoked again for that feature
-                    return true;
-                }, mapviewer, function() { //Layer filter callback
-                    //Return true if features in the passed in layer should be considered for selection
-                    return true;
-                }, mapviewer);
+                mapviewer.map.forEachFeatureAtPixel(e.pixel, featureCallback.bind(mapviewer), {
+                    layerFilter: layerFilterCallback.bind(mapviewer)
+                });
             });
 
+            function featureCallback(feature, layer) {
+                if (layer === null || layer.get('name') === 'Wetlands' || layer.get('layerObj') === null) {
+                    return false;
+                }
+
+                switch (layer.get('layerObj').ogc_type) {
+                    case 'SOS':
+                        if (feature.get('features').length > 1) {
+                            var options = '';
+                            $.each(feature.get('features'), function (index, feat) {
+                                options += '<option value="' + index + '">' + feat.get('description') + '</option>';
+                            });
+                            bootbox.dialog({
+                                title  : 'Please select a station',
+                                message: '<select id="select_station" name="select_station">' + options + '</select>',
+                                buttons: {
+                                    success: {
+                                        label   : 'Show chart',
+                                        callback: function () {
+                                            var station = $('#select_station').val();
+                                            var feat = feature.get('features')[station];
+                                            $modal.open({
+                                                controller : 'ClimateChartCtrl',
+                                                templateUrl: subdir + '/static/includes/climatechart.html',
+                                                backdrop   : 'static',
+                                                resolve    : {
+                                                    layer  : function () {
+                                                        return layer.get('layerObj');
+                                                    },
+                                                    feature: function () {
+                                                        return feat;
+                                                    },
+                                                    title  : function () {
+                                                        return feat.get('description');
+                                                    }
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            var feat = feature.get('features')[0];
+                            $modal.open({
+                                controller : 'ClimateChartCtrl',
+                                templateUrl: subdir + '/static/includes/climatechart.html',
+                                backdrop   : 'static',
+                                resolve    : {
+                                    layer  : function () {
+                                        return layer.get('layerObj');
+                                    },
+                                    feature: function () {
+                                        return feat;
+                                    },
+                                    title  : function () {
+                                        return feat.get('description');
+                                    }
+                                }
+                            });
+                        }
+                        break;
+                    default:
+                        var output = '<h2>Properties</h2><ul>';
+                        $.each(feature.getKeys(), function () {
+                            if (this !== 'geometry') {
+                                output += '<li><strong>' + this + ': </strong>' + feature.get(this) + '</li>';
+                            }
+                        });
+                        output += '</ul>';
+                        bootbox.dialog({title: 'Feature info', message: output, backdrop: false});
+                        break;
+                }
+                //feature is the selected feature
+                //layer is the layer it belongs to
+                //
+                //handle the your selected feature here
+                //
+                //Return a truthy value to stop processing, otherwise forEachFeatureAtPixel will continue with the next matching feature
+                //and this callback will be invoked again for that feature
+                return true;
+            }
+
+            function layerFilterCallback() {
+                //Return true if features in the passed in layer should be considered for selection
+                return true;
+            }
+
             angular.element($window).bind('resize', function () {
-                $timeout(function(){
+                $timeout(function () {
                     var center = ol.proj.transform(mapviewer.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
                     mapviewer.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
                 }, 2);
@@ -838,9 +856,11 @@ angular.module('webgisApp')
             mapviewer.map.getView().setZoom(mapviewer.map.getView().getZoom()-1);
         };
 
-
         $scope.zoomMaxExtent = function() {
-            mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection), mapviewer.map.getSize())
+            mapviewer.map.getView().fit(
+                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection),
+                { size: mapviewer.map.getSize() }
+            );
         };
 
         $scope.visibility_state_wetland_layer = true;
@@ -849,29 +869,24 @@ angular.module('webgisApp')
             var olLayer = mapviewer.map.getLayers().getArray()[1];
             var checkbox = $event.target;
 
-            // get selectInteraction from map
-            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function(interaction) {
-                return interaction instanceof ol.interaction.Select;
-            });
-
             if (checkbox.checked) {
                 olLayer.setVisible(true);
 
                 if($scope.selectedFeature){
-                   selectInteraction[0].getFeatures().getArray().push($scope.selectedFeature);
+                    mapviewer.selectInteraction.getFeatures().push($scope.selectedFeature);
                 }
                 $scope.visibility_state_wetland_layer = true;
             } else {
                 olLayer.setVisible(false);
-                $scope.selectedFeature = selectInteraction[0].getFeatures().getArray().pop();
+                $scope.selectedFeature = mapviewer.selectInteraction.getFeatures().pop();
                 $scope.visibility_state_wetland_layer = false;
             }
         };
 
         $scope.infoStatus = false;
         $scope.infoEventKey = null;
-        $scope.requestInfo = function() {
-            if ($scope.infoStatus == false) {
+        $scope.requestInfo = function () {
+            if ($scope.infoStatus === false) {
                 $scope.infoStatus = true;
                 $scope.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
                     var viewResolution = mapviewer.map.getView().getResolution();
@@ -880,110 +895,120 @@ angular.module('webgisApp')
                     var lon_arrow = 'East';
                     if (lon < 0) {
                         lon_arrow = 'West';
-                        lon = lon*-1;
+                        lon = lon * -1;
                     }
                     var lat = lonlat[1].toFixed(2);
                     var lat_arrow = 'North';
                     if (lat < 0) {
                         lat_arrow = 'South';
-                        lat = lat*-1;
+                        lat = lat * -1;
                     }
-                    var coordinate = '<p><strong>Position</strong><br />'+lon+'&deg; '+lon_arrow+'&nbsp;&nbsp;&nbsp;'+lat+'&deg; '+lat_arrow+'</p>';
+                    var coordinate = '<p><strong>Position</strong><br />' + lon + '&deg; ' + lon_arrow + '&nbsp;&nbsp;&nbsp;' + lat + '&deg; ' + lat_arrow + '</p>';
 
                     var urls = [];
                     var names = [];
-                    $.each(mapviewer.map.getLayers().getArray().slice(1), function(){
-                       var layer = this;
-                       if (layer.getVisible() == false) {
+                    $.each(mapviewer.map.getLayers().getArray().slice(1), function () {
+                        var layer = this;
+                        if (layer.getVisible() === false) {
                             return true;
-                       }
-                       // Works only for WMS layers
-                       try {
-                           var source = layer.getSource();
-						   var url = '';
-						   if (source.constructor == ol.source.TileWMS) {
-							   	url = source.getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapviewer.displayProjection, {
-							   		'INFO_FORMAT': 'text/html'
-							   	});
-						   } else if(source.constructor == ol.source.WMTS) {
-								var resolution= viewResolution;
-								var tilegrid= source.getTileGrid();
-								var tileResolutions= tilegrid.getResolutions();
-								var zoomIdx, diff=Infinity;
-								
-								for(var i=0; i<tileResolutions.length; i++){
-								    var tileResolution= tileResolutions[i];
-								    var diffP= Math.abs(resolution-tileResolution);
-								
-								    if(diffP<diff){
-								        diff=diffP;
-								        zoomIdx=i;
-								    }
-								
-								    if(tileResolution<resolution) break;
-								}
-								
-								//Getting parameters
-								//Reference: OpenLayers.Layer.WMTS.getTileInfo
-								var tileSize= tilegrid.getTileSize(zoomIdx);
-								var tileOrigin= tilegrid.getOrigin(zoomIdx);
-								
-								var fx = (evt.coordinate[0] - tileOrigin[0]) / (resolution * tileSize);
-								var fy = (tileOrigin[1] - evt.coordinate[1]) / (resolution * tileSize);
-								var tileCol = Math.floor(fx);
-								var tileRow = Math.floor(fy);
-								var tileI= Math.floor((fx - tileCol) * tileSize);
-								var tileJ= Math.floor((fy - tileRow) * tileSize);
-								var matrixIds= tilegrid.getMatrixIds()[zoomIdx];
-								var matrixSet= source.getMatrixSet();
-								
-								var params = {
-							        SERVICE: 'WMTS',
-							        REQUEST: 'GetFeatureInfo',
-							        VERSION: source.getVersion(),
-							        LAYER: source.getLayer(),
-							        INFOFORMAT: 'text/html',
-							        STYLE: source.getStyle(),
-							        FORMAT: source.getFormat(),
-							        TileCol: tileCol,
-							        TileRow: tileRow,
-							        TileMatrix: matrixIds,
-							        TileMatrixSet: matrixSet,
-							        I: tileI,
-							        J: tileJ
-							    }
-								console.log(params);
-								url = layer.get('layerObj').ogc_link+'?'+jQuery.param(params);
-						   }
-						   if (url != '') {
-							   	urls.push(encodeURIComponent(url));
-							   	names.push(encodeURIComponent(layer.get('name')));
-						   }
-                       } catch(e) {}
+                        }
+                        // Works only for WMS layers
+                        try {
+                            var source = layer.getSource();
+                            var url = '';
+                            if (source instanceof ol.source.TileWMS) {
+                                url = source.getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapviewer.displayProjection, {
+                                    'INFO_FORMAT': 'text/html'
+                                });
+                            } else if (source instanceof ol.source.WMTS) {
+                                var resolution = viewResolution;
+                                var tilegrid = source.getTileGrid();
+                                var tileResolutions = tilegrid.getResolutions();
+                                var zoomIdx, diff = Infinity;
+
+                                for (var i = 0; i < tileResolutions.length; i++) {
+                                    var tileResolution = tileResolutions[i];
+                                    var diffP = Math.abs(resolution - tileResolution);
+
+                                    if (diffP < diff) {
+                                        diff = diffP;
+                                        zoomIdx = i;
+                                    }
+
+                                    if (tileResolution < resolution) {
+                                        break;
+                                    }
+                                }
+
+                                //Getting parameters
+                                //Reference: OpenLayers.Layer.WMTS.getTileInfo
+                                var tileSize = tilegrid.getTileSize(zoomIdx);
+                                var tileOrigin = tilegrid.getOrigin(zoomIdx);
+
+                                var fx = (evt.coordinate[0] - tileOrigin[0]) / (resolution * tileSize);
+                                var fy = (tileOrigin[1] - evt.coordinate[1]) / (resolution * tileSize);
+                                var tileCol = Math.floor(fx);
+                                var tileRow = Math.floor(fy);
+                                var tileI = Math.floor((fx - tileCol) * tileSize);
+                                var tileJ = Math.floor((fy - tileRow) * tileSize);
+                                var matrixIds = tilegrid.getMatrixIds()[zoomIdx];
+                                var matrixSet = source.getMatrixSet();
+
+                                var params = {
+                                    SERVICE      : 'WMTS',
+                                    REQUEST      : 'GetFeatureInfo',
+                                    VERSION      : source.getVersion(),
+                                    LAYER        : source.getLayer(),
+                                    INFOFORMAT   : 'text/html',
+                                    STYLE        : source.getStyle(),
+                                    FORMAT       : source.getFormat(),
+                                    TileCol      : tileCol,
+                                    TileRow      : tileRow,
+                                    TileMatrix   : matrixIds,
+                                    TileMatrixSet: matrixSet,
+                                    I            : tileI,
+                                    J            : tileJ
+                                };
+                                console.log(params);
+                                url = layer.get('layerObj').ogc_link + '?' + jQuery.param(params);
+                            }
+                            if (url !== '') {
+                                urls.push(encodeURIComponent(url));
+                                names.push(encodeURIComponent(layer.get('name')));
+                            }
+                        } catch (e) {
+                        }
                     });
                     if (urls.length > 0) {
                         $('#loading-div').addClass('nobg').show();
                         djangoRequests.request({
-                            url: '/layers/info?url='+urls.join('||')+'&names='+names.join('||'),
+                            url   : '/layers/info?url=' + urls.join('||') + '&names=' + names.join('||'),
                             method: 'GET'
-                         }).then(function(data) {
-                            var dialog = bootbox.dialog({title: 'Feature Info Response', message: coordinate+data, backdrop: false});
-                            dialog.removeClass('modal').addClass('mymodal').drags({handle:'.modal-header'});
-                            var width = $(document).width()/2-300;
-                            if (width < 0) {width='2%';}
+                        }).then(function (data) {
+                            var dialog = bootbox.dialog({
+                                title   : 'Feature Info Response',
+                                message : coordinate + data,
+                                backdrop: false
+                            });
+                            dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+                            var width = $(document).width() / 2 - 300;
+                            if (width < 0) {
+                                width = '2%';
+                            }
                             $('.modal-content', dialog).css('left', width);
                             $('#loading-div').removeClass('nobg').hide();
-                         }, function(err){
+                        }, function (err) {
                             $('#loading-div').removeClass('nobg').hide();
-                            bootbox.alert('An error occurred while loading data: '+err.error);
+                            bootbox.alert('An error occurred while loading data: ' + err.error);
                         });
 
                     }
                 });
             } else {
                 $scope.infoStatus = false;
-                mapviewer.map.unByKey($scope.infoEventKey);
+                ol.Observable.unByKey($scope.infoEventKey);
             }
+            mapviewer.selectInteraction.setActive(!$scope.infoStatus);
         }
     })
     .controller('MapSettingsCtrl', function($scope, mapviewer, djangoRequests, $modal){
@@ -991,7 +1016,7 @@ angular.module('webgisApp')
 
         $scope.$on('mapviewer.baselayers_loaded', function () {
            $.each(mapviewer.baseLayers, function(){
-               if (this.get('name') != '') {
+               if (this.get('name') !== '') {
                    $scope.baseLayers.push(this.get('name'));
                }
                $scope.selectedBaseLayer = $scope.baseLayers[mapviewer.currentBaseLayerIndex];
@@ -1035,7 +1060,7 @@ angular.module('webgisApp')
         $scope.addLayerToMap = addLayerToMap;
         $scope.download = function(layer) {
             window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
-        }
+        };
         $scope.hidePopover = hidePopover;
         $scope.hoverLayer = hoverLayer;
         $scope.layerTree = mapviewer.datacatalog;
@@ -1052,8 +1077,8 @@ angular.module('webgisApp')
             if (layerObj.epsg > 0) {
                 extent = ol.proj.transformExtent(extent, 'EPSG:'+layerObj.epsg, mapviewer.map.getView().getProjection().getCode());
             }
-            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
-        };
+            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
+        }
         
         function hidePopover() {
             setTimeout(function () {
@@ -1061,11 +1086,11 @@ angular.module('webgisApp')
                    $('body .popover').popover('hide');
                 }
             }, 300);
-        };
+        }
 
         function hoverLayer(elem, layerID, $event) {
             var $popover = $('body .popover');
-            if ($scope.activeLayer == layerID && $popover.length > 0) {
+            if ($scope.activeLayer === layerID && $popover.length > 0) {
                 return false;
             }
             $scope.activeLayer = layerID;
@@ -1078,7 +1103,7 @@ angular.module('webgisApp')
                     }
                 }, 300)
             })
-        };
+        }
 
         function showMetadata(layer) {
             $('#loading-div').show();
@@ -1098,7 +1123,7 @@ angular.module('webgisApp')
             }, function() {
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
-        };
+        }
 
     })
     .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams) {
@@ -1132,7 +1157,7 @@ angular.module('webgisApp')
         $scope.zoomToStation = function(station) {
             var extent = [station.lat, station.lon, station.lat, station.lon];
             extent = ol.proj.transformExtent(extent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
-            mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
+            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
             mapviewer.map.getView().setZoom(10);
 
             var element = stationPopup.getElement();
@@ -1228,14 +1253,14 @@ angular.module('webgisApp')
 
             if(layerObj.west == -180 && layerObj.south == -90 && layerObj.east == 180 && layerObj.north == 90){
                 //Zoom to max extent (should be equal to MapViewerCtrl $scope.zoomMaxExtent )
-                mapviewer.map.getView().fitExtent(ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.map.getView().getProjection().getCode()), mapviewer.map.getSize());
+                mapviewer.map.getView().fit(
+                    ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.map.getView().getProjection().getCode()),
+                    { size: mapviewer.map.getSize() }
+                );
             }
             else{
-                mapviewer.map.getView().fitExtent(extent, mapviewer.map.getSize());
+                mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
             }
-
-
-
         };
 
         $scope.shareLink = function(id) {
