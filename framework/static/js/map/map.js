@@ -25,6 +25,7 @@ angular.module('webgisApp')
             'datacatalog': [],
             'sliderValues': {},
             'currentFeature': null,
+            'map': null,
 
             'currentBaseLayerIndex': -1,
             'center': null,
@@ -133,7 +134,7 @@ angular.module('webgisApp')
             'setBaseLayer': function(index) {
                 var layers = this.map.getLayers();
                 var layer = this.baseLayers[index];
-                if (layer.get('layerObj').ogc_type == 'GoogleMaps') {
+                if (layer.get('layerObj').ogc_type === 'GoogleMaps') {
                     this.gmap.setMapTypeId(google.maps.MapTypeId[layer.get('layerObj').ogc_layer]);
                     $('#gmap').show();
                     google.maps.event.trigger(this.gmap, 'resize');
@@ -185,7 +186,10 @@ angular.module('webgisApp')
                                 source: new ol.source.WMTS(options)
                             });
                         } else {
-                            if (parseInt(layer.epsg) > 0) layer.epsg = 'EPSG:'+layer.epsg;
+                            if (parseInt(layer.epsg) > 0) {
+                                layer.epsg = 'EPSG:'+layer.epsg;
+                            }
+
                             var resolutions = [];
                             var proj = ol.proj.get(layer.wmts_projection);
                             var multiply = 1;
@@ -407,7 +411,7 @@ angular.module('webgisApp')
             },
             'addLayer': function(layer) {
                 for (var i=0; i<this.layersMeta.length; i++) {
-                    if (layer.title == this.layersMeta[i].name) {
+                    if (layer.title === this.layersMeta[i].name) {
                         bootbox.alert('Layer exists already in the map. Please see the "Current" tab.');
                         return false;
                     }
@@ -419,7 +423,7 @@ angular.module('webgisApp')
                     alert('Layer could not be added, type '+layer.type+' is not implemented!');
                     return false;
                 }
-                if (typeof(layer.django_id) == 'undefined') {
+                if (typeof layer.django_id === 'undefined') {
                     layer.django_id = layer.id;
                 }
                 layer.name = layer.title;
@@ -427,7 +431,7 @@ angular.module('webgisApp')
                 this.sliderValues[layer.id] = 100;
                 layer.showLegend = true;
                 this.layers[layer.id] = olLayer;
-                if (layer.ogc_time == true) {
+                if (layer.ogc_time === true) {
                     this.layersTime.push(layer.id);
                     var $slider = $('#slider');
                     $slider.find(".tooltip.bottom").css('margin-top', '20px');
@@ -539,10 +543,10 @@ angular.module('webgisApp')
                     mapviewer.zoom_max = data.zoom_max;
                     mapviewer.center = ol.proj.transform([data.center_lon, data.center_lat], data.center_proj, mapviewer.displayProjection);
                     mapviewer.datacatalog = data.layergroups;
-                    if (data.layerauth == true) {
+                    if (data.layerauth === true) {
                         bootbox.alert('Please log in to see further layers!');
                     }
-                    if (baseLayer == true) {
+                    if (baseLayer === true) {
                         mapviewer.baseLayers = [];
                         if (data.baselayers.length > 0) {
                             mapviewer.currentBaseLayerIndex = 0;
@@ -556,9 +560,9 @@ angular.module('webgisApp')
 
                         $rootScope.$broadcast('mapviewer.baselayers_loaded', mapviewer.baseLayers);
                     }
-                    $rootScope.$broadcast('mapviewer.catalog_loaded', mapviewer.datacatalog);
+                    $rootScope.$broadcast('mapviewer.catalog_loaded');
 
-                    if (mapviewer.map != null) {
+                    if (mapviewer.map !== null) {
                         mapviewer.map.setTarget(null);
                         mapviewer.map = null;
                     }
@@ -569,12 +573,12 @@ angular.module('webgisApp')
                     $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
                     $('#loading-div').hide();
 
-                    if (data.time_slider == true) {
+                    if (data.time_slider === true) {
                         var $slider = $("#slider");
                         var times = data.time_slider_dates.split(',');
                         var noLabels = parseInt($slider.width()/80);
                         var eachLabels = Math.round(times.length/noLabels);
-                        if (eachLabels == 0) { eachLabels = 1; }
+                        if (eachLabels === 0) { eachLabels = 1; }
 
                         var ticks = []; var labels =  [];
                         var i = 0; var j=0;
@@ -1055,18 +1059,20 @@ angular.module('webgisApp')
         });
     })
     .controller('MapCatalogCtrl', function($scope, mapviewer, djangoRequests, $modal){
-        $scope.activeLayer = -1;
-        $scope.addLayerToMap = addLayerToMap;
-        $scope.download = function(layer) {
+        var mapCatalog = this;
+
+        mapCatalog.activeLayer = -1;
+        mapCatalog.addLayerToMap = addLayerToMap;
+        mapCatalog.download = function(layer) {
             window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
         };
-        $scope.hidePopover = hidePopover;
-        $scope.hoverLayer = hoverLayer;
-        $scope.layerTree = mapviewer.datacatalog;
-        $scope.showMetadata = showMetadata;
-        
+        mapCatalog.hidePopover = hidePopover;
+        mapCatalog.hoverLayer = hoverLayer;
+        mapCatalog.layerTree = mapviewer.datacatalog;
+        mapCatalog.showMetadata = showMetadata;
+
         $scope.$on('mapviewer.catalog_loaded', function () {
-            $scope.layerTree = mapviewer.datacatalog;
+            mapCatalog.layerTree = mapviewer.datacatalog;
         });
 
         function addLayerToMap(layer) {
@@ -1094,10 +1100,10 @@ angular.module('webgisApp')
 
         function hoverLayer(elem, layerID, $event) {
             var $popover = $('body .popover');
-            if ($scope.activeLayer === layerID && $popover.length > 0) {
+            if (mapCatalog.activeLayer === layerID && $popover.length > 0) {
                 return false;
             }
-            $scope.activeLayer = layerID;
+            mapCatalog.activeLayer = layerID;
             $($event.target).popover('show');
             $popover.on('mouseleave', function(){
                 var _this = this;
@@ -1128,7 +1134,6 @@ angular.module('webgisApp')
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
         }
-
     })
     .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams) {
         $scope.layersMeta = mapviewer.layersMeta;

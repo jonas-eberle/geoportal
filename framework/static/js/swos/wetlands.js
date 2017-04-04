@@ -588,7 +588,7 @@ angular.module('webgisApp')
                 
                 var intersection = turf.intersect(mapJSON, layerJSON);
                 //Zoom to extent except of global extent
-                if (typeof(intersection) == 'undefined' && !(layer.west == -180 && layer.south == -90 && layer.east == 180 && layer.north == 90)) {
+                if (typeof intersection === 'undefined' && !(layer.west == -180 && layer.south == -90 && layer.east == 180 && layer.north == 90)) {
 
                     // zoom to new layer
                     var layerExtent = [layer.west, layer.south, layer.east, layer.north];
