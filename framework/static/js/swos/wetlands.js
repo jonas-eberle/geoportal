@@ -11,8 +11,166 @@ angular.module('webgisApp')
 
     }])
 
-    .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout){
+    .service('WetlandsService', function(djangoRequests, mapviewer, $rootScope) {
+        var service = {
+            olLayer: null,
+            value: {},
+            activeTab: -1,
 
+            selectFeature: function (wetland) {
+                var extent = wetland.geometry.getExtent();
+                //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
+                //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
+                //mapviewer.map.beforeRender(pan, zoom)
+                mapviewer.map.getView().fit(extent, {size: mapviewer.map.getSize()});
+
+                var wetlandFeature = this.olLayer.getSource().getFeatureById(wetland.id);
+                wetlandFeature.setStyle(new ol.style.Style({
+
+                    stroke: new ol.style.Stroke({
+                        color: "#000000",
+                        width: 5
+                    })
+                }));
+
+                // get selectInteraction from map
+                var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
+                    return interaction instanceof ol.interaction.Select;
+                });
+                selectInteraction[0].getFeatures().clear();
+                selectInteraction[0].getFeatures().push(wetlandFeature);
+
+                // reset style of previously selected feature
+                if (mapviewer.currentFeature !== null) {
+                    mapviewer.currentFeature.setStyle(null);
+                }
+                // save the currently selected feature
+                mapviewer.currentFeature = wetlandFeature;
+
+            },
+
+            selectWetland: function(wetland) {
+                /*
+                 try {
+                 _paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
+                 _paq.push(['setDocumentTitle', wetland.name]);
+                 _paq.push(['trackPageView']);
+                 } catch (err) {}
+                 */
+                var wetland_service = this;
+                 //wetland.id;
+                //$('#sidebar-tabs li').removeClass('active');
+                //$('#sidebar .tab-content .tab-pane').removeClass('active');
+
+                //if (!(wetland.id in $scope.wetlands_opened)) {
+
+                // wetland_service.value = [];
+                wetland_service.wetland_found = false;
+
+                return djangoRequests.request({
+                    'method': "GET",
+                    'url': '/swos/wetland/'+wetland.id
+                }).then(function(data){
+                    wetland['data'] = data;
+                    //$scope.wetlands_opened[wetland.id] = wetland;
+                    wetland_service.value = wetland;
+                    wetland_service.data_count = data['count'];
+                    //console.log($scope.data_count);
+
+                    wetland_service.videosCurrentPage = 1;
+                    wetland_service.imagesCurrentPage = 1;
+                    wetland_service.allVideos = false;
+                    wetland_service.allImages = false;
+                    wetland_service.allImages_external = false;
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/images.json?start=0&max=24'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
+                        wetland_service.value['pictures'] = data;
+                        if (data['photos'].length < wetland_service.imagesMaxPage) {
+                            wetland_service.allImages = true;
+                        }
+                    });
+
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/panoramio.json?start=0&max=24'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
+                        wetland_service.value['external_pictures'] = data;
+                        if (data['photos'].length < wetland_service.imagesMaxPage) {
+                            wetland_service.allImages_external = true;
+                        }
+                    });
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/youtube.json?start=0&max=9'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['videos'] = data;
+                        wetland_service.value['videos'] = data;
+                        if (data.length < wetland_service.videosMaxPage) {
+                            wetland_service.allVideos = true;
+                        }
+                    });
+
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url': '/swos/wetland/'+wetland.id+'/satdata.json'
+                    }).then(function(data){
+                        //$scope.wetlands_opened[wetland.id]['satdata'] = data;
+                        wetland_service.value['satdata'] = data;
+                    });
+
+
+                    $.each(wetland_service.wetlands, function(){
+                        if (this['id'] == wetland.id) {
+                            wetland_service.wetland_found = this;
+                            return false;
+                        }
+                    });
+                    wetland_service.selectFeature(wetland_service.wetland_found);
+                    $rootScope.$broadcast("wetland_loaded");
+                    wetland_service.activeTab = 1;
+
+                }, function() {
+                    bootbox.alert('<h1>Error while loading wetland details</h1>');
+                });
+
+                /*} else {
+                 $('.scroller-right').click();
+                 $('#link_wetland_'+wetland.id).click();
+                 }*/
+
+            },
+            selectWetlandFromId: function (id) {
+                var wetland = null;
+                $.each(WetlandsService.wetlands, function() {
+                    if (this['id'] == id) {
+                        wetland = this;
+                        return false;
+                    }
+                });
+                if (wetland){
+                    return this.selectWetland(wetland);
+                }
+                return $q.reject();
+            }
+        };
+        return service;
+    })
+
+
+    .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService){
+
+        $scope.WetlandsService = WetlandsService;
+        $scope.value = WetlandsService.value;
+        $scope.$on('wetland_loaded', function (){
+             $scope.value = WetlandsService.value;
+        });
 
         $scope.wetlands = [];
         $scope.wetlands_without_geom = [];
@@ -52,8 +210,10 @@ angular.module('webgisApp')
                     $scope.wetlands_without_geom.push(without_geom);
                 });
 
+
+                WetlandsService.wetlands = $scope.wetlands;
                 vectorSource.addFeatures(features);
-                $scope.olLayer = new ol.layer.Vector({
+                WetlandsService.olLayer = new ol.layer.Vector({
                     name: 'Wetlands',
                     source: vectorSource,
                     style: function(feature, res) {
@@ -67,7 +227,7 @@ angular.module('webgisApp')
                                 fill: new ol.style.Fill({ color: "#000000" }),
                                 stroke: new ol.style.Stroke({ color: "#FFFFFF", width: 2 })
                             }),
-                            geometry: function(feature){   
+                            geometry: function(feature){
                                 var retPoint;
                                 if (feature.getGeometry().getType() === 'MultiPolygon') {
                                     retPoint = feature.getGeometry().getPolygons()[0].getInteriorPoint();
@@ -81,7 +241,7 @@ angular.module('webgisApp')
                         return [style,textStyle];
                     }
                 });
-                mapviewer.map.addLayer($scope.olLayer);
+                mapviewer.map.addLayer(WetlandsService.olLayer);
 
                 load_wetland();
             }, function() {
@@ -313,28 +473,11 @@ angular.module('webgisApp')
         };
         
         $scope.wetlands_opened = {};
-        $scope.activeTab = -1;
+
         
         $scope.$on('mapviewer.wetland_selected', function ($broadCast, id) {
-            $scope.selectWetlandFromId(id);
+            WetlandsService.selectWetlandFromId(id);
         });
-        
-        $scope.selectWetlandFromId = function(id) {
-            var wetland = null;
-            $.each($scope.wetlands, function() {
-                if (this['id'] == id) {
-                    wetland = this;
-                    return false;
-                }
-            });
-            if (wetland){
-                return $scope.selectWetland(wetland);
-            }
-            return $q.reject();
-        };
-        
-        $scope.value = null;
-
 
         $scope.satdata_table = false;
         $scope.satdata_image = true;
@@ -388,132 +531,7 @@ angular.module('webgisApp')
             } catch (err) {}
         };
 
-        $scope.selectFeature = function(wetland) {
 
-            var extent = wetland.geometry.getExtent();
-            //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
-            //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
-            //mapviewer.map.beforeRender(pan, zoom)
-            mapviewer.map.getView().fit(extent, { size: mapviewer.map.getSize() });
-
-            var wetlandFeature = $scope.olLayer.getSource().getFeatureById(wetland.id);
-            wetlandFeature.setStyle(new ol.style.Style({
-
-                stroke: new ol.style.Stroke({
-                    color: "#000000",
-                    width: 5
-                })
-            }));
-
-            // get selectInteraction from map
-            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
-                return interaction instanceof ol.interaction.Select;
-            });
-            selectInteraction[0].getFeatures().clear();
-            selectInteraction[0].getFeatures().push(wetlandFeature);
-
-            // reset style of previously selected feature
-            if (mapviewer.currentFeature !== null) {
-                mapviewer.currentFeature.setStyle(null);
-            }
-            // save the currently selected feature
-            mapviewer.currentFeature = wetlandFeature;
-        };
-
-        $scope.selectWetland = function(wetland) {
-
-            if (window.location.hash == '#/catalog') {
-                window.location.hash = '#/wetland/' + wetland.id;
-            }
-
-            $('#loading-div').css('background', 'none');
-            $('#loading-div').show();
-
-            $rootScope.$broadcast('current_wetland_id', wetland.id);
-                return djangoRequests.request({
-                    'method': "GET",
-                    'url': '/swos/wetland/'+wetland.id
-                }).then(function(data){
-                    wetland['data'] = data;
-                    //$scope.wetlands_opened[wetland.id] = wetland;
-                    $scope.value = wetland;
-
-                    $scope.data_count = data['count'];
-                    //console.log($scope.data_count);
-
-                    $scope.videosCurrentPage = 1;
-                    $scope.imagesCurrentPage = 1;
-                    $scope.allVideos = false;
-                    $scope.allImages = false;
-                    $scope.allImages_external = false;
-
-                    $('#loading-div').hide();
-                    $('#loading-div').css('background', 'rgba(255,255,255,0.8)');
-                    $scope.activeTab = 1;
-
-                    djangoRequests.request({
-                        'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/images.json?start=0&max=24'
-                    }).then(function(data){
-                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
-                        $scope.value['pictures'] = data;
-                        if (data['photos'].length < $scope.imagesMaxPage) {
-                            $scope.allImages = true;
-                        }
-                    });
-
-
-                    djangoRequests.request({
-                        'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/panoramio.json?start=0&max=24'
-                    }).then(function(data){
-                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
-                        $scope.value['external_pictures'] = data;
-                        if (data['photos'].length < $scope.imagesMaxPage) {
-                            $scope.allImages_external = true;
-                        }
-                    });
-                    
-                    djangoRequests.request({
-                        'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/youtube.json?start=0&max=9'
-                    }).then(function(data){
-                        //$scope.wetlands_opened[wetland.id]['videos'] = data;
-                        $scope.value['videos'] = data;
-                        if (data.length < $scope.videosMaxPage) {
-                            $scope.allVideos = true;
-                        }
-                    });
-                    
-                    djangoRequests.request({
-                        'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/satdata.json'
-                    }).then(function(data){
-                        //$scope.wetlands_opened[wetland.id]['satdata'] = data;
-                        $scope.value['satdata'] = data;
-                    });
-
-
-                    $.each($scope.wetlands, function(){
-                        if (this['id'] == wetland.id) {
-                            $scope.wetland_found = this;
-                            return false;
-                        }
-                    });
-
-                    $scope.selectFeature($scope.wetland_found);
-
-                }, function() {
-                    bootbox.alert('<h1>Error while loading wetland details</h1>');
-                });
-            
-            /*} else {
-                $('.scroller-right').click();
-                $('#link_wetland_'+wetland.id).click();    
-            }*/
-
-        };
-        
         $scope.foo = function() {
             //console.log('foo');
             reAdjust();
@@ -714,7 +732,7 @@ angular.module('webgisApp')
             var type_name = $routeParams.type_name;
             var layer_id = $routeParams.layer_id;
             if (wetland_id){
-                $scope.selectWetlandFromId(wetland_id).then(function(){
+                WetlandsService.selectWetlandFromId(wetland_id).then(function(){
                     var target = "overview";
                     if (type_name) {
                         switch (type_name){
