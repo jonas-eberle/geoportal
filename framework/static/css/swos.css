@@ -504,3 +504,6 @@ button.btn-loadmore:hover {
 .ngTruncateToggleText {
     cursor: pointer;
 }
+.list-group-item:hover .ngTruncateToggleText {
+     color: #04baf3;
+}

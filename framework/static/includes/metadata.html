@@ -45,13 +45,13 @@
 	        Bounding Box (Lat, Lon Coordinates)
 	    </div>
 	    <div class="description">
-	        North: {{value_passed.north}}
+	        North:  {{value_passed.north.toFixed(3)}}
 	        <br>
-	        West: {{value_passed.west}}
+	        West:   {{value_passed.west.toFixed(3)}}
 	        <br>
-	        South: {{value_passed.south}}
+	        South:  {{value_passed.south.toFixed(3)}}
 	        <br>
-	        East: {{value_passed.east}}
+	        East:   {{value_passed.east.toFixed(3)}}
 	    </div>
 	</div>
 	<div class="item" ng-if="value_passed.meta_lineage">

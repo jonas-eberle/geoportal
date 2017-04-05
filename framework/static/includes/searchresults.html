@@ -8,7 +8,7 @@
             <div class="catalog-item">
                 <div class="item_center">
                     <div class="item_title">{{item.title}}</div>
-                    <div class="item_desc">{{item.abstract}}</div>
+                    <div class="item_desc" ng-text-truncate='item.abstract' ng-tt-chars-threshold="120"></div>
                 </div>
                 <div class="item_right">
                     <button ng-click="showMetadata(item)" type="button" class="btn btn-default btn-xs" aria-label="Left Align" ><i class="fa fa-file-text-o fa-lg "></i></button>
