@@ -531,7 +531,6 @@ angular.module('webgisApp')
             } catch (err) {}
         };
 
-
         $scope.foo = function() {
             //console.log('foo');
             reAdjust();
@@ -606,14 +605,14 @@ angular.module('webgisApp')
                 
                 var intersection = turf.intersect(mapJSON, layerJSON);
                 //Zoom to extent except of global extent
-                if (typeof(intersection) == 'undefined' && !(layer.west == -180 && layer.south == -90 && layer.east == 180 && layer.north == 90)) {
+                if (typeof intersection === 'undefined' && !(layer.west == -180 && layer.south == -90 && layer.east == 180 && layer.north == 90)) {
 
                     // zoom to new layer
                     var layerExtent = [layer.west, layer.south, layer.east, layer.north];
                     if (layer.epsg > 0) {
                         layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:'+layer.epsg, mapviewer.map.getView().getProjection().getCode());
                     }
-                    mapviewer.map.getView().fit(layerExtent, { size: mapviewer.map.getSize() });
+                    mapviewer.map.getView().fit(layerExtent);
                 }
 
                 // if this the first time the user added a second layer to map, notify them
