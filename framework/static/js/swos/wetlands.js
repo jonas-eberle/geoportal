@@ -148,7 +148,7 @@ angular.module('webgisApp')
             },
             selectWetlandFromId: function (id) {
                 var wetland = null;
-                $.each(WetlandsService.wetlands, function() {
+                $.each(this.wetlands, function() {
                     if (this['id'] == id) {
                         wetland = this;
                         return false;
@@ -162,7 +162,6 @@ angular.module('webgisApp')
         };
         return service;
     })
-
 
     .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService){
 
@@ -530,6 +529,7 @@ angular.module('webgisApp')
                 _paq.push(['trackEvent', 'Show Video', $scope.value.name, url]);
             } catch (err) {}
         };
+
 
         $scope.foo = function() {
             //console.log('foo');
