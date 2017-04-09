@@ -38,6 +38,8 @@
     <script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
 
+    <link href="{% static "lib/anno.css" %}" rel="stylesheet" />
+
     <link href="{% static "css/swos.css" %}?v=20170325" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
@@ -254,8 +256,8 @@
                     </div>
                     <!-- END List GROUP -->
                 </div>
-                <div class="toggle-button-wrapper" ng-class="wetlandListState">
-                    <button class="glyphicon" ng-if="showToggleButton" ng-click="toggleWetlandList('click')"></button>
+                <div id="active_layer" class="toggle-button-wrapper" ng-class="wetlandListState">
+                    <button id="show_active_layer" class="glyphicon" ng-if="showToggleButton" ng-click="toggleWetlandList('click')"></button>
                 </div>
             </div>
 
@@ -382,6 +384,7 @@
                             <!-- Indicators -->
                             <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="trackWetlandTab('indicator')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
+
 
                                 <!--
                                 <ul class="items indicators">
@@ -638,7 +641,7 @@
         <p>Welcome to the first version of the SWOS Geoportal. We have made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. Please select the wetland of your interest in the panel on the right.</p>
         <p>We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
-        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">November 30, 2016</p>
+        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">April 10, 2017</p>
     </div>
 
     <!-- Bootstrap core JavaScript
@@ -675,9 +678,12 @@
     <script src="{% static "js/auth/auth.js" %}"></script>
     <script src="{% static "js/map/map.js" %}?v=20170325"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20170313"></script>
+
     <script src="{% static "js/swos/wetlands.js" %}?v=20170324"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
+
+    <script src="{% static "lib/anno.js" %}"></script>
 
 
     <div ng-view></div>

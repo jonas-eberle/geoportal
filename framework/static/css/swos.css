@@ -155,19 +155,18 @@ h4 {
 
 #map_icons {
     left: auto;
-    float: left;
+    display: inline-block;
     margin-right: 20px;
     top: auto; 
     width: auto; 
     position: relative; 
-    z-index: 1001; 
+    z-index: 1001;
     left: auto; 
 }
 
 #map_search {
-    position: relative;
-    right: auto;
-    top: auto;
+    position: absolute;
+    display: inline-block;
     width: calc(100% - 350px);
     max-width: 300px;
     z-index: 1025;
@@ -179,7 +178,7 @@ h4 {
 
 #wetland_sites {
     color: white;
-    float: left;
+    display: inline-block;
     margin-right: 20px;
     margin-top: 5px;
     margin-left: 13px;
@@ -437,6 +436,7 @@ button.btn-loadmore:hover {
 /* extends bootstrap-slider's .tooltip */
 .tooltip {
     pointer-events: none;
+    z-index: 1520;
 }
 
 .ol-scale-line {
