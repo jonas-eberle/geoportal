@@ -813,7 +813,7 @@ angular.module('webgisApp')
         }
 
         })
-    .controller('IntroductionTour', function ($scope,mapviewer,WetlandsService, $timeout ){
+    .controller('IntroductionTour', function ($scope,mapviewer,WetlandsService, $timeout, $cookies, $rootScope ){
 
         //#todo move all ids and paramenter as variable to the top
 
@@ -888,8 +888,16 @@ angular.module('webgisApp')
 
         function load_and_show_layer(wetland_id, type_name, layer_id, max_length) {
 
-console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
-            if (layer_id && mapviewer.layersMeta.length == max_length ) {
+            var layer_is_new = "true";
+
+            for (var key in mapviewer.layersMeta) {
+                if(mapviewer.layersMeta[key].django_id === layer_id){
+                    layer_is_new = false;
+                };
+            }
+
+            //only load a new layer, if the the layer is not already added and the max number of needed layers is reached
+            if (layer_id && layer_is_new && mapviewer.layersMeta.length == max_length ) {
 
                 var layer_ids = layer_id.split("_");
 
@@ -914,6 +922,27 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
             }
         }
 
+        function reset() {
+           // #todo replace remove and zoom once the function is available via service
+            while (mapviewer.layersMeta.length > 0) {
+                var layer = mapviewer.layersMeta[0];
+                mapviewer.removeLayer(layer.id, 0);
+                var checkbox = undefined;
+                if (layer["django_id"] !== undefined
+                    && layer.django_id !== null
+                    && (checkbox = document.getElementById("layer_vis_"+layer.django_id))
+                ) {
+                    checkbox.checked = "";
+                }
+            }
+            $rootScope.$broadcast("mapviewer.alllayersremoved");
+
+             mapviewer.map.getView().fit(
+                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection),
+                { size: mapviewer.map.getSize() }
+             );
+        }
+
         $scope.$on('start_tour', function () {
             return $scope.startAnno();
         });
@@ -922,6 +951,9 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
 
             $('.main').css('position', 'absolute');
             //  $('.main').css('position', 'fixed');
+            $('body').on("click",function(e){
+                console.log(e);
+            });
 
             var anno1 = new Anno([
 
@@ -1040,17 +1072,16 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
                             //Load wetland (id 4 - Camargue)
                             only_load_wetland(4);
 
-                            //ensure overview is shown
+                            //ensure overview of wetland is shown
                             select_tab("overview");
-
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
-                                console.log(e)
+
                                 // Allow preselection of overview tab; allow selection of products
                                 if (e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.parentElement.className === "flaticon-layers ng-scope ng-isolate-scope") {
                                     if (e.target.className === "flaticon-layers" || e.target.parentElement.className === "flaticon-layers ng-scope ng-isolate-scope") {
-                                        anno.switchToChainNext();
+                                        anno.switchToChainNext(); // switch to next step, if the user click on "products"
                                     }
                                 }
                                 else {
@@ -1061,14 +1092,14 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
                             return handler
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
                         },
                         content: '<h4>Wetlands Overview</h4><div><p>Summary of available information for a wetland:</p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li><u>Indicator</u>.Wetland indicators derived on the basis of satellite images / SWOS products.</li>' +
                         '<li><u>Products</u>. Maps produced with SWOS tools.</li>' +
                         '<li><u>Satellite data</u>. Overview on all available satellite data.</li>' +
-                        '<li><u>Images</u>. Uploaded and linked (source: Panoramio) images.</li>' +
+                        '<li><u>Photos</u>. Uploaded and linked (source: Panoramio) photos.</li>' +
                         '<li><u>Videos</u>. Uploaded and linked (source: Youtube) videos.</li>' +
                         '<li><u>External databases</u>. Compilation of other external data sources (e.g. databases, maps, ...).</li></ol>' +
                         '<p></p><p><strong>Try it:</strong> Select <u>Products</u>.</p></div>'
@@ -1095,11 +1126,10 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
                             //ensure products is shown
                             select_tab("product");
 
-                            // prevent all click events (except of checkboxes)
+                            // prevent all click events (except of ...)
                             var handler = function (e) {
-                                console.log(e);
-                                console.log(e.target.id.substring(0, 9));
-                                // Allow preselection of overview tab; allow selection of products
+
+                                // Allow preselection of product tab; allow accordion; allow layer selection
                                 if (e.target.className === "accordion-toggle" || e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.id.substring(0, 9) === "layer_vis") {
                                     if (e.target.id.substring(0, 9) === "layer_vis") {
                                         anno.switchToChainNext();
@@ -1115,14 +1145,22 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Wetlands </h4><div><p>Summary of available information for a wetland:</p>' +
+                        content: '<h4>Wetland Products</h4><div><p>Products derived with the help of <u>SWOS tools</u> on the basis of satellite images. Available products are:  </p>' +
+                        '<ol style="list-style-type:disc;list-style-position:outside;">' +
+                        '<li>Water Quality</li>' +
+                        '<li>Land Surface Temperature Trend</li>' +
+                        '<li>Surface Water Dynamics</li>' +
+                        '<li>Land Use Land Cover</li>' +
+                        '<li>Land Use Land Cover Change</li>' +
+                        '<li>Surface Soil Moisture</li></ol>' +
+                        '<p>(Please keep in mind not all products can and will be derived for each wetland.)</p>' +
 
-                        '<p></p><p><strong>Try it:</strong> Select a map.</p></div>'
+                        '<p></p><p><strong>Try it:</strong> Choose a product category and select a map.</p></div>'
                     },
                     {
                         target: '.sidebar',
                         position: {
-                            top: '6em',
+                            top: '300px',
                             right: '420px'
                         },
                         className: 'anno-width-500',
@@ -1140,6 +1178,8 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
 
                             //ensure products is shown
                             select_tab("product");
+
+                            $cookies.hasNotifiedAboutLayers = true;
                             load_and_show_layer(4, "product", "2836", 0);
 
                             // prevent all click events (except of checkboxes)
@@ -1157,7 +1197,9 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
                             return handler
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
+                            $cookies.hasNotifiedAboutLayers = false;
+
                         },
                         content: '<h4>Wetland Products</h4><div><p>All available products for the selected wetland. You can display all of them on the map.</p>' +
                         '<p>For each layer you can:' +
@@ -1235,6 +1277,7 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
 
                             //ensure products is shown
                             //select_tab("externaldb");
+                            $cookies.hasNotifiedAboutLayers = true;
                             load_and_show_layer(4, "externaldb", "2551", 1);
 
                             $('#show_active_layer').click();
@@ -1264,7 +1307,8 @@ console.log(mapviewer.layersMeta); // IDs of already existing layers #todo
                             $('.map-controls-wrapper').css('z-index', '');
                             $('.ol-viewport').css('z-index', '');
 
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
+                            $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Active Layer</h4><div>' +
                         '<p>Here you find all activated layer. You can hide, remove or change the order. In addition you can do the same actions as on the left side (e.g. show metadata).</p>' +
