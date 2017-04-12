@@ -38,6 +38,7 @@ angular.module('webgisApp')
                 'layersCount': 0,
                 'addexternallayer': false
             },
+            'maxExtent': [-10, 14, 60, 64],
 
             /* functions */
             'createMap': function(id) {
@@ -202,9 +203,9 @@ angular.module('webgisApp')
                             });
                             var matrixIds = [];
                             var wmts_prefix_matrix_ids = '';
-							if (layer.wmts_prefix_matrix_ids) {
-								wmts_prefix_matrix_ids = layer.wmts_prefix_matrix_ids;
-							}
+                            if (layer.wmts_prefix_matrix_ids) {
+                                wmts_prefix_matrix_ids = layer.wmts_prefix_matrix_ids;
+                            }
                             for (var i=0; i<resolutions.length; i++) { matrixIds.push(wmts_prefix_matrix_ids+i); }
                             olLayer = new ol.layer.Tile({
                                 name: layer.title,
@@ -264,8 +265,7 @@ angular.module('webgisApp')
                         });
                         break;
                     case 'WFS':
-                        vectorSource = new ol.source.ServerVector({
-                            format: new ol.format.GeoJSON(),
+                        vectorSource = new ol.source.Vector({
                             loader: function(extent) {
                                 var url = layer.ogc_link+'?service=WFS&version=1.1.0&request=GetFeature' +
                                     '&typename=' + layer.ogc_layer +
@@ -277,11 +277,15 @@ angular.module('webgisApp')
                                     url: url,
                                     method: 'GET'
                                 }).then(function(data){
-                                    vectorSource.addFeatures(vectorSource.readFeatures(data));
+                                    var format = new ol.format.GeoJSON();
+                                    var features = format.readFeatures(data, {
+                                        featureProjection: _this.displayProjection
+                                    });
+                                    vectorSource.addFeatures(features);
                                     $('#loading-div').hide();
                                 })
                             },
-                            projection: _this.displayProjection
+                            strategy: ol.loadingstrategy.bbox
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -290,8 +294,7 @@ angular.module('webgisApp')
                         });
                         break;
                     case 'Tiled-WFS':
-                        vectorSource = new ol.source.ServerVector({
-                            format: new ol.format.GeoJSON(),
+                        vectorSource = new ol.source.Vector({
                             loader: function() {
                                 var url = layer.ogc_link+'?service=WFS&version=1.1.0&request=GetFeature' +
                                     '&typename=' + layer.ogc_layer +
@@ -303,14 +306,17 @@ angular.module('webgisApp')
                                     url: url,
                                     method: 'GET'
                                 }).then(function(data){
-                                    vectorSource.addFeatures(vectorSource.readFeatures(data));
+                                    var format = new ol.format.GeoJSON();
+                                    var features = format.readFeatures(data, {
+                                        featureProjection: _this.displayProjection
+                                    });
+                                    vectorSource.addFeatures(features);
                                     $('#loading-div').hide();
                                 })
                             },
-                            strategy: ol.loadingstrategy.createTile(
+                            strategy: ol.loadingstrategy.tile(
                                 ol.tilegrid.createXYZ({maxZoom: 19})
-                            ),
-                            projection: _this.displayProjection
+                            )
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -319,23 +325,24 @@ angular.module('webgisApp')
                         });
                         break;
                     case 'GeoJSON':
-                        vectorSource = new ol.source.ServerVector({
-                            format: new ol.format.GeoJSON(),
+                        vectorSource = new ol.source.Vector({
                             loader: function() {
                                 $('#loading-div').show();
                                 djangoRequests.request({
                                     url: layer.ogc_link,
                                     method: 'GET'
                                 }).then(function(data){
-                                    var features = vectorSource.readFeatures(data);
+                                    var format = new ol.format.GeoJSON();
+                                    var features = format.readFeatures(data, {
+                                        featureProjection: 'EPSG:4326'
+                                    });
                                     $.each(features, function(){
                                         this.getGeometry().transform('EPSG:4326', _this.displayProjection);
                                     });
                                     vectorSource.addFeatures(features);
                                     $('#loading-div').hide();
                                 })
-                            },
-                            projection: 'EPSG:4326'
+                            }
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -358,23 +365,24 @@ angular.module('webgisApp')
                             layerID = layer.django_id;
                         }
                         var url = '/layers/sos/'+layerID+'/stations?format=json';
-                        vectorSource = new ol.source.ServerVector({
-                            format: new ol.format.GeoJSON(),
+                        vectorSource = new ol.source.Vector({
                             loader: function() {
                                 $('#loading-div').show();
                                 djangoRequests.request({
                                     url: url,
                                     method: 'GET'
                                 }).then(function(data){
-                                    var features = vectorSource.readFeatures(data);
+                                    var format = new ol.format.GeoJSON();
+                                    var features = format.readFeatures(data, {
+                                        featureProjection: 'EPSG:4326'
+                                    });
                                     $.each(features, function(){
                                         this.getGeometry().transform('EPSG:4326', _this.displayProjection);
                                     });
                                     vectorSource.addFeatures(features);
                                     $('#loading-div').hide();
                                 })
-                            },
-                            projection: 'EPSG:4326'
+                            }
                         });
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
@@ -862,7 +870,7 @@ angular.module('webgisApp')
 
         $scope.zoomMaxExtent = function() {
             mapviewer.map.getView().fit(
-                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection)
+                ol.proj.transformExtent(mapviewer.maxExtent, 'EPSG:4326', mapviewer.displayProjection)
             );
         };
 
@@ -1263,7 +1271,7 @@ angular.module('webgisApp')
             if(layerObj.west == -180 && layerObj.south == -90 && layerObj.east == 180 && layerObj.north == 90){
                 //Zoom to max extent (should be equal to MapViewerCtrl $scope.zoomMaxExtent )
                 mapviewer.map.getView().fit(
-                    ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.map.getView().getProjection().getCode())
+                    ol.proj.transformExtent(mapviewer.maxExtent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode())
                 );
             }
             else{
