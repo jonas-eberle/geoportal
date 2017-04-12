@@ -861,7 +861,7 @@ angular.module('webgisApp')
                         target = 'li.flaticon-technology-2 a';
                         break;
                 }
-                ;
+
                 try {
                     $(target).click(); // open tab
                 } catch (e) {
@@ -981,13 +981,13 @@ angular.module('webgisApp')
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
-                                console.log(e)
+                                console.log(e);
                                 if (e.target.htmlFor === "cb_testmapping" || e.target.id === "cb_testmapping" || e.target.htmlFor === "cb_groupbycountry" || e.target.id === "cb_groupbycountry" || e.target.id === "link_wetland_list") {
                                 }
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1036,7 +1036,7 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },

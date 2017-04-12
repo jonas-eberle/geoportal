@@ -24,6 +24,7 @@ angular.module('webgisApp')
             'layersMeta': [],
             'datacatalog': [],
             'sliderValues': {},
+            'selectedLayerDates': {},
             'currentFeature': null,
             'map': null,
 
@@ -437,8 +438,13 @@ angular.module('webgisApp')
                 layer.name = layer.title;
                 layer.id = Math.random().toString(36).substring(2, 15);
                 this.sliderValues[layer.id] = 100;
+                if (!layer.ogc_time && layer.ogc_times instanceof Array) {
+                    this.selectedLayerDates[layer.id] = layer.ogc_times[layer.ogc_times.length-1];
+                }
+
                 layer.showLegend = true;
                 this.layers[layer.id] = olLayer;
+
                 if (layer.ogc_time === true) {
                     this.layersTime.push(layer.id);
                     var $slider = $('#slider');
@@ -1147,6 +1153,8 @@ angular.module('webgisApp')
         $scope.layersMeta = mapviewer.layersMeta;
         $scope.newLayerIndex = -1;
         $scope.sliderValues = mapviewer.sliderValues;
+        $scope.selectedLayerDates = mapviewer.selectedLayerDates;
+
         $scope.prepareIndex = function(event, index, item) {
             $scope.newLayerIndex = index;
             return item;
@@ -1327,14 +1335,14 @@ angular.module('webgisApp')
 
         };
 
-        $scope.updateLayer = function(id, date) {
+        $scope.updateLayer = function(id) {
             var olLayer = mapviewer.getLayerById(id);
             var source = olLayer.getSource();
             var type = olLayer.get('layerObj').ogc_type;
-            if (type == 'WMS') {
-                source.updateParams({'TIME': date});
-            } else if (type == 'WMTS') {
-                source.updateDimensions({'time':date});
+            if (type === 'WMS') {
+                source.updateParams({'TIME': $scope.selectedLayerDates[id]});
+            } else if (type === 'WMTS') {
+                source.updateDimensions({'time':$scope.selectedLayerDates[id]});
             }
         };
 

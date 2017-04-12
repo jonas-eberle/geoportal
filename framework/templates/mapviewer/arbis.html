@@ -212,8 +212,8 @@
                                                     on-slide="changeOpacity(layer.id)"
                                                     on-stop-slide="changeOpacity(layer.id)"
                                                     min="0" max="100" step="1" style="width:95%;"></slider>
-                                            <div ng-if="layer.dates">Specify date: <select ng-model="layer.selectedDate"
-                                                                                           ng-change="updateLayer(layer.id, layer.selectedDate)"
+                                            <div ng-if="layer.dates">Specify date: <select ng-model="selectedLayerDates[layer.id]"
+                                                                                           ng-change="updateLayer(layer.id)"
                                                                                            ng-options="o as o for o in layer.dates"></select>
                                             </div>
                                         </div>

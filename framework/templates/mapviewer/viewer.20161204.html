@@ -32,8 +32,6 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-
-
     <script src="{% static "lib/turf.min.js" %}"></script>
     <script src="{% static "lib/ol.js" %}"></script>
     <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
@@ -125,6 +123,7 @@
             <div ng-controller="MapViewerCtrl" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
 
                 <div class="map-controls-wrapper">
+
                     <div id="wetland_sites">
                         <input type="checkbox" ng-click="changeSitesVisibility(1, $event)" id="layer_sites"
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
@@ -215,7 +214,7 @@
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
                                         <div class="item_desc">
                                             <slider class="slider" ng-model="sliderValues[layer.id]" min="0" max="100" step="1" on-slide="changeOpacity(layer.id)" on-stop-slide="changeOpacity(layer.id)" style="width:95%;"></slider>
-                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="layer.selectedDate" ng-change="updateLayer(layer.id, layer.selectedDate)" ng-options="o as o for o in layer.ogc_times"></select></div>
+                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="selectedLayerDates[layer.id]" ng-change="updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
                                         </div>
                                         <div class="item_icon">
                                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
@@ -269,7 +268,7 @@
                 <div class="wrapper">
 
                     <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
-                        <li role="presentation"  ng-class="{active: WetlandsService.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="WetlandsService.activeTab = -1" ><span  > Wetlands </span></a></li>
+                        <li role="presentation"  ng-class="{active: WetlandsService.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="WetlandsService.activeTab = -1" ><span> Wetlands </span></a></li>
                         <!--<li role="presentation"><a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current</a></li>-->
                         <li role="presentation" ng-if="value.id != null" ng-class="{active: WetlandsService.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
                         <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: WetlandsService.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo()" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
@@ -384,7 +383,6 @@
                             <!-- Indicators -->
                             <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="trackWetlandTab('indicator')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
-
 
                                 <!--
                                 <ul class="items indicators">
@@ -684,7 +682,6 @@
     <script src="{% static "js/dashboard.js" %}"></script>
 
     <script src="{% static "lib/anno.js" %}"></script>
-
 
     <div ng-view></div>
 
