@@ -507,3 +507,15 @@ button.btn-loadmore:hover {
 .list-group-item:hover .ngTruncateToggleText {
      color: #04baf3;
 }
+
+.nav {
+    position: relative;
+}
+
+.anno-highlight {
+    font-style: italic;
+
+  /*  font-weight: bold;
+      text-decoration: underline;
+    */
+}

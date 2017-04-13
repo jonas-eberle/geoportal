@@ -78,7 +78,7 @@
     </div>
     {% endverbatim %}
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top"  role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
                 <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="http://www.swos-service.eu" target="_blank"><img src="/swos/static/img/swos_logo_60.png" border="0" height="60"></a></div>
@@ -95,9 +95,9 @@
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
-                <ul class="nav navbar-nav pull-right" id="nav-top-right2">
+                <ul  class="nav navbar-nav pull-right" id="nav-top-right2">
                     <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>
-                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info.html" %}'"></li>
+                    <li  class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info.html" %}'"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div>
@@ -431,7 +431,7 @@
                                                 <div class="products_datasets">
                                                     <strong>Datasets:</strong>
                                                     <div class="select" ng-if="product.layers.length > 0">
-                                                        <div ng-repeat="layer in product.layers" ng-controller="MapCurrentLayersCtrl">
+                                                        <div ng-repeat="layer in product.layers" ng-controller="MapCurrentLayersCtrl" id="layer_vis_div_{{layer.id}}">
                                                             <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                             <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                             <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
@@ -597,7 +597,7 @@
                                                 <div class="select" ng-if="externaldb.layers.length > 0">
                                                     <strong>Datasets:</strong>
                                                     <div ng-repeat="layer in externaldb.layers"
-                                                         ng-controller="MapCurrentLayersCtrl">
+                                                         ng-controller="MapCurrentLayersCtrl" id="layer_vis_div_{{layer.id}}">
                                                         <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
                                                         <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
                                                         <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
@@ -665,7 +665,7 @@
     <script src="{% static "lib/bootbox.min.js" %}"></script>
     <script src="{% static "lib/bootstrap-slider.min.js" %}"></script>
     <script src="{% static "lib/angular-bootstrap-slider.js" %}"></script>
-    <script src="{% static "lib/jquery-drags.js" %}"></script>
+    <script src="{% static "js/jquery-drags_adjusted.js" %}"></script>
     <script src="{% static "lib/Chart.min.js" %}"></script>
     <script src="{% static "lib/angular-chart.min.js" %}"></script>
 

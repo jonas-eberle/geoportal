@@ -726,19 +726,21 @@ angular.module('webgisApp')
             }
 
         });
-
-
+        $scope.proceed = true;
+        $scope.$on("StopLoadingWetlandFromURL", function() {
+            $scope.proceed = false;
+        });
 
 
         var load_wetland = function () {
             var wetland_id = $routeParams.wetland_id;
             var type_name = $routeParams.type_name;
             var layer_id = $routeParams.layer_id;
-            if (wetland_id){
-                WetlandsService.selectWetlandFromId(wetland_id).then(function(){
+            if (wetland_id && $scope.proceed) {
+                WetlandsService.selectWetlandFromId(wetland_id).then(function () {
                     var target = "overview";
                     if (type_name) {
-                        switch (type_name){
+                        switch (type_name) {
                             case "product":
                                 target = 'li.flaticon-layers a';
                                 break;
@@ -759,38 +761,47 @@ angular.module('webgisApp')
                                 break;
                         }
 
-                      $timeout(function () {
-                        try {
-                            $(target).click(); // open tab
-                        } catch(e) {}
-
-                        if (layer_id) {
-
-                            var layer_ids = layer_id.split("_");
-
-
-                            $.each(layer_ids, function (i, value) {
-                                var layer_id = "#layer_vis_" + value; // create layer id
-                                $(layer_id).attr('checked', 'checked'); // mark as checked
-                                angular.element(layer_id).triggerHandler('click'); // add layer to map
-                            });
-
-                            var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
-
-                            //open menu according to the last layer id
-                            if (type_name == "product") {
-                                window.location.hash = '#/wetland/'+wetland_id+'/product/'+layer_id;
-                                $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                        $timeout(function () {
+                            try {
+                                $(target).click(); // open tab
+                            } catch (e) {
                             }
-                            if (type_name == "externaldb") {
-                                window.location.hash = '#/wetland/'+wetland_id+'/externaldb/'+layer_id;
-                                $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
-                                $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+
+                            if (layer_id && $scope.proceed) {
+
+                                var layer_ids = layer_id.split("_");
+
+
+                                $.each(layer_ids, function (i, value) {
+                                    var layer_id = "#layer_vis_" + value; // create layer id
+                                    $(layer_id).attr('checked', 'checked'); // mark as checked
+                                    angular.element(layer_id).triggerHandler('click'); // add layer to map
+                                });
+
+                                var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
+
+                                //open menu according to the last layer id
+                                if (type_name == "product") {
+                                    window.location.hash = '#/wetland/' + wetland_id + '/product/' + layer_id;
+                                    $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                                }
+                                if (type_name == "externaldb") {
+                                    window.location.hash = '#/wetland/' + wetland_id + '/externaldb/' + layer_id;
+                                    $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
+                                    $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                                }
                             }
-                        }
-                      });
+                            else if($scope.proceed == false)
+                            {
+                                //return ([wetland_id, type_name, layer_id]);
+                            }
+                        });
                     }
                 });
+            }
+            else if($scope.proceed == false)
+            {
+                // return ([wetland_id, type_name, layer_id]);
             }
         };
 
@@ -876,7 +887,6 @@ angular.module('webgisApp')
                     if ($("#link_wetland_list").parents().hasClass("active")) {}
                     else {
                         try {
-                            console.log("not active");
                             $("#link_wetland_list")[0].click(); // open catalog tab
                         } catch (e) {
                         }
@@ -897,33 +907,45 @@ angular.module('webgisApp')
             }
 
             //only load a new layer, if the the layer is not already added and the max number of needed layers is reached
-            if (layer_id && layer_is_new && mapviewer.layersMeta.length == max_length ) {
+            if (layer_id && layer_is_new && mapviewer.layersMeta.length == max_length) {
+                $("#layer_vis_" + layer_id).attr('checked', 'checked');
+                angular.element("#layer_vis_" + layer_id).triggerHandler('click'); // add layer to map
 
-                var layer_ids = layer_id.split("_");
 
-                $.each(layer_ids, function (i, value) {
-                    var layer_id = "#layer_vis_" + value; // create layer id
-                    $(layer_id).attr('checked', 'checked'); // mark as checked
-                    angular.element(layer_id).triggerHandler('click'); // add layer to map
-                });
-
-                var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
-
+                var layer_id_ = "#layer_vis_" + layer_id;
                 //open menu according to the last layer id
                 if (type_name == "product") {
                     window.location.hash = '#/wetland/' + wetland_id + '/product/' + layer_id;
-                    $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+
+                    if($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                    }
+                    $timeout(function() {
+                        $(".tab-content").animate({
+                            scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 200
+                        }, 2000);
+                    });
                 }
                 if (type_name == "externaldb") {
                     window.location.hash = '#/wetland/' + wetland_id + '/externaldb/' + layer_id;
-                    $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
-                    $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+
+                    if($(layer_id_).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
+                    }
+                    if($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                    }
+                    $timeout(function () {
+                        $(".tab-content").animate({
+                            scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 500
+                        }, 2000);
+                    });
                 }
             }
         }
 
-        function reset() {
-           // #todo replace remove and zoom once the function is available via service
+        function reset(startUrl) {
+           // #todo replace remove and zoom once the function is available via service / move back to start URL
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
                 mapviewer.removeLayer(layer.id, 0);
@@ -943,20 +965,78 @@ angular.module('webgisApp')
              );
         }
 
+        function show_metadata(action){
+
+            // Open Metadata
+            if(action === "open"){
+                $("#layer_vis_2836").closest("div").find("i.fa-file-text-o").parents(0).trigger("click")
+
+                $timeout(function (){
+                  $(".anno-overlay").css('z-index', '1032');
+                });
+
+            }
+            // Close Metadata
+            else if (action === "hide"){
+                 $(".modal-footer").children().trigger("click");
+
+                $timeout(function (){
+                  $(".anno-overlay").css('z-index', '');
+                });
+
+            }
+        }
+
         $scope.$on('start_tour', function () {
             return $scope.startAnno();
         });
 
         $scope.startAnno = function () {
 
+            $rootScope.$broadcast("StopLoadingWetlandFromURL"); // prevent loading from URL
+
             $('.main').css('position', 'absolute');
             //  $('.main').css('position', 'fixed');
             $('body').on("click",function(e){
-                console.log(e);
+            //    console.log(e);
             });
 
             var anno1 = new Anno([
+                {
+                    target: '#nav-top-right2',
 
+                    className: 'anno-width-500',
+
+                    buttons: [
+                        {
+                            text: 'Start',
+                            click: function (anno, evt) {
+                                anno.switchToChainNext();
+                            }
+                        }
+                    ],
+                    onShow: function (anno, $target, $annoElem) {
+
+                        // change overlay to avoid changing z-index of all nav elements
+                        $('.anno-overlay').css('z-index', '1029');
+
+                        // prevent all click events
+                        var handler = function (e) {
+                            e.stopPropagation();
+                        }
+                        $target[0].addEventListener('click', handler, true);
+                        return handler
+                    },
+                    onHide: function (anno, $target, $annoElem, handler) {
+                        $('.anno-overlay').css('z-index', '');
+                        $target[0].removeEventListener('click', handler, true)
+                    },
+
+                    content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS Geoportal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
+                    '<p>Please notice that certain functions are deactivated during the tour. If you like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information.</p> ' +
+                    '<p>You can always stop the tour with a click on the black area. To <strong>start</strong> the <strong>tour again </strong>go to the <span class="fa fa-question fa-lg"></span> on the top. Here you will also find information on how to contact us.</p>' +
+                    '</div>'
+                }, // Welcome
                     {
                         target: '.sidebar',
                         position: {
@@ -966,14 +1046,9 @@ angular.module('webgisApp')
                         className: 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons: [
+                            AnnoButton.BackButton,
                             {
-                                text: 'Learn more about SWOS products',
-                                className: 'anno-btn-low-importance',
-                                click: function (anno, evt) {
-                                }
-                            },
-                            {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -981,7 +1056,8 @@ angular.module('webgisApp')
                         ],
                         onShow: function (anno, $target, $annoElem) {
 
-                            select_tab();//ensure wetland catalog is shown
+                            //ensure wetland catalog is shown
+                            select_tab();
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
@@ -998,11 +1074,11 @@ angular.module('webgisApp')
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Wetland Catalog</h4><div><p>Here you find the wetland sites of the <strong>SWOS project</strong>. They are located in Europe and Africa. Products (maps) and indicators based on the <strong>SWOS toolbox</strong> will be provided.</p> ' +
-                        '<p>The preselected wetlands (<u>testmapping wetlands</u>) are used as test sites for the development of algorithms and its validation.</p>' +
-                        '<p> <strong>Try it</strong>: Unselect the <u>testmapping wetlands</u> to see the full list or use filter to search for wetlands.</p>' +
+                        content: '<h4>Wetland Catalog</h4><div><p>Here you find all wetland sites of the <strong>SWOS project</strong>.</p> ' +
+                        '<p>The preselected wetlands (<span class="anno-highlight">testmapping wetlands</span>) are used as test sites for the development of algorithms and its validation.</p>' +
+                        '<p>To see the full list of wetlands unselect the <span class="anno-highlight">testmapping wetlands</span> or use the provided filter to search for wetlands.</p>' +
                         '</div>'
-                    },
+                    }, // Wetland Catalog
                     {
                         target: '.sidebar',
                         position: {
@@ -1014,7 +1090,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1022,16 +1098,11 @@ angular.module('webgisApp')
                         ],
                         onShow: function (anno, $target, $annoElem) {
 
-                            select_tab(); //ensure wetland catalog is shown
+                            //ensure wetland catalog is shown
+                            select_tab();
 
-                            //  $("#gmap").css('z-index', '2000');
-                            //  $('.map-controls-wrapper').css('z-index', '2002');
-                            // $('.ol-viewport').css('z-index', '2001');
-
-                            // prevent all click events (except of checkboxes)
-
+                            // prevent all click events (except of Wetland selection)
                             var handler = function (e) {
-                                console.log(e);
                                 if (e.target.htmlFor === "cb_testmapping" || e.target.id === "cb_testmapping" || e.target.htmlFor === "cb_groupbycountry" || e.target.id === "cb_groupbycountry" || e.target.id === "link_wetland_list" || e.target.innerText === "Camargue") {
                                     if (e.target.innerText === "Camargue") {
                                         anno.switchToChainNext();
@@ -1048,8 +1119,8 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
                         content: '<h4>Wetland Selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
-                        '<p><strong>Try it:</strong> Select the <u>Camargue</u> (France) from the list.</p></div>'
-                    },
+                        '<p>In the <strong>next step</strong> we will use the <span class="anno-highlight">Camargue</span> in France.</p></div>'
+                    }, // Wetland selection
                     {
                         target: '.sidebar',
                         position: {
@@ -1061,7 +1132,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1079,8 +1150,8 @@ angular.module('webgisApp')
                             var handler = function (e) {
 
                                 // Allow preselection of overview tab; allow selection of products
-                                if (e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.parentElement.className === "flaticon-layers ng-scope ng-isolate-scope") {
-                                    if (e.target.className === "flaticon-layers" || e.target.parentElement.className === "flaticon-layers ng-scope ng-isolate-scope") {
+                                if (e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.parentElement.className.includes("flaticon-layers")) {
+                                    if (e.target.className === "flaticon-layers" || e.target.parentElement.className.includes("flaticon-layers")) {
                                         anno.switchToChainNext(); // switch to next step, if the user click on "products"
                                     }
                                 }
@@ -1094,7 +1165,7 @@ angular.module('webgisApp')
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                         },
-                        content: '<h4>Wetlands Overview</h4><div><p>Summary of available information for a wetland:</p>' +
+                        content: '<h4>Wetlands Overview</h4><div><p>Overview of all available information for a wetland:</p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li><u>Indicator</u>.Wetland indicators derived on the basis of satellite images / SWOS products.</li>' +
                         '<li><u>Products</u>. Maps produced with SWOS tools.</li>' +
@@ -1102,8 +1173,8 @@ angular.module('webgisApp')
                         '<li><u>Photos</u>. Uploaded and linked (source: Panoramio) photos.</li>' +
                         '<li><u>Videos</u>. Uploaded and linked (source: Youtube) videos.</li>' +
                         '<li><u>External databases</u>. Compilation of other external data sources (e.g. databases, maps, ...).</li></ol>' +
-                        '<p></p><p><strong>Try it:</strong> Select <u>Products</u>.</p></div>'
-                    },
+                        '<p></p><p>In the <strong>next step</strong> we will have a closer look at <u>Products</u>.</p></div>'
+                    }, // Wetland overview
                     {
                         target: '.sidebar',
                         position: {
@@ -1115,7 +1186,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1130,8 +1201,8 @@ angular.module('webgisApp')
                             var handler = function (e) {
 
                                 // Allow preselection of product tab; allow accordion; allow layer selection
-                                if (e.target.className === "accordion-toggle" || e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.id.substring(0, 9) === "layer_vis") {
-                                    if (e.target.id.substring(0, 9) === "layer_vis") {
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.id === "layer_vis_2836") {
+                                    if (e.target.id === "layer_vis_2836") {
                                         anno.switchToChainNext();
                                     }
                                 }
@@ -1155,8 +1226,8 @@ angular.module('webgisApp')
                         '<li>Surface Soil Moisture</li></ol>' +
                         '<p>(Please keep in mind not all products can and will be derived for each wetland.)</p>' +
 
-                        '<p></p><p><strong>Try it:</strong> Choose a product category and select a map.</p></div>'
-                    },
+                        '<p></p>In the <strong>next step</strong> we will choose <u>Land Surface Temperature Trend</u> and select the dataset <u>Land Surface Temperature Trend 2000 to 2015</u></p></div>'
+                    }, // Wetland Product
                     {
                         target: '.sidebar',
                         position: {
@@ -1179,18 +1250,21 @@ angular.module('webgisApp')
                             //ensure products is shown
                             select_tab("product");
 
+                            // prevent more than one layer warning
                             $cookies.hasNotifiedAboutLayers = true;
+
+                            //add layer (max one layer)
                             load_and_show_layer(4, "product", "2836", 0);
 
-                            // prevent all click events (except of checkboxes)
+                            // prevent all click events (except of ... )
                             var handler = function (e) {
 
                                 // Allow preselection of overview tab; allow selection of products
-                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "flaticon-technology-2 ng-scope ng-isolate-scope") {
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("fa-file") ) {
 
                                 }
                                 else {
-                                    e.stopPropagation();
+                                 //   e.stopPropagation();
                                 }
                             }
                             $target[0].addEventListener('click', handler, true);
@@ -1201,16 +1275,108 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = false;
 
                         },
-                        content: '<h4>Wetland Products</h4><div><p>All available products for the selected wetland. You can display all of them on the map.</p>' +
-                        '<p>For each layer you can:' +
-                        '<ol style="list-style-type:none;list-style-position:outside;">' +
-                        '<li><p><span class="fa fa-list fa-lg"></span> Show / Hide legend</p></li>' +
-                        '<li><p><span class="fa fa-file-text-o fa-lg"></span> Show metadata</p></li>' +
-                        '<li><span class="fa fa-search fa-lg"></span> Zoom to layer</li>' +
-                        '<li><span class="fa fa-share-alt fa-lg"></span> Share link to dataset</li></ol></p>' +
+                        content: '<h4>Wetland Product Dataset</h4><div><p></p>' +
+                        '<p>You can change the transparency for each layer (slider) and:' +
+                        '<ol style="list-style-type:disc;list-style-position:outside;">' +
+                        '<li><p><span class="fa fa-list fa-lg"></span> hide the legend,</p></li>' +
+                        '<li><p><span class="fa fa-file-text-o fa-lg"></span> view metadata, </p></li>' +
+                        '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer</p></li>' +
+                        '<li><p><span class="fa fa-share-alt fa-lg"></span> and create a permanent link to share it.</p></li></ol></p>' +
 
-                        '<p></p><p><strong>Try it:</strong> Move on to external <span class="flaticon-technology-2"></span>databases.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will have a look at the metadata.</p></div>'
+                    }, // Load product layer
+                {
+                    target: '.sidebar',
+                    position: {
+                        top: '300px',
+                        right: '420px'
                     },
+                    className: 'anno-width-500',
+                    arrowPosition: 'center-right',
+                    buttons: [
+                        AnnoButton.BackButton,
+                        {
+                            text: 'Continue',
+                            click: function (anno, evt) {
+                                anno.switchToChainNext();
+                            }
+                        }
+                    ],
+                    onShow: function (anno, $target, $annoElem) {
+
+                        //open metadata
+                        show_metadata("open");
+
+
+                        // prevent all click events (except of ... )
+                        var handler = function (e) {
+                            console.log(e);
+                            // Allow preselection of overview tab; allow selection of products
+                            if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("fa-file")) {
+
+                            }
+                            else {
+                                e.stopPropagation();
+                            }
+                        }
+                        $target[0].addEventListener('click', handler, true);
+                        return handler
+                    },
+                    onHide: function (anno, $target, $annoElem, handler) {
+                        $target[0].removeEventListener('click', handler, true);
+                        show_metadata("hide");
+
+
+                    },
+                    content: '<h4>Wetland Product Dataset Metadata</h4><div><p></p>' +
+                    '<p>...some text' +
+                    '</p>' +
+
+                    '<p></p><p>In the <strong>next step</strong> we will move to satellite data.</p></div>'
+                }, // Show Metadata for Product
+                    {
+                        target: '.sidebar',
+                        position: {
+                            top: '6em',
+                            right: '420px'
+                        },
+                        className: 'anno-width-500',
+                        arrowPosition: 'center-right',
+                        buttons: [
+                            AnnoButton.BackButton,
+                            {
+                                text: 'Continue',
+                                click: function (anno, evt) {
+                                    anno.switchToChainNext();
+                                }
+                            }
+                        ],
+                        onShow: function (anno, $target, $annoElem) {
+
+                            //ensure products is shown
+                            select_tab("satdata");
+
+                            // prevent all click events (except of checkboxes)
+                            var handler = function (e) {
+
+                                // Allow preselection of overview tab; allow selection of products
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-space-satellite-station") ) {
+
+                                }
+                                else {
+                                    e.stopPropagation();
+                                }
+                            }
+                            $target[0].addEventListener('click', handler, true);
+                            return handler
+                        },
+                        onHide: function (anno, $target, $annoElem, handler) {
+                            $target[0].removeEventListener('click', handler, true)
+                        },
+                        content: '<h4>Satellite Data</h4><div>' +
+                        '<p>Here you find ....</p>' +
+                        '<p></p><p>In the <strong>next step</strong> we will move to external database.</p></div>'
+                    }, // Satellite data ,
                     {
                         target: '.sidebar',
                         position: {
@@ -1237,8 +1403,8 @@ angular.module('webgisApp')
                             var handler = function (e) {
 
                                 // Allow preselection of overview tab; allow selection of products
-                                if (e.target.className === "accordion-toggle" || e.target.className === "flaticon-layers ng-binding ng-scope" || e.target.id === "only_layer" || e.target.id.substring(0, 9) === "layer_vis") {
-                                    if (e.target.id.substring(0, 9) === "layer_vis") {
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-layers") || e.target.id === "only_layer" || e.target.id === "layer_vis_2551") {
+                                    if (e.target.id === "layer_vis_2551") {
                                         anno.switchToChainNext();
                                     }
                                 }
@@ -1254,8 +1420,60 @@ angular.module('webgisApp')
                         },
                         content: '<h4>External Databases </h4><div>' +
                         '<p>Here you find external databases and information source related to wetlands</p>' +
-                        '<p></p><p><strong>Try it:</strong> Select an external global map (e.g. Global -> Global Surface Water -> Maximum Water extent).</p></div>'
-                    },
+                        '<p></p><p>In the <strong>next step</strong> we will select an external global map (Global Surface Water -> Maximum Water extent).</p></div>'
+                    }, // External DB
+                    {
+                        target: '.sidebar',
+                        position: {
+                            top: '100px',
+                            right: '420px'
+                        },
+                        arrowPosition: 'center-right',
+                        className: 'anno-width-500',
+
+                        buttons: [
+                            AnnoButton.BackButton,
+                            {
+                                text: 'Continue',
+                                click: function (anno, evt) {
+                                    anno.switchToChainNext();
+                                }
+                            }
+                        ],
+                        onShow: function (anno, $target, $annoElem) {
+
+                            //ensure products is shown
+                            //select_tab("externaldb");
+                            $cookies.hasNotifiedAboutLayers = true;
+                            load_and_show_layer(4, "externaldb", "2551", 1);
+
+
+
+                            // prevent all click events (except of checkboxes)
+                            var handler = function (e) {
+
+                                // Allow preselection of overview tab; allow selection of products
+                                // if (e.target.className === "accordion-toggle" || e.target.className === "flaticon-layers ng-binding ng-scope" || e.target.id === "only_layer" || e.target.id.substring(0,9) === "layer_vis" ) {
+
+                                //  }
+                                // else {
+                                // e.stopPropagation();
+                                // }
+                            }
+                            $target[0].addEventListener('click', handler, true);
+                            return handler
+                        },
+                        onHide: function (anno, $target, $annoElem, handler) {
+
+
+
+                            $target[0].removeEventListener('click', handler, true);
+                            $cookies.hasNotifiedAboutLayers = false;
+                        },
+                        content: '<h4>Add External Layer</h4><div>' +
+                        '<p>some text ...</p>' +
+                        '<p></p> In the <strong>next step</strong> ....</p></div>'
+                    }, // Select external LAyer
                     {
                         target: '#active_layer',
                         position: {
@@ -1313,7 +1531,7 @@ angular.module('webgisApp')
                         content: '<h4>Active Layer</h4><div>' +
                         '<p>Here you find all activated layer. You can hide, remove or change the order. In addition you can do the same actions as on the left side (e.g. show metadata).</p>' +
                         '<p></p><p><strong>Try it:</strong> Change the order and transparency of the layer.</p></div>'
-                    }
+                    } // Active Layer
                     //,
                     //{target: '.map-controls-wrapper', content: 'This is an annotation', position: 'bottom'}
                 ]
