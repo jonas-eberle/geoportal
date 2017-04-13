@@ -37,15 +37,11 @@ angular.module('webgisApp')
                     })
                 }));
 
-                // get selectInteraction from map
-                var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
-                    return interaction instanceof ol.interaction.Select;
-                });
-                selectInteraction[0].getFeatures().clear();
-                selectInteraction[0].getFeatures().push(wetlandFeature);
+                mapviewer.selectInteraction.getFeatures().clear();
+                mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
 
                 // reset style of previously selected feature
-                if (mapviewer.currentFeature !== null) {
+                if (mapviewer.currentFeature !== null && mapviewer.currentFeature.getId() !== wetlandFeature.getId()) {
                     mapviewer.currentFeature.setStyle(null);
                 }
                 // save the currently selected feature
@@ -807,7 +803,7 @@ angular.module('webgisApp')
 
         var changeWetlandFeatureStyle = function () {
 
-            var wetlandFeatureNewStyle = mapviewer.currentFeature
+            var wetlandFeatureNewStyle = mapviewer.currentFeature;
 
             wetlandFeatureNewStyle.setStyle(new ol.style.Style({
                 stroke: new ol.style.Stroke({
@@ -876,7 +872,7 @@ angular.module('webgisApp')
                         target = 'li.flaticon-technology-2 a';
                         break;
                 }
-                ;
+
                 try {
                     $(target).click(); // open tab
                 } catch (e) {
@@ -960,7 +956,7 @@ angular.module('webgisApp')
             $rootScope.$broadcast("mapviewer.alllayersremoved");
 
              mapviewer.map.getView().fit(
-                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection),
+                ol.proj.transformExtent(mapviewer.maxExtent, 'EPSG:4326', mapviewer.displayProjection),
                 { size: mapviewer.map.getSize() }
              );
         }
@@ -1061,13 +1057,13 @@ angular.module('webgisApp')
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
-                                console.log(e)
+                                console.log(e);
                                 if (e.target.htmlFor === "cb_testmapping" || e.target.id === "cb_testmapping" || e.target.htmlFor === "cb_groupbycountry" || e.target.id === "cb_groupbycountry" || e.target.id === "link_wetland_list") {
                                 }
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1111,7 +1107,7 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
