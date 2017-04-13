@@ -34,13 +34,13 @@ Prior to any mapviewer request you need to edit the mapviewer and adjust the tem
 ## Main frontend libraries
 
 * Bootstrap v3.3.1
-* OpenLayers v3.4.0
+* OpenLayers v4.0.1
 * jQuery v1.11.1
 * AngularJS v1.3.10
 * bootbox.js v4.3.0
 
 ## Anchors to wetlands and products
-#/wetland/4/ --> open wetland with id 4
-#/wetland/4/product/ --> open wetland with id 4 and select products
-#/wetland/4/product/1932 --> open wetland with id 4, select product, add layer with id 1932 and open menu
+#/wetland/4/ --> open wetland with id 4  
+#/wetland/4/product/ --> open wetland with id 4 and select products  
+#/wetland/4/product/1932 --> open wetland with id 4, select product, add layer with id 1932 and open menu  
 #/wetland/4/product/2551_1932 --> open wetland with id 4, select products, add layer with id 2551 and 1932 and open menu (type (e.g. "product") should fit to last layer id --> #/wetland/4/externaldb/1932_2551 )
