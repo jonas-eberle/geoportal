@@ -37,11 +37,15 @@ angular.module('webgisApp')
                     })
                 }));
 
-                mapviewer.selectInteraction.getFeatures().clear();
-                mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
+                // get selectInteraction from map
+                var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
+                    return interaction instanceof ol.interaction.Select;
+                });
+                selectInteraction[0].getFeatures().clear();
+                selectInteraction[0].getFeatures().push(wetlandFeature);
 
                 // reset style of previously selected feature
-                if (mapviewer.currentFeature !== null && mapviewer.currentFeature.getId() !== wetlandFeature.getId()) {
+                if (mapviewer.currentFeature !== null) {
                     mapviewer.currentFeature.setStyle(null);
                 }
                 // save the currently selected feature
@@ -803,7 +807,7 @@ angular.module('webgisApp')
 
         var changeWetlandFeatureStyle = function () {
 
-            var wetlandFeatureNewStyle = mapviewer.currentFeature;
+            var wetlandFeatureNewStyle = mapviewer.currentFeature
 
             wetlandFeatureNewStyle.setStyle(new ol.style.Style({
                 stroke: new ol.style.Stroke({
@@ -872,7 +876,7 @@ angular.module('webgisApp')
                         target = 'li.flaticon-technology-2 a';
                         break;
                 }
-
+                ;
                 try {
                     $(target).click(); // open tab
                 } catch (e) {
@@ -956,7 +960,7 @@ angular.module('webgisApp')
             $rootScope.$broadcast("mapviewer.alllayersremoved");
 
              mapviewer.map.getView().fit(
-                ol.proj.transformExtent(mapviewer.maxExtent, 'EPSG:4326', mapviewer.displayProjection),
+                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection),
                 { size: mapviewer.map.getSize() }
              );
         }
@@ -1057,13 +1061,13 @@ angular.module('webgisApp')
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
-                                console.log(e);
+                                console.log(e)
                                 if (e.target.htmlFor === "cb_testmapping" || e.target.id === "cb_testmapping" || e.target.htmlFor === "cb_groupbycountry" || e.target.id === "cb_groupbycountry" || e.target.id === "link_wetland_list") {
                                 }
                                 else {
                                     e.stopPropagation();
                                 }
-                            };
+                            }
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1107,7 +1111,7 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            };
+                            }
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1163,13 +1167,13 @@ angular.module('webgisApp')
                         },
                         content: '<h4>Wetlands Overview</h4><div><p>Overview of all available information for a wetland:</p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
-                        '<li><u>Indicator</u>.Wetland indicators derived on the basis of satellite images / SWOS products.</li>' +
-                        '<li><u>Products</u>. Maps produced with SWOS tools.</li>' +
-                        '<li><u>Satellite data</u>. Overview on all available satellite data.</li>' +
-                        '<li><u>Photos</u>. Uploaded and linked (source: Panoramio) photos.</li>' +
-                        '<li><u>Videos</u>. Uploaded and linked (source: Youtube) videos.</li>' +
-                        '<li><u>External databases</u>. Compilation of other external data sources (e.g. databases, maps, ...).</li></ol>' +
-                        '<p></p><p>In the <strong>next step</strong> we will have a closer look at <u>Products</u>.</p></div>'
+                        '<li><span class="anno-highlight">Indicator</span>.Wetland indicators derived on the basis of satellite images / SWOS products.</li>' +
+                        '<li><span class="anno-highlight">Products</span>. Maps produced with SWOS tools.</li>' +
+                        '<li><span class="anno-highlight">Satellite data</span>. Overview on all available satellite data.</li>' +
+                        '<li><span class="anno-highlight">Photos</span>. Uploaded and linked (source: Panoramio) photos.</li>' +
+                        '<li><span class="anno-highlight">Videos</span>. Uploaded and linked (source: Youtube) videos.</li>' +
+                        '<li><span class="anno-highlight">External databases</span>. Compilation of other external data sources (e.g. databases, maps, ...).</li></ol>' +
+                        '<p></p><p>In the <strong>next step</strong> we will have a closer look at <span class="anno-highlight">Products</span>.</p></div>'
                     }, // Wetland overview
                     {
                         target: '.sidebar',
@@ -1212,7 +1216,7 @@ angular.module('webgisApp')
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Wetland Products</h4><div><p>Products derived with the help of <u>SWOS tools</u> on the basis of satellite images. Available products are:  </p>' +
+                        content: '<h4>Wetland Products</h4><div><p>Products derived with the help of <span class="anno-highlight">SWOS tools</span> on the basis of satellite images. Available products are:  </p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li>Water Quality</li>' +
                         '<li>Land Surface Temperature Trend</li>' +
@@ -1222,7 +1226,7 @@ angular.module('webgisApp')
                         '<li>Surface Soil Moisture</li></ol>' +
                         '<p>(Please keep in mind not all products can and will be derived for each wetland.)</p>' +
 
-                        '<p></p>In the <strong>next step</strong> we will choose <u>Land Surface Temperature Trend</u> and select the dataset <u>Land Surface Temperature Trend 2000 to 2015</u></p></div>'
+                        '<p></p>In the <strong>next step</strong> we will choose <span class="anno-highlight">Land Surface Temperature Trend</span> and select the dataset <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2015</span></p></div>'
                     }, // Wetland Product
                     {
                         target: '.sidebar',
@@ -1279,7 +1283,7 @@ angular.module('webgisApp')
                         '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer</p></li>' +
                         '<li><p><span class="fa fa-share-alt fa-lg"></span> and create a permanent link to share it.</p></li></ol></p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will have a look at the metadata.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will open the metadata.</p></div>'
                     }, // Load product layer
                 {
                     target: '.sidebar',
@@ -1325,10 +1329,10 @@ angular.module('webgisApp')
 
                     },
                     content: '<h4>Wetland Product Dataset Metadata</h4><div><p></p>' +
-                    '<p>...some text' +
+                    '<p>Here you find more information about a layer (e.g. about its lineage)' +
                     '</p>' +
 
-                    '<p></p><p>In the <strong>next step</strong> we will move to satellite data.</p></div>'
+                    '<p></p><p>In the <strong>next step</strong> we will close the metadata info box and move to satellite data.</p></div>'
                 }, // Show Metadata for Product
                     {
                         target: '.sidebar',
@@ -1370,7 +1374,7 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
                         content: '<h4>Satellite Data</h4><div>' +
-                        '<p>Here you find ....</p>' +
+                        '<p>Here you find a nice overview about all available satellite data covering the wetland area. In the furture it will be also possible to also download them here.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will move to external database.</p></div>'
                     }, // Satellite data ,
                     {
@@ -1415,7 +1419,7 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
                         content: '<h4>External Databases </h4><div>' +
-                        '<p>Here you find external databases and information source related to wetlands</p>' +
+                        '<p>Here you find external databases and information sources related to the selected wetland on the regional, country, continent and global level. To search for external layer use the <span class="anno-highlight">onlyLayer</span> checkbox. You can add those layers in the same way as pthe roduct maps.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will select an external global map (Global Surface Water -> Maximum Water extent).</p></div>'
                     }, // External DB
                     {
@@ -1468,7 +1472,7 @@ angular.module('webgisApp')
                         },
                         content: '<h4>Add External Layer</h4><div>' +
                         '<p>some text ...</p>' +
-                        '<p></p> In the <strong>next step</strong> ....</p></div>'
+                        '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected maps.</p></div>'
                     }, // Select external LAyer
                     {
                         target: '#active_layer',
@@ -1525,8 +1529,8 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Active Layer</h4><div>' +
-                        '<p>Here you find all activated layer. You can hide, remove or change the order. In addition you can do the same actions as on the left side (e.g. show metadata).</p>' +
-                        '<p></p><p><strong>Try it:</strong> Change the order and transparency of the layer.</p></div>'
+                        '<p>Here you find all activated layer. You can hide, remove or change the order. In addition you can do the same actions as on the left side (e.g. show metadata, change the transparency, ...).</p>' +
+                        '<p></p><p>In the <strong>next step </strong> we will move to the gernal map control functions.</p></div>'
                     } // Active Layer
                     //,
                     //{target: '.map-controls-wrapper', content: 'This is an annotation', position: 'bottom'}
