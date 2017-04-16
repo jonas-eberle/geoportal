@@ -56,6 +56,11 @@ class CSW(models.Model):
                         ogc_layer = online.name
                         ogc_type = 'WMS'
                         break
+                    #elif 'WebMapTileService' in online.protocol:
+                    #    ogc_link = online.url.replace('http://earthcare.ads.uni-jena.de:8080/geoserver', 'http://artemis.geogr.uni-jena.de/geoserver')
+                    #    ogc_layer = online.name
+                    #    ogc_type = 'WMTS'
+                    #    break
                     elif 'WebFeatureService' in online.protocol:
                         ogc_link = online.url.replace('http://earthcare.ads.uni-jena.de:8080/geoserver', 'http://artemis.geogr.uni-jena.de/geoserver')
                         ogc_layer = online.name
@@ -119,10 +124,10 @@ class CSW(models.Model):
                                 'language': record.identification.resourcelanguage,
                                 'characterset': '',
                                 'format': record.distribution.format,
-                                'west': record.identification.bbox.minx,
-                                'east': record.identification.bbox.maxx,
-                                'north': record.identification.bbox.maxy,
-                                'south': record.identification.bbox.miny,
+                                'west': float(record.identification.bbox.minx),
+                                'east': float(record.identification.bbox.maxx),
+                                'north': float(record.identification.bbox.maxy),
+                                'south': float(record.identification.bbox.miny),
                                 'alternatetitle': record.identification.alternatetitle,
                                 'geo_description': '',
                                 'representation_type': '',

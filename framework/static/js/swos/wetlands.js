@@ -195,6 +195,7 @@ angular.module('webgisApp')
                     $scope.filtered_testmapping = true;
                     // show: true, when id is less or equal 9
                     prop['show'] = (prop['id'] <= 9);
+					prop['show'] = (prop['products'].length > 0);
 
                     $scope.wetlands.push(prop);
                     var without_geom = {
@@ -454,7 +455,8 @@ angular.module('webgisApp')
                 $scope.filterReset();
             } else {
                 $.each($scope.wetlands_without_geom, function(){
-                    this['show'] = (this['id'] <= 9);
+                    //this['show'] = (this['id'] <= 9);
+					this['show'] = (this['products'].length > 0);
                 })
             }
         };
@@ -969,7 +971,7 @@ angular.module('webgisApp')
 
             // Open Metadata
             if(action === "open"){
-                $("#layer_vis_2836").closest("div").find("i.fa-file-text-o").parents(0).trigger("click")
+                $("#layer_vis_2972").closest("div").find("i.fa-file-text-o").parents(0).trigger("click")
 
                 $timeout(function (){
                   $(".anno-overlay").css('z-index', '1032');
@@ -1201,8 +1203,8 @@ angular.module('webgisApp')
                             var handler = function (e) {
 
                                 // Allow preselection of product tab; allow accordion; allow layer selection
-                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.id === "layer_vis_2836") {
-                                    if (e.target.id === "layer_vis_2836") {
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.id === "layer_vis_2972") {
+                                    if (e.target.id === "layer_vis_2972") {
                                         anno.switchToChainNext();
                                     }
                                 }
@@ -1254,7 +1256,7 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //add layer (max one layer)
-                            load_and_show_layer(4, "product", "2836", 0);
+                            load_and_show_layer(4, "product", "2972", 0);
 
                             // prevent all click events (except of ... )
                             var handler = function (e) {
@@ -1464,9 +1466,6 @@ angular.module('webgisApp')
                             return handler
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
-
-
-
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.hasNotifiedAboutLayers = false;
                         },

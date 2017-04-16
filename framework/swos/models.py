@@ -65,6 +65,7 @@ class Wetland(models.Model):
     def satellitedata(self, forceUpdate=False):
         if os.path.isfile(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json') and forceUpdate == False:
             with open(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json', 'r') as f:
+                import json
                 data = json.load(f)
                 return data
         else:
@@ -74,82 +75,216 @@ class Wetland(models.Model):
             sentinel = None
             sentinel = api.SentinelDownloader('USER_ANPASSEN', 'PASSWD_ANPASSEN', api_url='https://scihub.copernicus.eu/dhus/')
             sentinel.set_geometries(str(self.geom.wkt))
-            sentinel.search('S1A*', min_overlap=0.01, productType='GRD', sensoroperationalmode='IW')
+            sentinel.search('S1*', min_overlap=0.01, productType='GRD', sensoroperationalmode='IW')
             s1_sum = sentinel.get_summary()
-            data.append({'sensor': 'Sentinel-1A (GRD,IW)', 'count': int(s1_sum['count']), 'begindate': int(s1_sum['begindate']), 'enddate': int(s1_sum['enddate'])})
+            data.append({'sensor': 'Sentinel-1 (GRD,IW)', 'count': int(s1_sum['count']), 'begindate': int(s1_sum['begindate']), 'enddate': int(s1_sum['enddate'])})
             sentinel.clean()
             
-            sentinel.search('S2A*', min_overlap=0.01)
+            sentinel.search('S2*', min_overlap=0.01)
             s2_sum = sentinel.get_summary()
-            data.append({'sensor': 'Sentinel-2A', 'count': int(s2_sum['count']), 'begindate': int(s2_sum['begindate']), 'enddate': int(s2_sum['enddate'])})
+            data.append({'sensor': 'Sentinel-2', 'count': int(s2_sum['count']), 'begindate': int(s2_sum['begindate']), 'enddate': int(s2_sum['enddate'])})
             sentinel.clean()
             
-            import psycopg2
-            import psycopg2.extras
-            conn = psycopg2.connect("dbname=landsat user=ANPASSEN password=ANPASSEN")
-            cur = conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
-            sql = "select sensor, count(sceneid), EXTRACT(YEAR from min(acquisitiondate)) as begindate, EXTRACT(YEAR FROM max(acquisitiondate)) as enddate from landsat where ST_Intersects(%s::geometry, the_geom) GROUP by sensor ORDER BY enddate DESC, begindate DESC;"
-            wkt = 'SRID=4326;'+self.geom.wkt
-            cur.execute(sql, (wkt,))
-            for line in cur.fetchall():
-                data.append({'sensor': line.sensor.strip(), 'count': int(line.count), 'begindate': int(line.begindate), 'enddate': int(line.enddate)})
-            cur.close()
-            conn.close()
+            sentinel.search('S3*', min_overlap=0.01)
+            s3_sum = sentinel.get_summary()
+            data.append({'sensor': 'Sentinel-3', 'count': int(s3_sum['count']), 'begindate': int(s3_sum['begindate']), 'enddate': int(s3_sum['enddate'])})
+            sentinel.clean()
+            
+            import requests, json
+            login_url = 'https://earthexplorer.usgs.gov/inventory/json/login'
+            login = requests.post(url=login_url, data={'jsonRequest':'{"username":"jonaseberle","password":"Moinmoin123#"}'}).json()
+            api_key = login['data']
+            
+            search_url = 'https://earthexplorer.usgs.gov/inventory/json/search'
+            search_params = {
+                 'apiKey': api_key,
+                 'datasetName': '',
+                 'includeUnknownCloudCover': True,
+                 'lowerLeft': {'latitude': self.geom.extent[1],'longitude': self.geom.extent[0]},
+                 'maxResults': '40000',
+                 'node': 'EE',
+                 'sortOrder': 'ASC',
+                 'startingNumber': '1',
+                 'upperRight': {'latitude': self.geom.extent[3], 'longitude': self.geom.extent[2]}
+            }
+            
+            from shapely.wkt import loads
+            geom = loads(self.geom.wkt)
+            from datetime import datetime
+            
+            from shapely.geometry import Polygon
+            collections = ['LANDSAT_8', 'LSR_LANDSAT_ETM_C1', 'LSR_LANDSAT_TM_C1', 'LANDSAT_MSS']
+            landsat_results = []
+            print 'Search for Landsat data'
+            for col in collections:
+                search_params['datasetName'] = col
+                search = requests.get(search_url+'?jsonRequest='+json.dumps(search_params)).json()
+                if search['data'] != None:
+                    print col+': '+str(search['data']['totalHits'])
+                    landsat_results.extend(search['data']['results'])
+                    landsat_data = []
+                    landsat_dates = []
+                    for scene in search['data']['results']:
+                        polygon = Polygon([(scene['lowerLeftCoordinate']['longitude'], scene['lowerLeftCoordinate']['latitude']), (scene['upperLeftCoordinate']['longitude'], scene['upperLeftCoordinate']['latitude']), (scene['upperRightCoordinate']['longitude'], scene['upperRightCoordinate']['latitude']), (scene['lowerRightCoordinate']['longitude'], scene['lowerRightCoordinate']['latitude'])])
+                        if polygon.intersects(geom):
+                            landsat_data.append(scene)
+                            landsat_dates.append(datetime.strptime(scene['acquisitionDate'], '%Y-%m-%d'))                                
+                    data.append({'sensor': col, 'count': len(landsat_data), 'begindate': min(landsat_dates), 'enddate': max(landsat_dates)})
+            
+            #import psycopg2
+            #import psycopg2.extras
+            #conn = psycopg2.connect("dbname=landsat user=ANPASSEN password=ANPASSEN")
+            #cur = conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
+            #sql = "select sensor, count(sceneid), EXTRACT(YEAR from min(acquisitiondate)) as begindate, EXTRACT(YEAR FROM max(acquisitiondate)) as enddate from landsat where ST_Intersects(%s::geometry, the_geom) GROUP by sensor ORDER BY enddate DESC, begindate DESC;"
+            #wkt = 'SRID=4326;'+self.geom.wkt
+            #cur.execute(sql, (wkt,))
+            #for line in cur.fetchall():
+            #    data.append({'sensor': line.sensor.strip(), 'count': int(line.count), 'begindate': int(line.begindate), 'enddate': int(line.enddate)})
+            #cur.close()
+            #conn.close()
             
             with open(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json','w') as f:
                 json.dump(data, f)
             return data
     
     def generateSatelliteDataStatistics(self, forceUpdate=True):        
-        import psycopg2
-        import psycopg2.extras
-        conn = psycopg2.connect("dbname=landsat user=ANPASSEN password=ANPASSEN")
-        cur = conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
-        sql = "select count(sceneid) as counter, satellitenumber, year from landsat where ST_Intersects(%s::geometry, the_geom) GROUP BY satellitenumber, year ORDER BY year ASC;"
-        wkt = 'SRID=4326;'+self.geom.wkt
-        cur.execute(sql, (wkt,))
-        #print cur.query
         stats = {}
-        for line in cur.fetchall():
-            if line.satellitenumber == None:
-                continue
-            if int(line.year) not in stats:
-                stats[int(line.year)] = {'LANDSAT_1': 0,'LANDSAT_2': 0,'LANDSAT_3': 0,'LANDSAT_4': 0,'LANDSAT_5': 0,'LANDSAT_7': 0,'LANDSAT_8': 0, 'SENTINEL_1A': 0, 'SENTINEL_2A': 0}
-            stats[int(line.year)][line.satellitenumber.strip()] = int(line.counter)
+        stats_table = []
         
-        cur.close()
-        conn.close()
+        import requests, json
+        from datetime import datetime
+        login_url = 'https://earthexplorer.usgs.gov/inventory/json/login'
+        login = requests.post(url=login_url, data={'jsonRequest':'{"username":"jonaseberle","password":"Moinmoin123#"}'}).json()
+        api_key = login['data']
         
+        search_url = 'https://earthexplorer.usgs.gov/inventory/json/search'
+        max_results = 100
+        search_params = {
+             'apiKey': api_key,
+             'datasetName': '',
+             'includeUnknownCloudCover': True,
+             'lowerLeft': {'latitude': self.geom.extent[1],'longitude': self.geom.extent[0]},
+             'maxResults': max_results,
+             'node': 'EE',
+             'sortOrder': 'ASC',
+             'startingNumber': '1',
+             'upperRight': {'latitude': self.geom.extent[3], 'longitude': self.geom.extent[2]}
+        }
+        
+        from shapely.wkt import loads
+        geom = loads(self.geom.wkt)
+        
+        from shapely.geometry import Polygon
+        collections = ['LANDSAT_8', 'LSR_LANDSAT_ETM_C1', 'LSR_LANDSAT_TM_C1', 'LANDSAT_MSS']
+        collections = ['LANDSAT_8', 'LANDSAT_ETM_C1', 'LANDSAT_TM', 'LANDSAT_MSS']
+        landsat_results_all = []
+        print 'Search for Landsat data'
+        for col in collections:
+            print col
+            landsat_results_col = []
+            search_params['datasetName'] = col
+            startingNumber = 1
+            while startingNumber > 0:
+                search_params['startingNumber'] = startingNumber
+                print 'startingNumber: '+str(startingNumber)
+                search = requests.get(search_url+'?jsonRequest='+json.dumps(search_params)).json()
+                if search['data'] != None:
+                    print 'totalHits: '+str(search['data']['totalHits'])
+                    print 'nextRecord: '+str(search['data']['nextRecord'])
+                    print 'lastRecord: '+str(search['data']['lastRecord'])
+                    landsat_results_all.extend(search['data']['results'])
+                    landsat_results_col.extend(search['data']['results'])
+                    if search['data']['nextRecord'] > search['data']['lastRecord']:
+                        startingNumber = search['data']['nextRecord']
+                    else:
+                        startingNumber = -1
+                        break
+                else:
+                    print search
+                    return False
+                        
+            data = {}
+            landsat_dates = []
+            for scene in landsat_results_col:
+                landsat_dates.append(datetime.strptime(scene['acquisitionDate'], '%Y-%m-%d'))
+                polygon = Polygon([(scene['lowerLeftCoordinate']['longitude'], scene['lowerLeftCoordinate']['latitude']), (scene['upperLeftCoordinate']['longitude'], scene['upperLeftCoordinate']['latitude']), (scene['upperRightCoordinate']['longitude'], scene['upperRightCoordinate']['latitude']), (scene['lowerRightCoordinate']['longitude'], scene['lowerRightCoordinate']['latitude'])])
+                if polygon.intersects(geom):
+                    year = int(scene['acquisitionDate'].split('-')[0])
+                    if year not in data:
+                        data[year] = []
+                    data[year].append(scene)
+            
+            stats_table.append({'sensor': col, 'count': len(landsat_results_col), 'begindate': min(landsat_dates).strftime('%Y'), 'enddate': max(landsat_dates).strftime('%Y')})
+            
+            for year in data:
+                if year not in stats:
+                    stats[year] = {'LANDSAT_MSS': 0,'LANDSAT_TM': 0,'LANDSAT_ETM_C1': 0, 'LANDSAT_8': 0,'SENTINEL_1': 0, 'SENTINEL_2': 0}
+                stats[year][col] = len(data[year])
+                
+        
+        with open(settings.MEDIA_ROOT+'cache/satdata_landsat_'+str(self.id)+'.json','w') as f:
+            json.dump(landsat_results_all, f)
+        
+        #import psycopg2
+        #import psycopg2.extras
+        #conn = psycopg2.connect("dbname=landsat user=ANPASSEN password=ANPASSEN")
+        #cur = conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
+        #sql = "select count(sceneid) as counter, satellitenumber, year from landsat where ST_Intersects(%s::geometry, the_geom) GROUP BY satellitenumber, year ORDER BY year ASC;"
+        #wkt = 'SRID=4326;'+self.geom.wkt
+        #cur.execute(sql, (wkt,))
+        ##print cur.query
+        #stats = {}
+        #for line in cur.fetchall():
+        #    if line.satellitenumber == None:
+        #        continue
+        #    if int(line.year) not in stats:
+        #        stats[int(line.year)] = {'LANDSAT_1': 0,'LANDSAT_2': 0,'LANDSAT_3': 0,'LANDSAT_4': 0,'LANDSAT_5': 0,'LANDSAT_7': 0,'LANDSAT_8': 0, 'SENTINEL_1A': 0, 'SENTINEL_2A': 0}
+        #    stats[int(line.year)][line.satellitenumber.strip()] = int(line.counter)
+        # 
+        #cur.close()
+        #conn.close()
+        
+        print 'Search for Sentinel data'
         from . import sentinel_api_search as api
         sentinel = None
-        sentinel = api.SentinelDownloader('USER_ANPASSEN', 'PASSWD_ANPASSEN', api_url='https://scihub.copernicus.eu/dhus/')
+        sentinel = api.SentinelDownloader('jeberle', 'jonas', api_url='https://scihub.copernicus.eu/apihub/')
         sentinel.set_geometries(str(self.geom.wkt))
         sentinel.search('S1A*', min_overlap=0.01, productType='GRD', sensoroperationalmode='IW')
+        sentinel.search('S1B*', min_overlap=0.01, productType='GRD', sensoroperationalmode='IW')
+        s1_sum = sentinel.get_summary()
+        stats_table.append({'sensor': 'Sentinel-1 (GRD,IW)', 'count': int(s1_sum['count']), 'begindate': int(s1_sum['begindate']), 'enddate': int(s1_sum['enddate'])})
         s1_sum = sentinel.get_summary_by_year()
+            
         sentinel.clean()
         for i in s1_sum:
             if i not in stats:
-                stats[i] = {'LANDSAT_1': 0,'LANDSAT_2': 0,'LANDSAT_3': 0,'LANDSAT_4': 0,'LANDSAT_5': 0,'LANDSAT_7': 0,'LANDSAT_8': 0, 'SENTINEL_1A': 0, 'SENTINEL_2A': 0}
-            stats[i]['SENTINEL_1A'] = s1_sum[i]
+                stats[i] = {'LANDSAT_MSS': 0,'LANDSAT_TM': 0,'LANDSAT_ETM_C1': 0, 'LANDSAT_8': 0,'SENTINEL_1': 0, 'SENTINEL_2': 0}
+            stats[i]['SENTINEL_1'] = s1_sum[i]
         
         sentinel.search('S2A*', min_overlap=0.01)
+        sentinel.search('S2B*', min_overlap=0.01)
+        s2_sum = sentinel.get_summary()
+        stats_table.append({'sensor': 'Sentinel-2', 'count': int(s2_sum['count']), 'begindate': int(s2_sum['begindate']), 'enddate': int(s2_sum['enddate'])})
         s2_sum = sentinel.get_summary_by_year()
         sentinel.clean()
         for i in s2_sum:
             if i not in stats:
-                stats[i] = {'LANDSAT_1': 0,'LANDSAT_2': 0,'LANDSAT_3': 0,'LANDSAT_4': 0,'LANDSAT_5': 0,'LANDSAT_7': 0,'LANDSAT_8': 0, 'SENTINEL_1A': 0, 'SENTINEL_2A': 0}
-            stats[i]['SENTINEL_2A'] = s2_sum[i]
-            
+                stats[i] = {'LANDSAT_MSS': 0,'LANDSAT_TM': 0,'LANDSAT_ETM_C1': 0, 'LANDSAT_8': 0,'SENTINEL_1': 0, 'SENTINEL_2': 0}
+            stats[i]['SENTINEL_2'] = s2_sum[i]
+        
+        with open(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json','w') as f:
+            json.dump(stats_table, f)
+        
         data = []
         for i in xrange(min(stats), max(stats)+1):
             if i in stats:
                 item = stats[i]
-                data.append([i, item['LANDSAT_1'], item['LANDSAT_2'], item['LANDSAT_3'], item['LANDSAT_4'], item['LANDSAT_5'], item['LANDSAT_7'], item['LANDSAT_8'], item['SENTINEL_1A'], item['SENTINEL_2A']])
+                data.append([i, item['LANDSAT_MSS'], item['LANDSAT_TM'], item['LANDSAT_ETM_C1'], item['LANDSAT_8'], item['SENTINEL_1'], item['SENTINEL_2']])
             else:
-                data.append([i, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                data.append([i, 0, 0, 0, 0, 0, 0])
         
         import pandas as pd
-        df2 = pd.DataFrame(data, columns=['year', 'LANDSAT_1', 'LANDSAT_2', 'LANDSAT_3', 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7', 'LANDSAT_8', 'SENTINEL_1A', 'SENTINEL_2A'])
+        df2 = pd.DataFrame(data, columns=['year', 'LANDSAT_MSS', 'LANDSAT_TM', 'LANDSAT_ETM_C1', 'LANDSAT_8', 'SENTINEL_1', 'SENTINEL_2'])
         df2.set_index('year',inplace=True)
         
         import matplotlib.pyplot as plt
@@ -163,7 +298,7 @@ class Wetland(models.Model):
         plt.xticks(fontsize=8)  
         plt.yticks(fontsize=8)
         plt.figtext(0.5, 0.915, 'Please note: Scenes are not filtered by cloud coverage!', fontsize=8, horizontalalignment='center')
-        plt.figtext(0.90, -0.0025, 'Created by EU H2020 SWOS project on 2016-09-08', fontsize=6, horizontalalignment='right')
+        plt.figtext(0.90, -0.0025, 'Created by EU H2020 SWOS project on 2017-04-15', fontsize=6, horizontalalignment='right')
         
         fig = plt.gcf()
         fig.set_size_inches(12, 6, forward=True)
@@ -401,7 +536,7 @@ class Wetland(models.Model):
             keyword += ' '+self.country+' -Sale -Business -Sex'
             
             from apiclient.discovery import build
-            DEVELOPER_KEY = "ANPASSEN"
+            DEVELOPER_KEY = "AIzaSyA_DlmClJEVqjroE5VWgWmtLR5RaKIfK68"
             PRE_URL = "https://www.youtube.com/watch?v="
             youtube = build('youtube', 'v3', developerKey=DEVELOPER_KEY)
             
@@ -513,7 +648,15 @@ class WetlandLayer(Layer):
             wq_type = ' '.join(self.identifier.split('_')[2:5])
         elif self.product.short_name in ['LULC', 'SWD']:
             wq_type = self.identifier.split('_')[2]
-            date_string = str(self.date_begin.year)
+            if self.date_begin.year == self.date_end.year:
+                date_string = str(self.date_begin.year)
+            else:
+                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+        elif self.product.short_name in ['FloodReg', 'PotWet']:
+            if self.date_begin.year == self.date_end.year:
+                date_string = str(self.date_begin.year)
+            else:
+                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
         elif self.product.short_name in ['LULCC_L', 'LST']:
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         return ' '.join([self.product.name,wq_type, date_string])

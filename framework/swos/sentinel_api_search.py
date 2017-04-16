@@ -94,8 +94,8 @@ class SentinelDownloader(object):
         """
         print('===========================================================')
         print('Search data for platform %s' % platform)
-        if platform != 'S1A*' and platform != 'S2A*':
-            raise Exception('platform parameter has to be S1A or S2A')
+        #if platform != 'S1A*' and platform != 'S2A*':
+        #    raise Exception('platform parameter has to be S1A or S2A')
 
         if download_dir is not None:
             self.set_download_dir(download_dir)
