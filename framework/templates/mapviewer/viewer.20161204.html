@@ -33,12 +33,12 @@
     <![endif]-->
 
     <script src="{% static "lib/turf.min.js" %}"></script>
-    <script src="{% static "lib/ol.js" %}"></script>
-    <link href="{% static "lib/ol.css" %}" rel="stylesheet" />
+    <script src="{% static "lib/ol.js" %}?v=401"></script>
+    <link href="{% static "lib/ol.css" %}?v=401" rel="stylesheet" />
 
     <link href="{% static "lib/anno.css" %}" rel="stylesheet" />
 
-    <link href="{% static "css/swos.css" %}?v=20170325" rel="stylesheet">
+    <link href="{% static "css/swos.css" %}?v=20170414" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -60,7 +60,7 @@
     <link href="{% static "lib/jqueryDateSlider/classic-min.css" %}" rel="stylesheet">
 
     <!--<script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARWJfd0ov-WXWAtbyZjvqayhCDiUJFtPw"></script>
 
     <script type="text/javascript">
         var _paq = _paq || [];
@@ -79,7 +79,7 @@
     <nav class="navbar navbar-default navbar-fixed-top"  role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="http://www.swos-service.eu" target="_blank"><img src="/swos/static/img/swos_logo_60.png" border="0" height="60"></a></div>
+                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="60"></a></div>
             </div>
 
             <!-- TOOLBAR in Navigation für Tablet und Desktop -->
@@ -87,14 +87,14 @@
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl" style="padding-right:0;">
                     <li>
                         <p style="margin-top: 3px;font-size: 0.8em;padding-left: 10px;">
-                            <img src="/swos/static/img/eu.png" alt="EU Logo" align="right" style="height: 45px;">
+                            <img src="/static/img/eu.png" alt="EU Logo" align="right" style="height: 45px;">
                             This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.
                         </p>
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
                 <ul  class="nav navbar-nav pull-right" id="nav-top-right2">
-                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>
+                    <!--<li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>-->
                     <li  class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info.html" %}'"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -236,10 +236,10 @@
                                     </div>
                                     <div class="item_legend" style="margin-left:40px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
                                         <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
-                                            <img ng-src="/swos{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
+                                            <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
                                         </a>
                                         <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" target="_blank">
-                                            <img ng-src="/swos{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
+                                            <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
                                         </a>
                                         <table ng-if="layer.legend_colors">
                                             <tr ng-repeat="item in layer.legend_colors track by $index">
@@ -310,16 +310,18 @@
                                 <option value="">- Filter by product -</option>
                                 <!-- products is an array for each wetland, thus first of all manual list of products -->
                                 <!--<option ng-repeat="option in wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
-                                <option value="LST">Land Surface Temperature Trend</option>
+                                <option value="FloodReg">Flood Regulation</option>
+								<option value="LST">Land Surface Temperature Trend</option>
                                 <option value="LULC">Land Use Land Cover</option>
                                 <option value="LULCC_L">Land Use Land Cover Change</option>
+                                <option value="PotWet">Potential Wetland areas</option>
                                 <option value="SWD">Surface Water Dynamics</option>
                                 <option value="WQ">Water Quality</option>
                             </select>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
                             <input type="checkbox" ng-model="filtered_testmapping" ng-change="filterTestmapping()"
-                                   id="cb_testmapping"/><label for="cb_testmapping">Show only testmapping wetlands</label>
+                                   id="cb_testmapping"/><label for="cb_testmapping">Show only wetlands with products</label>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;padding-top: 0;">
                             <input type="checkbox" ng-model="sortByCountryName" ng-change="setSortOrder()"
@@ -455,7 +457,7 @@
                                             Yearly coverage by sensor
                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_image, 'glyphicon-chevron-right': !satdata_image}"></i>
                                         </accordion-heading>
-                                        <a href="/swos/swos/media/cache/satdata_{{value.id}}.png" ng-click="trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img ng-src="/swos/swos/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
+                                        <a href="/media/cache/satdata_{{value.id}}.png" ng-click="trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
                                     </accordion-group>
                                     <accordion-group is-open="satdata_table">
                                         <accordion-heading>
@@ -486,7 +488,7 @@
 
                                 <div class="note">
                                     <strong>Please note: </strong>
-                                    <p>Official satellite data archives have been queried once on 2016-11-30. Regular updates are planned.</p>
+                                    <p>Official satellite data archives have been queried once on 2017-04-15. Regular updates are planned.</p>
                                     <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
                                     <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
                                 </div>
@@ -503,10 +505,10 @@
                                             <!--<span ng-if="!value.pictures">Loading...</span>-->
                                             <a ng-repeat="picture in value.pictures.photos"
                                                ng-click="'{{picture.photo_title}}'"
-                                               class="fancybox" rel="gallery1" data-fancybox-href="/swos{{ picture.photo_show_url }}"
+                                               class="fancybox" rel="gallery1" data-fancybox-href="{{ picture.photo_show_url }}"
                                                data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) {{picture.photo_title}} ({{picture.owner_name}})"
-                                               href="/swos{{picture.photo_url_thumb}}" target="_blank"><img
-                                                    ng-src="/swos{{picture.photo_url_thumb}}"
+                                               href="{{picture.photo_url_thumb}}" target="_blank"><img
+                                                    ng-src="{{picture.photo_url_thumb}}"
                                                     alt="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     title="{{picture.photo_title}} ({{picture.owner_name}})"
                                                     style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
@@ -674,10 +676,10 @@
 
     <script src="{% static "js/app.js" %}"></script>
     <script src="{% static "js/auth/auth.js" %}"></script>
-    <script src="{% static "js/map/map.js" %}?v=20170325"></script>
+    <script src="{% static "js/map/map.js" %}?v=20170415"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20170313"></script>
 
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170324"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170417"></script>
 
     <script src="{% static "js/dashboard.js" %}"></script>
 
