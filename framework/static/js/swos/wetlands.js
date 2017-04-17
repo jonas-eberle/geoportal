@@ -1035,8 +1035,8 @@ angular.module('webgisApp')
                     },
 
                     content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS Geoportal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
-                    '<p>Please notice that certain functions are deactivated during the tour. If you like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information.</p> ' +
-                    '<p>You can always stop the tour with a click on the black area. To <strong>start</strong> the <strong>tour again </strong>go to the <span class="fa fa-question fa-lg"></span> on the top. Here you will also find information on how to contact us.</p>' +
+                    '<p>Please notice that certain functions are deactivated during the tour. If you like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information on each card.</p> ' +
+                    '<p>You can always stop the tour with a click on the semi-transparent black area. To <strong>start</strong> the <strong>tour again </strong>go to the <span class="fa fa-question fa-lg"></span> on the top. Here you will also find information on how to contact us.</p>' +
                     '</div>'
                 }, // Welcome
                     {
@@ -1077,8 +1077,8 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
                         content: '<h4>Wetland Catalog</h4><div><p>Here you find all wetland sites of the <strong>SWOS project</strong>.</p> ' +
-                        '<p>The preselected wetlands (<span class="anno-highlight">testmapping wetlands</span>) are used as test sites for the development of algorithms and its validation.</p>' +
-                        '<p>To see the full list of wetlands unselect the <span class="anno-highlight">testmapping wetlands</span> or use the provided filter to search for wetlands.</p>' +
+                        '<p>The preselected wetlands already have products developed within the project.</p>' +
+                        '<p>To see the full list of wetlands please unselect the checkbox <span class="anno-highlight">Show only wetlands with products</span> or use the provided filter to search for wetlands.</p>' +
                         '</div>'
                     }, // Wetland Catalog
                     {
@@ -1167,14 +1167,14 @@ angular.module('webgisApp')
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                         },
-                        content: '<h4>Wetlands Overview</h4><div><p>Overview of all available information for a wetland:</p>' +
+                        content: '<h4>Wetlands Overview</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
-                        '<li><span class="anno-highlight">Indicator</span>.Wetland indicators derived on the basis of satellite images / SWOS products.</li>' +
-                        '<li><span class="anno-highlight">Products</span>. Maps produced with SWOS tools.</li>' +
-                        '<li><span class="anno-highlight">Satellite data</span>. Overview on all available satellite data.</li>' +
-                        '<li><span class="anno-highlight">Photos</span>. Uploaded and linked (source: Panoramio) photos.</li>' +
-                        '<li><span class="anno-highlight">Videos</span>. Uploaded and linked (source: Youtube) videos.</li>' +
-                        '<li><span class="anno-highlight">External databases</span>. Compilation of other external data sources (e.g. databases, maps, ...).</li></ol>' +
+                        '<li><strong>Indicators: </strong>Wetland indicators derived on the basis of satellite data and SWOS products.</li>' +
+                        '<li><strong>Products: </strong>Maps produced with SWOS tools.</li>' +
+                        '<li><strong>Satellite data: </strong>Overview on free available satellite data.</li>' +
+                        '<li><strong>Photos: </strong>Uploaded and linked (source: Panoramio) photos.</li>' +
+                        '<li><strong>Videos: </strong>Uploaded and linked (source: Youtube) videos.</li>' +
+                        '<li><strong>External databases: </strong>Compilation of other external data sources (e.g. databases, maps, websites).</li></ol>' +
                         '<p></p><p>In the <strong>next step</strong> we will have a closer look at <span class="anno-highlight">Products</span>.</p></div>'
                     }, // Wetland overview
                     {
@@ -1218,7 +1218,7 @@ angular.module('webgisApp')
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Wetland Products</h4><div><p>Products derived with the help of <span class="anno-highlight">SWOS tools</span> on the basis of satellite images. Available products are:  </p>' +
+                        content: '<h4>Wetland Products</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS tools</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li>Water Quality</li>' +
                         '<li>Land Surface Temperature Trend</li>' +
@@ -1226,7 +1226,7 @@ angular.module('webgisApp')
                         '<li>Land Use Land Cover</li>' +
                         '<li>Land Use Land Cover Change</li>' +
                         '<li>Surface Soil Moisture</li></ol>' +
-                        '<p>(Please keep in mind not all products can and will be derived for each wetland.)</p>' +
+                        '<p>(Please keep in mind that not all products can and will be derived for each wetland.)</p>' +
 
                         '<p></p>In the <strong>next step</strong> we will choose <span class="anno-highlight">Land Surface Temperature Trend</span> and select the dataset <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2015</span></p></div>'
                     }, // Wetland Product
@@ -1241,7 +1241,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1298,7 +1298,7 @@ angular.module('webgisApp')
                     buttons: [
                         AnnoButton.BackButton,
                         {
-                            text: 'Continue',
+                            text: 'Next',
                             click: function (anno, evt) {
                                 anno.switchToChainNext();
                             }
@@ -1331,7 +1331,7 @@ angular.module('webgisApp')
 
                     },
                     content: '<h4>Wetland Product Dataset Metadata</h4><div><p></p>' +
-                    '<p>Here you find more information about a layer (e.g. about its lineage)' +
+                    '<p>Here you find more information about the map (e.g. about its lineage)' +
                     '</p>' +
 
                     '<p></p><p>In the <strong>next step</strong> we will close the metadata info box and move to satellite data.</p></div>'
@@ -1347,7 +1347,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1376,8 +1376,9 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
                         content: '<h4>Satellite Data</h4><div>' +
-                        '<p>Here you find a nice overview about all available satellite data covering the wetland area. In the furture it will be also possible to also download them here.</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will move to external database.</p></div>'
+                        '<p>Here you find an overview about free available satellite data (Landsat and Sentinel) covering the wetland area. Please click on the Yearly coverage by sensor image to enlarge it. You will also find the total amount of data by sensor as a table. </p>' +
+                        '<p>In the furture it will be also possible to download pre-processed satellite data clipped to the wetland area.</p>' +
+                        '<p></p><p>In the <strong>next step</strong> we will move to the external database tab.</p></div>'
                     }, // Satellite data ,
                     {
                         target: '.sidebar',
@@ -1390,7 +1391,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1420,9 +1421,9 @@ angular.module('webgisApp')
                         onHide: function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>External Databases </h4><div>' +
-                        '<p>Here you find external databases and information sources related to the selected wetland on the regional, country, continent and global level. To search for external layer use the <span class="anno-highlight">onlyLayer</span> checkbox. You can add those layers in the same way as pthe roduct maps.</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will select an external global map (Global Surface Water -> Maximum Water extent).</p></div>'
+                        content: '<h4>External Databases</h4><div>' +
+                        '<p>Here you find external databases and information sources related to the selected wetland on the regional, country, continental and global level. To search for external layers that can be visualized in the map use the <span class="anno-highlight">Filter by maps</span> checkbox. You can add those layers in the same way as the product maps.</p>' +
+                        '<p></p><p>In the <strong>next step</strong> we will discover an external global ressource (Global -> Global Surface Water).</p></div>'
                     }, // External DB
                     {
                         target: '.sidebar',
@@ -1436,7 +1437,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1470,7 +1471,7 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Add External Layer</h4><div>' +
-                        '<p>some text ...</p>' +
+                        '<p>For each external ressource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
                         '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected maps.</p></div>'
                     }, // Select external LAyer
                     {
@@ -1484,7 +1485,7 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Continue',
+                                text: 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
@@ -1528,7 +1529,7 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Active Layer</h4><div>' +
-                        '<p>Here you find all activated layer. You can hide, remove or change the order. In addition you can do the same actions as on the left side (e.g. show metadata, change the transparency, ...).</p>' +
+                        '<p>All layers activated and added to the map are listed in the <span class="anno-highlight">Active layer</span> box on the left. You can hide, remove or change the order of the layers. In addition you can do the same actions as on the right side (e.g. show metadata, change the transparency, show legend).</p>' +
                         '<p></p><p>In the <strong>next step </strong> we will move to the gernal map control functions.</p></div>'
                     } // Active Layer
                     //,
