@@ -198,20 +198,42 @@ angular.module('webgisApp')
 					prop['show'] = (prop['products'].length > 0);
 
                     $scope.wetlands.push(prop);
-                    var without_geom = {
-                        "name":         prop["name"],
-                        "country":      prop["country"],
-                        "id":           prop["id"],
-                        "show":         prop["show"],
-                        "geo_scale":    prop["geo_scale"],
-                        "size":         prop["size"],
-                        "ecoregion":    prop["ecoregion"],
-                        "wetland_type": prop["wetland_type"],
-                        "site_type":    prop["site_type"],
-                        "products":    prop["products"]
-                    };
 
-                    $scope.wetlands_without_geom.push(without_geom);
+                    if (prop["country"].includes("-")) {
+                        var country_array = prop["country"].split("-");
+                        for (var key in country_array) {
+                            var without_geom = {
+                                "name": prop["name"],
+                                "country": country_array[key],
+                                "id": prop["id"],
+                                "show": prop["show"],
+                                "geo_scale": prop["geo_scale"],
+                                "size": prop["size"],
+                                "ecoregion": prop["ecoregion"],
+                                "wetland_type": prop["wetland_type"],
+                                "site_type": prop["site_type"],
+                                "products": prop["products"]
+                            };
+
+                            $scope.wetlands_without_geom.push(without_geom);
+                        }
+                    }
+                    else {
+                        var without_geom = {
+                            "name": prop["name"],
+                            "country": prop["country"],
+                            "id": prop["id"],
+                            "show": prop["show"],
+                            "geo_scale": prop["geo_scale"],
+                            "size": prop["size"],
+                            "ecoregion": prop["ecoregion"],
+                            "wetland_type": prop["wetland_type"],
+                            "site_type": prop["site_type"],
+                            "products": prop["products"]
+                        };
+
+                        $scope.wetlands_without_geom.push(without_geom);
+                    }
                 });
 
 
@@ -997,10 +1019,11 @@ angular.module('webgisApp')
 
             $rootScope.$broadcast("StopLoadingWetlandFromURL"); // prevent loading from URL
 
-            $('.main').css('position', 'absolute');
+
+            $('.main').css('position', 'absolute'); //# todo remove on close
             //  $('.main').css('position', 'fixed');
             $('body').on("click",function(e){
-            //    console.log(e);
+              //  console.log(e);
             });
 
             var anno1 = new Anno([
@@ -1223,9 +1246,13 @@ angular.module('webgisApp')
                         '<li>Water Quality</li>' +
                         '<li>Land Surface Temperature Trend</li>' +
                         '<li>Surface Water Dynamics</li>' +
+                        '<li>Flood Regulation</li>' +
+                        '<li>Potential Wetland areas</li>' +
                         '<li>Land Use Land Cover</li>' +
                         '<li>Land Use Land Cover Change</li>' +
-                        '<li>Surface Soil Moisture</li></ol>' +
+                        '<li>Surface Soil Moisture</li>' +
+                        '</ol>' +
+
                         '<p>(Please keep in mind that not all products can and will be derived for each wetland.)</p>' +
 
                         '<p></p>In the <strong>next step</strong> we will choose <span class="anno-highlight">Land Surface Temperature Trend</span> and select the dataset <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2015</span></p></div>'
