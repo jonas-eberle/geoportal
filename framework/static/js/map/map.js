@@ -1151,6 +1151,7 @@ angular.module('webgisApp')
     })
     .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams) {
         $scope.layersMeta = mapviewer.layersMeta;
+        $scope.mapviewerdata = mapviewer.data;
         $scope.newLayerIndex = -1;
         $scope.sliderValues = mapviewer.sliderValues;
         $scope.selectedLayerDates = mapviewer.selectedLayerDates;
