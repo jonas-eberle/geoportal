@@ -1370,7 +1370,7 @@ angular.module('webgisApp')
                                     }
                                 }
                                 else {
-                                    //   e.stopPropagation();
+                                       e.stopPropagation();
                                 }
                             }
                             $target[0].addEventListener('click', handler, true);
@@ -1412,7 +1412,7 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //add layer (max one layer)
-                            load_and_show_layer(wetland_id, "product", "2972", "yes");
+                            load_and_show_layer(wetland_id, "product", product_id, "yes");
 
                             //reset on close Anno
                             $('.anno-overlay').on("click", function () {
