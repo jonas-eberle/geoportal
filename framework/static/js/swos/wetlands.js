@@ -920,7 +920,7 @@ angular.module('webgisApp')
 
     }
 
-        function load_and_show_layer(wetland_id, type_name, layer_id, max_length) {
+        function load_and_show_layer(wetland_id, type_name, layer_id) {
 
             var layer_is_new = "true";
 
@@ -931,7 +931,7 @@ angular.module('webgisApp')
             }
 
             //only load a new layer, if the the layer is not already added and the max number of needed layers is reached
-            if (layer_id && layer_is_new && mapviewer.layersMeta.length == max_length) {
+            if (layer_id && layer_is_new) {
                 $("#layer_vis_" + layer_id).attr('checked', 'checked');
                 angular.element("#layer_vis_" + layer_id).triggerHandler('click'); // add layer to map
 
@@ -969,27 +969,29 @@ angular.module('webgisApp')
         }
 
         function reset(startUrl) {
-           // #todo replace remove and zoom once the function is available via service / move back to start URL
+            // #todo replace remove and zoom once the function is available via service / move back to start URL
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
                 mapviewer.removeLayer(layer.id, 0);
                 var checkbox = undefined;
                 if (layer["django_id"] !== undefined
                     && layer.django_id !== null
-                    && (checkbox = document.getElementById("layer_vis_"+layer.django_id))
+                    && (checkbox = document.getElementById("layer_vis_" + layer.django_id))
                 ) {
                     checkbox.checked = "";
                 }
             }
             $rootScope.$broadcast("mapviewer.alllayersremoved");
 
-             mapviewer.map.getView().fit(
-                ol.proj.transformExtent([-10, 14, 60, 64], 'EPSG:4326', mapviewer.displayProjection),
-                { size: mapviewer.map.getSize() }
-             );
+            mapviewer.map.getView().fit(
+                ol.proj.transformExtent(mapviewer.maxExtent, 'EPSG:4326', mapviewer.displayProjection),
+                {size: mapviewer.map.getSize()}
+            );
+
+            select_tab();
         }
 
-        function show_metadata(action){
+       /* function show_metadata(action){
 
             // Open Metadata
             if(action === "open"){
@@ -1009,7 +1011,7 @@ angular.module('webgisApp')
                 });
 
             }
-        }
+        }*/
 
         $scope.$on('start_tour', function () {
             return $scope.startAnno();
@@ -1024,6 +1026,10 @@ angular.module('webgisApp')
             //  $('.main').css('position', 'fixed');
             $('body').on("click",function(e){
               //  console.log(e);
+            });
+
+            $('.anno-overly').on("click",function() {
+                reset();
             });
 
             var anno1 = new Anno([
@@ -1044,6 +1050,10 @@ angular.module('webgisApp')
 
                         // change overlay to avoid changing z-index of all nav elements
                         $('.anno-overlay').css('z-index', '1029');
+
+                        $('.anno-overlay').on("click", function () {
+                            reset();
+                        });
 
                         // prevent all click events
                         var handler = function (e) {
@@ -1083,6 +1093,11 @@ angular.module('webgisApp')
 
                             //ensure wetland catalog is shown
                             select_tab();
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
@@ -1125,6 +1140,11 @@ angular.module('webgisApp')
 
                             //ensure wetland catalog is shown
                             select_tab();
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of Wetland selection)
                             var handler = function (e) {
@@ -1170,6 +1190,11 @@ angular.module('webgisApp')
 
                             //ensure overview of wetland is shown
                             select_tab("overview");
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
@@ -1221,6 +1246,11 @@ angular.module('webgisApp')
 
                             //ensure products is shown
                             select_tab("product");
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of ...)
                             var handler = function (e) {
@@ -1283,7 +1313,12 @@ angular.module('webgisApp')
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //add layer (max one layer)
-                            load_and_show_layer(4, "product", "2972", 0);
+                            load_and_show_layer(4, "product", "2972");
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of ... )
                             var handler = function (e) {
@@ -1312,9 +1347,9 @@ angular.module('webgisApp')
                         '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer</p></li>' +
                         '<li><p><span class="fa fa-share-alt fa-lg"></span> and create a permanent link to share it.</p></li></ol></p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will open the metadata.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will move to satellite data.</p></div>'
                     }, // Load product layer
-                {
+                  /*  {
                     target: '.sidebar',
                     position: {
                         top: '300px',
@@ -1362,7 +1397,7 @@ angular.module('webgisApp')
                     '</p>' +
 
                     '<p></p><p>In the <strong>next step</strong> we will close the metadata info box and move to satellite data.</p></div>'
-                }, // Show Metadata for Product
+                }, // Show Metadata for Product */
                     {
                         target: '.sidebar',
                         position: {
@@ -1384,6 +1419,11 @@ angular.module('webgisApp')
 
                             //ensure products is shown
                             select_tab("satdata");
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
@@ -1428,6 +1468,11 @@ angular.module('webgisApp')
 
                             //ensure products is shown
                             select_tab("externaldb");
+
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
@@ -1475,9 +1520,12 @@ angular.module('webgisApp')
                             //ensure products is shown
                             //select_tab("externaldb");
                             $cookies.hasNotifiedAboutLayers = true;
-                            load_and_show_layer(4, "externaldb", "2551", 1);
+                            load_and_show_layer(4, "externaldb", "2551");
 
-
+                            //reset on close Anno
+                            $('.anno-overlay').on("click", function () {
+                                reset();
+                            });
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
@@ -1523,7 +1571,7 @@ angular.module('webgisApp')
                             //ensure products is shown
                             //select_tab("externaldb");
                             $cookies.hasNotifiedAboutLayers = true;
-                            load_and_show_layer(4, "externaldb", "2551", 1);
+                            load_and_show_layer(4, "externaldb", "2551");
 
                             $('#show_active_layer').click();
                             $('#current').css('z-index', '1501');
