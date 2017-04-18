@@ -2,14 +2,14 @@
     <h1>{{title}}</h1>
 </div>
 <div class="modal-body metadataModal">
-	<div class="item" ng-if="value_passed.identifier">
+	<!--<div class="item" ng-if="value_passed.identifier">
 	    <div class="headline">
 	        Identifier
 	    </div>
 	    <div class="description">
 	        {{value_passed.identifier}}
 	    </div>
-	</div>
+	</div>-->
 	<div class="item">
 	    <div class="headline">
 	        Resource Title
@@ -23,6 +23,14 @@
 	        Resource Description
 	    </div>
 	    <div class="description" style="white-space: pre-line;">{{value_passed.abstract}}</div>
+	</div>
+    <div class="item" ng-if="value_passed.date_begin || value_passed.date_end">
+	    <div class="headline">
+	        Temporal Extent
+	    </div>
+	    <div class="description">
+	        {{value_passed.date_begin}} - {{value_passed.date_end}}
+	    </div>
 	</div>
 	<div class="item" ng-if="value_passed.topicCategory">
 	    <div class="headline">

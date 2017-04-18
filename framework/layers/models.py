@@ -238,7 +238,7 @@ class MetadataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'dataset_contact_new', 'date_create', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage')
+        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'dataset_contact_new', 'date_create', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
 
 
 # Layergroup model to group layers, just title is needed, the layers were referenced in the LayerInline model
