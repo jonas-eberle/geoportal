@@ -1370,7 +1370,7 @@ angular.module('webgisApp')
                                     }
                                 }
                                 else {
-                                       e.stopPropagation();
+                                    e.stopPropagation();
                                 }
                             }
                             $target[0].addEventListener('click', handler, true);
@@ -1382,9 +1382,9 @@ angular.module('webgisApp')
 
                         },
                         content: '<h4>Wetland Product</h4><div><p></p>' +
-                        '<p>Here you will find all available datasets of a product.</p>' +
+                        '<p>Here you will find a list of all available datasets of a product.</p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will add a the <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2015</span> dataset to the map.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2015</span> dataset to the map.</p></div>'
                     }, // Show product layer
                     {
                         target: '.sidebar',
@@ -1445,10 +1445,10 @@ angular.module('webgisApp')
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li><p><span class="fa fa-list fa-lg"></span> hide the legend,</p></li>' +
                         '<li><p><span class="fa fa-file-text-o fa-lg"></span> view metadata, </p></li>' +
-                        '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer</p></li>' +
+                        '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer,</p></li>' +
                         '<li><p><span class="fa fa-share-alt fa-lg"></span> and create a permanent link to share it.</p></li></ol></p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will move to <span class="anno-highlight">Satellite data </span>.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will move to <span class="anno-highlight">Satellite data</span>.</p></div>'
                     }, // Load product layer
                     /*  {
                      target: '.sidebar',
@@ -1526,17 +1526,20 @@ angular.module('webgisApp')
                                 reset();
                             });
 
+                            $('a.fancybox').on("click", function ( event ) {
+                                 event.preventDefault();
+                                })
+
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
-console.log(e);
+
                                 // Allow preselection of overview tab; allow selection of products
-                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-technology-2") || e.target.className.includes("fancybox") || e.target.parentElement.className.includes("flaticon-technology-2")) {
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-technology-2") || e.target.className.includes("fancybox") || e.target.parentElement.className.includes("flaticon-technology-2") || e.target.nodeName == "IMG") {
                                     if (e.target.className.includes("flaticon-technology-2") || e.target.parentElement.className.includes("flaticon-technology-2")) {
                                         anno.switchToChainNext();
                                     }
                                 }
                                 else {
-                                    console.log(e);
                                     e.stopPropagation();
                                 }
                             }
@@ -1547,9 +1550,9 @@ console.log(e);
                             $target[0].removeEventListener('click', handler, true)
                         },
                         content: '<h4>Satellite Data</h4><div>' +
-                        '<p>Here you find an overview about free available satellite data (Landsat and Sentinel) covering the wetland area. Please click on the Yearly coverage by sensor image to enlarge it. You will also find the total amount of data by sensor as a table. </p>' +
-                        '<p>In the furture it will be also possible to download pre-processed satellite data clipped to the wetland area.</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will move to the external database tab.</p></div>'
+                        '<p>Here you find an overview about free available satellite data (Landsat and Sentinel) covering the wetland area. Please click on the <span class="anno-highlight">Yearly coverage by sensor</span> image to enlarge it. You will also find the total amount of data by sensor as a table. </p>' +
+                        '<p>In the <strong>future</strong> it will be also possible to download<strong> pre-processed satellite data</strong> clipped to the wetland area.</p>' +
+                        '<p></p><p>In the <strong>next step</strong> we will move to the <span class="anno-highlight">External databases</span> tab.</p></div>'
                     }, // Satellite data ,
                     {
                         target: '.sidebar',
@@ -1599,7 +1602,7 @@ console.log(e);
                         },
                         content: '<h4>External Databases</h4><div>' +
                         '<p>Here you find external databases and information sources related to the selected wetland on the regional, country, continental and global level. To search for external layers that can be visualized in the map use the <span class="anno-highlight">Filter by maps</span> checkbox. You can add those layers in the same way as the product maps.</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will discover an external global ressource (Global -> Global Surface Water).</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will discover an external global resource (<span class="anno-highlight">Global</span> -> <span class="anno-highlight">Global Surface Water</span>).</p></div>'
                     }, // External DB
                     {
                         target: '.sidebar',
@@ -1636,8 +1639,8 @@ console.log(e);
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Add External Layer</h4><div>' +
-                        '<p>For each external ressource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
-                        '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected maps.</p></div>'
+                        '<p>For each external resource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
+                        '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected layers.</p></div>'
                     }, // Select external LAyer
                     {
                         target: '#active_layer',
@@ -1678,8 +1681,8 @@ console.log(e);
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Active Layer</h4><div>' +
-                        '<p>All layers activated and added to the map are listed in the <span class="anno-highlight">Active layer</span> box on the left. You can hide, remove or change the order of the layers. In addition you can do the same actions as on the right side (e.g. show metadata, change the transparency, show legend).</p>' +
-                        '<p></p><p>In the <strong>next step </strong> we will move to the gernal map control functions.</p></div>'
+                        '<p>All layers activated and added to the map are listed in the <span class="anno-highlight">Active layer</span> box on the left. You can hide, remove or change the order of the layers. In addition you can do the same actions as on the right side (e.g. view the metadata, change the transparency, show legend).</p>' +
+                        '<p></p><p>In the <strong>next step </strong> we will show to the general map functions.</p></div>'
                     }, // Active Layer
                     {
                         target: '.map-controls-wrapper',
@@ -1697,24 +1700,32 @@ console.log(e);
 
                             $cookies.hasNotifiedAboutLayers = true;
 
-                            //select_tab("externaldb");
-                            load_and_show_layer(wetland_id, "externaldb", "2551", "yes");
+                            move_map_elements_higher();
 
                             //reset on close Anno
                             $('.anno-overlay').on("click", function () {
                                 reset();
                             });
 
-                            move_map_elements_higher();
+                            var handler = function (e) {
+                                // prevent info tool selection
+                                if (e.target.className.includes("fa-info")) {
+                                       e.stopPropagation();
+                                    }
+                            }
+                            $target[0].addEventListener('click', handler, true);
+                            return handler
 
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
+                            $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Wetland sites</h4><div>' +
-                        '<p>To hide the wetland boundaries deselect <span class="anno-highlight">Show Wetland sites</span>.</p>' +
-                        '<p></p><p>In the <strong>next step </strong> we will move to the gernal map control functions.</p></div>'
+                        '<p>Unselect <span class="anno-highlight">Show Wetland sites</span> to hide the wetlands.</p>' +
+                        '<p>In the <strong>next step</strong> we show you the general map control elements.</p>' +
+                        '</div>'
                     }, // Wetland sites
                     {
                         target: '.map-controls-wrapper',
@@ -1739,11 +1750,19 @@ console.log(e);
                             $('.anno-overlay').on("click", function () {
                                 reset();
                             });
+
+                            var handler = function (e) {
+                                // prevent info tool selection
+                                if (e.target.className.includes("fa-info")) {
+                                       e.stopPropagation();
+                                    }
+                            }
+                            $target[0].addEventListener('click', handler, true);
+                            return handler
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
-
+                            $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
-
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Map Control</h4><div><p></p>' +
@@ -1752,12 +1771,13 @@ console.log(e);
                         '<li><p><span class="fa fa-plus fa-lg"></span> zoom into the map,</p></li>' +
                         '<li><p><span class="fa fa-minus fa-lg"></span> zoom out of the map, </p></li>' +
                         '<li><p><span class="fa fa-globe fa-lg"></span> zoom to the maximal SWOS extent,</p></li>' +
-                        '<li><p><span class="fa fa-info fa-lg"></span> &nbsp; and request info on visible layers. You need to activate this tool by clicking on the button. Afterwards you can click in the map. A window shows the responses from the visible WMS layers.</p></li></ol></p>' +
-                        '<p></p><p>In the <strong>next step </strong> we will move to the search function.</p></div>'
+                        '<li><p><span class="fa fa-info fa-lg"></span> &nbsp; and request information on visible layers. You need to activate this tool by clicking on the button. Afterwards you can click in the map. A window shows the responses from the visible WMS layers.</p></li></ol></p>' +
+                        '<p></p><p>In the <strong>next step </strong> we will show you the search function.</p></div>'
                     }, // Map Control
                     {
                         target: '.map-controls-wrapper',
                         position: 'right',
+
                         buttons: [
                             AnnoButton.BackButton,
                             {
@@ -1778,14 +1798,23 @@ console.log(e);
                             $('.anno-overlay').on("click", function () {
                                 reset();
                             });
+                           var handler = function (e) {
+                                // prevent info tool selection
+                                if (e.target.className.includes("fa-info")) {
+                                       e.stopPropagation();
+                                    }
+                            }
+                            $target[0].addEventListener('click', handler, true);
+                            return handler
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
+                            $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Search</h4><div><p></p>' +
-                        '<p>Here you can search for datasets.</p>' +
-                        '<p></p>' +
+                        '<p>Here you can search for datasets. Requests will be send to the SWOS Catalog Services for Web (CSW). In the future it will contain all in the SWOS Geoportal integrated datasets and the service will be also reachable for external applications.</p>' +
+                        '<p></p><p></p>' +
                         '<p><strong>Congratulations</strong>, you reached the end of the tour. <strong>Now it\'s your turn!</strong> We will remove all added layer and guide you back to the start page.</p>'
                     } // Search
                 ]

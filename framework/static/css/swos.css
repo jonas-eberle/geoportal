@@ -507,15 +507,22 @@ button.btn-loadmore:hover {
 .list-group-item:hover .ngTruncateToggleText {
      color: #04baf3;
 }
-
-.nav {
-    position: relative;
-}
-
+/* Anno */
 .anno-highlight {
     font-style: italic;
 
   /*  font-weight: bold;
       text-decoration: underline;
     */
+}
+.anno.anno-width-500 {
+    width: 500px;
+}
+
+.anno-overlay {
+    z-index: 1450;
+}
+
+.anno-emphasise-target {
+  z-index: 1601 !important !important;
 }
