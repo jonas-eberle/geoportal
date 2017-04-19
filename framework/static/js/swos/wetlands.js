@@ -1526,9 +1526,6 @@ angular.module('webgisApp')
                                 reset();
                             });
 
-                            $('a.fancybox').on("click", function ( event ) {
-                                 event.preventDefault();
-                                })
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
