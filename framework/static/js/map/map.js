@@ -145,8 +145,8 @@ angular.module('webgisApp')
                     $('#gmap').hide();
                     $('.ol-overlaycontainer-stopevent').css('left', '0px');
                 }
-                layers.insertAt(0,layer);
                 layers.remove(this.baseLayers[this.currentBaseLayerIndex]);
+                layers.insertAt(0,layer);
                 this.currentBaseLayerIndex = index;
             },
             'getLayerById': function(id) {
@@ -507,12 +507,14 @@ angular.module('webgisApp')
             },
             'raiseLayer': function(id, delta) {
                 var layer = this.layers[id];
-                var layerIndex = $.inArray(layer, this.map.getLayers().getArray());
                 var layers = this.map.getLayers();
+                var layerIndex = $.inArray(layer, layers.getArray());
 
-                layers.insertAt(layerIndex+delta, layer);
-                if (delta < 0) layerIndex = layerIndex+1;
                 layers.removeAt(layerIndex);
+                if (delta > 0) {
+                    layerIndex--;
+                }
+                layers.insertAt(layerIndex+delta, layer);
             },
             'changeWMSTime': function(time) {
                 var _this = this;
@@ -1156,7 +1158,7 @@ angular.module('webgisApp')
         $scope.sliderValues = mapviewer.sliderValues;
         $scope.selectedLayerDates = mapviewer.selectedLayerDates;
 
-        $scope.prepareIndex = function(event, index, item) {
+        $scope.prepareIndex = function(index, item) {
             $scope.newLayerIndex = index;
             return item;
         };

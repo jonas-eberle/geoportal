@@ -198,7 +198,7 @@
                         </div>
                         <!-- List GROUP -->
                         <div ng-show="!layersMeta.length">No layers added to the map!</div>
-                        <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item, type)">
+                        <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(index, item)">
                             <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" ng-controller="MapCurrentLayersCtrl" dnd-draggable="layer" dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move">
 
                                 <div class="catalog-item">

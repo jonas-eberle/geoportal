@@ -33,8 +33,8 @@
     <![endif]-->
 
     <script src="{% static "lib/turf.min.js" %}"></script>
-    <script src="{% static "lib/ol.js" %}?v=401"></script>
-    <link href="{% static "lib/ol.css" %}?v=401" rel="stylesheet" />
+    <script src="{% static "lib/ol.js" %}?v=41"></script>
+    <link href="{% static "lib/ol.css" %}?v=41" rel="stylesheet" />
 
     <link href="{% static "lib/anno.css" %}" rel="stylesheet" />
 
@@ -193,7 +193,7 @@
                             <div class="div-button-text">Remove all layers</div>
                         </div>
                     </div>
-                    <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(event, index, item)">
+                    <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(index, item)">
                         <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer"
                              dnd-moved="changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
 
