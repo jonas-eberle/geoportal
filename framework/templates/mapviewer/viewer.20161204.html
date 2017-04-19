@@ -36,7 +36,7 @@
     <script src="{% static "lib/ol.js" %}?v=41"></script>
     <link href="{% static "lib/ol.css" %}?v=41" rel="stylesheet" />
 
-    <link href="{% static "lib/anno.css" %}" rel="stylesheet" />
+    <link href="{% static "css/anno.css" %}" rel="stylesheet" />
 
     <link href="{% static "css/swos.css" %}?v=20170414" rel="stylesheet">
 
@@ -311,7 +311,7 @@
                                 <!-- products is an array for each wetland, thus first of all manual list of products -->
                                 <!--<option ng-repeat="option in wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
                                 <option value="FloodReg">Flood Regulation</option>
-								<option value="LST">Land Surface Temperature Trend</option>
+                                <option value="LST">Land Surface Temperature Trend</option>
                                 <option value="LULC">Land Use Land Cover</option>
                                 <option value="LULCC_L">Land Use Land Cover Change</option>
                                 <option value="PotWet">Potential Wetland areas</option>
@@ -638,7 +638,7 @@
     </div>
 
     <div id="welcome_text" style="display:none">
-        <p>Welcome to the first version of the SWOS Geoportal. We have made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. Please select the wetland of your interest in the panel on the right.</p>
+        <p>Welcome to the first version of the <a href="http://swos-service.eu" target="_blank">SWOS</a> Geoportal. We have made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. Please select the wetland of your interest in the panel on the right.</p>
         <p>We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">April 10, 2017</p>
@@ -665,7 +665,7 @@
     <script src="{% static "lib/bootbox.min.js" %}"></script>
     <script src="{% static "lib/bootstrap-slider.min.js" %}"></script>
     <script src="{% static "lib/angular-bootstrap-slider.js" %}"></script>
-    <script src="{% static "js/jquery-drags_adjusted.js" %}"></script>
+    <script src="{% static "lib/jquery-drags.js" %}"></script>
     <script src="{% static "lib/Chart.min.js" %}"></script>
     <script src="{% static "lib/angular-chart.min.js" %}"></script>
 

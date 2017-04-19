@@ -134,9 +134,6 @@
 .anno.anno-width-400 {
   width: 400px;
 }
-.anno.anno-width-500 {
-  width: 500px;
-}
 .anno.anno-width-250 {
   width: 250px;
 }
@@ -151,7 +148,7 @@
 }
 .anno-overlay {
   position: fixed;
-  z-index: 1450;
+  z-index: 1000;
   height: 100%;
   width: 100%;
   top: 0;
@@ -169,5 +166,5 @@
   opacity: 0;
 }
 .anno-emphasise-target {
-  z-index: 1601 !important !important;
+  z-index: 1001 !important !important;
 }
