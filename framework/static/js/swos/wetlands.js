@@ -1526,7 +1526,6 @@ angular.module('webgisApp')
                                 reset();
                             });
 
-
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
 
@@ -1671,10 +1670,34 @@ angular.module('webgisApp')
                             $('.anno-overlay').on("click", function () {
                                 reset();
                             });
+
+                            var el = document.getElementsByClassName("map-controls-wrapper");
+                            var handler = function (e) {
+                                // prevent info tool selection
+                                if (e.target.className.includes("fa-info") || e.target.firstChild.className.includes("fa-info") ||e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
+                                       e.stopPropagation();
+                                }
+                            }
+                            el[0].addEventListener('click', handler, true);
+
+                            var el2 = document.getElementsByClassName("item_icon");
+                            var handler = function (e) {
+                                // prevent metadata show
+                                if (e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
+                                       e.stopPropagation();
+                                }
+                            }
+                            el2[0].addEventListener('click', handler, true);
+                            return handler
+
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
                             open_close_active_layer("close");
                             move_map_elements_higher("reset");
+                            var el = document.getElementsByClassName("map-controls-wrapper");
+                            el[0].addEventListener('click', handler, true);
+                            var el2 = document.getElementsByClassName("item_icon")
+                            el2[0].addEventListener('click', handler, true);
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Active Layer</h4><div>' +
@@ -1706,9 +1729,9 @@ angular.module('webgisApp')
 
                             var handler = function (e) {
                                 // prevent info tool selection
-                                if (e.target.className.includes("fa-info")) {
+                                if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
                                        e.stopPropagation();
-                                    }
+                                }
                             }
                             $target[0].addEventListener('click', handler, true);
                             return handler
@@ -1750,9 +1773,9 @@ angular.module('webgisApp')
 
                             var handler = function (e) {
                                 // prevent info tool selection
-                                if (e.target.className.includes("fa-info")) {
+                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
                                        e.stopPropagation();
-                                    }
+                                 }
                             }
                             $target[0].addEventListener('click', handler, true);
                             return handler
@@ -1797,9 +1820,9 @@ angular.module('webgisApp')
                             });
                            var handler = function (e) {
                                 // prevent info tool selection
-                                if (e.target.className.includes("fa-info")) {
+                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
                                        e.stopPropagation();
-                                    }
+                                 }
                             }
                             $target[0].addEventListener('click', handler, true);
                             return handler
@@ -2064,3 +2087,18 @@ $(document).ready(function() {
         }
     });
 });
+
+if (!String.prototype.includes) {
+  String.prototype.includes = function(search, start) {
+    'use strict';
+    if (typeof start !== 'number') {
+      start = 0;
+    }
+
+    if (start + search.length > this.length) {
+      return false;
+    } else {
+      return this.indexOf(search, start) !== -1;
+    }
+  };
+}
