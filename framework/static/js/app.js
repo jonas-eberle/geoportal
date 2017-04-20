@@ -131,9 +131,17 @@ angular.module('webgisApp', [
                 _paq.push(['setDocumentTitle', 'Help']);
                 _paq.push(['trackPageView']);
            } catch (err) {}
+           
+           if(mapviewer.title == 'SWOS') {
+               var url = subdir + '/static/help/help_swos.html';
+           }
+           else{
+               var url = subdir + '/static/help/help.html';
+           } 
+            
            $modal.open({
                 controller: 'ModalInstanceCtrl',
-                templateUrl: subdir+'/static/help/help.html',
+                templateUrl: url,
                 backdrop: 'static',
                 resolve: {
                         data: function() {return {};},
