@@ -554,6 +554,7 @@ angular.module('webgisApp')
                         //TODO: change map(Number) to something that works with older browsers!
                         mapviewer.resolutions = data.map_resolutions.split(' ').map(Number);
                     }
+                    mapviewer.title = data.title;
                     mapviewer.zoom_init = data.zoom_init;
                     mapviewer.zoom_min = data.zoom_min;
                     mapviewer.zoom_max = data.zoom_max;

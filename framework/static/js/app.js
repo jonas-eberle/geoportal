@@ -107,7 +107,7 @@ angular.module('webgisApp', [
             $modalInstance.close();
         };
     })
-    .controller('InfoCtrl', function ($scope, $modal) {
+    .controller('InfoCtrl', function ($scope, $modal, mapviewer) {
         $scope.info = function () {
             try {
                 _paq.push(['setCustomUrl', '/info']);
