@@ -38,8 +38,8 @@
     <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
         <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
     </a>
-    <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="/swos{{ layer.legend_graphic }}" target="_blank">
-        <img ng-src="/swos{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
+    <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" target="_blank">
+        <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
     </a>
     <table ng-if="layer.legend_colors">
         <tr ng-repeat="item in layer.legend_colors track by $index">
