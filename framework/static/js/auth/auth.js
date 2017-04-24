@@ -383,10 +383,7 @@ angular.module('webgisApp')
             },
             templateUrl: subdir+'/static/includes/auth-new-password.html',
             controller: 'NewPasswordInstanceCtrl'
-        });
-        
-        $scope.submit
-        
+        });        
     })
     .controller('NewPasswordInstanceCtrl', function ($scope, $modalInstance, uid, token, djangoAuth, AlertService) {
         $scope.uid = uid;
