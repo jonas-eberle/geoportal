@@ -149,6 +149,23 @@ angular.module('webgisApp', [
                 }
             });
         };
+        $scope.credits = function () {
+           try {
+                _paq.push(['setCustomUrl', '/credits']);
+                _paq.push(['setDocumentTitle', 'Credits']);
+                _paq.push(['trackPageView']);
+           } catch (err) {}
+            
+           $modal.open({
+                controller: 'ModalInstanceCtrl',
+                templateUrl: subdir + '/static/includes/credits.html',
+                backdrop: 'static',
+                resolve: {
+                        data: function() {return {};},
+                        title: function() {return '';}
+                }
+            });
+        };
         $scope.imprint = function () {
            try {
                 _paq.push(['setCustomUrl', '/imprint']);
