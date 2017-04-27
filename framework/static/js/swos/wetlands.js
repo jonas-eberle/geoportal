@@ -1428,9 +1428,9 @@ angular.module('webgisApp')
                                         anno.switchToChainNext();
                                     }
                                 }
-                                else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
+                              //  else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
                                     
-                                }
+                                //}
                                 else {
                                     e.stopPropagation();
                                 }
@@ -1632,9 +1632,23 @@ angular.module('webgisApp')
                             $('.anno-overlay').on("click", function () {
                                 reset();
                             });
+
+                             var handler = function (e) {
+
+                                // Allow preselection of overview tab; allow selection of products
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-layers") || e.target.id === "only_layer" ||  e.target.id.includes("layer_vis_")) {
+
+                                }
+                                else {
+                                    e.stopPropagation();
+                                }
+                            }
+                            $target[0].addEventListener('click', handler, true);
+                            return handler
+
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
-
+                            $target[0].removeEventListener('click', handler, true)
                             $cookies.hasNotifiedAboutLayers = false;
                         },
                         content: '<h4>Information and tools on selected resource</h4><div>' +
