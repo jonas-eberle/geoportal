@@ -697,13 +697,27 @@ angular.module('webgisApp')
                     }
                 });
                 var attr_list = attribution_arr.join(' | \u00A9 ');
+
+
+                var www_list = attr_list.match(/\([a-zA-Z., ]*\)/g);
+                if (www_list) {
+                    $.each(www_list, function () {
+                        var parts = this.split(",");
+                        var new_ = '<a href="http:\\\\' + parts[0].substr(1) + '" target = "_blank">' + parts[1].substr(0, parts[1].length - 1) + "</a>";
+                        attr_list = attr_list.replace(this, new_);
+                    });
+                }
+
                 if(attr_list.length > 0){
                     $('.map-controls-wrapper').css('height', '82px');
                 }
                 else{
                     $('.map-controls-wrapper').css('height', '53px');
                 }
-                Attribution.setList(attr_list);
+                $( "#wetland_attribution_list" ).remove();
+                $( "#wetland_attribution" ).append( '<div id="wetland_attribution_list">' + attr_list + '</div>' );
+
+             //   Attribution.setList(attr_list);
         };
 
         $scope.removeAllLayers = function () {
