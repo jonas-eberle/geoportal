@@ -57,7 +57,7 @@ class Layer(models.Model):
     ogc_time = models.BooleanField("WMS/WMTS Time", default=False, help_text="Time enabled?")
     ogc_imageformat = models.CharField("Image format", max_length=100, blank=True, null=True, help_text="For WMS/WMTS, e.g., image/png, image/jpeg")
     ogc_getfeatureinfo = models.CharField("OGC WMS GetFeatureInfo URL", max_length=200, blank=True, null=True)
-    ogc_attribution = models.CharField("Attribution", max_length=200, blank=True, null=True, help_text="Attribution / Copyright")
+    ogc_attribution = models.CharField("Attribution", max_length=200, blank=True, null=True, help_text="Attribution / Copyright. To add a link use the following syntax (www.adress.de, name)")
     ogc_times = models.TextField("Time dimension", blank=True, null=True, help_text="Separated by space/blank character")
 
     #Download services

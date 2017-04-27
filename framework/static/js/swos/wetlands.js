@@ -703,7 +703,7 @@ angular.module('webgisApp')
                 if (www_list) {
                     $.each(www_list, function () {
                         var parts = this.split(",");
-                        var new_ = '<a href="http:\\\\' + parts[0].substr(1) + '" target = "_blank">' + parts[1].substr(0, parts[1].length - 1) + "</a>";
+                        var new_ = '<a href="http:\\\\' + parts[0].substr(1) + '" target = "_blank" style="text-decoration-line: underline; color: #d6d6d6;">' + parts[1].substr(0, parts[1].length - 1) + "</a>";
                         attr_list = attr_list.replace(this, new_);
                     });
                 }
