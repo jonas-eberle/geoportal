@@ -281,7 +281,7 @@
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: WetlandsService.activeTab==-1}" id="catalog">
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
-                            <select ng-model="filtered_country" ng-change="filterCountry()" style="width: 50%; margin-bottom: 10px;">
+                            <select ng-model="filtered_country" ng-change="filterCountry()" style="width: 50%; margin-bottom: 10px;" >
                                 <option value="">- Filter by country -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
                             </select>
@@ -302,7 +302,7 @@
                             </select>
                             <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 91%;margin-bottom: 10px;">
                                 <option value="">- Filter by ecoregion -</option>
-                                <option ng-repeat="option in wetlands_without_geom | unique:'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
+                                <option ng-repeat="option in wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
                             </select>
                             <select ng-model="filtered_products" ng-change="filterProduct()" style="width: 91%">
                                 <option value="">- Filter by product -</option>
