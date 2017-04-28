@@ -366,7 +366,7 @@ angular.module('webgisApp')
             console.log(picture);
             return false;
         };
-        
+
         $scope.filtered_country = '';
         $scope.filtered_geo_scale = '';
         $scope.filtered_ecoregion = '';
@@ -1014,6 +1014,9 @@ angular.module('webgisApp')
                     checkbox.checked = "";
                 }
             }
+
+            $(".modal-footer").children().trigger("click");
+
             $rootScope.$broadcast("mapviewer.alllayersremoved");
 
             mapviewer.map.getView().fit(
@@ -1039,11 +1042,11 @@ angular.module('webgisApp')
 
         function move_map_elements_higher(action) {
             if (!action) {
-                $('#current').css('z-index', '1501');
-                $('#active_layer').css('z-index', '1503');
-                $("#gmap").css('z-index', '1498');
-                $('.map-controls-wrapper').css('z-index', '1500');
-                $('.ol-viewport').css('z-index', '1499');
+                $('#current').css('z-index', '1041');
+                $('#active_layer').css('z-index', '1042');
+                $("#gmap").css('z-index', '1038');
+                $('.map-controls-wrapper').css('z-index', '1040');
+                $('.ol-viewport').css('z-index', '1039');
             }
             else if (action === "reset") {
                 $('#current').css('z-index', '');
@@ -1441,9 +1444,9 @@ angular.module('webgisApp')
                                         anno.switchToChainNext();
                                     }
                                 }
-                              //  else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
+                                else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
                                     
-                                //}
+                                }
                                 else {
                                     e.stopPropagation();
                                 }
@@ -1652,6 +1655,9 @@ angular.module('webgisApp')
                                 if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-layers") || e.target.id === "only_layer" ||  e.target.id.includes("layer_vis_")) {
 
                                 }
+                                else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
+
+                                }
                                 else {
                                     e.stopPropagation();
                                 }
@@ -1711,14 +1717,14 @@ angular.module('webgisApp')
                             el[0].addEventListener('click', handler, true);
 
                             var el2 = document.getElementsByClassName("item_icon");
-                            var handler = function (e) {
+                           // var handler = function (e) {
                                 // prevent metadata show
-                                if (e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
+                            /*    if (e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
                                        e.stopPropagation();
                                 }
                             }
                             el2[0].addEventListener('click', handler, true);
-                            return handler
+                            return handler */
 
                         },
                         onHide: function (anno, $target, $annoElem, handler) {
