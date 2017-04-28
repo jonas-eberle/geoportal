@@ -281,7 +281,7 @@
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: WetlandsService.activeTab==-1}" id="catalog">
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
-                            <select ng-model="filtered_country" ng-change="filterCountry()" style="width: 50%; margin-bottom: 10px;" >
+                            <select ng-model="filtered_country" ng-change="filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
                                 <option ng-repeat="option in wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
                             </select>
