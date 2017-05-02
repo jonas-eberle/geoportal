@@ -79,17 +79,18 @@
     <nav class="navbar navbar-default navbar-fixed-top"  role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="60"></a></div>
+                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
             </div>
 
             <!-- TOOLBAR in Navigation für Tablet und Desktop -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl" style="padding-right:0;">
                     <li>
-                        <p style="margin-top: 3px;font-size: 0.8em;padding-left: 10px;">
-                            <img src="/static/img/eu.png" alt="EU Logo" align="right" style="height: 45px;">
-                            This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.
-                        </p>
+                        <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;">
+                            <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" align="left" style="margin-right: 4px;"/></a>
+                            <img src="/static/img/eu.png" alt="EU Logo" align="right" height="45"/>
+                            <div style="font-size: 0.8em;padding-top:4px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
+                        </div>
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
