@@ -1104,7 +1104,7 @@ angular.module('webgisApp')
             return $scope.startAnno();
         });
 
-        $scope.trackIntroductionTour(title) {
+        $scope.trackIntroductionTour = function(title) {
              try {
                  _paq.push(['setCustomUrl', '/introduction/'+title.toLowerCase()]);
                  _paq.push(['setDocumentTitle', 'Introduction Tour: '+title]);
