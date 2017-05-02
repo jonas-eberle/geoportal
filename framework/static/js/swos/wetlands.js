@@ -1104,10 +1104,10 @@ angular.module('webgisApp')
             return $scope.startAnno();
         });
 
-        $scope.trackIntroductionTour = function(title) {
+        $scope.trackIntroductionTour = function(title, step) {
              try {
-                 _paq.push(['setCustomUrl', '/introduction/'+title.toLowerCase()]);
-                 _paq.push(['setDocumentTitle', 'Introduction Tour: '+title]);
+                 _paq.push(['setCustomUrl', '/introduction/'+step+'_'+title.toLowerCase()]);
+                 _paq.push(['setDocumentTitle', 'Introduction Tour: '+title+' ('+step+')']);
                  _paq.push(['trackPageView']);
              } catch (err) {}
         }
@@ -1134,7 +1134,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Welcome');
+                            $scope.trackIntroductionTour('Welcome', '01');
                             // change overlay to avoid changing z-index of all nav elements
                             $('.anno-overlay').css('z-index', '1029');
 
@@ -1177,7 +1177,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Catalog');
+                            $scope.trackIntroductionTour('Catalog', '02');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1224,7 +1224,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Selection');
+                            $scope.trackIntroductionTour('Selection', '03');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1271,7 +1271,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Wetland');
+                            $scope.trackIntroductionTour('Wetland', '04');
                             //Load wetland (id 4 - Camargue)
                             only_load_wetland(4);
 
@@ -1330,7 +1330,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Products');
+                            $scope.trackIntroductionTour('Products', '05');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1390,7 +1390,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Product');
+                            $scope.trackIntroductionTour('Product', '06');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1449,7 +1449,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Dataset');
+                            $scope.trackIntroductionTour('Dataset', '07');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1565,7 +1565,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Satellitedata');
+                            $scope.trackIntroductionTour('Satellitedata', '08');
                             //ensure products is shown
                             select_tab("satdata");
 
@@ -1616,7 +1616,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('External1');
+                            $scope.trackIntroductionTour('External1', '09');
                             //ensure products is shown
                             select_tab("externaldb");
 
@@ -1667,7 +1667,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('External2');
+                            $scope.trackIntroductionTour('External2', '10');
                             //ensure products is shown
                             //select_tab("externaldb");
                             $cookies.hasNotifiedAboutLayers = true;
@@ -1721,7 +1721,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('ActiveLayers');
+                            $scope.trackIntroductionTour('ActiveLayers', '11');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //select_tab("externaldb");
@@ -1782,7 +1782,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('WetlandSites');
+                            $scope.trackIntroductionTour('WetlandSites', '12');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1826,7 +1826,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('MapControls');
+                            $scope.trackIntroductionTour('MapControls', '13');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1868,14 +1868,14 @@ angular.module('webgisApp')
                             {
                                 text: 'Close',
                                 click: function (anno, evt) {
-                                    $scope.trackIntroductionTour('Close');
+                                    $scope.trackIntroductionTour('Close', '15');
 									reset();
                                     anno.hide();
                                 }
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Search');
+                            $scope.trackIntroductionTour('Search', '14');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
