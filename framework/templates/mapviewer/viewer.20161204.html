@@ -89,7 +89,7 @@
                         <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;">
                             <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" align="left" style="margin-right: 4px;"/></a>
                             <img src="/static/img/eu.png" alt="EU Logo" align="right" height="45"/>
-                            <div style="font-size: 0.8em;padding-top:4px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
+                            <div style="font-size: 0.8em;">This portal is developed by the SWOS project, which has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
                         </div>
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
@@ -423,7 +423,7 @@
                                     <accordion close-others="false">
                                         <accordion-group ng-repeat="product in value.data.products"  heading="{{product.name}}" is-open="product.open">
                                             <accordion-heading ng-click="trackProduct(product.name, product.open);">
-                                                {{product.name}}
+                                                <span class="project">[SWOS]</span> {{product.name}}
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
                                             </accordion-heading>
                                             <div class="options">
@@ -638,7 +638,8 @@
     </div>
 
     <div id="welcome_text" style="display:none">
-        <p>Welcome to the first version of the <a href="http://swos-service.eu" target="_blank">SWOS</a> Geoportal. We have made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
+        <p>Welcome to the first version of the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
+        <p>The SWOS team has made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
 		<p>You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">May 1, 2017</p>

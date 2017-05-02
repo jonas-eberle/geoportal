@@ -1146,7 +1146,7 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
 
-                        content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS Geoportal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
+                        content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS and GEO-Wetlands Community Portal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
                         '<p>Please notice that certain functions are deactivated during the tour. If you would like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information on each card.</p> ' +
                         '<p>You can always stop the tour with a click on the semi-transparent black area. To <strong>start</strong> the <strong>tour again </strong>go to the <span class="fa fa-question fa-lg"></span> on the top. Here you will also find information on how to contact us.</p>' +
                         '</div>'
