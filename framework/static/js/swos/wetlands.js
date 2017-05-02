@@ -536,7 +536,7 @@ angular.module('webgisApp')
 
             window.location.hash = '#/wetland/'+$scope.value.id+'/'+type;
 
-        try {
+            try {
                 _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);
                 _paq.push(['setDocumentTitle', $scope.value.name+'/'+type]);
                 _paq.push(['trackPageView']);
@@ -1104,6 +1104,14 @@ angular.module('webgisApp')
             return $scope.startAnno();
         });
 
+        $scope.trackIntroductionTour(title) {
+             try {
+                 _paq.push(['setCustomUrl', '/introduction/'+title.toLowerCase()]);
+                 _paq.push(['setDocumentTitle', 'Introduction Tour: '+title]);
+                 _paq.push(['trackPageView']);
+             } catch (err) {}
+        }
+
         $scope.startAnno = function () {
 
             $rootScope.$broadcast("StopLoadingWetlandFromURL"); // prevent loading from URL
@@ -1126,7 +1134,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Welcome');
                             // change overlay to avoid changing z-index of all nav elements
                             $('.anno-overlay').css('z-index', '1029');
 
@@ -1169,7 +1177,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Catalog');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1216,7 +1224,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Selection');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1263,7 +1271,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Wetland');
                             //Load wetland (id 4 - Camargue)
                             only_load_wetland(4);
 
@@ -1322,7 +1330,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Products');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1382,7 +1390,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Product');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1441,7 +1449,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Dataset');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1557,7 +1565,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Satellitedata');
                             //ensure products is shown
                             select_tab("satdata");
 
@@ -1608,7 +1616,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('External1');
                             //ensure products is shown
                             select_tab("externaldb");
 
@@ -1659,7 +1667,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('External2');
                             //ensure products is shown
                             //select_tab("externaldb");
                             $cookies.hasNotifiedAboutLayers = true;
@@ -1713,7 +1721,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('ActiveLayers');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //select_tab("externaldb");
@@ -1774,7 +1782,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('WetlandSites');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1818,7 +1826,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('MapControls');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1860,13 +1868,14 @@ angular.module('webgisApp')
                             {
                                 text: 'Close',
                                 click: function (anno, evt) {
-                                    reset();
+                                    $scope.trackIntroductionTour('Close');
+									reset();
                                     anno.hide();
                                 }
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Search');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
