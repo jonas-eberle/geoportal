@@ -179,6 +179,7 @@ angular.module('webgisApp')
         $scope.wetlands_without_geom = [];
         $scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function () {
+            $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
                 'url': '/swos/wetlands.geojson'
@@ -236,7 +237,6 @@ angular.module('webgisApp')
                     }
                 });
 
-
                 WetlandsService.wetlands = $scope.wetlands;
                 vectorSource.addFeatures(features);
                 WetlandsService.olLayer = new ol.layer.Vector({
@@ -269,6 +269,27 @@ angular.module('webgisApp')
                 });
                 mapviewer.map.addLayer(WetlandsService.olLayer);
 
+                $('#loading-div').hide();
+                bootbox.dialog({
+                    title:'Welcome to the SWOS Geoportal', 
+                    message: $('#welcome_text').html(), 
+                    backdrop: true, 
+                    onEscape:true, 
+                    buttons: {
+                        confirm: {
+                            label: 'Start Tour',
+                            callback: function() {
+                                var sidebar = document.getElementById('wetland_sites');
+                                var scope = angular.element(sidebar).scope();
+                                var rootScope = scope.$root;
+                                scope.$apply(function () {
+                                    rootScope.$broadcast("start_tour");
+                                });
+                            }
+                        },
+                        close:{label:'Close'}
+                    }
+                });
                 load_wetland();
             }, function() {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
@@ -2100,27 +2121,6 @@ $(document).ready(function() {
     $(".fancybox").fancybox({
         openEffect    : 'none',
         closeEffect    : 'none'
-    });
-    bootbox.dialog({
-        title:'Welcome to the SWOS Geoportal', 
-        message: $('#welcome_text').html(), 
-        backdrop: true, 
-        onEscape:true, 
-        buttons: {
-            confirm: {
-                label: 'Start Tour',
-                 callback: function() {
-                     var sidebar = document.getElementById('wetland_sites');
-                     var scope = angular.element(sidebar).scope();
-                     var rootScope = scope.$root;
-                     scope.$apply(function () {
-                         rootScope.$broadcast("start_tour");
-                     });
-                }
-            },
-            close:{
-                label:'Close'}
-        }
     });
 });
 
