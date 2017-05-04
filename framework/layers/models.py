@@ -44,10 +44,6 @@ class ContactSerializer(serializers.ModelSerializer):
 # Layer model to specify visualization layers with metadata information
 class Layer(models.Model):    
 
-    DOWNLOAD_TYPE = (
-
-    )
-
     #Overview
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
