@@ -43,6 +43,11 @@ class ContactSerializer(serializers.ModelSerializer):
 
 # Layer model to specify visualization layers with metadata information
 class Layer(models.Model):    
+
+    DOWNLOAD_TYPE = (
+
+    )
+
     #Overview
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
@@ -62,9 +67,11 @@ class Layer(models.Model):
 
     #Download services
     downloadable = models.BooleanField(default=False, help_text="Define whether layer can be downloaded")
-    download_url = models.CharField("Download URL", max_length=200, null=True, blank=True, help_text="URL for layer download")
+    download_url = models.CharField("Download URL", max_length=300, null=True, blank=True, help_text="URL for download")
+    download_name = models.CharField("Download name", max_length=100, null=True, blank=True, help_text="Name for download")
+    download_type = models.CharField("Download type", max_length=20, choices=[("wcs", "WCS"),("link", "Link / URL")], blank=True, help_text="")
     download_file = models.FileField("Download file", upload_to='downloads', null=True, blank=True, help_text="Upload file for layer download")
-
+    map_layout_image = models.FileField("Map layout image", upload_to="downloads",null=True, blank=True, help_text="Upload for a file with the Map Layout Image")
     #download_layer = models.CharField(max_length=200, null=True, blank=True)
     #download_type = models.CharField(max_length=200, choices=[('WCS', 'WCS'), ('WFS', 'WFS'), ('URL', 'URL'), ('SOS', 'SOS')], null=True, blank=True)
 
@@ -228,7 +235,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids')
 
 
 # Metadata serializer to output metadata related information from a given layer
