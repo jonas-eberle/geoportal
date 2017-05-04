@@ -762,7 +762,8 @@ angular.module('webgisApp')
             });
 
             function featureCallback(feature, layer) {
-                if (layer === null || layer.get('name') === 'Wetlands' || layer.get('layerObj') === null) {
+
+                if (layer === null || layer.get('name') === 'Wetlands' || layer.get('layerObj') === undefined || layer.get('layerObj') === null ) {
                     return false;
                 }
 
@@ -1106,7 +1107,7 @@ angular.module('webgisApp')
                 mapviewer.map.getView().fit(extent);
             }
         }
-        
+
         function hidePopover() {
             setTimeout(function () {
                 if (!$(".popover:hover").length) {
@@ -1291,11 +1292,214 @@ angular.module('webgisApp')
             }
         };
 
+        $scope.addDrawBox = function (remove) {
+
+            var draw;
+
+            var source = new ol.source.Vector({wrapX: false});
+            var vector = new ol.layer.Vector({source: source, name: "draw_box"});
+
+            var source_2 = new ol.source.Vector({wrapX: false});
+            var vector_2 = new ol.layer.Vector({source: source_2, name: "draw_box_2"});
+
+            mapviewer.map.addLayer(vector);
+            mapviewer.map.addLayer(vector_2);
+
+            function addInteraction() {
+                var value = "Box";
+                if (value !== 'None') {
+                    var geometryFunction, maxPoints;
+                    if (value === 'Square') {
+                        value = 'Circle';
+                        geometryFunction = ol.interaction.Draw.createRegularPolygon(4);
+                    } else if (value === 'Box') {
+                        value = 'LineString';
+                        maxPoints = 2;
+                        geometryFunction = function (coordinates, geometry) {
+                            if (!geometry) {
+                                geometry = new ol.geom.Polygon(null);
+                            }
+                            var start = coordinates[0];
+                            var end = coordinates[1];
+                            geometry.setCoordinates([
+                                [start, [start[0], end[1]], end, [end[0], start[1]], start]
+                            ]);
+                            return geometry;
+                        };
+                    }
+                    draw = new ol.interaction.Draw({
+                        source: source,
+                        type: /** @type {ol.geom.GeometryType} */ (value),
+                        geometryFunction: geometryFunction,
+                        maxPoints: maxPoints
+                    });
+                    draw.on('drawstart', function (e) {
+                        source.clear();
+                        source_2.clear();
+                    });
+                    draw.on('drawend', function (e) {
+                        var drawendExtent = ol.proj.transformExtent(e.feature.getGeometry().getExtent(), 'EPSG:3857', 'EPSG:4326');
+                        var drawendExtent3857 = e.feature.getGeometry().getExtent();
+
+                        var geom = new ol.geom.Polygon([[
+                            [drawendExtent3857[0], drawendExtent3857[3]],
+                            [drawendExtent3857[2], drawendExtent3857[3]],
+                            [drawendExtent3857[2], drawendExtent3857[1]],
+                            [drawendExtent3857[0], drawendExtent3857[1]]
+                        ]]);
+                        var feature = new ol.Feature({
+                            name: "bbox",
+                            geometry: geom
+                        });
+                        source_2.addFeature(feature);
+
+                        var drawendExtent = ol.proj.transformExtent(e.feature.getGeometry().getExtent(), 'EPSG:3857', 'EPSG:4326');
+                        $('#east').val(drawendExtent[0].toFixed(2));
+                        $('#north').val(drawendExtent[3].toFixed(2));
+                        $('#south').val(drawendExtent[1].toFixed(2));
+                        $('#west').val(drawendExtent[2].toFixed(2));
+                        $('input:radio[name="extent_type"]').filter('[value="bbox"]').prop('checked', true);
+
+                        $scope.currentBBOX = drawendExtent;
+                    })
+                    mapviewer.map.addInteraction(draw);
+                }
+            }
+            addInteraction();
+        };
+
+        $scope.removeDrawBox = function () {
+            mapviewer.map.getLayers().forEach(function (layer, i) {
+                if (layer.get('name') == "draw_box" || layer.get('name') == "draw_box_2") {
+                    mapviewer.map.removeLayer(layer);
+                }
+            });
+            mapviewer.map.getInteractions().forEach(function (interaction) {
+                if (interaction instanceof ol.interaction.Draw) {
+                    interaction.setActive(false);
+                }
+            }, this);
+        };
+
+        $scope.requestWCS = function (layer_id) {
+            $scope.addDrawBox();
+
+            var output = '<div  class="modal-body">' +
+                '<div style="display: inline-flex;  white-space: nowrap;">Please select an output format:' +
+                '<select name="output_format" id="output_format" class="form-control" style="margin-left: 16px;">' +
+                '<option>GeoTiff</option>' +
+                '</select>' +
+                '</div>' +
+                '<div><p>Bounding Box:</p><div><input type="text" name="north" id="north" class="form-control" style="width: 100px"></div>' +
+                '<div style="display: inline-flex; width: 100%">' +
+                '<input type="text" name="east" id="east" class="form-control" style="width: 100px">' +
+                '<input type="text" name="west" id="west" class="form-control" style="width: 100px"></div>' +
+                '<div><input type="text" name="south" id="south" class="form-control" style="width: 100px"></div>' +
+                '<div>' +
+                '<label for="bbox" style="margin-left: 100px"><input type="radio" name="extent_type" value="bbox" id="bbox">Map selection</label>' +
+                '<label for="full_extent" style="margin-left: 20px; margin-right: 20px;"><input type="radio" name="extent_type" id="full_extent"  value="full_extent" >Entire dataset</label>' +
+                '<label for="current_view"><input type="radio" name="extent_type" value="current_view" id="current_view">Current view</label>' +
+                '</div></div>' +
+                '';
+            var dialog = bootbox.dialog({
+                title: 'Download',
+                message: output,
+                backdrop: false,
+                buttons: {
+                    confirm: {
+                        label: 'Download',
+                        className: 'btn-primary',
+                        callback: function () {
+                            $scope.removeDrawBox();
+
+                            //  djangoRequests.request({
+                            // 'method': "GET",
+
+                            //     'url': '... /...?layer_id'+ layer_id +'&output_format='+ $('#output_format').val() + 'east=' + $('#east').val() + 'west=' + $('#west').val() + 'south=' + $('#south').val() + 'north=' + $('#north').val()
+                            //  }).then(function (data) {
+
+
+                            // });
+                        }
+                    },
+                    cancel: {
+                        label: "Cancel",
+                        className: "btn-default",
+                        callback: function () {
+                            $scope.removeDrawBox();
+                        }
+                    }
+                }
+            });
+            dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+            var width = $(document).width() / 2 - 300;
+            if (width < 0) {
+                width = '2%';
+            }
+            $('.modal-content', dialog).css('left', width);
+            $('#loading-div').removeClass('nobg').hide();
+
+            // fill with full extent by default
+            full_extent();
+            $('input:radio[name="extent_type"]').filter('[value="full_extent"]').prop('checked', true);
+
+            $("input[type=radio][name=extent_type]").change(function () {
+
+                if (this.value == "bbox") {
+                    var extent = $scope.currentBBOX;
+                    $('#east').val(extent[0].toFixed(2));
+                    $('#north').val(extent[3].toFixed(2));
+                    $('#south').val(extent[1].toFixed(2));
+                    $('#west').val(extent[2].toFixed(2));
+                }
+                if (this.value == "full_extent") {
+                    full_extent();
+                }
+                if (this.value == "current_view") {
+
+                    var extent = ol.proj.transformExtent(mapviewer.map.getView().calculateExtent(mapviewer.map.getSize()), 'EPSG:3857', 'EPSG:4326');
+                    $('#east').val(extent[0].toFixed(2));
+                    $('#north').val(extent[3].toFixed(2));
+                    $('#south').val(extent[1].toFixed(2));
+                    $('#west').val(extent[2].toFixed(2));
+                }
+            });
+
+            function full_extent() {
+                var olLayer = mapviewer.getLayerById(layer_id);
+
+                var layerObj = olLayer.get('layerObj');
+
+                var west = layerObj.west;
+                var south = layerObj.south;
+                var east = layerObj.east;
+                var north = layerObj.north;
+
+                var map_epsg = mapviewer.map.getView().getProjection().getCode();
+
+                //reduce extent to fit to mercator projection (Google)
+                if (layerObj["epsg"] == 4326 && (map_epsg == "EPSG:3857" || map_epsg == "EPSG:900913")) {
+                    if (south < -85) {
+                        south = -85
+                    }
+                    if (north > 85) {
+                        north = 85
+                    }
+                }
+
+                $('#east').val(east.toFixed(2));
+                $('#north').val(north.toFixed(2));
+                $('#south').val(south.toFixed(2));
+                $('#west').val(west.toFixed(2));
+            }
+
+        };
+
         $scope.shareLink = function(id) {
             var host = document.location.protocol +"//"+ document.location.hostname + document.location.pathname;
             var hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;
             var url = host+hash;
-            bootbox.alert('<h4>Share dataset link</h4><div class="share_link">Please use the following link to share the dataset: <br /><a href="'+url+'" target="_blank">'+url+'</a></div>'); 
+            bootbox.alert('<h4>Share dataset link</h4><div class="share_link">Please use the following link to share the dataset: <br /><a href="'+url+'" target="_blank">'+url+'</a></div>');
         };
 
         $scope.showMetadata = function(layer) {
@@ -1363,6 +1567,8 @@ angular.module('webgisApp')
                 }
             });
         };
+
+
 
         $scope.wetlandListState = "";
         $scope.showToggleButton = false;
