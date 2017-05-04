@@ -577,7 +577,6 @@ angular.module('webgisApp')
 
                         $rootScope.$broadcast('mapviewer.baselayers_loaded', mapviewer.baseLayers);
                     }
-                    $rootScope.$broadcast('mapviewer.catalog_loaded');
 
                     if (mapviewer.map !== null) {
                         mapviewer.map.setTarget(null);
@@ -587,8 +586,9 @@ angular.module('webgisApp')
                     if (mapviewer.baseLayers.length > 0) {
                         mapviewer.setBaseLayer(0);
                     }
-                    $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
                     $('#loading-div').hide();
+                    $rootScope.$broadcast('mapviewer.catalog_loaded');
+                    $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
 
                     if (data.time_slider === true) {
                         var $slider = $("#slider");

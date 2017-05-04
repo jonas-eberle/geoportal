@@ -179,6 +179,7 @@ angular.module('webgisApp')
         $scope.wetlands_without_geom = [];
         $scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function () {
+            $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
                 'url': '/swos/wetlands.geojson'
@@ -236,7 +237,6 @@ angular.module('webgisApp')
                     }
                 });
 
-
                 WetlandsService.wetlands = $scope.wetlands;
                 vectorSource.addFeatures(features);
                 WetlandsService.olLayer = new ol.layer.Vector({
@@ -269,6 +269,27 @@ angular.module('webgisApp')
                 });
                 mapviewer.map.addLayer(WetlandsService.olLayer);
 
+                $('#loading-div').hide();
+                bootbox.dialog({
+                    title:'Welcome to the SWOS Geoportal', 
+                    message: $('#welcome_text').html(), 
+                    backdrop: true, 
+                    onEscape:true, 
+                    buttons: {
+                        confirm: {
+                            label: 'Start Tour',
+                            callback: function() {
+                                var sidebar = document.getElementById('wetland_sites');
+                                var scope = angular.element(sidebar).scope();
+                                var rootScope = scope.$root;
+                                scope.$apply(function () {
+                                    rootScope.$broadcast("start_tour");
+                                });
+                            }
+                        },
+                        close:{label:'Close'}
+                    }
+                });
                 load_wetland();
             }, function() {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
@@ -515,7 +536,7 @@ angular.module('webgisApp')
 
             window.location.hash = '#/wetland/'+$scope.value.id+'/'+type;
 
-        try {
+            try {
                 _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);
                 _paq.push(['setDocumentTitle', $scope.value.name+'/'+type]);
                 _paq.push(['trackPageView']);
@@ -1083,6 +1104,14 @@ angular.module('webgisApp')
             return $scope.startAnno();
         });
 
+        $scope.trackIntroductionTour = function(title, step) {
+             try {
+                 _paq.push(['setCustomUrl', '/introduction/'+step+'_'+title.toLowerCase()]);
+                 _paq.push(['setDocumentTitle', 'Introduction Tour: '+title+' ('+step+')']);
+                 _paq.push(['trackPageView']);
+             } catch (err) {}
+        }
+
         $scope.startAnno = function () {
 
             $rootScope.$broadcast("StopLoadingWetlandFromURL"); // prevent loading from URL
@@ -1105,7 +1134,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Welcome', '01');
                             // change overlay to avoid changing z-index of all nav elements
                             $('.anno-overlay').css('z-index', '1029');
 
@@ -1125,7 +1154,7 @@ angular.module('webgisApp')
                             $target[0].removeEventListener('click', handler, true)
                         },
 
-                        content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS Geoportal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
+                        content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS and GEO-Wetlands Community Portal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
                         '<p>Please notice that certain functions are deactivated during the tour. If you would like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information on each card.</p> ' +
                         '<p>You can always stop the tour with a click on the semi-transparent black area. To <strong>start</strong> the <strong>tour again </strong>go to the <span class="fa fa-question fa-lg"></span> on the top. Here you will also find information on how to contact us.</p>' +
                         '</div>'
@@ -1148,7 +1177,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Catalog', '02');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1195,7 +1224,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Selection', '03');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1242,7 +1271,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Wetland', '04');
                             //Load wetland (id 4 - Camargue)
                             only_load_wetland(4);
 
@@ -1301,7 +1330,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Products', '05');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1361,7 +1390,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Product', '06');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1420,7 +1449,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Dataset', '07');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1536,7 +1565,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Satellitedata', '08');
                             //ensure products is shown
                             select_tab("satdata");
 
@@ -1587,7 +1616,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('External1', '09');
                             //ensure products is shown
                             select_tab("externaldb");
 
@@ -1638,7 +1667,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('External2', '10');
                             //ensure products is shown
                             //select_tab("externaldb");
                             $cookies.hasNotifiedAboutLayers = true;
@@ -1692,7 +1721,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('ActiveLayers', '11');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //select_tab("externaldb");
@@ -1753,7 +1782,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('WetlandSites', '12');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1797,7 +1826,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('MapControls', '13');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1839,13 +1868,14 @@ angular.module('webgisApp')
                             {
                                 text: 'Close',
                                 click: function (anno, evt) {
-                                    reset();
+                                    $scope.trackIntroductionTour('Close', '15');
+									reset();
                                     anno.hide();
                                 }
                             }
                         ],
                         onShow: function (anno, $target, $annoElem) {
-
+                            $scope.trackIntroductionTour('Search', '14');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -2100,27 +2130,6 @@ $(document).ready(function() {
     $(".fancybox").fancybox({
         openEffect    : 'none',
         closeEffect    : 'none'
-    });
-    bootbox.dialog({
-        title:'Welcome to the SWOS Geoportal', 
-        message: $('#welcome_text').html(), 
-        backdrop: true, 
-        onEscape:true, 
-        buttons: {
-            confirm: {
-                label: 'Start Tour',
-                 callback: function() {
-                     var sidebar = document.getElementById('wetland_sites');
-                     var scope = angular.element(sidebar).scope();
-                     var rootScope = scope.$root;
-                     scope.$apply(function () {
-                         rootScope.$broadcast("start_tour");
-                     });
-                }
-            },
-            close:{
-                label:'Close'}
-        }
     });
 });
 
