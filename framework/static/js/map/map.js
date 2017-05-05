@@ -1082,7 +1082,14 @@ angular.module('webgisApp')
         mapCatalog.activeLayer = -1;
         mapCatalog.addLayerToMap = addLayerToMap;
         mapCatalog.download = function(layer) {
-            window.open(subdir+'/layers/detail/'+layer.id+'/download', 'download_'+layer.id);
+            if (layer.download_type == 'wcs') {
+                alert('TODO');
+            } else {
+                window.open(subdir + '/layers/detail/' + layer.id + '/download', 'download_' + layer.id);
+            }
+        };
+        mapCatalog.showMap = function(layer) {
+            window.open(subdir+layer.map_layout_image, 'map_'+layer.id);
         };
         mapCatalog.hidePopover = hidePopover;
         mapCatalog.hoverLayer = hoverLayer;
@@ -1292,6 +1299,19 @@ angular.module('webgisApp')
             }
         };
 
+        $scope.download = function(layer) {
+            console.log(layer);
+			if (layer.download_type == 'wcs') {
+                $scope.requestWCS(layer);
+            } else {
+                window.open(subdir + '/layers/detail/' + layer.id + '/download', 'download_' + layer.id);
+            }
+        };
+
+        $scope.showMap = function(layer) {
+            window.open(subdir+layer.map_layout_image, 'map_'+layer.id);
+        };
+
         $scope.addDrawBox = function (remove) {
 
             var draw;
@@ -1354,10 +1374,10 @@ angular.module('webgisApp')
                         source_2.addFeature(feature);
 
                         var drawendExtent = ol.proj.transformExtent(e.feature.getGeometry().getExtent(), 'EPSG:3857', 'EPSG:4326');
-                        $('#east').val(drawendExtent[0].toFixed(2));
+                        $('#east').val(drawendExtent[2].toFixed(2));
                         $('#north').val(drawendExtent[3].toFixed(2));
                         $('#south').val(drawendExtent[1].toFixed(2));
-                        $('#west').val(drawendExtent[2].toFixed(2));
+                        $('#west').val(drawendExtent[0].toFixed(2));
                         $('input:radio[name="extent_type"]').filter('[value="bbox"]').prop('checked', true);
 
                         $scope.currentBBOX = drawendExtent;
@@ -1381,8 +1401,9 @@ angular.module('webgisApp')
             }, this);
         };
 
-        $scope.requestWCS = function (layer_id) {
-            $scope.addDrawBox();
+        $scope.requestWCS = function(layer) {		
+			var layer_id = layer.id;
+			$scope.addDrawBox();
 
             var output = '<div  class="modal-body">' +
                 '<div style="display: inline-flex;  white-space: nowrap;">Please select an output format:' +
@@ -1392,8 +1413,8 @@ angular.module('webgisApp')
                 '</div>' +
                 '<div><p>Bounding Box:</p><div><input type="text" name="north" id="north" class="form-control" style="width: 100px"></div>' +
                 '<div style="display: inline-flex; width: 100%">' +
-                '<input type="text" name="east" id="east" class="form-control" style="width: 100px">' +
-                '<input type="text" name="west" id="west" class="form-control" style="width: 100px"></div>' +
+                '<input type="text" name="west" id="west" class="form-control" style="width: 100px">' +
+                '<input type="text" name="east" id="east" class="form-control" style="width: 100px"></div>' +
                 '<div><input type="text" name="south" id="south" class="form-control" style="width: 100px"></div>' +
                 '<div>' +
                 '<label for="bbox" style="margin-left: 100px"><input type="radio" name="extent_type" value="bbox" id="bbox">Map selection</label>' +
@@ -1412,14 +1433,10 @@ angular.module('webgisApp')
                         callback: function () {
                             $scope.removeDrawBox();
 
-                            //  djangoRequests.request({
-                            // 'method': "GET",
-
-                            //     'url': '... /...?layer_id'+ layer_id +'&output_format='+ $('#output_format').val() + 'east=' + $('#east').val() + 'west=' + $('#west').val() + 'south=' + $('#south').val() + 'north=' + $('#north').val()
-                            //  }).then(function (data) {
-
-
-                            // });
+                            var bbox = $('#west').val()+','+$('#south').val()+','+$('#east').val()+','+$('#north').val()
+                            var url = subdir+'/layers/detail/'+layer.django_id+'/download?bbox='+bbox+'&outputformat='+$('#output_format').val();
+                            $scope.removeDrawBox();
+                            window.open(url,'download_'+layer.django_id);
                         }
                     },
                     cancel: {
@@ -1447,10 +1464,10 @@ angular.module('webgisApp')
 
                 if (this.value == "bbox") {
                     var extent = $scope.currentBBOX;
-                    $('#east').val(extent[0].toFixed(2));
+                    $('#east').val(extent[2].toFixed(2));
                     $('#north').val(extent[3].toFixed(2));
                     $('#south').val(extent[1].toFixed(2));
-                    $('#west').val(extent[2].toFixed(2));
+                    $('#west').val(extent[0].toFixed(2));
                 }
                 if (this.value == "full_extent") {
                     full_extent();
@@ -1458,10 +1475,10 @@ angular.module('webgisApp')
                 if (this.value == "current_view") {
 
                     var extent = ol.proj.transformExtent(mapviewer.map.getView().calculateExtent(mapviewer.map.getSize()), 'EPSG:3857', 'EPSG:4326');
-                    $('#east').val(extent[0].toFixed(2));
+                    $('#east').val(extent[2].toFixed(2));
                     $('#north').val(extent[3].toFixed(2));
                     $('#south').val(extent[1].toFixed(2));
-                    $('#west').val(extent[2].toFixed(2));
+                    $('#west').val(extent[0].toFixed(2));
                 }
             });
 
@@ -1552,10 +1569,6 @@ angular.module('webgisApp')
             } else if (type === 'WMTS') {
                 source.updateDimensions({'time':$scope.selectedLayerDates[id]});
             }
-        };
-
-        $scope.download = function(layer) {
-            window.open(subdir+'/layers/detail/'+layer.django_id+'/download', 'download_'+layer.django_id);
         };
 
         $scope.addOwnLayer = function() {

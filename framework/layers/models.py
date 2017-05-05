@@ -64,7 +64,7 @@ class Layer(models.Model):
     #Download services
     downloadable = models.BooleanField(default=False, help_text="Define whether layer can be downloaded")
     download_url = models.CharField("Download URL", max_length=300, null=True, blank=True, help_text="URL for download")
-    download_name = models.CharField("Download name", max_length=100, null=True, blank=True, help_text="Name for download")
+    download_layer = models.CharField("Download layer", max_length=100, null=True, blank=True, help_text="Layername for download url (only wcs)")
     download_type = models.CharField("Download type", max_length=20, choices=[("wcs", "WCS"),("link", "Link / URL")], blank=True, help_text="")
     download_file = models.FileField("Download file", upload_to='downloads', null=True, blank=True, help_text="Upload file for layer download")
     map_layout_image = models.FileField("Map layout image", upload_to="downloads",null=True, blank=True, help_text="Upload for a file with the Map Layout Image")
@@ -204,6 +204,60 @@ class Layer(models.Model):
             link = self.download_file.url
         elif self.download_url != '':
             link = self.download_url
+            if self.download_type == 'wcs':
+                bbox = request.query_params.get('bbox')
+                format = request.query_params.get('outputformat')
+                if format == None:
+                    format = 'GeoTIFF'
+                                        
+                bbox = bbox.split(',')
+                bbox = [float(i) for i in bbox]
+                
+                from owslib.wcs import WebCoverageService
+                wcs = WebCoverageService(self.download_url,version='1.0.0')
+                l = wcs.contents[self.download_layer]
+                resx = float(l.grid.offsetvectors[0][0])
+                resy = float(l.grid.offsetvectors[1][1])*-1.0
+                min_x = l.boundingBoxWGS84[0]
+                min_y = l.boundingBoxWGS84[1]
+                
+                range_min_x = bbox[0]-min_x
+                range_min_y = bbox[1]-min_y
+                range_max_x = bbox[2]-min_x
+                range_max_y = bbox[3]-min_y
+                
+                range_min_x_pixels = int(range_min_x/resx)
+                range_min_y_pixels = int(range_min_y/resy)
+                range_max_x_pixels = int(range_max_x/resx)
+                range_max_y_pixels = int(range_max_y/resy)
+                
+                bbox_min_x = min_x+(range_min_x_pixels*resx)
+                bbox_min_y = min_y+(range_min_y_pixels*resy)
+                bbox_max_x = min_x+(range_max_x_pixels*resx)
+                bbox_max_y = min_y+(range_max_y_pixels*resy)
+                
+                bbox = ','.join([str(bbox_min_x), str(bbox_min_y), str(bbox_max_x), str(bbox_max_y)])
+                
+                import requests
+                url = self.download_url+'?service=WCS&request=GetCoverage&version=1.0.0&COVERAGE='+self.download_layer+'&BBOX='+bbox+'&CRS=EPSG:4326&format='+format+'&RESPONSE_CRS=EPSG:4326&RESX='+str(resx)+'&RESY='+str(resy)
+                return url
+                
+                # old code
+                data = requests.get(url)
+                content_type = data.headers['CONTENT-TYPE']
+                
+                response = HttpResponse(str(data.content), content_type=content_type)
+                filename = 'download.bin'
+                if 'tiff' in content_type.lower():
+                    filename = 'download.tif'
+                elif 'hdf' in content_type.lower():
+                    filename = 'download.hdf'
+                elif 'nitf' in content_type.lower() or 'ntf' in content_type.lower():
+                    filename = 'download.nitf'
+                elif 'xml' in content_type.lower():
+                    filename = 'download.xml'
+                response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+                return response
         else:
             raise Http404
 

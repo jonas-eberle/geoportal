@@ -58,7 +58,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-download',),
-            'fields': ('downloadable', 'download_url', 'download_name', 'download_type','download_file', 'map_layout_image')
+            'fields': ('downloadable', 'download_url', 'download_layer', 'download_type','download_file', 'map_layout_image')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-permissions',),

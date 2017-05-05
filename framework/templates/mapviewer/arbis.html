@@ -173,6 +173,7 @@
                                                     </div>
                                                     <div class="item_right">
                                                         <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mapCatalog.download(layer)" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
+                                                        <button tooltip-placement="bottom" tooltip="Show map PDF" ng-if="layer.map_layout_image" type="button" ng-click="mapCatalog.showMap(layer)" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-map fa-lg"></i></button>
                                                         <button tooltip-placement="bottom" tooltip="Show metadata" ng-click="mapCatalog.showMetadata(layer)" type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" ><i class="fa fa-file-text-o fa-lg "></i></button>
                                                         <button tooltip-placement="bottom" tooltip="Add layer to map" ng-click="mapCatalog.addLayerToMap(layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg "></i></button>
                                                     </div>
@@ -226,6 +227,10 @@
                                                     ng-if="layer.downloadable" type="button" ng-click="download(layer)"
                                                     class="btn btn-default" aria-label="Left Align"><i
                                                     class="fa fa-download fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Show map PDF"
+                                                    ng-if="layer.map_layout_image" type="button" ng-click="showMap(layer)"
+                                                    class="btn btn-default" aria-label="Left Align"><i
+                                                    class="fa fa-map fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Show metadata" type="button"
                                                     ng-click="showMetadata(layer)" class="btn btn-default"
                                                     aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i>
