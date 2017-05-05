@@ -60,7 +60,7 @@
     <link href="{% static "lib/jqueryDateSlider/classic-min.css" %}" rel="stylesheet">
 
     <!--<script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARWJfd0ov-WXWAtbyZjvqayhCDiUJFtPw"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>
 
     <script type="text/javascript">
         var _paq = _paq || [];
@@ -71,12 +71,12 @@
     <div id="loading-div"><div class="loading"><i class="fa fa-circle-o-notch fa-spin"></i></div></div>
 
     {% verbatim %}
-    <div id="alerts" ng-controller="AlertCtrl">
-        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
+    <div id="alerts" ng-controller="AlertCtrl as ac">
+        <alert ng-repeat="alert in ac.alerts" type="{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</alert>
     </div>
     {% endverbatim %}
 
-    <nav class="navbar navbar-default navbar-fixed-top"  role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
                 <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
@@ -84,7 +84,7 @@
 
             <!-- TOOLBAR in Navigation für Tablet und Desktop -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl" style="padding-right:0;">
+                <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl as lc" style="padding-right:0;">
                     <li>
                         <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;">
                             <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" align="left" style="margin-right: 4px;"/></a>
@@ -94,9 +94,9 @@
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
-                <ul  class="nav navbar-nav pull-right" id="nav-top-right2">
+                <ul class="nav navbar-nav pull-right" id="nav-top-right2">
                     <!--<li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>-->
-                    <li  class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_swos.html" %}'"></li>
+                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_swos.html" %}'"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div>
@@ -104,11 +104,11 @@
 
     {% verbatim %}
     <!-- NAVBAR SEARCH SMARTPHONE - Zweite Version, die auf dem Smartphone in einer separaten Zeile angezeigt wird.-->
-    <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl">
+    <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl as sb">
         <div class="container-fluid">
-            <form class="navbar-form navbar-right" ng-submit="search();" role="search" id="xs-search">
+            <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="text" placeholder="Search">
+                    <input type="text" class="form-control" ng-model="sb.text" placeholder="Search">
                 </div>
             </form>
             <button class="btn btn-primary" type="submit"  id="toggle-sidebar">Menu</button>
@@ -118,31 +118,31 @@
     <!-- NAVBAR END -->
 
     <div class="container-fluid" id="center">
-        <div class="row">
+        <div class="row" ng-controller="MapCurrentLayersCtrl as mcl">
 
             <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
-            <div ng-controller="MapViewerCtrl" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
+            <div ng-controller="MapViewerCtrl as mv" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
 
                 <div class="map-controls-wrapper">
 
                     <div id="wetland_sites">
-                        <input type="checkbox" ng-click="changeSitesVisibility(1, $event)" id="layer_sites"
+                        <input type="checkbox" ng-click="mv.changeSitesVisibility(1, $event)" id="layer_sites"
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" ng-click="zoomIn()" class="btn btn-default btn-circle hidden-xs"><i
+                        <button type="button" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" ng-click="zoomOut()" class="btn btn-default btn-circle hidden-xs"><i
+                        <button type="button" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" ng-click="zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
-                        <!--<button type="button" ng-click="createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" ng-click="requestInfo()" ng-class="{'btn-active': infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+                        <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
+                        <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
-                    <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl">
-                        <form ng-submit="search();">
-                            <input type="text" ng-model="text" class="form-control" placeholder="Search for..."
+                    <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                        <form ng-submit="sb.search();">
+                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..."
                                    id="search_desktop">
                             <br style="clear:both"/>
                             <div id="search-extend">
@@ -166,7 +166,7 @@
 
                 <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
 
-                <div id="cookienote" ng-hide="hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="closeCookieNote()">Okay</button></div>
+                <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
 
                 <div id="map_legend"></div>
 
@@ -176,54 +176,54 @@
 
             </div>
 
-            <div class="layer-list" ng-controller="MapCurrentLayersCtrl">
-                <div id="current" ng-show="wetlandListState">
+            <div class="layer-list">
+                <div id="current" ng-show="mcl.wetlandListState">
 
                     <!--
                        <div id="addexternallayer" ng-if="mapviewerdata.addexternallayer">
                            <hr />
-                           <div align="center"><button type="button" ng-click="addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
+                           <div align="center"><button type="button" ng-click="mcl.addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
                            <hr />
                        </div>
                        -->
                     <!-- List GROUP -->
-                    <!--<div ng-show="!layersMeta.length">No layers added to the map!</div>-->
+                    <!--<div ng-show="!mcl.layersMeta.length">No layers added to the map!</div>-->
                     <div class="layer-list-top-bar">
-                        <div class="div-button" ng-click="removeAllLayers()">
+                        <div class="div-button" ng-click="mcl.removeAllLayers()">
                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                             <div class="div-button-text">Remove all layers</div>
                         </div>
                     </div>
-                    <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(index, item)">
-                        <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" dnd-draggable="layer"
-                             dnd-moved="changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
+                    <div class="list-group" dnd-list="mcl.layersMeta" dnd-drop="mcl.prepareIndex(index, item)">
+                        <div class="list-group-item clearfix" ng-repeat="layer in mcl.layersMeta" dnd-draggable="layer"
+                             dnd-moved="mcl.changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
 
                             <div class="catalog-item">
                                 <div class="item_left" style="padding-top:12px;">
-                                    <input type="checkbox" ng-click="changeVisibility(layer.id, $event)"
+                                    <input type="checkbox" ng-click="mcl.changeVisibility(layer.id, $event)"
                                            id="id_{{ layer.id }}" checked="checked"/>
                                     <label for="id_{{ layer.id }}"></label>
                                 </div>
                                 <div class="item_catalog">
                                     <div class="layer-title-wrapper">
-                                        <div class="item_title" style="float: left;width:206px;" ng-click="zoomToLayer(layer.id)" ng-bind="layer.title"></div>
-                                        <div class="glyphicon glyphicon-chevron-down" ng-click="toggleLayerControls(layer.id, $event)">
+                                        <div class="item_title" style="float: left;width:206px;" ng-click="mcl.zoomToLayer(layer.id)" ng-bind="layer.title"></div>
+                                        <div class="glyphicon glyphicon-chevron-down" ng-click="mcl.toggleLayerControls(layer.id, $event)">
                                             &nbsp;
                                         </div>
                                         <div style="clear:both;"></div>
                                     </div>
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
                                         <div class="item_desc">
-                                            <slider class="slider" ng-model="sliderValues[layer.id]" min="0" max="100" step="1" on-slide="changeOpacity(layer.id)" on-stop-slide="changeOpacity(layer.id)" style="width:95%;"></slider>
-                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="selectedLayerDates[layer.id]" ng-change="updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
+                                            <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)" style="width:95%;"></slider>
+                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]" ng-change="mcl.updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
                                         </div>
                                         <div class="item_icon">
-                                            <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -231,7 +231,7 @@
                                     <div class="item_stations" ng-if="layer.ogc_type == 'SOS'" ng-hide="!layer.showStations">
                                         <strong>Available stations:</strong>
                                         <ul style="padding-left:20px;">
-                                            <li ng-repeat="station in layer.stations"><a href="#" ng-click="zoomToStation(station);">{{ station.name }}
+                                            <li ng-repeat="station in layer.stations"><a href="#" ng-click="mcl.zoomToStation(station);">{{ station.name }}
                                                 ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
                                         </ul>
                                     </div>
@@ -256,8 +256,8 @@
                     </div>
                     <!-- END List GROUP -->
                 </div>
-                <div id="active_layer" class="toggle-button-wrapper" ng-class="wetlandListState">
-                    <button id="show_active_layer" class="glyphicon" ng-if="showToggleButton" ng-click="toggleWetlandList('click')"></button>
+                <div id="active_layer" class="toggle-button-wrapper" ng-class="mcl.wetlandListState">
+                    <button id="show_active_layer" class="glyphicon" ng-if="mcl.showToggleButton" ng-click="mcl.toggleWetlandList('click')"></button>
                 </div>
             </div>
 
@@ -385,8 +385,7 @@
                             <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="trackWetlandTab('indicator')">
                                 <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
 
-
-<!--
+                                <!--
                                 <ul class="items indicators">
                                     <li>
                                         <input type="checkbox" id="indicator_statustrend" /><label for="indicator_statustrend">Status and Trend of Wetland</label>
@@ -431,11 +430,11 @@
                                                 <div class="products_datasets">
                                                     <strong>Datasets:</strong>
                                                     <div class="select" ng-if="product.layers.length > 0">
-                                                        <div ng-repeat="layer in product.layers" ng-controller="MapCurrentLayersCtrl" id="layer_vis_div_{{layer.id}}">
+                                                        <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
                                                             <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                             <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                             <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                            <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" ol-layer="layers[layerIdMap[layer.id]]"></swos-layer-controls>
+                                                            <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
                                                         </div>
                                                     </div>
                                                     <div class="select" ng-if="product.layers.length == 0">
@@ -597,11 +596,11 @@
                                                 <div class="select" ng-if="externaldb.layers.length > 0">
                                                     <strong>Datasets:</strong>
                                                     <div ng-repeat="layer in externaldb.layers"
-                                                         ng-controller="MapCurrentLayersCtrl" id="layer_vis_div_{{layer.id}}">
+                                                         ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
                                                         <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
                                                         <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
                                                         <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                        <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" ol-layer="layers[layerIdMap[layer.id]]"></swos-layer-controls>
+                                                        <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
                                                     </div>
                                                 </div>
                                             </accordion-group>
@@ -631,7 +630,7 @@
             <div class="text window_info">{{html_info|safe|linebreaks}}</div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="close()">
+            <button class="btn btn-primary" ng-click="mi.close()">
                 Close
             </button>
         </div>

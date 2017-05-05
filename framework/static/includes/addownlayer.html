@@ -1,44 +1,46 @@
 <div modal-draggable class="modal-header">
-    <h1>{{title}}</h1>
+    <h1>{{ maol.title }}</h1>
 </div>
 <div class="modal-body AddOwnLayerModal">
 
-	<form class="form form-horizontal" role="form" ng-submit="submitURL()" name="registerForm" id="formRegister">
-	    <div class="form-group">
-	        <label for="service_url" class="col-sm-3 control-label">
-	            Service URL
-	        </label>
-	        <div class="col-sm-9">
-	            <input name="service_url" id="service_url" ng-model="service.url" placeholder="Service URL" type="text" class="form-control">
-	        </div>
-	        <label for="service_url" class="col-sm-3 control-label">
-	            Service Type
-	        </label>
-	        <div class="col-sm-9">
-	            <select name="service_type" id="service_type" ng-model="service.type">
-	                <option value="WMS">WMS</option>
-	                <option value="WMTS">WMTS</option>
-	            </select>
-	        </div>
-	    </div>
-	    <div class="form-group" ng-if="showLayers">
-	        <label for="layers" class="col-sm-3 control-label">
-	            Layers
-	        </label>
-	        <div class="col-sm-9">
-	            <select id="layers" ng-model="selectedLayer" ng-change="selectLayer(selectedLayer)" ng-options="layer as layer.ogc_layer for layer in layers">
-	                <option value="">-- choose layer --</option>
-	            </select>
-	        </div>
-	    </div>
-	</form>
+    <form class="form form-horizontal" role="form" ng-submit="maol.submitURL()" name="registerForm" id="formRegister">
+        <div class="form-group">
+            <label for="service_url" class="col-sm-3 control-label">
+                Service URL
+            </label>
+            <div class="col-sm-9">
+                <input name="service_url" id="service_url" ng-model="maol.service.url" placeholder="Service URL" type="text"
+                       class="form-control">
+            </div>
+            <label for="service_url" class="col-sm-3 control-label">
+                Service Type
+            </label>
+            <div class="col-sm-9">
+                <select name="service_type" id="service_type" ng-model="maol.service.type">
+                    <option value="WMS">WMS</option>
+                    <option value="WMTS">WMTS</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group" ng-if="maol.showLayers">
+            <label for="layers" class="col-sm-3 control-label">
+                Layers
+            </label>
+            <div class="col-sm-9">
+                <select id="layers" ng-model="maol.selectedLayer" ng-change="maol.selectLayer(maol.selectedLayer)"
+                        ng-options="layer as layer.ogc_layer for layer in maol.layers">
+                    <option value="">-- choose layer --</option>
+                </select>
+            </div>
+        </div>
+    </form>
 
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="submitURL()">
+    <button class="btn btn-primary" ng-click="maol.submitURL()">
         List layers
     </button>
-    <button class="btn btn-primary" ng-click="close()">
+    <button class="btn btn-primary" ng-click="maol.close()">
         Close
     </button>
 </div>

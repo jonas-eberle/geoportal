@@ -1,42 +1,42 @@
 <div class="item_catalog" style="margin-left:0;">
     <div class="item_desc">
-        <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" style="width:95%;"
-                on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)"></slider>
-        <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]"
-                                                       ng-change="mcl.updateLayer(layer.id)"
+        <slider class="slider" ng-model="mcl.sliderValues[slc.layer.id]" min="0" max="100" step="1" style="width:95%;"
+                on-slide="mcl.changeOpacity(slc.layer.id)" on-stop-slide="mcl.changeOpacity(slc.layer.id)"></slider>
+        <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[slc.layer.id]"
+                                                       ng-change="mcl.updateLayer(slc.layer.id)"
                                                        ng-options="o as o for o in layer.ogc_times"></select></div>
     </div>
     <div class="item_icon">
         <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
-                ng-click="mcl.toggleLegend(layer)" class="btn btn-default" aria-label="Left Align"><i
+                ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
         <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
-                ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i
+                ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-download fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)"
+        <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
         <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button"
-                ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(layer)" class="btn btn-default"
+                ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(slc.layer)" class="btn btn-default"
                 aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(layer.id)"
+        <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(layer.django_id)"
+        <button tooltip-placement="bottom" tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
         <!--<button tooltip-placement="bottom" tooltip="Remove layer" type="button"
-                ng-click="removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default"
+                ng-click="mcl.removeLayer(slc.layer.id, $index, slc.layer.django_id)" class="btn btn-default"
                 aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
     </div>
 </div>
-<div class="item_stations" ng-if="layer.ogc_type == 'SOS'" ng-hide="!layer.showStations">
+<div class="item_stations" ng-if="slc.layer.ogc_type == 'SOS'" ng-hide="!slc.layer.showStations">
     <strong>Available stations:</strong>
     <ul style="padding-left:20px;">
         <li ng-repeat="station in layer.stations"><a href="#" ng-click="mcl.zoomToStation(station);">{{ station.name }}
             ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
     </ul>
 </div>
-<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
+<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showLegend">
     <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
-        <img ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
+        <img ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
     </a>
     <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" target="_blank">
         <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>

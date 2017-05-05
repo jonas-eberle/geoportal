@@ -12,9 +12,7 @@ angular.module('webgisApp')
                 pages: 0,
                 itemsPerPage: 10
             },
-            'setPage': function(page) {
-
-            },
+            'setPage': function(page) { },
             'search': function(text) {
                 if (parseInt(this.server) === 0) {
                     bootbox.alert('Server ID is not valid!');
@@ -24,7 +22,7 @@ angular.module('webgisApp')
                     bootbox.alert('No search text given!');
                     return false;
                 }
-                
+
                 try {
                     _paq.push(['trackSiteSearch',
                         // Search keyword searched for
@@ -35,7 +33,7 @@ angular.module('webgisApp')
                         false
                     ]);
                 } catch(err) {}
-                
+
                 var searchData = {"text":text};
                 $('#loading-div').show();
                 djangoRequests.request({
@@ -47,7 +45,9 @@ angular.module('webgisApp')
                     //self.results.totalCount = data.totalCount
                     $('#loading-div').hide();
                     $modal.open({
+                        bindToController: true,
                         controller: 'SearchResultsModalCtrl',
+                        controllerAs: 'srm',
                         templateUrl: subdir+'/static/includes/searchresults.html',
                         backdrop: 'static',
                         resolve: {
@@ -61,22 +61,35 @@ angular.module('webgisApp')
         };
         return service;
     })
-    .controller('SearchBoxCtrl', function($scope, csw){
+    .controller('SearchBoxCtrl', function(csw){
+        var sb = this;
 
-        $scope.text = '';
+        sb.search = search;
+        sb.text = '';
 
-        $scope.search = function() {
+        //--------------------------------------------------------------------------------------------------------------
+
+        function search() {
             csw.setMapViewer(mapId);
-            csw.search($scope.text);
-        };
-
+            csw.search(sb.text);
+        }
     })
-    .controller('SearchResultsModalCtrl', function ($scope, csw, mapviewer, $modal, $modalInstance, djangoRequests, title, results, searchData) {
-        $scope.title = title;
-        $scope.results = results;
-        $scope.searchData =searchData;
+    .controller('SearchResultsModalCtrl', function (csw, mapviewer, $modal, $modalInstance, djangoRequests, title, results, searchData) {
+        var srm = this;
 
-        $scope.addLayerToMap = function(layer) {
+        srm.addLayerToMap = addLayerToMap;
+        srm.close = $modalInstance.close;
+        srm.currentPage = 1;
+        srm.maxSize = 10;
+        srm.page_changed = pageChanged;
+        srm.results = results;
+        srm.searchData = searchData;
+        srm.showMetadata = showMetadata;
+        srm.title = title;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function addLayerToMap(layer) {
             var olLayer = mapviewer.addLayer(layer);
             if (olLayer instanceof ol.layer.Base) {
                 var layerObj = olLayer.get('layerObj');
@@ -84,37 +97,32 @@ angular.module('webgisApp')
                 extent = ol.proj.transformExtent(extent, "EPSG:4326", mapviewer.map.getView().getProjection().getCode());
                 mapviewer.map.getView().fit(extent);
             }
-        };
+        }
 
-        $scope.showMetadata = function(layer) {
+        function showMetadata(layer) {
             $modal.open({
+                bindToController: true,
                 controller: 'ModalInstanceCtrl',
+                controllerAs: 'mi',
                 templateUrl: subdir+'/static/includes/metadata.html',
                 resolve: {
                     data: function() {return layer;},
                     title: function() {return layer.title;}
                 }
             });
-        };
+        }
 
-
-        $scope.currentPage = 1;
-        $scope.maxSize = 10;
-        $scope.page_changed = function() {
-            $scope.searchData.start = $scope.currentPage*$scope.maxSize - $scope.maxSize;
+        function pageChanged() {
+            srm.searchData.start = srm.currentPage*srm.maxSize - srm.maxSize;
             $('#loading-div').show();
             djangoRequests.request({
                 url: '/csw/search/'+csw.server,
                 method: 'POST',
-                data: $scope.searchData
+                data: srm.searchData
             }).then(function(data){
-                $scope.results = data;
+                srm.results = data;
                 $('#loading-div').hide();
             });
 
-        };
-
-        $scope.close = function () {
-            $modalInstance.close();
-        };
+        }
     });

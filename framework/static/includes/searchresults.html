@@ -1,29 +1,24 @@
-<div modal-draggable class="modal-header"><h1>{{title}}</h1></div>
+<div modal-draggable class="modal-header"><h1>{{ srm.title }}</h1></div>
 <div class="modal-body searchresults">
-
-
     <div class="list-group">
-
-          <div ng-repeat="item in results.records" class="list-group-item clearfix">
+        <div ng-repeat="item in srm.results.records" class="list-group-item clearfix">
             <div class="catalog-item">
                 <div class="item_center">
-                    <div class="item_title">{{item.title}}</div>
+                    <div class="item_title">{{ item.title }}</div>
                     <div class="item_desc" ng-text-truncate='item.abstract' ng-tt-chars-threshold="120"></div>
                 </div>
                 <div class="item_right">
-                    <button ng-click="showMetadata(item)" type="button" class="btn btn-default btn-xs" aria-label="Left Align" ><i class="fa fa-file-text-o fa-lg "></i></button>
-                    <button ng-click="addLayerToMap(item)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg "></i></button>
+                    <button ng-click="srm.showMetadata(item)" type="button" class="btn btn-default btn-xs"
+                            aria-label="Left Align"><i class="fa fa-file-text-o fa-lg "></i></button>
+                    <button ng-click="srm.addLayerToMap(item)" type="button" class="btn btn-default btn-xs"
+                            aria-label="Left Align"><i class="fa fa-plus fa-lg "></i></button>
                 </div>
             </div>
-          </div>
-
-
-
+        </div>
     </div>
-
-
 </div>
 <div class="modal-footer searchresults">
-    <pagination style="display:inline" total-items="results.totalCount" ng-model="currentPage" max-size="10" ng-change="page_changed()"></pagination>
-    <button class="btn btn-primary" ng-click="close()">Close</button>
+    <pagination style="display:inline" total-items="srm.results.totalCount" ng-model="srm.currentPage" max-size="10"
+                ng-change="srm.page_changed()"></pagination>
+    <button class="btn btn-primary" ng-click="srm.close()">Close</button>
 </div>

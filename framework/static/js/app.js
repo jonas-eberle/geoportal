@@ -87,92 +87,116 @@ angular.module('webgisApp', [
         return sharedService;
     })
     .controller('AlertCtrl', function ($scope, AlertService) {
-        $scope.alerts = [];
+        var ac = this;
+
+        ac.alerts = [];
+        ac.closeAlert = closeAlert;
+
+        //--------------------------------------------------------------------------------------------------------------
 
         $scope.$on('alert.added', function () {
-            $scope.alerts = [AlertService.alert];
+            ac.alerts = [AlertService.alert];
         });
 
-        $scope.closeAlert = function () {
-            $scope.alerts = [];
-        };
+        //--------------------------------------------------------------------------------------------------------------
+
+        function closeAlert() {
+            ac.alerts = [];
+        }
     })
-    .controller('RouteAlertCtrl', function ($scope, $route, AlertService) {
+    .controller('RouteAlertCtrl', function ($route, AlertService) {
         AlertService.addAlert({'type': $route.current.alertType, 'msg': $route.current.alertMsg});
     })
-    .controller('ModalInstanceCtrl', function ($scope, $modal, $modalInstance, data, title) {
-        $scope.value_passed = data;
-        $scope.title = title;
-        $scope.close = function () {
-            $modalInstance.close();
-        };
+    .controller('ModalInstanceCtrl', function ($modal, $modalInstance, data, title) {
+        var mi = this;
+
+        mi.close = $modalInstance.close;
+        mi.title = title;
+        mi.value_passed = data;
     })
-    .controller('InfoCtrl', function ($scope, $modal, mapviewer) {
-        $scope.info = function () {
+    .controller('InfoCtrl', function ($modal, mapviewer) {
+        var ic = this;
+
+        ic.credits = credits;
+        ic.help = help;
+        ic.imprint = imprint;
+        ic.info = info;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function credits() {
             try {
-                _paq.push(['setCustomUrl', '/info']);
-                _paq.push(['setDocumentTitle', 'Info']);
-                _paq.push(['trackPageView']);
-            } catch (err) {}
-           $modal.open({
-                controller: 'ModalInstanceCtrl',
-                template: $('#info_text').html(),
-                //templateUrl: subdir+'/static/includes/window_info.html?v=3',
-                backdrop: 'static',
-                resolve: {
-                        data: function() {return {};},
-                        title: function() {return '';}
-                }
-            });
-        };
-        $scope.help = function () {
-           try {
-                _paq.push(['setCustomUrl', '/help']);
-                _paq.push(['setDocumentTitle', 'Help']);
-                _paq.push(['trackPageView']);
-           } catch (err) {}
-           
-           if(mapviewer.title == 'SWOS') {
-               var url = subdir + '/static/help/help_swos.html';
-           }
-           else{
-               var url = subdir + '/static/help/help.html';
-           } 
-            
-           $modal.open({
-                controller: 'ModalInstanceCtrl',
-                templateUrl: url,
-                backdrop: 'static',
-                resolve: {
-                        data: function() {return {};},
-                        title: function() {return '';}
-                }
-            });
-        };
-        $scope.credits = function () {
-           try {
                 _paq.push(['setCustomUrl', '/credits']);
                 _paq.push(['setDocumentTitle', 'Credits']);
                 _paq.push(['trackPageView']);
-           } catch (err) {}
-            
-           $modal.open({
+            } catch (err) {
+            }
+
+            $modal.open({
                 controller: 'ModalInstanceCtrl',
                 templateUrl: subdir + '/static/includes/credits.html',
                 backdrop: 'static',
                 resolve: {
-                        data: function() {return {};},
-                        title: function() {return '';}
+                    data: function() {return {};},
+                    title: function() {return '';}
                 }
             });
-        };
-        $scope.imprint = function () {
+        }
+
+        function help() {
+            try {
+                _paq.push(['setCustomUrl', '/help']);
+                _paq.push(['setDocumentTitle', 'Help']);
+                _paq.push(['trackPageView']);
+            } catch (err) {
+            }
+
+            var url = subdir + '/static/help/help.html';
+            if(mapviewer.title == 'SWOS') {
+                url = subdir + '/static/help/help_swos.html';
+            }
+
+            $modal.open({
+                bindToController: true,
+                controller      : 'ModalInstanceCtrl',
+                controllerAs    : 'mi',
+                templateUrl     : url,
+                backdrop        : 'static',
+                resolve         : {
+                    data : function(){return {};},
+                    title: function(){return '';}
+                }
+            });
+        }
+
+        function imprint() {
            try {
                 _paq.push(['setCustomUrl', '/imprint']);
                 _paq.push(['setDocumentTitle', 'Imprint']);
                 _paq.push(['trackPageView']);
            } catch (err) {}
-        };
+        }
+
+        function info() {
+            try {
+                _paq.push(['setCustomUrl', '/info']);
+                _paq.push(['setDocumentTitle', 'Info']);
+                _paq.push(['trackPageView']);
+            } catch (err) {
+            }
+            $modal.open({
+                bindToController: true,
+                controller      : 'ModalInstanceCtrl',
+                controllerAs    : 'mi',
+                template        : $('#info_text').html(),
+                //templateUrl: subdir+'/static/includes/window_info.html?v=3',
+                backdrop        : 'static',
+                resolve         : {
+                    data : function(){return {};},
+                    title: function(){return '';}
+                }
+            });
+        }
     })
     .directive('modalDraggable', function () {
       return {

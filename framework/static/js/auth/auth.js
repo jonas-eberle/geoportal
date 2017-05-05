@@ -207,53 +207,79 @@ angular.module('webgisApp')
             })
             .when('/password-reset-confirm/:uid/:token', {
                 template: '',
-                controller: 'NewPasswordCtrl'
+                bindToController: true,
+                controller: 'NewPasswordCtrl',
+                controllerAs: 'np'
             });
     })
     .controller('LoginCtrl', function ($scope, $location, djangoAuth, $modal) {
-        $scope.isCollapsed = true;
-        $scope.authenticated = false;
-        $scope.user = '';
-        $scope.userData = {};
+        var lc = this;
+
+        lc.authenticated = false;
+        lc.complete = false;
+        lc.editProfileForm = editProfileForm;
+        lc.isCollapsed = true;
+        lc.login = login;
+        lc.logout = logout;
+        lc.model = {'username': '', 'password': ''};
+        lc.registerForm = registerForm;
+        lc.registration_enabled = false;
+        lc.resetPasswordForm = resetPasswordForm;
+        lc.user = '';
+        lc.userData = {};
+
+        //--------------------------------------------------------------------------------------------------------------
 
         djangoAuth.authenticationStatus(true).then(function () {
-            $scope.authenticated = true;
-            $scope.user = djangoAuth.user;
-            $scope.userData = djangoAuth.userData;
+            lc.authenticated = true;
+            lc.user = djangoAuth.user;
+            lc.userData = djangoAuth.userData;
         });
-        // Wait and respond to the logout event.
-        $scope.$on('djangoAuth.logged_out', function () {
-            $scope.authenticated = false;
-            $scope.user = djangoAuth.user;
-            $scope.userData = {};
-        });
+
+        //--------------------------------------------------------------------------------------------------------------
+
         // Wait and respond to the log in event.
         $scope.$on('djangoAuth.logged_in', function () {
-            $scope.authenticated = true;
-            $scope.user = djangoAuth.user;
-            $scope.userData = djangoAuth.userData;
+            lc.authenticated = true;
+            lc.user = djangoAuth.user;
+            lc.userData = djangoAuth.userData;
+        });
+
+        // Wait and respond to the logout event.
+        $scope.$on('djangoAuth.logged_out', function () {
+            lc.authenticated = false;
+            lc.user = djangoAuth.user;
+            lc.userData = {};
         });
 
         $scope.$on('djangoAuth.registration_enabled', function ($broadCast, status) {
-            $scope.registration_enabled = status;
+            lc.registration_enabled = status;
         });
 
+        //--------------------------------------------------------------------------------------------------------------
 
-        $scope.model = {'username': '', 'password': ''};
-        $scope.complete = false;
-        $scope.login = function () {
-            djangoAuth.login($scope.model.username, $scope.model.password)
+        function editProfileForm() {
+            $modal.open({
+                bindToController: true,
+                controller: 'EditProfileCtrl',
+                controllerAs: 'ep',
+                templateUrl: subdir+'/static/includes/auth-edit-profile.html'
+            })
+        }
+
+        function login() {
+            djangoAuth.login(lc.model.username, lc.model.password)
                 .then(function () {
                     // success case
-                    $scope.authenticated = true;
+                    lc.authenticated = true;
                 }, function (data) {
                     $('#loading-div').hide();
 
                     // error case
-                    $scope.errors = data;
+                    lc.errors = data;
                     var errors = '';
 
-                    if (typeof(data) == 'object') {
+                    if (typeof data === 'object') {
                         errors += '<ul>';
                         if ('username' in data) {
                             errors += '<li><strong>Username:</strong> ' + data.username[0] + '</li>';
@@ -272,59 +298,64 @@ angular.module('webgisApp')
                     }
 
                     $modal.open({
+                        bindToController: true,
                         controller: 'ModalInstanceCtrl',
-                        template: '<div modal-draggable class="modal-header"><h1>Error while logging in!</h1></div><div class="modal-body">' + errors + '</div><div class="modal-footer"><button class="btn btn-primary" ng-click="close()">Close</button></div>',
+                        controllerAs: 'mi',
+                        template: '<div modal-draggable class="modal-header"><h1>Error while logging in!</h1></div><div class="modal-body">' + errors + '</div><div class="modal-footer"><button class="btn btn-primary" ng-click="mi.close()">Close</button></div>',
                         resolve: {
                                 data: function() {return {};},
                                 title: function() {return '';}
                         }
                     });
                 });
-        };
+        }
 
-        $scope.logout = function () {
+        function logout() {
             djangoAuth.logout().then(function () {
             }, function () {
                 bootbox.alert('Error while logging out...');
             });
-        };
+        }
 
-        $scope.editProfileForm = function () {
+        function registerForm() {
             $modal.open({
-                controller: 'EditProfileCtrl',
-                templateUrl: subdir+'/static/includes/auth-edit-profile.html'
-            })
-        };
-
-        $scope.registerForm = function () {
-            $modal.open({
+                bindToController: true,
                 controller: 'RegisterUserCtrl',
+                controllerAs: 'ru',
                 templateUrl: subdir+'/static/includes/auth-register.html'
-            });
-        };
-
-        $scope.resetPasswordForm = function () {
-            $modal.open({
-                controller: 'ResetPasswordCtrl',
-                templateUrl: subdir+'/static/includes/auth-reset-password.html'
             });
         }
 
+        function resetPasswordForm() {
+            $modal.open({
+                bindToController: true,
+                controller: 'ResetPasswordCtrl',
+                controllerAs: 'rp',
+                templateUrl: subdir+'/static/includes/auth-reset-password.html'
+            });
+        }
     })
-    .controller('RegisterUserCtrl', function ($scope, $modalInstance, djangoAuth) {
-        $scope.model = {};
-        $scope.model.username = '';
-        $scope.model.password1 = '';
-        $scope.model.password2 = '';
-        $scope.model.email = '';
-        $scope.model.organization = '';
+    .controller('RegisterUserCtrl', function ($modalInstance, djangoAuth) {
+        var ru = this;
 
-        $scope.register = function() {
-            djangoAuth.register($scope.model.username, $scope.model.password1, $scope.model.password2, $scope.model.email, {'organization': $scope.model.organization})
+        ru.close = $modalInstance.close;
+        ru.model = {
+            email : '',
+            organization : '',
+            password1 : '',
+            password2 : '',
+            username : ''
+        };
+        ru.register = register;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function register() {
+            djangoAuth.register(ru.model.username, ru.model.password1, ru.model.password2, ru.model.email, {'organization': ru.model.organization})
                 .then(function () {
                     bootbox.alert('Please check your emails for verfication!');
-                    $scope.model.password1, $scope.model.password2, $scope.model.email, $scope.model.organization = '';
-                    $scope.close();
+                    ru.model.password1 = ru.model.password2 = ru.model.email = ru.model.organization = '';
+                    ru.close();
                 }, function (error) {
                     var errors = '';
                     if ('username' in error) {
@@ -343,20 +374,20 @@ angular.module('webgisApp')
                     }
 
                     bootbox.alert('<h2>Error while registration!</h2><ul>' + errors + '</ul>');
-
                 });
-        };
-
-        $scope.close = function () {
-            $modalInstance.close();
-        };
+        }
     })
-    .controller('ResetPasswordCtrl', function ($scope, $modalInstance, djangoAuth, djangoRequests) {
-        $scope.email = '';
-        $scope.submit = function () {
-            djangoAuth.resetPassword($scope.email).then(function (data) {
+    .controller('ResetPasswordCtrl', function ($modalInstance, djangoAuth, djangoRequests) {
+        var rp = this;
+
+        rp.close = $modalInstance.close;
+        rp.email = '';
+        rp.submit = submit;
+
+        function submit() {
+            djangoAuth.resetPassword(rp.email).then(function (data) {
                 bootbox.alert(data.success);
-                $scope.close();
+                rp.close();
                 djangoRequests.request({
                     url: '/authapi/rest/setmapid/'+mapId,
                     method: 'GET'
@@ -364,60 +395,86 @@ angular.module('webgisApp')
             }, function (error) {
                 bootbox.alert(error.email);
             });
-        };
-        $scope.close = function () {
-            $modalInstance.close();
-        };
+        }
     })
-    .controller('NewPasswordCtrl', function ($scope, $modal, $routeParams) {
-        $scope.uid = $routeParams.uid;
-        $scope.token = $routeParams.token;
-        $modal.open({
-            resolve: {
-                uid: function () {
-                    return $scope.uid
+    .controller('NewPasswordCtrl', function ($modal, $routeParams) {
+        var np = this;
+
+        np.token = $routeParams.token;
+        np.uid = $routeParams.uid;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        activate();
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function activate() {
+            $modal.open({
+                resolve: {
+                    uid: function () {
+                        return np.uid
+                    },
+                    token: function () {
+                        return np.token
+                    }
                 },
-                token: function () {
-                    return $scope.token
-                }
-            },
-            templateUrl: subdir+'/static/includes/auth-new-password.html',
-            controller: 'NewPasswordInstanceCtrl'
-        });        
+                templateUrl: subdir+'/static/includes/auth-new-password.html',
+                bindToController: true,
+                controller: 'NewPasswordInstanceCtrl',
+                controllerAs: 'npi'
+            });
+        }
     })
-    .controller('NewPasswordInstanceCtrl', function ($scope, $modalInstance, uid, token, djangoAuth, AlertService) {
-        $scope.uid = uid;
-        $scope.token = token;
-        $scope.password1 = '';
-        $scope.password2 = '';
-        $scope.changePassword = function () {
-            if ($scope.password1 != $scope.password2 || $scope.password1 == '') {
+    .controller('NewPasswordInstanceCtrl', function ($modalInstance, uid, token, djangoAuth, AlertService) {
+        var npi = this;
+        
+        npi.changePassword = changePassword;
+        npi.close = $modalInstance.close;
+        npi.uid = uid;
+        npi.token = token;
+        npi.password1 = '';
+        npi.password2 = '';
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function changePassword() {
+            if (npi.password1 !== npi.password2 || npi.password1 === '') {
                 bootbox.alert('Passwords are not correct or empty, please check!');
                 return false;
             }
-            djangoAuth.confirmReset($scope.uid, $scope.token, $scope.password1, $scope.password2).then(function () {
-                $scope.uid, $scope.token, $scope.password1, $scope.password2 = '';
+
+            djangoAuth.confirmReset(npi.uid, npi.token, npi.password1, npi.password2).then(function () {
+                npi.uid = npi.token = npi.password1 = npi.password2 = '';
                 $modalInstance.close();
                 AlertService.addAlert({'type': 'success', 'msg': 'Password has been reset with the new password.'});
             }, function (error) {
                 bootbox.alert(error);
-            })
-        };
-        $scope.close = function () {
-            $modalInstance.close();
-        };
+            });
+        }
     })
-    .controller('EditProfileCtrl', function ($scope, $modalInstance, djangoAuth, AlertService) {
-        $scope.userdata = {};
+    .controller('EditProfileCtrl', function ($modalInstance, djangoAuth, AlertService) {
+        var ep = this;
+
+        ep.close = $modalInstance.close;
+        ep.delete = deleteProfile;
+        ep.save = saveProfile;
+        ep.userdata = {};
+
+        //--------------------------------------------------------------------------------------------------------------
+
         djangoAuth.profile().then(function (data) {
-            $scope.userdata = data;
+            ep.userdata = data;
         });
-        $scope.delete = function () {
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function deleteProfile() {
             bootbox.confirm('Really delete your account? (Cannot be undone!)', function (result) {
 
-                if (result == true) {
+                if (result === true) {
                     djangoAuth.delete().then(function () {
-                        $scope.close();
+                        ep.close();
                         djangoAuth.profile();
                     }, function (error) {
                         console.log(error);
@@ -425,31 +482,29 @@ angular.module('webgisApp')
                     })
                 }
             })
-        };
+        }
 
-        $scope.save = function () {
-            djangoAuth.updateProfile($scope.userdata).then(function () {
+        function saveProfile() {
+            djangoAuth.updateProfile(ep.userdata).then(function () {
                 $modalInstance.close();
                 AlertService.addAlert({'type': 'success', 'msg': 'Profile updated!'});
             }, function (error) {
                 console.log('update profile error');
                 console.log(error)
             });
-            if ($scope.userdata.password1 != null && $scope.userdata.password2 != null) {
-                if ($scope.userdata.password1 != $scope.userdata.password2) {
+            if (ep.userdata.password1 !== null && ep.userdata.password2 !== null) {
+                if (ep.userdata.password1 !== ep.userdata.password2) {
                     bootbox.alert('Given passwords are not equal!');
                     return false;
                 }
-                djangoAuth.changePassword($scope.userdata.password1, $scope.userdata.password2).then(function () {
+                djangoAuth.changePassword(ep.userdata.password1, ep.userdata.password2).then(function () {
                     bootbox.alert('Successfully changed password.')
                 }, function (error) {
                     bootbox.alert('An error occurred');
                 });
             }
-        };
-        $scope.close = function () {
-            $modalInstance.close();
-        };
-    }).run(function (djangoAuth) {
+        }
+    })
+    .run(function (djangoAuth) {
         djangoAuth.initialize('/authapi/rest', true);
     });

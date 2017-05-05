@@ -1,56 +1,58 @@
-
-	<a href="#" class="dropdown-toggle hidden-xs login" data-toggle="dropdown" role="button" aria-expanded="false">{{user ? 'Welcome, '+user : 'Please log in'}}<span class="caret"></span></a>
-    <a href="#" class="dropdown-toggle visible-xs" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-lock fa-lg"></i></a>
-  	<div class="dropdown-menu dropdown-menu-arrow" ng-hide="authenticated">
-      <form lass="form-horizontal" role="form" ng-submit="login(loginForm)" name="loginForm" id="formLogin">
-		<div class="form-group">
-        	 <label for="username" class="col-sm-3 control-label">Username</label>
+<a href="#" class="dropdown-toggle hidden-xs login" data-toggle="dropdown" role="button" aria-expanded="false">
+    {{ lc.user ? 'Welcome, '+lc.user : 'Please log in'}}<span class="caret"></span></a>
+<a href="#" class="dropdown-toggle visible-xs" data-toggle="dropdown" role="button" aria-expanded="false"><i
+        class="fa fa-lock fa-lg"></i></a>
+<div class="dropdown-menu dropdown-menu-arrow" ng-hide="lc.authenticated">
+    <form class="form-horizontal" role="form" ng-submit="lc.login(loginForm)" name="loginForm" id="formLogin">
+        <div class="form-group">
+            <label for="username" class="col-sm-3 control-label">Username</label>
             <div class="col-sm-9">
-               <input name="username" id="username" ng-model="model.username" placeholder="Username" type="text" class="form-control">
-            </div>	
+                <input name="username" id="username" ng-model="lc.model.username" placeholder="Username" type="text"
+                       class="form-control">
+            </div>
         </div>
         <div class="form-group">
-        	 <label for="password" class="col-sm-3 control-label">Password</label>
+            <label for="password" class="col-sm-3 control-label">Password</label>
             <div class="col-sm-9">
-               <input name="password" id="password" ng-model="model.password" placeholder="Password" type="password" class="form-control">
-            </div>	
+                <input name="password" id="password" ng-model="lc.model.password" placeholder="Password" type="password"
+                       class="form-control">
+            </div>
         </div>
-        
+
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-9">
-              <button type="submit" id="btnLogin" class="btn btn-primary">Sign in</button>
+                <button type="submit" id="btnLogin" class="btn btn-primary">Sign in</button>
             </div>
-         </div>
-        <br style="clear:both;" />
+        </div>
+        <br style="clear:both;"/>
         <hr/>
-        
-        <div class="col-sm-6" ng-if="registration_enabled">
-        	 <button type="button" ng-click="registerForm()" class="btn btn-default btn-xs">Register as user</button>
+
+        <div class="col-sm-6" ng-if="lc.registration_enabled">
+            <button type="button" ng-click="lc.registerForm()" class="btn btn-default btn-xs">Register as user</button>
         </div>
         <div class="col-sm-6">
-        	<button type="button" class="btn btn-default btn-xs" ng-click="resetPasswordForm()">Forgot password?</button>
+            <button type="button" class="btn btn-default btn-xs" ng-click="lc.resetPasswordForm()">Forgot password?
+            </button>
         </div>
-       
-      </form>
-    </div>
-    
-    <div class="dropdown-menu dropdown-menu-arrow" ng-show="authenticated">
-      <form class="form" role="form" ng-submit="logout()" name="logoutForm" id="formLogout" style="padding: 10px 20px;">
-      	<table border="0">
-        	<tr>
-            	<td>Username:</td>
-                <td>{{userData.username}}</td>
+
+    </form>
+</div>
+
+<div class="dropdown-menu dropdown-menu-arrow" ng-show="lc.authenticated">
+    <form class="form" role="form" ng-submit="lc.logout()" name="logoutForm" id="formLogout" style="padding: 10px 20px;">
+        <table border="0">
+            <tr>
+                <td>Username:</td>
+                <td>{{ lc.userData.username }}</td>
             </tr>
             <tr>
-            	<td>Email:</td>
-                <td>{{userData.email}}</td>
+                <td>Email:</td>
+                <td>{{ lc.userData.email }}</td>
             </tr>
         </table>
-        <hr/> 
-                
-      	
-          <button type="button" class="btn btn-primary btn-s"  ng-click="editProfileForm()">Edit</button>
-          <button type="button" class="btn btn-primary btn-s" id="btnLogout" ng-click="logout()">Logout</button>
-          <!-- <input type="submit" id="btnLogout" value="Logout" class="btn" /> -->
-      </form>
-    </div>
+        <hr/>
+        <button type="button" class="btn btn-primary btn-s" ng-click="lc.editProfileForm()">Edit</button>
+        <button type="button" class="btn btn-primary btn-s" id="btnLogout" ng-click="lc.logout()">Logout</button>
+        <!-- <input type="submit" id="btnLogout" value="Logout" class="btn" /> -->
+    </form>
+</div>

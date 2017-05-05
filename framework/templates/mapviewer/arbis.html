@@ -59,8 +59,8 @@
     <div id="loading-div"><div class="loading"><i class="fa fa-circle-o-notch fa-spin"></i></div></div>
 
     {% verbatim %}
-    <div id="alerts" ng-controller="AlertCtrl">
-        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <div id="alerts" ng-controller="AlertCtrl as ac">
+        <alert ng-repeat="alert in ac.alerts" type="{{alert.type}}" close="ac.closeAlert($index)">{{alert.msg}}</alert>
     </div>
     {% endverbatim %}
 
@@ -72,7 +72,7 @@
 
             <!-- TOOLBAR in Navigation für Tablett und Desktop -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl">
+                <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl as lc">
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon"></li>
                 </ul>
                 <ul class="nav navbar-nav pull-right" id="nav-top-right2">
@@ -86,11 +86,11 @@
 
     {% verbatim %}
     <!-- NAVBAR SEARCH SMARTPHONE - Zweite Version, die auf dem Smartphone in einer separaten Zeile angezeigt wird.-->
-    <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl">
+    <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl as sb">
         <div class="container-fluid">
-            <form class="navbar-form navbar-right" ng-submit="search();" role="search" id="xs-search">
+            <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="text" placeholder="Search">
+                    <input type="text" class="form-control" ng-model="sb.text" placeholder="Search">
                 </div>
             </form>
             <button class="btn btn-primary" type="submit"  id="toggle-sidebar">Menu</button>
@@ -104,18 +104,18 @@
         <div class="row">
 
             <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
-            <div ng-controller="MapViewerCtrl" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
+            <div ng-controller="MapViewerCtrl as mv" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
                 <div id="map_icons">
-                    <button type="button" ng-click="zoomIn()" class="btn btn-default btn-circle hidden-xs"><i class="fa-plus fa fa-lg"></i></button>
-                    <button type="button" ng-click="zoomOut()" class="btn btn-default btn-circle hidden-xs"><i class="fa-minus fa fa-lg"></i></button>
-                    <button type="button" ng-click="zoomMaxExtent()" class="btn btn-default btn-circle"><i class="fa-globe fa fa-lg"></i></button>
-                    <!--<button type="button" ng-click="createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                    <button type="button" ng-click="requestInfo()" ng-class="{'btn-active': infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+                    <button type="button" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs"><i class="fa-plus fa fa-lg"></i></button>
+                    <button type="button" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs"><i class="fa-minus fa fa-lg"></i></button>
+                    <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i class="fa-globe fa fa-lg"></i></button>
+                    <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
+                    <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
                 </div>
 
-                <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl">
-                    <form ng-submit="search();">
-                        <input type="text" ng-model="text" class="form-control" placeholder="Search for..." id="search_desktop">
+                <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                    <form ng-submit="sb.search();">
+                        <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..." id="search_desktop">
                         <br style="clear:both"/>
                         <div id="search-extend">
                             <!--
@@ -139,8 +139,8 @@
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs nav-justified tabcount-2" role="tablist" id="sidebar-tabs">
                     <li role="presentation" class="active"><a href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab">Catalog</a></li>
-                    <li role="presentation" ng-controller="MapCurrentLayersTabCtrl">
-                        <a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current <span class="badge">{{data.layersCount}}</span>
+                    <li role="presentation" ng-controller="MapCurrentLayersTabCtrl as mclt">
+                        <a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current <span class="badge">{{ mclt.data.layersCount }}</span>
                         </a>
                     </li>
                 </ul>
@@ -191,40 +191,40 @@
                         <!-- END ACCORDION -->
 
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="current" ng-controller="MapCurrentLayersCtrl">
-                        <div id="addexternallayer" ng-if="mapviewerdata.addexternallayer">
+                    <div role="tabpanel" class="tab-pane" id="current" ng-controller="MapCurrentLayersCtrl as mcl">
+                        <div id="addexternallayer" ng-if="mcl.mapviewerdata.addexternallayer">
                             <hr />
-                            <div align="center"><button type="button" ng-click="addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
+                            <div align="center"><button type="button" ng-click="mcl.addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
                             <hr />
                         </div>
                         <!-- List GROUP -->
-                        <div ng-show="!layersMeta.length">No layers added to the map!</div>
-                        <div class="list-group" dnd-list="layersMeta" dnd-drop="prepareIndex(index, item)">
-                            <div class="list-group-item clearfix" ng-repeat="layer in layersMeta" ng-controller="MapCurrentLayersCtrl" dnd-draggable="layer" dnd-moved="changeLayer($index, $event)" dnd-effect-allowed="move">
+                        <div ng-show="!mcl.layersMeta.length">No layers added to the map!</div>
+                        <div class="list-group" dnd-list="mcl.layersMeta" dnd-drop="mcl.prepareIndex(index, item)">
+                            <div class="list-group-item clearfix" ng-repeat="layer in mcl.layersMeta" dnd-draggable="layer" dnd-moved="mcl.changeLayer($index, $event)" dnd-effect-allowed="move">
 
                                 <div class="catalog-item">
                                     <div class="item_left">
-                                        <input type="checkbox" ng-click="changeVisibility(layer.id, $event)" id="id_{{layer.id}}" checked="checked" /><label for="id_{{layer.id}}"></label>
+                                        <input type="checkbox" ng-click="mcl.changeVisibility(layer.id, $event)" id="id_{{layer.id}}" checked="checked" /><label for="id_{{layer.id}}"></label>
                                     </div>
                                     <div class="item_catalog">
                                         <div class="item_title">{{layer.title}}</div>
                                         <div class="item_desc">
-                                            <slider class="slider" ng-model="sliderValues[layer.id]"
-                                                    on-slide="changeOpacity(layer.id)"
-                                                    on-stop-slide="changeOpacity(layer.id)"
+                                            <slider class="slider" ng-model="mcl.sliderValues[layer.id]"
+                                                    on-slide="mcl.changeOpacity(layer.id)"
+                                                    on-stop-slide="mcl.changeOpacity(layer.id)"
                                                     min="0" max="100" step="1" style="width:95%;"></slider>
-                                            <div ng-if="layer.dates">Specify date: <select ng-model="selectedLayerDates[layer.id]"
-                                                                                           ng-change="updateLayer(layer.id)"
-                                                                                           ng-options="o as o for o in layer.dates"></select>
+                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]"
+                                                                                           ng-change="mcl.updateLayer(layer.id)"
+                                                                                           ng-options="o as o for o in layer.ogc_times"></select>
                                             </div>
                                         </div>
                                         <div class="item_icon">
                                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button"
-                                                    ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="toggleLegend(layer)"
+                                                    ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"
                                                     class="btn btn-default" aria-label="Left Align"><i
                                                     class="fa fa-list fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Download data"
-                                                    ng-if="layer.downloadable" type="button" ng-click="download(layer)"
+                                                    ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)"
                                                     class="btn btn-default" aria-label="Left Align"><i
                                                     class="fa fa-download fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Show map PDF"
@@ -232,25 +232,25 @@
                                                     class="btn btn-default" aria-label="Left Align"><i
                                                     class="fa fa-map fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Show metadata" type="button"
-                                                    ng-click="showMetadata(layer)" class="btn btn-default"
+                                                    ng-click="mcl.showMetadata(layer)" class="btn btn-default"
                                                     aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i>
                                             </button>
                                             <button tooltip-placement="bottom" tooltip="Show/Hide station list"
                                                     type="button" ng-if="layer.ogc_type == 'SOS'"
-                                                    ng-click="toggleStations(layer)" class="btn btn-default"
+                                                    ng-click="mcl.toggleStations(layer)" class="btn btn-default"
                                                     aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button"
-                                                    ng-click="zoomToLayer(layer.id)" class="btn btn-default"
+                                                    ng-click="mcl.zoomToLayer(layer.id)" class="btn btn-default"
                                                     aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Remove layer" type="button"
-                                                    ng-click="removeLayer(layer.id, $index)" class="btn btn-default"
+                                                    ng-click="mcl.removeLayer(layer.id, $index)" class="btn btn-default"
                                                     aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
                                         </div>
                                     </div>
                                     <div class="item_stations" ng-if="layer.ogc_type == 'SOS'" ng-hide="!layer.showStations">
                                         <strong>Available stations:</strong>
                                         <ul style="padding-left:20px;">
-                                            <li ng-repeat="station in layer.stations"><a href="#" ng-click="zoomToStation(station);">{{station.name}}
+                                            <li ng-repeat="station in layer.stations"><a href="#" ng-click="mcl.zoomToStation(station);">{{station.name}}
                                                 ({{station.lat.toFixed(2)}} {{station.lon.toFixed(2)}})</a></li>
                                         </ul>
                                     </div>
@@ -262,7 +262,7 @@
                                         </a>
                                         <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url"
                                            href="{{ layer.legend_graphic }}" target="_blank">
-                                            <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend"
+                                            <img ng-src="/swos{{ layer.legend_graphic }}" alt="Layer legend"
                                                  style="max-width:100%"/>
                                         </a>
                                         <table ng-if="layer.legend_colors">

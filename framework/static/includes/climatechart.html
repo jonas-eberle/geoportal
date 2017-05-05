@@ -1,35 +1,42 @@
-<div modal-draggable class="modal-header"><h1>{{title}}</h1></div>
+<div modal-draggable class="modal-header"><h1>{{ cc.title }}</h1></div>
 <div class="chart options">
-<div class="row">
-    <div class="date_start col-xs-6">
-        <label>Start date: </label>
-        <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="startDate" is-open="openedStart" ng-focus="openStart($event)" min-date="minDate" max-date="endDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-        <button type="button" class="btn btn-primary" ng-click="openStart($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+    <div class="row">
+        <div class="date_start col-xs-6">
+            <label>Start date: </label>
+            <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd" ng-model="cc.startDate"
+                   is-open="cc.openedStart" ng-focus="cc.openStart($event)" min-date="cc.minDate" max-date="cc.endDate"
+                   datepicker-options="cc.dateOptions" ng-required="true" close-text="Close"/>
+            <button type="button" class="btn btn-primary" ng-click="cc.openStart($event)"><i
+                    class="glyphicon glyphicon-calendar"></i></button>
+        </div>
+        <div class="date_end col-xs-6">
+            <label>End date: </label>
+            <input type="text" class="form-control" ng-model="cc.endDate" ng-focus="cc.openEnd($event)"
+                   datepicker-popup="yyyy-MM-dd" is-open="cc.openedEnd" min-date="cc.startDate" max-date="cc.maxDate"
+                   datepicker-options="cc.dateOptions" ng-required="true" close-text="Close"/>
+            <button type="button" class="btn btn-primary" ng-click="cc.openEnd($event)"><i
+                    class="glyphicon glyphicon-calendar"></i></button>
+        </div>
     </div>
-    <div class="date_end col-xs-6">
-        <label>End date: </label>
-        <input type="text" class="form-control" ng-model="endDate"  ng-focus="openEnd($event)" datepicker-popup="yyyy-MM-dd" is-open="openedEnd" min-date="startDate" max-date="maxDate" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
-        <button type="button" class="btn btn-primary" ng-click="openEnd($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="parameter select">
+                <label>Parameter: </label>
+                <select class="form-control" ng-model="cc.parameter"
+                        ng-options="item.name for item in cc.parameters track by item.definition"
+                        style="width: 187px;margin-top: 6px;">
+                </select>
+            </div>
+        </div>
+        <div class="plot button col-xs-4">
+            <button class="btn btn-primary" ng-click="cc.changeOptions()">Plot</button>
+        </div>
     </div>
-</div>
-<div class="row">
-<div class="col-xs-6">
-    <div class="parameter select">
-        <label>Parameter: </label>
-        <select class="form-control" ng-model="parameter" ng-options="item.name for item in parameters track by item.definition" style="width: 187px;margin-top: 6px;">
 
-        </select>
-    </div>
-</div>
-    <div class="plot button col-xs-4">
-        <button class="btn btn-primary" ng-click="changeOptions()">Plot</button>
-    </div>
-</div>
-    
-    <br style="clear:both;" />
+    <br style="clear:both;"/>
 </div>
 <div class="modal-body chart" chart></div>
 <div class="modal-footer chart">
-    <button class="btn btn-primary" ng-click="download()">Download</button>
-    <button class="btn btn-primary" ng-click="close()">Close</button>
+    <button class="btn btn-primary" ng-click="cc.download()">Download</button>
+    <button class="btn btn-primary" ng-click="cc.close()">Close</button>
 </div>

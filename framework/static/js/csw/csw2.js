@@ -1,19 +1,24 @@
 angular.module('webgisApp')
-    .controller('SearchBoxCtrl', function($scope, $modal){
-        $scope.text = '';
+    .controller('SearchBoxCtrl', function($modal){
+        var sb2 = this;
 
-        $scope.search = function() {
-            //bootbox.alert('Search geklickt: '+$scope.text);
+        sb2.search = search;
+        sb2.text = '';
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function search() {
+            //bootbox.alert('Search geklickt: '+sb2.text);
 
             $modal.open({
+                bindToController: true,
                 controller: 'ModalInstanceCtrl',
-                template: '<div modal-draggable class="modal-header"><h1>{{title}}</h1></div><div class="modal-body metadataModal"></div><div class="modal-footer"><button class="btn btn-primary" ng-click="close()">Close</button></div>',
+                controllerAs: 'mi',
+                template: '<div modal-draggable class="modal-header"><h1>{{mi.title}}</h1></div><div class="modal-body metadataModal"></div><div class="modal-footer"><button class="btn btn-primary" ng-click="mi.close()">Close</button></div>',
                 resolve: {
                     data: function() {return {};},
-                    title: function() {return $scope.text;}
+                    title: function() {return sb2.text;}
                 }
             });
-
         }
-
     });

@@ -1,108 +1,110 @@
 <div modal-draggable class="modal-header">
-    <h1>{{title}}</h1>
+    <h1>{{ mi.title }}</h1>
 </div>
 <div class="modal-body metadataModal">
-	<!--<div class="item" ng-if="value_passed.identifier">
-	    <div class="headline">
-	        Identifier
-	    </div>
-	    <div class="description">
-	        {{value_passed.identifier}}
-	    </div>
-	</div>
-	<div class="item">
-	    <div class="headline">
-	        Resource Title
-	    </div>
-	    <div class="description">
-	        {{value_passed.title}}
-	    </div>
-	</div>-->
-	<div class="item">
-	    <div class="headline">
-	        Resource Description
-	    </div>
-	    <div class="description" style="white-space: pre-line;">{{value_passed.abstract}}</div>
-	</div>
-    <div class="item" ng-if="value_passed.date_begin || value_passed.date_end">
-	    <div class="headline">
-	        Temporal Extent
-	    </div>
-	    <div class="description">
-	        {{value_passed.date_begin}} - {{value_passed.date_end}}
-	    </div>
-	</div>
-	<div class="item" ng-if="value_passed.topicCategory">
-	    <div class="headline">
-	        Category
-	    </div>
-	    <div class="description">
-	        {{value_passed.topicCategory}}
-	    </div>
-	</div>
-	<div class="item" ng-if="value_passed.keywords">
-	    <div class="headline">
-	        Keywords
-	    </div>
-	    <div class="description">
-	        {{value_passed.keywords}}
-	    </div>
-	</div>
-	<div class="item">
-	    <div class="headline">
-	        Bounding Box (Lat, Lon Coordinates)
-	    </div>
-	    <div class="description">
-	        North:  {{value_passed.north.toFixed(3)}}
-	        <br>
-	        West:   {{value_passed.west.toFixed(3)}}
-	        <br>
-	        South:  {{value_passed.south.toFixed(3)}}
-	        <br>
-	        East:   {{value_passed.east.toFixed(3)}}
-	    </div>
-	</div>
-	<div class="item" ng-if="value_passed.meta_lineage">
-	    <div class="headline">
-	        Lineage
-	    </div>
-	    <div class="description" style="white-space: pre-line;">{{value_passed.meta_lineage}}</div>
-	</div>
-	<div class="item" ng-if="value_passed.equi_scale > 0">
-	    <div class="headline">
-	        Resolution
-	    </div>
-	    <div class="description">
-	        {{value_passed.equi_scale}} meter
-	    </div>
-	</div>
-	<!--
-	<div class="item">
-	    <div class="headline">
-	        Point of Contact
-	    </div>
-	    <div class="description">
-	        {{value_passed.meta_contact.organisation}}<br ng-if="value_passed.meta_contact.organisation">
-	        {{value_passed.meta_contact.address}}<br ng-if="value_passed.meta_contact.address">
-	        {{value_passed.meta_contact.postcode}} {{value_passed.meta_contact.city}}<br ng-if="value_passed.meta_contact.city">
-	        Contact: {{value_passed.meta_contact.first_name}} {{value_passed.meta_contact.last_name}}<br>
-	        Email: {{value_passed.meta_contact.email}}
-	    </div>
-	</div>
-	-->
-	<div class="item">
-	    <div class="headline">
-	        Point of Contact (Dataset)
-	    </div>
-	    <div class="description">
-	        <div ng-if="value_passed.dataset_contact_new.organisation">{{value_passed.dataset_contact_new.organisation}}</div>
-	        <div ng-if="value_passed.dataset_contact_new.last_name">Contact: {{value_passed.dataset_contact_new.first_name}} {{value_passed.dataset_contact_new.last_name}}</div>
-	        <div ng-if="value_passed.dataset_contact_new.email">Email: {{value_passed.dataset_contact_new.email}}</div>
-	    </div>
-	</div>
+    <!--<div class="item" ng-if="mi.value_passed.identifier">
+        <div class="headline">
+            Identifier
+        </div>
+        <div class="description">
+            {{ mi.value_passed.identifier }}
+        </div>
+    </div>
+    <div class="item">
+        <div class="headline">
+            Resource Title
+        </div>
+        <div class="description">
+            {{ mi.value_passed.title }}
+        </div>
+    </div>-->
+    <div class="item">
+        <div class="headline">
+            Resource Description
+        </div>
+        <div class="description" style="white-space: pre-line;">{{ mi.value_passed.abstract }}</div>
+    </div>
+    <div class="item" ng-if="mi.value_passed.date_begin || mi.value_passed.date_end">
+        <div class="headline">
+            Temporal Extent
+        </div>
+        <div class="description">
+            {{ mi.value_passed.date_begin }} - {{ mi.value_passed.date_end }}
+        </div>
+    </div>
+    <div class="item" ng-if="mi.value_passed.topicCategory">
+        <div class="headline">
+            Category
+        </div>
+        <div class="description">
+            {{ mi.value_passed.topicCategory }}
+        </div>
+    </div>
+    <div class="item" ng-if="mi.value_passed.keywords">
+        <div class="headline">
+            Keywords
+        </div>
+        <div class="description">
+            {{ mi.value_passed.keywords }}
+        </div>
+    </div>
+    <div class="item">
+        <div class="headline">
+            Bounding Box (Lat, Lon Coordinates)
+        </div>
+        <div class="description">
+            North:  {{ mi.value_passed.north.toFixed(3) }}
+            <br>
+            West:   {{ mi.value_passed.west.toFixed(3) }}
+            <br>
+            South:  {{ mi.value_passed.south.toFixed(3) }}
+            <br>
+            East:   {{ mi.value_passed.east.toFixed(3) }}
+        </div>
+    </div>
+    <div class="item" ng-if="mi.value_passed.meta_lineage">
+        <div class="headline">
+            Lineage
+        </div>
+        <div class="description" style="white-space: pre-line;">{{ mi.value_passed.meta_lineage }}</div>
+    </div>
+    <div class="item" ng-if="mi.value_passed.equi_scale > 0">
+        <div class="headline">
+            Resolution
+        </div>
+        <div class="description">
+            {{ mi.value_passed.equi_scale }} meter
+        </div>
+    </div>
+    <!--
+    <div class="item">
+        <div class="headline">
+            Point of Contact
+        </div>
+        <div class="description">
+            {{mi.value_passed.meta_contact.organisation}}<br ng-if="mi.value_passed.meta_contact.organisation">
+            {{mi.value_passed.meta_contact.address}}<br ng-if="mi.value_passed.meta_contact.address">
+            {{mi.value_passed.meta_contact.postcode}} {{mi.value_passed.meta_contact.city}}<br ng-if="mi.value_passed.meta_contact.city">
+            Contact: {{mi.value_passed.meta_contact.first_name}} {{mi.value_passed.meta_contact.last_name}}<br>
+            Email: {{mi.value_passed.meta_contact.email}}
+        </div>
+    </div>
+    -->
+    <div class="item">
+        <div class="headline">
+            Point of Contact (Dataset)
+        </div>
+        <div class="description">
+            <div ng-if="mi.value_passed.dataset_contact_new.organisation">{{ mi.value_passed.dataset_contact_new.organisation }}</div>
+            <div ng-if="mi.value_passed.dataset_contact_new.last_name">
+                Contact: {{ mi.value_passed.dataset_contact_new.first_name }} {{ mi.value_passed.dataset_contact_new.last_name }}</div>
+            <div ng-if="mi.value_passed.dataset_contact_new.email">
+                Email: {{ value_passed.dataset_contact_new.email }}</div>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="close()">
+    <button class="btn btn-primary" ng-click="mi.close()">
         Close
     </button>
 </div>

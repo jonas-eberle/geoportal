@@ -2,7 +2,7 @@
 
 angular.module('webgisApp')
 
-    .config(['$routeProvider', function($routeProvider) {
+    .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/wetland/:wetland_id', {controller: 'WetlandsCtrl'})
             .when('/wetland/:wetland_id/:type_name', {controller: 'WetlandsCtrl'})
@@ -11,14 +11,14 @@ angular.module('webgisApp')
 
     }])
 
-    .config(function($locationProvider) {
+    .config(function ($locationProvider) {
         $locationProvider.hashPrefix('');
     })
 
-    .service('WetlandsService', function(djangoRequests, mapviewer, $rootScope) {
+    .service('WetlandsService', function (djangoRequests, mapviewer, $rootScope) {
         var service = {
-            olLayer: null,
-            value: {},
+            olLayer  : null,
+            value    : {},
             activeTab: -1,
 
             selectFeature: function (wetland) {
@@ -37,15 +37,11 @@ angular.module('webgisApp')
                     })
                 }));
 
-                // get selectInteraction from map
-                var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
-                    return interaction instanceof ol.interaction.Select;
-                });
-                selectInteraction[0].getFeatures().clear();
-                selectInteraction[0].getFeatures().push(wetlandFeature);
+                mapviewer.selectInteraction.getFeatures().clear();
+                mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
 
                 // reset style of previously selected feature
-                if (mapviewer.currentFeature !== null) {
+                if (mapviewer.currentFeature !== null && mapviewer.currentFeature.getId() !== wetlandFeature.getId()) {
                     mapviewer.currentFeature.setStyle(null);
                 }
                 // save the currently selected feature
@@ -53,7 +49,7 @@ angular.module('webgisApp')
 
             },
 
-            selectWetland: function(wetland) {
+            selectWetland: function (wetland) {
                 /*
                  try {
                  _paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
@@ -62,7 +58,7 @@ angular.module('webgisApp')
                  } catch (err) {}
                  */
                 var wetland_service = this;
-                 //wetland.id;
+                //wetland.id;
                 //$('#sidebar-tabs li').removeClass('active');
                 //$('#sidebar .tab-content .tab-pane').removeClass('active');
 
@@ -73,8 +69,8 @@ angular.module('webgisApp')
 
                 return djangoRequests.request({
                     'method': "GET",
-                    'url': '/swos/wetland/'+wetland.id
-                }).then(function(data){
+                    'url'   : '/swos/wetland/' + wetland.id
+                }).then(function (data) {
                     wetland['data'] = data;
                     //$scope.wetlands_opened[wetland.id] = wetland;
                     wetland_service.value = wetland;
@@ -89,8 +85,8 @@ angular.module('webgisApp')
 
                     djangoRequests.request({
                         'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/images.json?start=0&max=24'
-                    }).then(function(data){
+                        'url'   : '/swos/wetland/' + wetland.id + '/images.json?start=0&max=24'
+                    }).then(function (data) {
                         //$scope.wetlands_opened[wetland.id]['pictures'] = data;
                         wetland_service.value['pictures'] = data;
                         if (data['photos'].length < wetland_service.imagesMaxPage) {
@@ -101,8 +97,8 @@ angular.module('webgisApp')
 
                     djangoRequests.request({
                         'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/panoramio.json?start=0&max=24'
-                    }).then(function(data){
+                        'url'   : '/swos/wetland/' + wetland.id + '/panoramio.json?start=0&max=24'
+                    }).then(function (data) {
                         //$scope.wetlands_opened[wetland.id]['pictures'] = data;
                         wetland_service.value['external_pictures'] = data;
                         if (data['photos'].length < wetland_service.imagesMaxPage) {
@@ -112,8 +108,8 @@ angular.module('webgisApp')
 
                     djangoRequests.request({
                         'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/youtube.json?start=0&max=9'
-                    }).then(function(data){
+                        'url'   : '/swos/wetland/' + wetland.id + '/youtube.json?start=0&max=9'
+                    }).then(function (data) {
                         //$scope.wetlands_opened[wetland.id]['videos'] = data;
                         wetland_service.value['videos'] = data;
                         if (data.length < wetland_service.videosMaxPage) {
@@ -123,14 +119,14 @@ angular.module('webgisApp')
 
                     djangoRequests.request({
                         'method': "GET",
-                        'url': '/swos/wetland/'+wetland.id+'/satdata.json'
-                    }).then(function(data){
+                        'url'   : '/swos/wetland/' + wetland.id + '/satdata.json'
+                    }).then(function (data) {
                         //$scope.wetlands_opened[wetland.id]['satdata'] = data;
                         wetland_service.value['satdata'] = data;
                     });
 
 
-                    $.each(wetland_service.wetlands, function(){
+                    $.each(wetland_service.wetlands, function () {
                         if (this['id'] == wetland.id) {
                             wetland_service.wetland_found = this;
                             return false;
@@ -140,7 +136,7 @@ angular.module('webgisApp')
                     $rootScope.$broadcast("wetland_loaded");
                     wetland_service.activeTab = 1;
 
-                }, function() {
+                }, function () {
                     bootbox.alert('<h1>Error while loading wetland details</h1>');
                 });
 
@@ -152,13 +148,13 @@ angular.module('webgisApp')
             },
             selectWetlandFromId: function (id) {
                 var wetland = null;
-                $.each(this.wetlands, function() {
+                $.each(this.wetlands, function () {
                     if (this['id'] == id) {
                         wetland = this;
                         return false;
                     }
                 });
-                if (wetland){
+                if (wetland) {
                     return this.selectWetland(wetland);
                 }
                 return $q.reject();
@@ -167,36 +163,53 @@ angular.module('webgisApp')
         return service;
     })
 
-    .controller('WetlandsCtrl', function($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService){
+    .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService) {
 
-        $scope.WetlandsService = WetlandsService;
+        $scope.addLayer = addLayer;
+        $scope.addLayerToMap = addLayerToMap;
+        $scope.attributionList = attributionList;
+        $scope.closeWetland = closeWetland;
+        $scope.externaldb_search = {'searchText': "", 'layer_exist': ""};
+        $scope.foo = foo;
+        // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
+        $scope.layerIdMap = {};
+        $scope.layers = mapviewer.layers;
+        $scope.proceed = true;
+        $scope.removeAllLayers = removeAllLayers;
+        $scope.removeLayersByWetland = removeLayersByWetland;
+        $scope.satdata_image = true;
+        $scope.satdata_table = false;
         $scope.value = WetlandsService.value;
-        $scope.$on('wetland_loaded', function (){
-             $scope.value = WetlandsService.value;
+        $scope.wetlands = [];
+        $scope.wetlands_map = {};
+        $scope.wetlands_opened = {};
+        $scope.wetlands_without_geom = [];
+        $scope.WetlandsService = WetlandsService;
+
+        $scope.$on("mapviewer.alllayersremoved", function () {
+            $scope.layerIdMap = {};
+            $scope.attributionList();
         });
 
-        $scope.wetlands = [];
-        $scope.wetlands_without_geom = [];
-        $scope.wetlands_map = {};
         $scope.$on('mapviewer.catalog_loaded', function () {
             $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
-                'url': '/swos/wetlands.geojson'
-            }).then(function(data){
+                'url'   : '/swos/wetlands.geojson'
+            }).then(function (data) {
                 //$scope.wetlands = data.features;
                 $scope.wetlands = [];
                 var vectorSource = new ol.source.Vector();
                 //var features = (new ol.format.GeoJSON()).readFeatures(data.data);
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
-                $.each(features, function(){
+                $.each(features, function () {
                     this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
                     var prop = this.getProperties();
 
                     $scope.filtered_testmapping = true;
                     // show: true, when id is less or equal 9
                     prop['show'] = (prop['id'] <= 9);
-					prop['show'] = (prop['products'].length > 0);
+                    prop['show'] = (prop['products'].length > 0);
 
                     $scope.wetlands.push(prop);
 
@@ -204,16 +217,16 @@ angular.module('webgisApp')
                         var country_array = prop["country"].split("-");
                         for (var key in country_array) {
                             var without_geom = {
-                                "name": prop["name"],
-                                "country": country_array[key],
-                                "id": prop["id"],
-                                "show": prop["show"],
-                                "geo_scale": prop["geo_scale"],
-                                "size": prop["size"],
-                                "ecoregion": prop["ecoregion"],
+                                "name"        : prop["name"],
+                                "country"     : country_array[key],
+                                "id"          : prop["id"],
+                                "show"        : prop["show"],
+                                "geo_scale"   : prop["geo_scale"],
+                                "size"        : prop["size"],
+                                "ecoregion"   : prop["ecoregion"],
                                 "wetland_type": prop["wetland_type"],
-                                "site_type": prop["site_type"],
-                                "products": prop["products"]
+                                "site_type"   : prop["site_type"],
+                                "products"    : prop["products"]
                             };
 
                             $scope.wetlands_without_geom.push(without_geom);
@@ -221,16 +234,16 @@ angular.module('webgisApp')
                     }
                     else {
                         var without_geom = {
-                            "name": prop["name"],
-                            "country": prop["country"],
-                            "id": prop["id"],
-                            "show": prop["show"],
-                            "geo_scale": prop["geo_scale"],
-                            "size": prop["size"],
-                            "ecoregion": prop["ecoregion"],
+                            "name"        : prop["name"],
+                            "country"     : prop["country"],
+                            "id"          : prop["id"],
+                            "show"        : prop["show"],
+                            "geo_scale"   : prop["geo_scale"],
+                            "size"        : prop["size"],
+                            "ecoregion"   : prop["ecoregion"],
                             "wetland_type": prop["wetland_type"],
-                            "site_type": prop["site_type"],
-                            "products": prop["products"]
+                            "site_type"   : prop["site_type"],
+                            "products"    : prop["products"]
                         };
 
                         $scope.wetlands_without_geom.push(without_geom);
@@ -240,20 +253,20 @@ angular.module('webgisApp')
                 WetlandsService.wetlands = $scope.wetlands;
                 vectorSource.addFeatures(features);
                 WetlandsService.olLayer = new ol.layer.Vector({
-                    name: 'Wetlands',
+                    name  : 'Wetlands',
                     source: vectorSource,
-                    style: function(feature, res) {
+                    style : function (feature, res) {
                         var style = new ol.style.Style({
-                            fill: fill,
+                            fill  : fill,
                             stroke: stroke
                         });
                         var textStyleConfig = {
-                            text:new ol.style.Text({
-                                text:res < 1230 ? feature.get('name') : '' ,
-                                fill: new ol.style.Fill({ color: "#000000" }),
-                                stroke: new ol.style.Stroke({ color: "#FFFFFF", width: 2 })
+                            text: new ol.style.Text({
+                                text  : res < 1230 ? feature.get('name') : '',
+                                fill  : new ol.style.Fill({color: "#000000"}),
+                                stroke: new ol.style.Stroke({color: "#FFFFFF", width: 2})
                             }),
-                            geometry: function(feature){
+                            geometry: function (feature) {
                                 var retPoint;
                                 if (feature.getGeometry().getType() === 'MultiPolygon') {
                                     retPoint = feature.getGeometry().getPolygons()[0].getInteriorPoint();
@@ -262,23 +275,23 @@ angular.module('webgisApp')
                                 }
                                 return retPoint;
                             }
-                        }
+                        };
                         var textStyle = new ol.style.Style(textStyleConfig);
-                        return [style,textStyle];
+                        return [style, textStyle];
                     }
                 });
                 mapviewer.map.addLayer(WetlandsService.olLayer);
 
                 $('#loading-div').hide();
                 bootbox.dialog({
-                    title:'Welcome to the SWOS Geoportal', 
-                    message: $('#welcome_text').html(), 
-                    backdrop: true, 
-                    onEscape:true, 
-                    buttons: {
+                    title   : 'Welcome to the SWOS Geoportal',
+                    message : $('#welcome_text').html(),
+                    backdrop: true,
+                    onEscape: true,
+                    buttons : {
                         confirm: {
-                            label: 'Start Tour',
-                            callback: function() {
+                            label   : 'Start Tour',
+                            callback: function () {
                                 var sidebar = document.getElementById('wetland_sites');
                                 var scope = angular.element(sidebar).scope();
                                 var rootScope = scope.$root;
@@ -287,194 +300,194 @@ angular.module('webgisApp')
                                 });
                             }
                         },
-                        close:{label:'Close'}
+                        close  : {label: 'Close'}
                     }
                 });
-                load_wetland();
-            }, function() {
+                loadWetland();
+            }, function () {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
             })
         });
 
+        $scope.$on("mapviewer.layerremoved", function ($broadcast, id) {
+            if (id !== undefined && id !== null) {
+                $scope.layerIdMap[id] = undefined;
+                $scope.attributionList();
+            }
+        });
+
+        $scope.$on('mapviewer.wetland_selected', function ($broadCast, id) {
+            WetlandsService.selectWetlandFromId(id);
+        });
+
+        $scope.$on("StopLoadingWetlandFromURL", function () {
+            $scope.proceed = false;
+        });
+
+        $scope.$on('wetland_loaded', function () {
+            $scope.value = WetlandsService.value;
+        });
+
+        // IMAGE/VIDEO DISPLAY START
         $scope.data_count = {};
-        $scope.videosCurrentPage = 1;
+        $scope.allImages = false;
+        $scope.allImages_external = false;
         $scope.allVideos = false;
+        $scope.external_pictures_is_open = true;
+        $scope.imagesCurrentPage = 1;
+        $scope.imagesCurrentPage_external = 1;
+        $scope.imagesMaxPage = 24;
+        $scope.loadMoreImages = loadMoreImages;
+        $scope.loadMoreImages_external = loadMoreImages_external;
+        $scope.loadMoreVideos = loadMoreVideos;
+        $scope.moreImages = moreImages;
+        $scope.moreImages_external = moreImages_external;
+        $scope.pictures_is_open = true;
+        $scope.showFoto = showFoto;
+        $scope.videosCurrentPage = 1;
         $scope.videosMaxPage = 9;
-        $scope.loadMoreVideos = function() {
+
+        function loadMoreImages() {
+            $scope.imagesCurrentPage += 1;
+            var start = $scope.imagesCurrentPage * $scope.imagesMaxPage - $scope.imagesMaxPage;
+            djangoRequests.request({
+                'method': "GET",
+                'url'   : '/swos/wetland/' + $scope.value.id + '/images.json?start=' + start + '&max=' + $scope.imagesMaxPage
+            }).then(function (data) {
+                $scope.value['pictures']['photos'].push.apply($scope.value['pictures']['photos'], data['photos']);
+                if (data['photos'].length < $scope.imagesMaxPage) {
+                    $scope.allImages = true;
+                }
+            })
+        }
+
+        function loadMoreImages_external() {
+            $scope.imagesCurrentPage_external += 1;
+            var start = $scope.imagesCurrentPage_external * $scope.imagesMaxPage - $scope.imagesMaxPage;
+            djangoRequests.request({
+                'method': "GET",
+                'url'   : '/swos/wetland/' + $scope.value.id + '/panoramio.json?start=' + start + '&max=' + $scope.imagesMaxPage
+            }).then(function (data) {
+                $scope.value['external_pictures']['photos'].push.apply($scope.value['external_pictures']['photos'], data['photos']);
+                if (data['photos'].length < $scope.imagesMaxPage) {
+                    $scope.allImages_external = true;
+                }
+            })
+        }
+
+        function loadMoreVideos() {
             $scope.videosCurrentPage += 1;
-            var start = $scope.videosCurrentPage*$scope.videosMaxPage - $scope.videosMaxPage;
+            var start = $scope.videosCurrentPage * $scope.videosMaxPage - $scope.videosMaxPage;
             //console.log('start = '+start);
             djangoRequests.request({
                 'method': "GET",
-                'url': '/swos/wetland/'+$scope.value.id+'/youtube.json?start='+start+'&max='+$scope.videosMaxPage
-            }).then(function(data){
+                'url'   : '/swos/wetland/' + $scope.value.id + '/youtube.json?start=' + start + '&max=' + $scope.videosMaxPage
+            }).then(function (data) {
                 //$scope.value['videos'] = data;
                 $scope.value['videos'].push.apply($scope.value['videos'], data);
                 if (data.length < $scope.videosMaxPage) {
                     $scope.allVideos = true;
                 }
             })
-        };
+        }
 
-        $scope.pictures_is_open = true;
-        $scope.external_pictures_is_open = true;
-        $scope.imagesCurrentPage = 1;
-        $scope.imagesCurrentPage_external = 1;
-        $scope.allImages = false;
-        $scope.allImages_external = false;
-        $scope.imagesMaxPage = 24;
-        $scope.loadMoreImages = function() {
-            $scope.imagesCurrentPage += 1;
-            var start = $scope.imagesCurrentPage*$scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url': '/swos/wetland/'+$scope.value.id+'/images.json?start='+start+'&max='+$scope.imagesMaxPage
-            }).then(function(data){
-                $scope.value['pictures']['photos'].push.apply($scope.value['pictures']['photos'], data['photos']);
-                if (data['photos'].length < $scope.imagesMaxPage) {
-                    $scope.allImages = true;
-                }
-            })
-        };
-        $scope.loadMoreImages_external = function() {
-            $scope.imagesCurrentPage_external += 1;
-            var start = $scope.imagesCurrentPage_external*$scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
-            }).then(function(data){
-                $scope.value['external_pictures']['photos'].push.apply($scope.value['external_pictures']['photos'], data['photos']);
-                if (data['photos'].length < $scope.imagesMaxPage) {
-                    $scope.allImages_external = true;
-                }
-            })
-        };
-        $scope.moreImages_external = function(action) {
-            if (action == 'prev') {
-                $scope.imagesCurrentPage_external -= 1;
-            } else {
-                $scope.imagesCurrentPage_external += 1;
-            }
-            var start = $scope.imagesCurrentPage_external*$scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
-            }).then(function(data){
-                $scope.value['external_pictures']['photos'] = data['photos'];
-
-                $scope.allImages_external = (data['photos'].length < $scope.imagesMaxPage);
-            })
-            
-        };
-        $scope.moreImages = function(action) {
-            if (action == 'prev') {
+        function moreImages(action) {
+            if (action === 'prev') {
                 $scope.imagesCurrentPage -= 1;
             } else {
                 $scope.imagesCurrentPage += 1;
             }
-            var start = $scope.imagesCurrentPage*$scope.imagesMaxPage - $scope.imagesMaxPage;
+            var start = $scope.imagesCurrentPage * $scope.imagesMaxPage - $scope.imagesMaxPage;
             djangoRequests.request({
                 'method': "GET",
-                'url': '/swos/wetland/'+$scope.value.id+'/panoramio.json?start='+start+'&max='+$scope.imagesMaxPage
-            }).then(function(data){
+                'url'   : '/swos/wetland/' + $scope.value.id + '/panoramio.json?start=' + start + '&max=' + $scope.imagesMaxPage
+            }).then(function (data) {
                 $scope.value['pictures']['photos'] = data['photos'];
 
                 $scope.allImages = (data['photos'].length < $scope.imagesMaxPage);
             })
+        }
 
-        };
-        $scope.showFoto = function(picture) {
+        function moreImages_external(action) {
+            if (action === 'prev') {
+                $scope.imagesCurrentPage_external -= 1;
+            } else {
+                $scope.imagesCurrentPage_external += 1;
+            }
+            var start = $scope.imagesCurrentPage_external * $scope.imagesMaxPage - $scope.imagesMaxPage;
+            djangoRequests.request({
+                'method': "GET",
+                'url'   : '/swos/wetland/' + $scope.value.id + '/panoramio.json?start=' + start + '&max=' + $scope.imagesMaxPage
+            }).then(function (data) {
+                $scope.value['external_pictures']['photos'] = data['photos'];
+
+                $scope.allImages_external = (data['photos'].length < $scope.imagesMaxPage);
+            })
+        }
+
+        function showFoto(picture) {
             console.log(picture);
             return false;
-        };
+        }
+        // IMAGE/VIDEO DISPLAY END
 
+        // FILTER START
         $scope.filtered_country = '';
-        $scope.filtered_geo_scale = '';
         $scope.filtered_ecoregion = '';
-        $scope.filtered_wetland_type = '';
-        $scope.filtered_site_type = '';
+        $scope.filtered_geo_scale = '';
         $scope.filtered_products = '';
+        $scope.filtered_site_type = '';
         $scope.filtered_testmapping = false;
-        $scope.filterCountry = function() {
+        $scope.filtered_wetland_type = '';
+        $scope.filterCountry = filterCountry;
+        $scope.filterEcoregion = filterEcoregion;
+        $scope.filterProduct = filterProduct;
+        $scope.filterReset = filterReset;
+        $scope.filterScale = filterScale;
+        $scope.filterSiteType = filterSiteType;
+        $scope.filterTestmapping = filterTestmapping;
+        $scope.filterWetlandType = filterWetlandType;
+        $scope.setSortOrder = setSortOrder;
+        $scope.sortByCountryName = false;
+        $scope.sortOrder = 'name';
+
+        function filterCountry() {
             $scope.filtered_testmapping = false;
             $scope.sortByCountryName = false;
             $.each($scope.wetlands_without_geom, function(){
-                this['show'] = ((this['country'] == $scope.filtered_country) || $scope.filtered_country== '');
+                this['show'] = ((this['country'] === $scope.filtered_country) || $scope.filtered_country === '');
             });
 
             $scope.filtered_geo_scale = '';
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
-        	$scope.filtered_products = '';
+            $scope.filtered_products = '';
             if ($scope.filtered_country == null) {
                 $scope.filterReset();
             }
-        };
-        $scope.filterScale = function() {
+        }
+
+        function filterEcoregion() {
             $scope.filtered_testmapping = false;
             $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function(){
-                this['show'] = ((this['geo_scale'] == $scope.filtered_geo_scale) || ($scope.filtered_geo_scale == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_site_type = '';
-        	$scope.filtered_products = '';
-            if ($scope.filtered_geo_scale == null) {
-                $scope.filterReset();
-            }
-        };
-        $scope.filterEcoregion = function() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function(){
+            $.each($scope.wetlands_without_geom, function () {
                 this['show'] = ((this['ecoregion'] == $scope.filtered_ecoregion) || ($scope.filtered_ecoregion == ''));
             });
             $scope.filtered_country = '';
             $scope.filtered_geo_scale = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
-        	$scope.filtered_products = '';
+            $scope.filtered_products = '';
             if ($scope.filtered_ecoregion == null) {
                 $scope.filterReset();
             }
-        };
-        $scope.filterWetlandType = function() {
+        }
+
+        function filterProduct() {
             $scope.filtered_testmapping = false;
             $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function(){
-                this['show'] = ((this['wetland_type'] == $scope.filtered_wetland_type) || ($scope.filtered_wetland_type == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_site_type = '';
-        	$scope.filtered_products = '';
-            if ($scope.filtered_wetland_type == null) {
-                $scope.filterReset();
-            }
-        };
-        $scope.filterSiteType = function() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function(){
-                this['show'] = ((this['site_type'] == $scope.filtered_site_type) || ($scope.filtered_site_type == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-        	$scope.filtered_products = '';
-            if ($scope.filtered_site_type == null) {
-                $scope.filterReset();
-            }
-        };
-        $scope.filterProduct = function() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function(){
+            $.each($scope.wetlands_without_geom, function () {
                 this['show'] = ((jQuery.inArray($scope.filtered_products, this['products']) > -1) || ($scope.filtered_products == ''));
             });
             $scope.filtered_country = '';
@@ -485,128 +498,162 @@ angular.module('webgisApp')
             if ($scope.filtered_products == null) {
                 $scope.filterReset();
             }
-        };
-        $scope.filterTestmapping = function() {
+        }
+
+        function filterReset() {
+            $.each($scope.wetlands_without_geom, function () {
+                this['show'] = true;
+            })
+        }
+
+        function filterScale() {
+            $scope.filtered_testmapping = false;
+            $scope.sortByCountryName = false;
+            $.each($scope.wetlands_without_geom, function () {
+                this['show'] = ((this['geo_scale'] == $scope.filtered_geo_scale) || ($scope.filtered_geo_scale == ''));
+            });
+            $scope.filtered_country = '';
+            $scope.filtered_ecoregion = '';
+            $scope.filtered_wetland_type = '';
+            $scope.filtered_site_type = '';
+            $scope.filtered_products = '';
+            if ($scope.filtered_geo_scale == null) {
+                $scope.filterReset();
+            }
+        }
+
+        function filterSiteType() {
+            $scope.filtered_testmapping = false;
+            $scope.sortByCountryName = false;
+            $.each($scope.wetlands_without_geom, function () {
+                this['show'] = ((this['site_type'] == $scope.filtered_site_type) || ($scope.filtered_site_type == ''));
+            });
+            $scope.filtered_country = '';
+            $scope.filtered_geo_scale = '';
+            $scope.filtered_ecoregion = '';
+            $scope.filtered_wetland_type = '';
+            $scope.filtered_products = '';
+            if ($scope.filtered_site_type == null) {
+                $scope.filterReset();
+            }
+        }
+
+        function filterTestmapping() {
             $scope.filtered_country = '';
             $scope.filtered_geo_scale = '';
             $scope.filtered_ecoregion = '';
             $scope.filtered_wetland_type = '';
             $scope.filtered_site_type = '';
-        	$scope.filtered_products = '';
+            $scope.filtered_products = '';
 
             if ($scope.filtered_testmapping == false) {
                 $scope.filterReset();
             } else {
-                $.each($scope.wetlands_without_geom, function(){
+                $.each($scope.wetlands_without_geom, function () {
                     //this['show'] = (this['id'] <= 9);
-					this['show'] = (this['products'].length > 0);
+                    this['show'] = (this['products'].length > 0);
                 })
             }
-        };
-        $scope.filterReset = function() {
-            $.each($scope.wetlands_without_geom, function(){
-                this['show'] = true;
-            })
-        };
+        }
 
-        $scope.sortByCountryName = false;
-        $scope.sortOrder = 'name';
-        $scope.setSortOrder = function () {
+        function filterWetlandType() {
+            $scope.filtered_testmapping = false;
+            $scope.sortByCountryName = false;
+            $.each($scope.wetlands_without_geom, function () {
+                this['show'] = ((this['wetland_type'] == $scope.filtered_wetland_type) || ($scope.filtered_wetland_type == ''));
+            });
+            $scope.filtered_country = '';
+            $scope.filtered_geo_scale = '';
+            $scope.filtered_ecoregion = '';
+            $scope.filtered_site_type = '';
+            $scope.filtered_products = '';
+            if ($scope.filtered_wetland_type == null) {
+                $scope.filterReset();
+            }
+        }
+
+        function setSortOrder() {
             if ($scope.sortByCountryName) {
                 $scope.sortOrder = ['country', 'name'];
             }
             else {
                 $scope.sortOrder = 'name';
             }
-        };
-        
-        $scope.wetlands_opened = {};
+        }
+        // FILTER END
 
-        
-        $scope.$on('mapviewer.wetland_selected', function ($broadCast, id) {
-            WetlandsService.selectWetlandFromId(id);
-        });
+        // TRACKING START
+        $scope.trackAddLayer = trackAddLayer;
+        $scope.trackProduct = trackProduct;
+        $scope.trackShowImage = trackShowImage;
+        $scope.trackShowSatdataImage = trackShowSatdataImage;
+        $scope.trackShowVideo = trackShowVideo;
+        $scope.trackWetlandTab = trackWetlandTab;
 
-        $scope.satdata_table = false;
-        $scope.satdata_image = true;
-
-        $scope.externaldb_search = {'searchText':  "", 'layer_exist': ""};
-
-        $scope.trackWetlandTab = function(type, $location) {
-
-            window.location.hash = '#/wetland/'+$scope.value.id+'/'+type;
-
+        function trackAddLayer(layer) {
             try {
-                _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/'+type]);
-                _paq.push(['setDocumentTitle', $scope.value.name+'/'+type]);
+                _paq.push(['setCustomUrl', '/wetland/' + $scope.value.name + '/products/' + layer.product_name + '/' + layer.alternate_title]);
+                _paq.push(['setDocumentTitle', 'Map: ' + layer.title]);
                 _paq.push(['trackPageView']);
-            } catch (err) {}
-        };
-        
-        $scope.trackProduct = function(product, open) {
+            } catch (err) {
+            }
+        }
+
+        function trackProduct(product, open) {
             if (open) {
                 try {
-                    _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/products/'+product]);
-                    _paq.push(['setDocumentTitle', $scope.value.name+'/products/'+product]);
+                    _paq.push(['setCustomUrl', '/wetland/' + $scope.value.name + '/products/' + product]);
+                    _paq.push(['setDocumentTitle', $scope.value.name + '/products/' + product]);
                     _paq.push(['trackPageView']);
-                } catch (err) {}
+                } catch (err) {
+                }
             }
-        };
+        }
 
-        $scope.trackAddLayer = function(layer) {
-            try {
-                _paq.push(['setCustomUrl', '/wetland/'+$scope.value.name+'/products/'+layer.product_name+'/'+layer.alternate_title]);
-                _paq.push(['setDocumentTitle', 'Map: '+layer.title]);
-                _paq.push(['trackPageView']);
-            } catch (err) {}
-        };
-        
-        $scope.trackShowSatdataImage = function(image) {
-            try {
-                _paq.push(['trackEvent', 'Show Satdata Image', $scope.value.name, image]);
-            } catch (err) {}
-        };
-        
-        $scope.trackShowImage = function(url) {
+        function trackShowImage(url) {
             try {
                 _paq.push(['trackEvent', 'Show Photo', $scope.value.name, url]);
-            } catch (err) {}
-        };
-        
-        $scope.trackShowVideo = function(url) {
+            } catch (err) {
+            }
+        }
+
+        function trackShowSatdataImage(image) {
+            try {
+                _paq.push(['trackEvent', 'Show Satdata Image', $scope.value.name, image]);
+            } catch (err) {
+            }
+        }
+
+        function trackShowVideo(url) {
             try {
                 _paq.push(['trackEvent', 'Show Video', $scope.value.name, url]);
-            } catch (err) {}
-        };
+            } catch (err) {
+            }
+        }
 
+        function trackWetlandTab(type, $location) {
+            window.location.hash = '#/wetland/' + $scope.value.id + '/' + type;
 
-        $scope.foo = function() {
-            //console.log('foo');
-            reAdjust();
-            $('.scroller-right').click();
-            //$('#sidebar-tabs a:last').tab('show')
-        };
-        
-        $scope.closeWetland = function(id) {
-            $('#link_wetland_'+id).remove();
-            $('#wetland_'+id).remove();
-            delete $scope.wetlands_opened[id];
-            $('.scroller-left').click();
-            $('#link_wetland_list').click();
-        };
-        
-        $scope.addLayer = function(product) {
+            try {
+                _paq.push(['setCustomUrl', '/wetland/' + $scope.value.name + '/' + type]);
+                _paq.push(['setDocumentTitle', $scope.value.name + '/' + type]);
+                _paq.push(['trackPageView']);
+            } catch (err) {
+            }
+        }
+        // TRACKING END
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function addLayer(product) {
             if (product.layers.length > 0) {
                 mapviewer.addLayer(product.layers[0]);
             } else {
                 alert('No layer found');
             }
-        };
+        }
 
-        // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
-        $scope.layerIdMap = {};
-        $scope.layers = mapviewer.layers;
-        $scope.addLayerToMap = function(layer, $event) {
+        function addLayerToMap(layer, $event) {
             var checkbox = $event.target;
 
             //changeWetlandFeatureStyle(); // change Style (remove fill)
@@ -617,41 +664,41 @@ angular.module('webgisApp')
                 var layerObj = mapviewer.addLayer(layer).get("layerObj");
                 // store the mapping between django_id and hash-like id
                 $scope.layerIdMap[layerObj.django_id] = layerObj.id;
-                
+
                 // check intersection, if no, please zoom to the new layer!
                 var mapExtent = mapviewer.map.getView().calculateExtent(mapviewer.map.getSize());
                 mapExtent = ol.proj.transformExtent(mapExtent, 'EPSG:3857', 'EPSG:4326');
                 var mapJSON = {
-                  "type": "Feature",
-                  "properties": {"fill":"#fff"},
-                  "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [[
-                      [mapExtent[0], mapExtent[1]],
-                      [mapExtent[0], mapExtent[3]],
-                      [mapExtent[2], mapExtent[3]],
-                      [mapExtent[2], mapExtent[1]],
-                      [mapExtent[0], mapExtent[1]]
-                    ]]
-                  }
+                    "type"      : "Feature",
+                    "properties": {"fill": "#fff"},
+                    "geometry"  : {
+                        "type"       : "Polygon",
+                        "coordinates": [[
+                            [mapExtent[0], mapExtent[1]],
+                            [mapExtent[0], mapExtent[3]],
+                            [mapExtent[2], mapExtent[3]],
+                            [mapExtent[2], mapExtent[1]],
+                            [mapExtent[0], mapExtent[1]]
+                        ]]
+                    }
                 };
-                
+
 
                 var layerJSON = {
-                  "type": "Feature",
-                  "properties": {"fill":"#fff"},
-                  "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [[
-                      [layer.west, layer.south],
-                      [layer.west, layer.north],
-                      [layer.east, layer.north],
-                      [layer.east, layer.south],
-                      [layer.west, layer.south]
-                    ]]
-                  }
+                    "type"      : "Feature",
+                    "properties": {"fill": "#fff"},
+                    "geometry"  : {
+                        "type"       : "Polygon",
+                        "coordinates": [[
+                            [layer.west, layer.south],
+                            [layer.west, layer.north],
+                            [layer.east, layer.north],
+                            [layer.east, layer.south],
+                            [layer.west, layer.south]
+                        ]]
+                    }
                 };
-                
+
                 var intersection = turf.intersect(mapJSON, layerJSON);
                 //Zoom to extent except of global extent
                 if (typeof intersection === 'undefined' && !(layer.west == -180 && layer.south == -90 && layer.east == 180 && layer.north == 90)) {
@@ -659,25 +706,25 @@ angular.module('webgisApp')
                     // zoom to new layer
                     var layerExtent = [layer.west, layer.south, layer.east, layer.north];
                     if (layer.epsg > 0) {
-                        layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:'+layer.epsg, mapviewer.map.getView().getProjection().getCode());
+                        layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:' + layer.epsg, mapviewer.map.getView().getProjection().getCode());
                     }
                     mapviewer.map.getView().fit(layerExtent);
                 }
 
                 // if this the first time the user added a second layer to map, notify them
                 // about it. using cookies to prevent the dialog from popping up everytime.
-                if (mapviewer.layersMeta.length > 1 && ! $cookies.hasNotifiedAboutLayers) {
+                if (mapviewer.layersMeta.length > 1 && !$cookies.hasNotifiedAboutLayers) {
                     bootbox.dialog({
-                        title: "Warning",
-                        message: "More than one layer has been added to the map. This means " +
+                        title      : "Warning",
+                        message    : "More than one layer has been added to the map. This means " +
                         "that layers are visualized in combination, i.e. the layer added most " +
                         "recently is displayed on top.",
                         closeButton: false,
-                        buttons: {
-                            "Do not show again": function() {
+                        buttons    : {
+                            "Do not show again": function () {
                                 $cookies.hasNotifiedAboutLayers = true;
                             },
-                            cancel: {
+                            cancel             : {
                                 label: "Close"
                             }
                         }
@@ -686,7 +733,7 @@ angular.module('webgisApp')
             } else {
                 var layers = mapviewer.map.getLayers().getArray();
                 // NOTE: iterating over an array here whilst deleting elements from this array!
-                $.each(layers, function(){
+                $.each(layers, function () {
                     if (layer.title == this.get('name')) {
                         var layerId = this.get('layerObj').id;
                         //console.log('LayerId: '+layerId);
@@ -701,96 +748,73 @@ angular.module('webgisApp')
                 });
             }
             $scope.attributionList();
-        };
+        }
 
-        $scope.attributionList = function() {
+        function attributionList() {
             var layers = mapviewer.map.getLayers().getArray();
             var attribution_arr = [];
-            $.each(layers, function() {
-                    var layer = this.get('layerObj');
+            $.each(layers, function () {
+                var layer = this.get('layerObj');
 
-                    if(typeof(layer) !== 'undefined') {
-                        if (attribution_arr.indexOf(layer.ogc_attribution) == -1  ) {
-                                if(layer.ogc_attribution != 'null') {
-                                    attribution_arr.push(layer.ogc_attribution);
-                                }
+                if (typeof layer !== 'undefined') {
+                    if (attribution_arr.indexOf(layer.ogc_attribution) == -1) {
+                        if (layer.ogc_attribution != 'null') {
+                            attribution_arr.push(layer.ogc_attribution);
                         }
                     }
+                }
+            });
+            var attr_list = attribution_arr.join(' | \u00A9 ');
+
+            var www_list = attr_list.match(/\([a-zA-Z., ]*\)/g);
+            if (www_list) {
+                $.each(www_list, function () {
+                    var new_ = '<a href="http:\\\\' + this.substr(1, this.indexOf(',')) + '" target = "_blank" style="text-decoration-line: underline; color: #d6d6d6;">' + this.substr(this.indexOf(',') + 1, this.substr(this.indexOf(',') + 1).length - 1) + "</a>";
+                    attr_list = attr_list.replace(this, new_);
                 });
-                var attr_list = attribution_arr.join(' | \u00A9 ');
-
-
-                var www_list = attr_list.match(/\([a-zA-Z., ]*\)/g);
-                if (www_list) {
-                    $.each(www_list, function () {
-                        var new_ = '<a href="http:\\\\' + this.substr(1,this.indexOf(',')) + '" target = "_blank" style="text-decoration-line: underline; color: #d6d6d6;">' + this.substr(this.indexOf(',')+1, this.substr(this.indexOf(',')+1).length -1) + "</a>";
-                        attr_list = attr_list.replace(this, new_);
-                    });
-                }
-
-                if(attr_list.length > 0){
-                    $('.map-controls-wrapper').css('height', '82px');
-                }
-                else{
-                    $('.map-controls-wrapper').css('height', '53px');
-                }
-                $( "#wetland_attribution_list" ).remove();
-                $( "#wetland_attribution" ).append( '<div id="wetland_attribution_list">' + attr_list + '</div>' );
-
-             //   Attribution.setList(attr_list);
-        };
-
-        $scope.removeAllLayers = function () {
-            while (mapviewer.layersMeta.length > 0) {
-                var layer = mapviewer.layersMeta[0];
-                mapviewer.removeLayer(layer.id, 0);
-                var checkbox = undefined;
-                if (layer["django_id"] !== undefined
-                    && layer.django_id !== null
-                    && (checkbox = document.getElementById("layer_vis_"+layer.django_id))
-                ) {
-                    checkbox.checked = "";
-                }
-            }
-            $scope.layerIdMap = {};
-
-        };
-
-        $scope.removeLayersByWetland = function(wetlandId) {
-            // get layers of opened wetland
-            var layersToRemove = mapviewer.layersMeta.filter(function(layer) {
-                return layer.wetland_id === wetlandId;
-            });
-
-            // remove layers of opened wetland
-            // NOTE: never iterate over layersMeta while manipulating layersMeta
-            $.each(layersToRemove, function() {
-                var layersMetaIndex = mapviewer.getIndexFromLayer(this.title);
-                mapviewer.removeLayer(this.id, layersMetaIndex);
-            });
-
-        };
-
-        $scope.$on("mapviewer.alllayersremoved", function () {
-            $scope.layerIdMap = {};
-            $scope.attributionList()
-
-        });
-
-        $scope.$on("mapviewer.layerremoved", function($broadcast, id) {
-            if (id !== undefined && id !== null) {
-                $scope.layerIdMap[id] = undefined;
-                $scope.attributionList()
             }
 
-        });
-        $scope.proceed = true;
-        $scope.$on("StopLoadingWetlandFromURL", function() {
-            $scope.proceed = false;
-        });
+            if (attr_list.length > 0) {
+                $('.map-controls-wrapper').css('height', '82px');
+            } else {
+                $('.map-controls-wrapper').css('height', '53px');
+            }
+            $("#wetland_attribution_list").remove();
+            $("#wetland_attribution").append('<div id="wetland_attribution_list">' + attr_list + '</div>');
 
+            //Attribution.setList(attr_list);
+        }
 
-        var load_wetland = function () {
+        function changeWetlandFeatureStyle() {
+            var wetlandFeatureNewStyle = mapviewer.currentFeature;
+
+            wetlandFeatureNewStyle.setStyle(new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: "#4B94B6",
+                    width: 5
+                })
+            }));
+
+            mapviewer.selectInteraction.getFeatures().clear();
+            mapviewer.selectInteraction.getFeatures().push(wetlandFeatureNewStyle);
+        }
+
+        function closeWetland(id) {
+            $('#link_wetland_' + id).remove();
+            $('#wetland_' + id).remove();
+            delete $scope.wetlands_opened[id];
+            $('.scroller-left').click();
+            $('#link_wetland_list').click();
+        }
+
+        function foo() {
+            //console.log('foo');
+            reAdjust();
+            $('.scroller-right').click();
+            //$('#sidebar-tabs a:last').tab('show')
+        }
+
+        function loadWetland() {
             var wetland_id = $routeParams.wetland_id;
             var type_name = $routeParams.type_name;
             var layer_id = $routeParams.layer_id;
@@ -826,9 +850,7 @@ angular.module('webgisApp')
                             }
 
                             if (layer_id && $scope.proceed) {
-
                                 var layer_ids = layer_id.split("_");
-
 
                                 $.each(layer_ids, function (i, value) {
                                     var layer_id = "#layer_vis_" + value; // create layer id
@@ -839,51 +861,58 @@ angular.module('webgisApp')
                                 var last_layer_id = "#layer_vis_" + layer_ids.pop(); // create layer id
 
                                 //open menu according to the last layer id
-                                if (type_name == "product") {
+                                if (type_name === "product") {
                                     window.location.hash = '#/wetland/' + wetland_id + '/product/' + layer_id;
                                     $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
                                 }
+
                                 if (type_name == "externaldb") {
                                     window.location.hash = '#/wetland/' + wetland_id + '/externaldb/' + layer_id;
                                     $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
                                     $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
                                 }
-                            }
-                            else if($scope.proceed == false)
-                            {
+                            } else if ($scope.proceed == false) {
                                 //return ([wetland_id, type_name, layer_id]);
                             }
                         });
                     }
                 });
-            }
-            else if($scope.proceed == false)
-            {
+            } else if (!$scope.proceed) {
                 // return ([wetland_id, type_name, layer_id]);
             }
-        };
-
-        var changeWetlandFeatureStyle = function () {
-
-            var wetlandFeatureNewStyle = mapviewer.currentFeature
-
-            wetlandFeatureNewStyle.setStyle(new ol.style.Style({
-                stroke: new ol.style.Stroke({
-                    color: "#4B94B6",
-                    width: 5
-                })
-            }));
-
-            var selectInteraction = mapviewer.map.getInteractions().getArray().filter(function (interaction) {
-                return interaction instanceof ol.interaction.Select;
-            });
-            selectInteraction[0].getFeatures().clear();
-            selectInteraction[0].getFeatures().push(wetlandFeatureNewStyle);
         }
 
-        })
-    .controller('IntroductionTour', function ($scope,mapviewer,WetlandsService, $timeout, $cookies, $rootScope ){
+        function removeAllLayers() {
+            while (mapviewer.layersMeta.length > 0) {
+                var layer = mapviewer.layersMeta[0];
+                mapviewer.removeLayer(layer.id, 0);
+                var checkbox = undefined;
+                if (layer["django_id"] !== undefined
+                    && layer.django_id !== null
+                    && (checkbox = document.getElementById("layer_vis_" + layer.django_id))
+                ) {
+                    checkbox.checked = "";
+                }
+            }
+            $scope.layerIdMap = {};
+        }
 
+        function removeLayersByWetland(wetlandId) {
+            // get layers of opened wetland
+            var layersToRemove = mapviewer.layersMeta.filter(function (layer) {
+                return layer.wetland_id === wetlandId;
+            });
+
+            // remove layers of opened wetland
+            // NOTE: never iterate over layersMeta while manipulating layersMeta
+            $.each(layersToRemove, function () {
+                var layersMetaIndex = mapviewer.getIndexFromLayer(this.title);
+                mapviewer.removeLayer(this.id, layersMetaIndex);
+            });
+
+        }
+    })
+    .controller('IntroductionTour', function ($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope) {
         var extdb_id = "2551"; // Camargue:  Land Surface Temperature Trend 2000 to 2015
         var product_id = "2972"; // Global Surface Water: Water Occurence (1984-2015)
         var wetland_id = 4; // Camargue
@@ -945,6 +974,7 @@ angular.module('webgisApp')
                         target = 'li.flaticon-technology-2 a';
                         break;
                 }
+
                 try {
                     $(target).click(); // open tab
                 } catch (e) {
@@ -1024,7 +1054,7 @@ angular.module('webgisApp')
             // #todo replace remove and zoom once the function is available via service / move back to start URL
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
-                if(layer) {
+                if (layer) {
                     mapviewer.removeLayer(layer.id, 0);
                 }
                 var checkbox = undefined;
@@ -1078,62 +1108,55 @@ angular.module('webgisApp')
             }
 
         }
-       /* function show_metadata(action){
 
-            // Open Metadata
-            if(action === "open"){
-                $("#layer_vis_2972").closest("div").find("i.fa-file-text-o").parents(0).trigger("click")
+        /* function show_metadata(action){
 
-                $timeout(function (){
-                  $(".anno-overlay").css('z-index', '1032');
-                });
+         // Open Metadata
+         if(action === "open"){
+         $("#layer_vis_2972").closest("div").find("i.fa-file-text-o").parents(0).trigger("click")
 
-            }
-            // Close Metadata
-            else if (action === "hide"){
-                 $(".modal-footer").children().trigger("click");
+         $timeout(function (){
+         $(".anno-overlay").css('z-index', '1032');
+         });
 
-                $timeout(function (){
-                  $(".anno-overlay").css('z-index', '');
-                });
+         }
+         // Close Metadata
+         else if (action === "hide"){
+         $(".modal-footer").children().trigger("click");
 
-            }
-        }*/
+         $timeout(function (){
+         $(".anno-overlay").css('z-index', '');
+         });
+
+         }
+         }*/
+
+        $scope.startAnno = startAnno;
+        $scope.trackIntroductionTour = trackIntroductionTour;
 
         $scope.$on('start_tour', function () {
             return $scope.startAnno();
         });
 
-        $scope.trackIntroductionTour = function(title, step) {
-             try {
-                 _paq.push(['setCustomUrl', '/introduction/'+step+'_'+title.toLowerCase()]);
-                 _paq.push(['setDocumentTitle', 'Introduction Tour: '+title+' ('+step+')']);
-                 _paq.push(['trackPageView']);
-             } catch (err) {}
-        }
-
-        $scope.startAnno = function () {
+        function startAnno() {
 
             $rootScope.$broadcast("StopLoadingWetlandFromURL"); // prevent loading from URL
 
             $('.main').css('position', 'absolute'); // set back on reset()
 
-
             var anno1 = new Anno([
                     {
-                        target: '#nav-top-right2',
-
+                        target   : '#nav-top-right2',
                         className: 'anno-width-500',
-
-                        buttons: [
+                        buttons  : [
                             {
-                                text: 'Start',
+                                text : 'Start',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow   : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Welcome', '01');
                             // change overlay to avoid changing z-index of all nav elements
                             $('.anno-overlay').css('z-index', '1029');
@@ -1149,7 +1172,7 @@ angular.module('webgisApp')
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide   : function (anno, $target, $annoElem, handler) {
                             $('.anno-overlay').css('z-index', '');
                             $target[0].removeEventListener('click', handler, true)
                         },
@@ -1160,23 +1183,23 @@ angular.module('webgisApp')
                         '</div>'
                     }, // Welcome
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '3em',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '3em',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Catalog', '02');
                             //ensure wetland catalog is shown
                             select_tab();
@@ -1188,42 +1211,42 @@ angular.module('webgisApp')
 
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
-                                console.log(e)
+                                console.log(e);
                                 if (e.target.htmlFor === "cb_testmapping" || e.target.id === "cb_testmapping" || e.target.htmlFor === "cb_groupbycountry" || e.target.id === "cb_groupbycountry" || e.target.id === "link_wetland_list") {
                                 }
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Wetlands catalog</h4><div><p>All wetland sites of the <strong>SWOS project</strong> are listed here.</p> ' +
+                        content      : '<h4>Wetlands catalog</h4><div><p>All wetland sites of the <strong>SWOS project</strong> are listed here.</p> ' +
                         '<p>The preselected wetlands already have products developed within the project.</p>' +
                         '<p>To see the full list of wetlands of the SWOS project please unselect the checkbox <span class="anno-highlight">Show only wetlands with products</span> or use the provided filter to search for wetlands.</p>' +
                         '</div>'
                     }, // Wetland Catalog
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '15em',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '15em',
                             right: '420px'
                         },
-                        className: 'anno-width-400',
+                        className    : 'anno-width-400',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Selection', '03');
                             //ensure wetland catalog is shown
                             select_tab();
@@ -1243,34 +1266,34 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Wetland selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
+                        content      : '<h4>Wetland selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
                         '<p>In the <strong>next step</strong> we will use the <span class="anno-highlight">Camargue</span> wetland in France.</p></div>'
                     }, // Wetland selection
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '6em',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '6em',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Wetland', '04');
                             //Load wetland (id 4 - Camargue)
                             only_load_wetland(4);
@@ -1295,14 +1318,14 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                         },
-                        content: '<h4>Overview of selected wetland</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
+                        content      : '<h4>Overview of selected wetland</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li><strong>Indicators: </strong>Wetland indicators derived on the basis of satellite data and SWOS products.</li>' +
                         '<li><strong>Products: </strong>Maps produced with the SWOS software toolbox.</li>' +
@@ -1313,23 +1336,23 @@ angular.module('webgisApp')
                         '<p></p><p>In the <strong>next step</strong> we will have a closer look at <span class="anno-highlight">Products</span> <span class="flaticon-layers"><a style="text-decoration: none;"></a></span>.</p></div>'
                     }, // Wetland overview
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '6em',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '6em',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Products', '05');
                             //ensure products is shown
                             select_tab("product");
@@ -1349,14 +1372,14 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
+                        content      : '<h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li>Water Quality</li>' +
                         '<li>Land Surface Temperature Trend</li>' +
@@ -1373,23 +1396,23 @@ angular.module('webgisApp')
                         '<p></p>In the <strong>next step</strong> we will select the product <span class="anno-highlight">Land Surface Temperature Trend</span>.</p></div>'
                     }, // Wetland Product
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '300px',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '300px',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Product', '06');
                             //ensure products is shown
                             select_tab("product");
@@ -1421,34 +1444,34 @@ angular.module('webgisApp')
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.hasNotifiedAboutLayers = false;
 
                         },
-                        content: '<h4>Detailed product information</h4><div><p></p>' +
+                        content      : '<h4>Detailed product information</h4><div><p></p>' +
                         '<p>All available datasets of a product are listed here below a short description of the product. Each dataset can be added to the map using the checkbox in front of the dataset name.</p>' +
 
                         '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2015</span> dataset to the map.</p></div>'
                     }, // Show product layer
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '300px',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '300px',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Dataset', '07');
                             //ensure products is shown
                             select_tab("product");
@@ -1474,7 +1497,7 @@ angular.module('webgisApp')
                                     }
                                 }
                                 else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
-                                    
+
                                 }
                                 else {
                                     e.stopPropagation();
@@ -1483,12 +1506,12 @@ angular.module('webgisApp')
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.hasNotifiedAboutLayers = false;
 
                         },
-                        content: '<h4>Dataset information and tools</h4><div><p></p>' +
+                        content      : '<h4>Dataset information and tools</h4><div><p></p>' +
                         '<p>You can change the transparency for each layer (slider) and:' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li><p><span class="fa fa-list fa-lg"></span> hide the legend,</p></li>' +
@@ -1548,23 +1571,23 @@ angular.module('webgisApp')
                      '<p></p><p>In the <strong>next step</strong> we will close the metadata info box and move to satellite data.</p></div>'
                      }, // Show Metadata for Product */
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '6em',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '6em',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Satellitedata', '08');
                             //ensure products is shown
                             select_tab("satdata");
@@ -1590,32 +1613,32 @@ angular.module('webgisApp')
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>Satellite data</h4><div>' +
+                        content      : '<h4>Satellite data</h4><div>' +
                         '<p>An overview about free available satellite data (Landsat and Sentinel) covering the wetland area is given here. Please click on the <span class="anno-highlight">Yearly coverage by sensor</span> image to enlarge it. You will also find the total amount of data by sensor as a table below. </p>' +
                         '<p>In the <strong>future</strong> it will be also possible to download<strong> pre-processed satellite data</strong> clipped to the wetland area.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will move to the <span class="anno-highlight">External databases</span> tab <span class="flaticon-technology-2"><a style="text-decoration: none;"></a></span>.</p></div>'
                     }, // Satellite data ,
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '6em',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '6em',
                             right: '420px'
                         },
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
                         arrowPosition: 'center-right',
-                        buttons: [
+                        buttons      : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow       : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('External1', '09');
                             //ensure products is shown
                             select_tab("externaldb");
@@ -1641,32 +1664,32 @@ angular.module('webgisApp')
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content: '<h4>External databases</h4><div>' +
+                        content      : '<h4>External databases</h4><div>' +
                         '<p>In this tab external databases and information sources related to the selected wetland on the regional, country, continental and global level are shown. To search for external layers that can be visualized in the map use the <span class="anno-highlight"><span class="flaticon-layers"><a style="text-decoration: none;"></a></span> Filter by maps</span> checkbox. You can add those layers in the same way as the product maps.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will discover and add one of the Global Surface Water maps from JRC/Google as an external global resource to the map (<span class="anno-highlight">Global</span> -> <span class="anno-highlight">Global Surface Water</span>).</p></div>'
                     }, // External DB
                     {
-                        target: '.sidebar',
-                        position: {
-                            top: '100px',
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '100px',
                             right: '420px'
                         },
                         arrowPosition: 'center-right',
-                        className: 'anno-width-500',
+                        className    : 'anno-width-500',
 
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('External2', '10');
                             //ensure products is shown
                             //select_tab("externaldb");
@@ -1678,10 +1701,10 @@ angular.module('webgisApp')
                                 reset();
                             });
 
-                             var handler = function (e) {
+                            var handler = function (e) {
 
                                 // Allow preselection of overview tab; allow selection of products
-                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-layers") || e.target.id === "only_layer" ||  e.target.id.includes("layer_vis_")) {
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-layers") || e.target.id === "only_layer" || e.target.id.includes("layer_vis_")) {
 
                                 }
                                 else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
@@ -1695,7 +1718,7 @@ angular.module('webgisApp')
                             return handler
 
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                             $cookies.hasNotifiedAboutLayers = false;
                         },
@@ -1704,9 +1727,9 @@ angular.module('webgisApp')
                         '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected layers.</p></div>'
                     }, // Select external LAyer
                     {
-                        target: '#active_layer',
-                        position: {
-                            top: '100px',
+                        target   : '#active_layer',
+                        position : {
+                            top : '100px',
                             left: '400px'
                         },
                         className: 'anno-width-500',
@@ -1714,13 +1737,13 @@ angular.module('webgisApp')
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('ActiveLayers', '11');
                             $cookies.hasNotifiedAboutLayers = true;
 
@@ -1739,24 +1762,24 @@ angular.module('webgisApp')
                             var el = document.getElementsByClassName("map-controls-wrapper");
                             var handler = function (e) {
                                 // prevent info tool selection
-                                if (e.target.className.includes("fa-info") || e.target.firstChild.className.includes("fa-info") ||e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
-                                       e.stopPropagation();
+                                if (e.target.className.includes("fa-info") || e.target.firstChild.className.includes("fa-info") || e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
+                                    e.stopPropagation();
                                 }
                             }
                             el[0].addEventListener('click', handler, true);
 
                             var el2 = document.getElementsByClassName("item_icon");
-                           // var handler = function (e) {
-                                // prevent metadata show
+                            // var handler = function (e) {
+                            // prevent metadata show
                             /*    if (e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
-                                       e.stopPropagation();
-                                }
-                            }
-                            el2[0].addEventListener('click', handler, true);
-                            return handler */
+                             e.stopPropagation();
+                             }
+                             }
+                             el2[0].addEventListener('click', handler, true);
+                             return handler */
 
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide : function (anno, $target, $annoElem, handler) {
                             open_close_active_layer("close");
                             move_map_elements_higher("reset");
                             var el = document.getElementsByClassName("map-controls-wrapper");
@@ -1770,18 +1793,18 @@ angular.module('webgisApp')
                         '<p></p><p>In the <strong>next step </strong> we will show the general map functions.</p></div>'
                     }, // Active Layer
                     {
-                        target: '.map-controls-wrapper',
+                        target  : '.map-controls-wrapper',
                         position: 'left',
-                        buttons: [
+                        buttons : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow  : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('WetlandSites', '12');
                             $cookies.hasNotifiedAboutLayers = true;
 
@@ -1795,37 +1818,37 @@ angular.module('webgisApp')
                             var handler = function (e) {
                                 // prevent info tool selection
                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
-                                       e.stopPropagation();
+                                    e.stopPropagation();
                                 }
                             }
                             $target[0].addEventListener('click', handler, true);
                             return handler
 
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide  : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content: '<h4>Wetland sites</h4><div>' +
+                        content : '<h4>Wetland sites</h4><div>' +
                         '<p>Unselect <span class="anno-highlight">Show Wetland sites</span> to hide the wetland boundaries in the map.</p>' +
                         '<p>In the <strong>next step</strong> we show you the general map control elements.</p>' +
                         '</div>'
                     }, // Wetland sites
                     {
-                        target: '.map-controls-wrapper',
-                        position: 'center-bottom',
+                        target   : '.map-controls-wrapper',
+                        position : 'center-bottom',
                         className: 'anno-width-500',
-                        buttons: [
+                        buttons  : [
                             AnnoButton.BackButton,
                             {
-                                text: 'Next',
+                                text : 'Next',
                                 click: function (anno, evt) {
                                     anno.switchToChainNext();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow   : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('MapControls', '13');
                             $cookies.hasNotifiedAboutLayers = true;
 
@@ -1838,19 +1861,19 @@ angular.module('webgisApp')
 
                             var handler = function (e) {
                                 // prevent info tool selection
-                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
-                                       e.stopPropagation();
-                                 }
+                                if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
+                                    e.stopPropagation();
+                                }
                             }
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide   : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content: '<h4>Map control</h4><div><p></p>' +
+                        content  : '<h4>Map control</h4><div><p></p>' +
                         '<p>You can' +
                         '<ol style="list-style-type:disc;list-style-position:outside;">' +
                         '<li><p><span class="fa fa-plus fa-lg"></span> zoom into the map,</p></li>' +
@@ -1860,21 +1883,21 @@ angular.module('webgisApp')
                         '<p></p><p>In the <strong>next step </strong> we will show you the search function.</p></div>'
                     }, // Map Control
                     {
-                        target: '.map-controls-wrapper',
+                        target  : '.map-controls-wrapper',
                         position: 'right',
 
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text: 'Close',
+                                text : 'Close',
                                 click: function (anno, evt) {
                                     $scope.trackIntroductionTour('Close', '15');
-									reset();
+                                    reset();
                                     anno.hide();
                                 }
                             }
                         ],
-                        onShow: function (anno, $target, $annoElem) {
+                        onShow : function (anno, $target, $annoElem) {
                             $scope.trackIntroductionTour('Search', '14');
                             $cookies.hasNotifiedAboutLayers = true;
 
@@ -1884,16 +1907,16 @@ angular.module('webgisApp')
                             $('.anno-overlay').on("click", function () {
                                 reset();
                             });
-                           var handler = function (e) {
+                            var handler = function (e) {
                                 // prevent info tool selection
-                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
-                                       e.stopPropagation();
-                                 }
+                                if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
+                                    e.stopPropagation();
+                                }
                             }
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
-                        onHide: function (anno, $target, $annoElem, handler) {
+                        onHide : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
@@ -1906,32 +1929,46 @@ angular.module('webgisApp')
                 ]
             );
             anno1.show();
-        };
-    })
-    .directive('repeatDone', function() {
-      return function(scope, element, attrs) {
-        scope.$eval(attrs.repeatDone);
-      }
-    })
-    .directive('swosLayerControls', function(){
-        return {
-            restrict: "E",
-            scope: {
-                olLayer: "=olLayer"
-            },
-            transclude: true,
-            controller: function($scope) {
-                // unveil our layer object (as we actually get handed over an ol3 layer object)
-                $scope.layer = $scope.olLayer.get("layerObj");
-                $scope.mcl = $scope.$parent.$parent;
-            },
-            templateUrl: "../../static/includes/swos-layer-controls.html"
+        }
+
+        function trackIntroductionTour(title, step) {
+            try {
+                _paq.push(['setCustomUrl', '/introduction/' + step + '_' + title.toLowerCase()]);
+                _paq.push(['setDocumentTitle', 'Introduction Tour: ' + title + ' (' + step + ')']);
+                _paq.push(['trackPageView']);
+            } catch (err) {
+            }
         }
     })
+    .directive('repeatDone', function () {
+        return function (scope, element, attrs) {
+            scope.$eval(attrs.repeatDone);
+        }
+    })
+    .directive('swosLayerControls', ["mapviewer", function(mapviewer) {
+        var directive = {
+            restrict: "E",
+            scope: true,
+            controller: function ($scope) {
+                // necessary so we can use controllerAs syntax
+                var slc = this;
+            },
+            controllerAs: "slc",
+            transclude: true,
+            bindToController: true,
+            templateUrl: "../../static/includes/swos-layer-controls.html",
+            link: linkFunc
+        };
+        return directive;
 
-    //coppied from https://github.com/lorenooliveira/ng-text-truncate/blob/master/ng-text-truncate.js
-    .directive( "ngTextTruncate", [ "$compile", "ValidationServices", "CharBasedTruncation", "WordBasedTruncation",
-        function( $compile, ValidationServices, CharBasedTruncation, WordBasedTruncation ) {
+        function linkFunc(scope, iElement, iAttr) {
+            // TODO: no need to pass the whole layer to the view, extract only required properties
+            scope.slc.layer = mapviewer.getLayerById(iAttr.layerHash).get("layerObj");
+        }
+    }])
+    //copied from https://github.com/lorenooliveira/ng-text-truncate/blob/master/ng-text-truncate.js
+    .directive("ngTextTruncate", ["$compile", "ValidationServices", "CharBasedTruncation", "WordBasedTruncation",
+        function ($compile, ValidationServices, CharBasedTruncation, WordBasedTruncation) {
             return {
                 restrict  : "A",
                 scope     : {
@@ -1982,79 +2019,79 @@ angular.module('webgisApp')
             };
         }
     ])
-    .factory( "ValidationServices", function() {
+    .factory("ValidationServices", function () {
         return {
-            failIfWrongThreshouldConfig: function( firstThreshould, secondThreshould ) {
-                if( (! firstThreshould && ! secondThreshould) || (firstThreshould && secondThreshould) ) {
+            failIfWrongThreshouldConfig: function (firstThreshould, secondThreshould) {
+                if ((!firstThreshould && !secondThreshould) || (firstThreshould && secondThreshould)) {
                     throw "You must specify one, and only one, type of threshould (chars or words)";
                 }
             }
         };
     })
-    .factory( "CharBasedTruncation", [ "$compile", function( $compile ) {
+    .factory("CharBasedTruncation", ["$compile", function ($compile) {
         return {
-            truncationApplies: function( $scope, threshould ) {
+            truncationApplies: function ($scope, threshould) {
                 return $scope.text.length > threshould;
             },
 
-            applyTruncation: function( threshould, $scope, $element ) {
-                if( $scope.useToggling ) {
-                    var el = angular.element(    "<span>" +
-                                                    $scope.text.substr( 0, threshould ) +
-                                                    "<span ng-show='!open'>...</span>" +
-                                                    "<span class='btn-link ngTruncateToggleText' " +
-                                                        "ng-click='toggleShow()'" +
-                                                        "ng-show='!open'>" +
-                                                        " " + ($scope.customMoreLabel ? $scope.customMoreLabel : "More") +
-                                                    "</span>" +
-                                                    "<span ng-show='open'>" +
-                                                        $scope.text.substring( threshould ) +
-                                                        "<span class='btn-link ngTruncateToggleText'" +
-                                                              "ng-click='toggleShow()'>" +
-                                                            " " + ($scope.customLessLabel ? $scope.customLessLabel : "Less") +
-                                                        "</span>" +
-                                                    "</span>" +
-                                                "</span>" );
-                    $compile( el )( $scope );
-                    $element.append( el );
+            applyTruncation: function (threshould, $scope, $element) {
+                if ($scope.useToggling) {
+                    var el = angular.element("<span>" +
+                        $scope.text.substr(0, threshould) +
+                        "<span ng-show='!open'>...</span>" +
+                        "<span class='btn-link ngTruncateToggleText' " +
+                        "ng-click='toggleShow()'" +
+                        "ng-show='!open'>" +
+                        " " + ($scope.customMoreLabel ? $scope.customMoreLabel : "More") +
+                        "</span>" +
+                        "<span ng-show='open'>" +
+                        $scope.text.substring(threshould) +
+                        "<span class='btn-link ngTruncateToggleText'" +
+                        "ng-click='toggleShow()'>" +
+                        " " + ($scope.customLessLabel ? $scope.customLessLabel : "Less") +
+                        "</span>" +
+                        "</span>" +
+                        "</span>");
+                    $compile(el)($scope);
+                    $element.append(el);
 
                 } else {
-                    $element.append( $scope.text.substr( 0, threshould ) + "..." );
+                    $element.append($scope.text.substr(0, threshould) + "...");
 
                 }
             }
         };
     }])
-    .factory( "WordBasedTruncation", [ "$compile", function( $compile ) {
+    .factory("WordBasedTruncation", ["$compile", function ($compile) {
         return {
-            truncationApplies: function( $scope, threshould ) {
-                return $scope.text.split( " " ).length > threshould;
+            truncationApplies: function ($scope, threshould) {
+                return $scope.text.split(" ").length > threshould;
             },
 
-            applyTruncation: function( threshould, $scope, $element ) {
-                var splitText = $scope.text.split( " " );
-                if( $scope.useToggling ) {
-                    var el = angular.element(    "<span>" +
-                                                    splitText.slice( 0, threshould ).join( " " ) + " " +
-                                                    "<span ng-show='!open'>...</span>" +
-                                                    "<span class='btn-link ngTruncateToggleText' " +
-                                                        "ng-click='toggleShow()'" +
-                                                        "ng-show='!open'>" +
-                                                        " " + ($scope.customMoreLabel ? $scope.customMoreLabel : "More") +
-                                                    "</span>" +
-                                                    "<span ng-show='open'>" +
-                                                        splitText.slice( threshould, splitText.length ).join( " " ) +
-                                                        "<span class='btn-link ngTruncateToggleText'" +
-                                                              "ng-click='toggleShow()'>" +
-                                                            " " + ($scope.customLessLabel ? $scope.customLessLabel : "Less") +
-                                                        "</span>" +
-                                                    "</span>" +
-                                                "</span>" );
-                    $compile( el )( $scope );
-                    $element.append( el );
+            applyTruncation: function (threshould, $scope, $element) {
+                var splitText = $scope.text.split(" ");
+                if ($scope.useToggling) {
+                    var el = angular.element("<span>" +
+                        splitText.slice(0, threshould).join(" ") + " " +
+                        "<span ng-show='!open'>...</span>" +
+                        "<span class='btn-link ngTruncateToggleText' " +
+                        "ng-click='toggleShow()'" +
+                        "ng-show='!open'>" +
+                        " " + ($scope.customMoreLabel ? $scope.customMoreLabel : "More") +
+                        "</span>" +
+                        "<span ng-show='open'>" +
+                        splitText.slice(threshould, splitText.length).join(" ") +
+                        "<span class='btn-link ngTruncateToggleText'" +
+                        "ng-click='toggleShow()'>" +
+                        " " + ($scope.customLessLabel ? $scope.customLessLabel : "Less") +
+                        "</span>" +
+                        "</span>" +
+                        "</span>");
+                    $compile(el)($scope);
+                    $element.append(el);
 
                 } else {
-                    $element.append( splitText.slice( 0, threshould ).join( " " ) + "..." );
+                    $element.append(splitText.slice(0, threshould).join(" ") + "...");
                 }
             }
         };
@@ -2063,87 +2100,86 @@ angular.module('webgisApp')
 ;
 
 
-
 // copied from http://www.bootply.com/l2ChB4vYmC
 var scrollBarWidths = 40;
 
-var widthOfList = function(){
-  var itemsWidth = 0;
-  $('.list li').each(function(){
-    itemsWidth += $(this).outerWidth();
-  });
-  return itemsWidth;
+var widthOfList = function () {
+    var itemsWidth = 0;
+    $('.list li').each(function () {
+        itemsWidth += $(this).outerWidth();
+    });
+    return itemsWidth;
 };
 
-var widthOfHidden = function(){
-  return (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
+var widthOfHidden = function () {
+    return (($('.wrapper').outerWidth()) - widthOfList() - getLeftPosi()) - scrollBarWidths;
 };
 
-var getLeftPosi = function(){
-  return $('.list').position().left;
+var getLeftPosi = function () {
+    return $('.list').position().left;
 };
 
-var reAdjust = function(){
-  if (($('.wrapper').outerWidth()) < widthOfList()) {
-    $('.scroller-right').show();
-  }
-  else {
-    $('.scroller-right').hide();
-  }
-  
-  if (getLeftPosi()<0) {
-    $('.scroller-left').show();
-  }
-  else {
-    $('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
-      $('.scroller-left').hide();
-  }
+var reAdjust = function () {
+    if (($('.wrapper').outerWidth()) < widthOfList()) {
+        $('.scroller-right').show();
+    }
+    else {
+        $('.scroller-right').hide();
+    }
+
+    if (getLeftPosi() < 0) {
+        $('.scroller-left').show();
+    }
+    else {
+        $('.item').animate({left: "-=" + getLeftPosi() + "px"}, 'slow');
+        $('.scroller-left').hide();
+    }
 };
 
 reAdjust();
 
-$(window).on('resize',function(){
-      reAdjust();
+$(window).on('resize', function () {
+    reAdjust();
 });
 
-$('.scroller-right').click(function() {
-  
-  $('.scroller-left').fadeIn('slow');
-  $('.scroller-right').fadeOut('slow');
-  
-  $('.list').animate({left:"+="+widthOfHidden()+"px"},'slow',function(){
+$('.scroller-right').click(function () {
 
-  });
+    $('.scroller-left').fadeIn('slow');
+    $('.scroller-right').fadeOut('slow');
+
+    $('.list').animate({left: "+=" + widthOfHidden() + "px"}, 'slow', function () {
+
+    });
 });
 
-$('.scroller-left').click(function() {
-  
+$('.scroller-left').click(function () {
+
     $('.scroller-right').fadeIn('slow');
     $('.scroller-left').fadeOut('slow');
-  
-      $('.list').animate({left:"-="+getLeftPosi()+"px"},'slow',function(){
-      
-      });
-});    
 
-$(document).ready(function() {
+    $('.list').animate({left: "-=" + getLeftPosi() + "px"}, 'slow', function () {
+
+    });
+});
+
+$(document).ready(function () {
     $(".fancybox").fancybox({
-        openEffect    : 'none',
-        closeEffect    : 'none'
+        openEffect : 'none',
+        closeEffect: 'none'
     });
 });
 
 if (!String.prototype.includes) {
-  String.prototype.includes = function(search, start) {
-    'use strict';
-    if (typeof start !== 'number') {
-      start = 0;
-    }
+    String.prototype.includes = function (search, start) {
+        'use strict';
+        if (typeof start !== 'number') {
+            start = 0;
+        }
 
-    if (start + search.length > this.length) {
-      return false;
-    } else {
-      return this.indexOf(search, start) !== -1;
-    }
-  };
+        if (start + search.length > this.length) {
+            return false;
+        } else {
+            return this.indexOf(search, start) !== -1;
+        }
+    };
 }

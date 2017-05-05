@@ -6,13 +6,13 @@ $(this).on('show.bs.popover', function () {
 /* Used for mobile version */
 $('#toggle-sidebar').on('click', function() {
     var panel = $('#sidebar');
-    
+
     if (panel.hasClass("visible")) {
         panel.removeClass('visible').animate({'left':'100%'},600);
     } else {
         panel.addClass('visible').animate({'left':'2%'},600);
     }
-    return false;    
+    return false;
 });
 
 /* When a form element is being focused, the dropdown-menu is closed, with this code we prevent this behaviour */
