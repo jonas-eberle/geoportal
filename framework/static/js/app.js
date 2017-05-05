@@ -133,7 +133,9 @@ angular.module('webgisApp', [
             }
 
             $modal.open({
+                bindToController: true,
                 controller: 'ModalInstanceCtrl',
+                controllerAs: 'mi',
                 templateUrl: subdir + '/static/includes/credits.html',
                 backdrop: 'static',
                 resolve: {

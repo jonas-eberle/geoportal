@@ -912,88 +912,23 @@ angular.module('webgisApp')
 
         }
     })
-    .controller('IntroductionTour', function ($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope) {
+    .controller('IntroductionTourCtrl', function ($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope) {
+        var introTour = this;
+
+        introTour.startAnno = startAnno;
+        introTour.trackIntroductionTour = trackIntroductionTour;
+
         var extdb_id = "2551"; // Camargue:  Land Surface Temperature Trend 2000 to 2015
         var product_id = "2972"; // Global Surface Water: Water Occurence (1984-2015)
         var wetland_id = 4; // Camargue
 
-        function only_load_wetland(wetland_id) {
+        //--------------------------------------------------------------------------------------------------------------
 
-            var current_wetland_id = "";
+        $scope.$on('start_tour', function () {
+            return introTour.startAnno();
+        });
 
-            if (mapviewer.currentFeature) {
-                current_wetland_id = mapviewer.currentFeature.get('id');
-            }
-            if (wetland_id != current_wetland_id) {
-                WetlandsService.selectWetlandFromId(wetland_id)
-            }
-            else {
-                $timeout(function () {
-                    if ($("#link_wetland_list").parents().hasClass("active")) {
-                        try {
-                            $("#link_wetland_opened")[0].click(); // open catalog tab
-                        } catch (e) {
-                        }
-                    }
-                }, 0, false);
-
-                $.each(WetlandsService.wetlands, function () {
-                    if (this['id'] == current_wetland_id) {
-                        WetlandsService.selectFeature(this);
-                        return false;
-                    }
-                });
-            }
-        }
-
-        function select_tab(type_name) {
-            var target = ""; //default tab
-
-            // open wetland tab
-            if (type_name) {
-                switch (type_name) {
-                    case "overview":
-                        target = 'li.flaticon-bars a';
-                        break;
-                    case "product":
-                        target = 'li.flaticon-layers a';
-                        break;
-                    case "indicator":
-                        target = 'li.flaticon-business a';
-                        break;
-                    case "satdata":
-                        target = 'li.flaticon-space-satellite-station a';
-                        break;
-                    case "images":
-                        target = 'li.flaticon-technology-1 a';
-                        break;
-                    case "video":
-                        target = 'li.flaticon-technology a';
-                        break;
-                    case "externaldb":
-                        target = 'li.flaticon-technology-2 a';
-                        break;
-                }
-
-                try {
-                    $(target).click(); // open tab
-                } catch (e) {
-                }
-            }
-            //open wetland catalog
-            else {
-                $timeout(function () {
-                    if ($("#link_wetland_list").parents().hasClass("active")) {
-                    }
-                    else {
-                        try {
-                            $("#link_wetland_list")[0].click(); // open catalog tab
-                        } catch (e) {
-                        }
-                    }
-                }, 0, false);
-            }
-        }
+        //--------------------------------------------------------------------------------------------------------------
 
         function load_and_show_layer(wetland_id, type_name, layer_id, load_layer) {
 
@@ -1050,6 +985,64 @@ angular.module('webgisApp')
             }
         }
 
+        function move_map_elements_higher(action) {
+            if (!action) {
+                $('#current').css('z-index', '1041');
+                $('#active_layer').css('z-index', '1042');
+                $("#gmap").css('z-index', '1038');
+                $('.map-controls-wrapper').css('z-index', '1040');
+                $('.ol-viewport').css('z-index', '1039');
+            }
+            else if (action === "reset") {
+                $('#current').css('z-index', '');
+                $('#active_layer').css('z-index', '');
+                $("#gmap").css('z-index', '');
+                $('.map-controls-wrapper').css('z-index', '');
+                $('.ol-viewport').css('z-index', '');
+            }
+
+        }
+
+        function only_load_wetland(wetland_id) {
+
+            var current_wetland_id = "";
+
+            if (mapviewer.currentFeature) {
+                current_wetland_id = mapviewer.currentFeature.get('id');
+            }
+            if (wetland_id != current_wetland_id) {
+                WetlandsService.selectWetlandFromId(wetland_id)
+            }
+            else {
+                $timeout(function () {
+                    if ($("#link_wetland_list").parents().hasClass("active")) {
+                        try {
+                            $("#link_wetland_opened")[0].click(); // open catalog tab
+                        } catch (e) {
+                        }
+                    }
+                }, 0, false);
+
+                $.each(WetlandsService.wetlands, function () {
+                    if (this['id'] == current_wetland_id) {
+                        WetlandsService.selectFeature(this);
+                        return false;
+                    }
+                });
+            }
+        }
+
+        function open_close_active_layer(action) {
+
+            if (!$('#active_layer').attr("class").includes("expanded") && action == "open") {
+                $('#show_active_layer').click();
+                $(".item_catalog").find('.glyphicon-chevron-down').first().click();
+            }
+            else if ($('#active_layer').attr("class").includes("expanded") && action == "close") {
+                $('#show_active_layer').click();
+            }
+        }
+
         function reset(startUrl) {
             // #todo replace remove and zoom once the function is available via service / move back to start URL
             while (mapviewer.layersMeta.length > 0) {
@@ -1080,33 +1073,53 @@ angular.module('webgisApp')
             $('.main').css('position', 'fixed'); // set back to origin
         }
 
-        function open_close_active_layer(action) {
+        function select_tab(type_name) {
+            var target = ""; //default tab
 
-            if (!$('#active_layer').attr("class").includes("expanded") && action == "open") {
-                $('#show_active_layer').click();
-                $(".item_catalog").find('.glyphicon-chevron-down').first().click();
-            }
-            else if ($('#active_layer').attr("class").includes("expanded") && action == "close") {
-                $('#show_active_layer').click();
-            }
-        }
+            // open wetland tab
+            if (type_name) {
+                switch (type_name) {
+                    case "overview":
+                        target = 'li.flaticon-bars a';
+                        break;
+                    case "product":
+                        target = 'li.flaticon-layers a';
+                        break;
+                    case "indicator":
+                        target = 'li.flaticon-business a';
+                        break;
+                    case "satdata":
+                        target = 'li.flaticon-space-satellite-station a';
+                        break;
+                    case "images":
+                        target = 'li.flaticon-technology-1 a';
+                        break;
+                    case "video":
+                        target = 'li.flaticon-technology a';
+                        break;
+                    case "externaldb":
+                        target = 'li.flaticon-technology-2 a';
+                        break;
+                }
 
-        function move_map_elements_higher(action) {
-            if (!action) {
-                $('#current').css('z-index', '1041');
-                $('#active_layer').css('z-index', '1042');
-                $("#gmap").css('z-index', '1038');
-                $('.map-controls-wrapper').css('z-index', '1040');
-                $('.ol-viewport').css('z-index', '1039');
+                try {
+                    $(target).click(); // open tab
+                } catch (e) {
+                }
             }
-            else if (action === "reset") {
-                $('#current').css('z-index', '');
-                $('#active_layer').css('z-index', '');
-                $("#gmap").css('z-index', '');
-                $('.map-controls-wrapper').css('z-index', '');
-                $('.ol-viewport').css('z-index', '');
+            //open wetland catalog
+            else {
+                $timeout(function () {
+                    if ($("#link_wetland_list").parents().hasClass("active")) {
+                    }
+                    else {
+                        try {
+                            $("#link_wetland_list")[0].click(); // open catalog tab
+                        } catch (e) {
+                        }
+                    }
+                }, 0, false);
             }
-
         }
 
         /* function show_metadata(action){
@@ -1131,13 +1144,6 @@ angular.module('webgisApp')
          }
          }*/
 
-        $scope.startAnno = startAnno;
-        $scope.trackIntroductionTour = trackIntroductionTour;
-
-        $scope.$on('start_tour', function () {
-            return $scope.startAnno();
-        });
-
         function startAnno() {
 
             $rootScope.$broadcast("StopLoadingWetlandFromURL"); // prevent loading from URL
@@ -1157,7 +1163,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow   : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Welcome', '01');
+                            introTour.trackIntroductionTour('Welcome', '01');
                             // change overlay to avoid changing z-index of all nav elements
                             $('.anno-overlay').css('z-index', '1029');
 
@@ -1200,7 +1206,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Catalog', '02');
+                            introTour.trackIntroductionTour('Catalog', '02');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1247,7 +1253,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Selection', '03');
+                            introTour.trackIntroductionTour('Selection', '03');
                             //ensure wetland catalog is shown
                             select_tab();
 
@@ -1294,7 +1300,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Wetland', '04');
+                            introTour.trackIntroductionTour('Wetland', '04');
                             //Load wetland (id 4 - Camargue)
                             only_load_wetland(4);
 
@@ -1353,7 +1359,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Products', '05');
+                            introTour.trackIntroductionTour('Products', '05');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1413,7 +1419,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Product', '06');
+                            introTour.trackIntroductionTour('Product', '06');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1472,7 +1478,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Dataset', '07');
+                            introTour.trackIntroductionTour('Dataset', '07');
                             //ensure products is shown
                             select_tab("product");
 
@@ -1588,7 +1594,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Satellitedata', '08');
+                            introTour.trackIntroductionTour('Satellitedata', '08');
                             //ensure products is shown
                             select_tab("satdata");
 
@@ -1639,7 +1645,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow       : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('External1', '09');
+                            introTour.trackIntroductionTour('External1', '09');
                             //ensure products is shown
                             select_tab("externaldb");
 
@@ -1690,7 +1696,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('External2', '10');
+                            introTour.trackIntroductionTour('External2', '10');
                             //ensure products is shown
                             //select_tab("externaldb");
                             $cookies.hasNotifiedAboutLayers = true;
@@ -1744,7 +1750,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('ActiveLayers', '11');
+                            introTour.trackIntroductionTour('ActiveLayers', '11');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             //select_tab("externaldb");
@@ -1805,7 +1811,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow  : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('WetlandSites', '12');
+                            introTour.trackIntroductionTour('WetlandSites', '12');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1849,7 +1855,7 @@ angular.module('webgisApp')
                             }
                         ],
                         onShow   : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('MapControls', '13');
+                            introTour.trackIntroductionTour('MapControls', '13');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -1891,14 +1897,14 @@ angular.module('webgisApp')
                             {
                                 text : 'Close',
                                 click: function (anno, evt) {
-                                    $scope.trackIntroductionTour('Close', '15');
+                                    introTour.trackIntroductionTour('Close', '15');
                                     reset();
                                     anno.hide();
                                 }
                             }
                         ],
                         onShow : function (anno, $target, $annoElem) {
-                            $scope.trackIntroductionTour('Search', '14');
+                            introTour.trackIntroductionTour('Search', '14');
                             $cookies.hasNotifiedAboutLayers = true;
 
                             move_map_elements_higher();
@@ -2096,7 +2102,6 @@ angular.module('webgisApp')
             }
         };
     }])
-
 ;
 
 
