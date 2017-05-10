@@ -58,35 +58,80 @@ angular.module('webgisApp')
                 class_id = layer.legend_colors[legend_entries].code;
                 value[class_id] = layer.legend_colors[legend_entries].size;
             }
-            console.log('sizes');
-			console.log(value);
+            
+            var type;
+            var options = {};
             var data = -1;
-            if (layer.identifier.includes("CLC")) {
+            if (layer.identifier.includes("CLC") && layer.identifier.includes("LULC_")) { 
                 data = id_name_color['CLC'];
+                data = add_no_data_level_clc(value, data);
+                data = create_value_legend_clc_data(data[1], data[0])[0];
+                type = 'sunburstChart';
+                options['height'] = 300;
+                options['showLabels'] = false;
             }
-            if (layer.identifier.includes("MAES")) {
+            if (layer.identifier.includes("MAES") && layer.identifier.includes("LULC_")) {
                 data = id_name_color['MAES'];
+                data = add_no_data_level_clc(value, data);
+                data = create_value_legend_clc_data(data[1], data[0])[0];
+                type = 'sunburstChart';
+                options['height'] = 300;
+                options['showLabels'] = false;
+            }
+            if (layer.identifier.includes("LULCC")) {
+                data = [{
+                    key: 'LULCC',
+                    values: layer.legend_colors
+                }];
+                type = 'discreteBarChart';
+                options['height'] = 200;
+                options['showXAxis'] = false;
+                options['x'] = function(d){return d.label.split(' - ')[0];};
+                options['y'] = function(d){return d.size;};
+                options['showLabels'] = false;
+                /*options['pie'] = {
+                    startAngle: function(d) { return d.startAngle/2 -Math.PI/2 },
+                    endAngle: function(d) { return d.endAngle/2 -Math.PI/2 }
+                };*/
+            }
+            if (layer.identifier.includes("SWD_TD")) {
+                data = layer.legend_colors;
+                type = 'pieChart';
+                options['height'] = 200;
+                options['x'] = function(d){return d.label;};
+                options['y'] = function(d){return d.size;};
+                options['showLabels'] = false;
+                options['showLegend'] = false;
+            }
+            if (layer.identifier.includes("SWD_TF")) {
+                data = [{
+                    key: 'Area',
+                    values: layer.legend_colors
+                }];
+                type = 'multiBarHorizontalChart';
+                options['height'] = 200;
+                options['width'] = 350;
+                options['x'] = function(d){return d.label;};
+                options['y'] = function(d){return d.size;};
+                options['barColor'] = function(d){return d.color;};
+                options['showLabels'] = false;
+                options['showLegend'] = false;
+                options['showControls'] = false;
             }
             if (data !== -1) {
-                var data = add_no_data_level_clc(value, data);
-                layer_value_clc = create_value_legend_clc_data(data[1], data[0]);
-                console.log(layer_value_clc);
-
-                $scope.data = layer_value_clc;
+                $scope.data = data;
                 $scope.options = {
                     "chart": {
-                        "type": "sunburstChart",
-                        "height": 300,
+                        "type": type,
                         "width": 375,
                         "mode": 'size',
                         "groupColorByParent": false,
-                        color: function (d, i) {
+                        /*color: function (d, i) {
                             var d2 = d3.selectAll("path").data().filter(function (d1) {
                                 return (d1.name == d)
                             })[0]
-                        },
+                        },*/
                         duration: 250,
-                        // "showLabels": true,
                         //"labelFormat":function (d){if(d.size < 5){console.log(d);return d.name}else{return ''}''}
                         "tooltip": {
                             "valueFormatter": function (d) {
@@ -95,9 +140,13 @@ angular.module('webgisApp')
                         }
                     }
                 };
+                $.extend($scope.options['chart'], options);
 
-                var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data[0]" class="with-3d-shadow with-transitions"></nvd3></div>'
+                var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>'
                 $('#diagram_' + layer.id).show();
+                if (layer.identifier.includes("LULC_")) {
+                    $('#diagram_' + layer.id + ' .hint').show();
+                }
                 angular.element('#diagram_' + layer.id).append($compile(template)($scope));
             }
         }
