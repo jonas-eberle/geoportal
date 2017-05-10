@@ -509,7 +509,7 @@
                                 <!-- Photos -->
                                 <tab class="flaticon-technology-1" heading="" tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
                                     <div ng-controller="WetlandsImageCtrl as wetlandsImage">
-                                        <accordion ng-if="wetlandsImage.images.photos.length != 0">
+                                        <accordion ng-if="wetlandsImage.images.photos.length > 0">
                                             <accordion-group is-open="wetlandsImage.imagesIsOpen">
                                                 <accordion-heading>Images
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.imagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.imagesIsOpen}"></i>
@@ -534,7 +534,7 @@
                                                 </button>
                                             </accordion-group>
                                         </accordion>
-                                        <accordion ng-if="wetlandsImage.externalImages.photos.length != 0">
+                                        <accordion ng-if="wetlandsImage.externalImages.photos.length > 0">
                                             <accordion-group is-open="wetlandsImage.externalImagesIsOpen">
                                                 <accordion-heading>Panoramio images
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.externalImagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.externalImagesIsOpen}"></i>
@@ -571,11 +571,17 @@
 
                                 <!-- Videos -->
                                 <tab class="flaticon-technology" heading="" tooltip="Videos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('video')">
-                                    <div>
-                                        <span ng-if="!value.videos">Loading...</span>
-                                        <a ng-repeat="video in value.videos" ng-click="tracking.trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
+                                    <div ng-controller="WetlandsVideoCtrl as wetlandsVideo">
+                                        <div>
+                                            <span ng-if="!wetlandsVideo.videos.videos">Loading...</span>
+                                            <a ng-repeat="video in wetlandsVideo.videos.videos" ng-click="tracking.trackShowVideo('{{video.url}}')"
+                                               class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1"
+                                               href="{{video.url}}" target="_blank">
+                                                <img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0; top: 0;margin: 5px;">
+                                            </a>
+                                        </div>
+                                        <button ng-if="wetlandsVideo.videos.currentPage < wetlandsVideo.videos.lastPage" type="button" class="btn btn-loadmore" ng-click="wetlandsVideo.loadMoreVideos()">Load more videos</button>
                                     </div>
-                                    <button ng-if="!allVideos" type="button" class="btn btn-loadmore" ng-click="loadMoreVideos()">Load more videos</button>
                                 </tab>
 
                                 <!-- External databases -->

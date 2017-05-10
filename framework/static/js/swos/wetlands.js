@@ -26,6 +26,7 @@ angular.module('webgisApp')
             value    : {},
             externalImages: {},
             images: {},
+            videos: {},
             activeTab: -1,
             wetlands_without_geom: [],
 
@@ -106,13 +107,13 @@ angular.module('webgisApp')
 
                     djangoRequests.request({
                         'method': "GET",
-                        'url'   : '/swos/wetland/' + wetland.id + '/youtube.json?start=0&max=9'
+                        'url'   : '/swos/wetland/' + wetland.id + '/youtube.json?start=0&max=' + mediaConfig.videosPerPage
                     }).then(function (data) {
-                        //$scope.wetlands_opened[wetland.id]['videos'] = data;
-                        wetland_service.value['videos'] = data;
-                        if (data.length < wetland_service.videosMaxPage) {
-                            wetland_service.allVideos = true;
-                        }
+                        Object.assign(wetland_service.videos, {
+                            currentPage: 1,
+                            lastPage: Math.ceil(wetland_service.data_count['videos'] / mediaConfig.videosPerPage),
+                            videos: data
+                        });
                     });
 
                     djangoRequests.request({
@@ -197,11 +198,6 @@ angular.module('webgisApp')
         $scope.wetlands_opened = {};
         $scope.wetlands_without_geom = WetlandsService.wetlands_without_geom;
         $scope.WetlandsService = WetlandsService;
-
-        $scope.log = log;
-        function log() {
-            console.log("foo");
-        }
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             $scope.layerIdMap = {};
@@ -341,31 +337,7 @@ angular.module('webgisApp')
             $scope.proceed = false;
         });
 
-        // IMAGE/VIDEO DISPLAY START
         $scope.data_count = {};
-
-        // TODO: make this the VideoController
-        $scope.allVideos = false;
-        $scope.loadMoreVideos = loadMoreVideos;
-        $scope.videosCurrentPage = 1;
-        $scope.videosMaxPage = 9;
-
-        function loadMoreVideos() {
-            $scope.videosCurrentPage += 1;
-            var start = $scope.videosCurrentPage * $scope.videosMaxPage - $scope.videosMaxPage;
-            //console.log('start = '+start);
-            djangoRequests.request({
-                'method': "GET",
-                'url'   : '/swos/wetland/' + $scope.value.id + '/youtube.json?start=' + start + '&max=' + $scope.videosMaxPage
-            }).then(function (data) {
-                //$scope.value['videos'] = data;
-                $scope.value['videos'].push.apply($scope.value['videos'], data);
-                if (data.length < $scope.videosMaxPage) {
-                    $scope.allVideos = true;
-                }
-            })
-        }
-        // IMAGE/VIDEO DISPLAY END
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -852,7 +824,7 @@ angular.module('webgisApp')
                 url: '/swos/wetland/' + WetlandsService.value.id + jsonTarget + '?start=' + start + '&max=' + mediaConfig.imagesPerPage
             }).then(function(data) {
                 wetlandsImage[key]['photos'] = data['photos'];
-            })
+            });
         }
 
         function moreImages(action) {
@@ -867,6 +839,26 @@ angular.module('webgisApp')
         function showFoto(picture) {
             console.log(picture);
             return false;
+        }
+    })
+    .controller('WetlandsVideoCtrl', function WetlandsVideoCtrl(WetlandsService, djangoRequests, mediaConfig) {
+        var wetlandsVideo = this;
+
+        wetlandsVideo.loadMoreVideos = loadMoreVideos;
+        wetlandsVideo.videos = WetlandsService.videos;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function loadMoreVideos() {
+            wetlandsVideo.videos.currentPage++;
+            var start = (wetlandsVideo.videos.currentPage - 1) * mediaConfig.videosPerPage;
+            djangoRequests.request({
+                'method': "GET",
+                'url'   : '/swos/wetland/' + WetlandsService.value.id + '/youtube.json?start=' + start + '&max=' + mediaConfig.videosPerPage
+            }).then(function (data) {
+                // if not for IE, we could use: wetlandsVideo.videos.videos.push(...data)
+                Array.prototype.push.apply(wetlandsVideo.videos.videos, data);
+            });
         }
     })
     .controller('IntroductionTourCtrl', function IntroductionTourCtrl($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope, TrackingService) {
