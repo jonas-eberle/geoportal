@@ -526,3 +526,9 @@ button.btn-loadmore:hover {
 .anno-emphasise-target {
   z-index: 1601 !important !important;
 }
+
+.legend-percent {
+	font-size: 0.9em;
+    padding-left: 5px;
+    text-align: right;
+}
