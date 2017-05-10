@@ -162,7 +162,382 @@ angular.module('webgisApp')
         };
         return service;
     })
+    .controller('DiagramCtrl', function (mapviewer, $scope, WetlandsService, $compile){
 
+        var id_name_color_clc = [];
+
+        id_name_color_clc[1] = ['1 Artificial surfaces', 'rgb(230,0,169)'];
+        id_name_color_clc[11] = ['1.1 Urban fabric', 'rgb(150,0,36)'];
+        id_name_color_clc[111] = ['1.1.1 Continuous urban fabrics', 'rgb(230,0,77)'];
+        id_name_color_clc[112] = ['1.1.2 Discontinuous urban fabric', 'rgb(255,0,0)'];
+        id_name_color_clc[12] = ['1.2 Industrial, commercial and transport units', 'rgb(232,190,255)'];
+        id_name_color_clc[121] = ['1.2.1 Industrial or commercial units', 'rgb(204,77,242)'];
+        id_name_color_clc[122] = ['1.2.2 Road and rail networks and associated land', 'rgb(204,0,0)'];
+        id_name_color_clc[123] = ['1.2.3 Port areas', 'rgb(230,204,204)'];
+        id_name_color_clc[124] = ['1.2.4 Airports', 'rgb(230,204,230)'];
+        id_name_color_clc[13] = ['1.3 Mine, dump and construction sites', 'rgb(169,0,230)'];
+        id_name_color_clc[131] = ['1.3.1 Mineral extraction sites', 'rgb(166,0,204)'];
+        id_name_color_clc[1311] = ['1.3.1.1 Excavations, gravel/brick/clay pits, borrow pits, mining pools', 'rgb(112,68,137)'];
+        id_name_color_clc[132] = ['1.3.2 Dump sites', 'rgb(166,77,0)'];
+        id_name_color_clc[133] = ['1.3.3 Construction sites', 'rgb(255,77,255)'];
+        id_name_color_clc[14] = ['1.4 Artificial non-agricultural vegetated areas', 'rgb(255,115,223)'];
+        id_name_color_clc[141] = ['1.4.1 Green urban areas', 'rgb(255,166,255)'];
+        id_name_color_clc[142] = ['1.4.2 Sport and leisure facilities', 'rgb(255,230,255)'];
+        id_name_color_clc[2] = ['2 Agricultural areas', 'rgb(255,255,210)'];
+        id_name_color_clc[21] = ['2.1 Arable land', 'rgb(255,255,115)'];
+        id_name_color_clc[211] = ['2.1.1 Non-irrigated arable land ', 'rgb(255,255,168)'];
+        id_name_color_clc[212] = ['2.1.2 Permanently irrigated land', 'rgb(255,255,0)'];
+        id_name_color_clc[213] = ['2.1.3 Rice fields', 'rgb(230,230,0)'];
+        id_name_color_clc[22] = ['2.2 Permanent crops', 'rgb(255,85,0)'];
+        id_name_color_clc[221] = ['2.2.1 Vineyards', 'rgb(230,128,0)'];
+        id_name_color_clc[222] = ['2.2.2 Fruit trees and berry plantations', 'rgb(242,166,77)'];
+        id_name_color_clc[223] = ['2.2.3 Olive groves', 'rgb(230,166,0)'];
+        id_name_color_clc[23] = ['2.3 Pastures', 'rgb(168,168,0)'];
+        id_name_color_clc[231] = ['2.3.1 Pastures', 'rgb(230,230,77)'];
+        id_name_color_clc[2313] = ['2.3.1.3 Wet pastures', 'rgb(139,137,12)'];
+        id_name_color_clc[24] = ['2.4 Heterogeneous agricultural areas', 'rgb(255,211,127)'];
+        id_name_color_clc[241] = ['2.4.1 Annual crops associated with permanent crops', 'rgb(255,230,166)'];
+        id_name_color_clc[242] = ['2.4.2 Complex cultivation', 'rgb(255,230,77)'];
+        id_name_color_clc[243] = ['2.4.3 Land principally occupied by agriculture, with significant areas of natural vegetation', 'rgb(230,204,77)'];
+        id_name_color_clc[244] = ['2.4.4 Agro-forestry areas', 'rgb(242,204,166)'];
+        id_name_color_clc[3] = ['3 Forests and semi-natural areas', 'rgb(0,168,132)'];
+        id_name_color_clc[31] = ['3.1 Forests', 'rgb(112,168,0)'];
+        id_name_color_clc[311] = ['3.1.1 Broad-leaved forest', 'rgb(128,255,0)'];
+        id_name_color_clc[3112] = ['3.1.1.2 Wet forests including riparian', 'rgb(129,208,76)'];
+        id_name_color_clc[312] = ['3.1.2 Coniferous forest', 'rgb(0,166,0)'];
+        id_name_color_clc[313] = ['3.1.3 Mixed forest', 'rgb(77,255,0)'];
+        id_name_color_clc[32] = ['3.2 Shrub and/or herbaceous vegetation association', 'rgb(211,255,190)'];
+        id_name_color_clc[321] = ['3.2.1 Natural grassland', 'rgb(204,242,77)'];
+        id_name_color_clc[322] = ['3.2.2 Moors and heathland', 'rgb(166,255,128)'];
+        id_name_color_clc[323] = ['3.2.3 Sclerophyllous vegetation', 'rgb(166,230,77)'];
+        id_name_color_clc[324] = ['3.2.4 Transitional woodland shrub', 'rgb(166,242,0)'];
+        id_name_color_clc[3241] = ['3.2.4.1 Shrub-dominated wetlands, shrub swamps, shrub-dominated freshwater marshes, shrub carr, alder thicket on inorganic soils', 'rgb(199,215,158)'];
+        id_name_color_clc[33] = ['3.3 Open spaces with little or no vegetation', 'rgb(178,178,178)'];
+        id_name_color_clc[331] = ['3.3.1 Beaches, dunes, and sand plains', 'rgb(230,230,230)'];
+        id_name_color_clc[3311] = ['3.3.1.1 Sand, shingle or pebble shores, includes sand bars, spits and sandy islets, includes dune systems and humid dune slacks', 'rgb(215,215,215)'];
+        id_name_color_clc[332] = ['3.3.2 Bare rock', 'rgb(204,204,204)'];
+        id_name_color_clc[3321] = ['3.3.2.1 Rocky marine shores, includes rocky offshore islands, sea cliffs', 'rgb(190,190,190)'];
+        id_name_color_clc[333] = ['3.3.3 Sparsely vegetated areas', 'rgb(204,255,204)'];
+        id_name_color_clc[334] = ['3.3.4 Burnt areas', 'rgb(0,0,0)'];
+        id_name_color_clc[335] = ['3.3.5 Glaciers and perpetual snow', 'rgb(166,230,204)'];
+        id_name_color_clc[4] = ['4 Wetlands', 'rgb(0,169,230)'];
+        id_name_color_clc[41] = ['4.1 Inland wetlands', 'rgb(122,142,245)'];
+        id_name_color_clc[411] = ['4.1.1 Inland marshes', 'rgb(166,166,255)'];
+        id_name_color_clc[4111] = ['4.1.1.1 Reedbeds and high helophytes', 'rgb(88,106,253)'];
+        id_name_color_clc[4114] = ['4.1.1.4 Permanent saline/brackish/alkaline marshes/pools', 'rgb(0,3,175)'];
+        id_name_color_clc[4115] = ['4.1.1.5 Seasonal/intermittent saline/brackish/alkaline marshes/pools', 'rgb(87,103,248)'];
+        id_name_color_clc[4116] = ['4.1.1.6 Permanent freshwater marshes/pools, ponds (below 8 ha), marshes and swamps on inorganic soils, with emergent vegetation water-logged for at least most of the growing season', 'rgb(0,4,228)'];
+        id_name_color_clc[4117] = ['4.1.1.7 Seasonal/intermittent freshwater marshes/pools on inorganic soils, includes sloughs, potholes, seasonally flooded meadows, sedge marshes', 'rgb(0,116,240)'];
+        id_name_color_clc[4118] = ['4.1.1.8 Tundra wetlands, includes tundra pools, temporary waters from snowmelt', 'rgb(0,5,254)'];
+        id_name_color_clc[4119] = ['4.1.1.9 Freshwater springs', 'rgb(97,74,245)'];
+        id_name_color_clc[412] = ['4.1.2 Peatbogs', 'rgb(77,77,255)'];
+        id_name_color_clc[4121] = ['4.1.2.1 Raised bogs', 'rgb(77,79,253)'];
+        id_name_color_clc[4122] = ['4.1.2.2 Blanket bogs', 'rgb(136,77,253)'];
+        id_name_color_clc[4123] = ['4.1.2.3 Forested peatlands, peatswamp forests', 'rgb(93,53,174)'];
+        id_name_color_clc[42] = ['4.2 Coastal wetlands', 'rgb(214,157,188)'];
+        id_name_color_clc[421] = ['4.2.1 Salt marshes', 'rgb(204,204,255)'];
+        id_name_color_clc[422] = ['4.2.2 Salines', 'rgb(230,230,255)'];
+        id_name_color_clc[423] = ['4.2.3 Intertidal flats', 'rgb(166,166,230)'];
+        id_name_color_clc[4231] = ['4.2.3.1 Intertidal mud, sand or salt flats', 'rgb(164,165,228)'];
+        id_name_color_clc[4232] = ['4.2.3.2 Intertidal forested wetlands, includes mangrove swamps, nipah swamps and tidal freshwater swamp forests ', 'rgb(201,201,228)'];
+        id_name_color_clc[5] = ['5 Water bodies', 'rgb(0,77,168)'];
+        id_name_color_clc[51] = ['5.1 Inland waters', 'rgb(0,112,255)'];
+        id_name_color_clc[511] = ['5.1.1 Inland water courses', 'rgb(0,204,242)'];
+        id_name_color_clc[5111] = ['5.1.1.1 Permanent inland deltas', 'rgb(0,212,240)'];
+        id_name_color_clc[5112] = ['5.1.1.2 Permanent rivers/streams/creeks, includes waterfalls', 'rgb(134,247,253)'];
+        id_name_color_clc[5113] = ['5.1.1.3 Seasonal/intermittent/irregular rivers/streams/creeks/wadis', 'rgb(0,229,241)'];
+        id_name_color_clc[5114] = ['5.1.1.4 Canals and drainage channels, ditches', 'rgb(0,4,233)'];
+        id_name_color_clc[512] = ['5.1.2 Inland water bodies', 'rgb(128,242,230)'];
+        id_name_color_clc[5121] = ['5.1.2.1 Permanent freshwater lakes (over 8 ha), includes large oxbow lakes', 'rgb(114,230,170)'];
+        id_name_color_clc[5122] = ['5.1.2.2 Seasonal/intermittent freshwater lakes (over 8 ha), includes floodplain lakes', 'rgb(142,254,249)'];
+        id_name_color_clc[5123] = ['5.1.2.3 Permanent saline/brackish/alkaline lakes', 'rgb(121,202,243)'];
+        id_name_color_clc[5124] = ['5.1.2.4 Seasonal/intermittent saline/brackish/alkaline lakes and flats', 'rgb(143,229,202)'];
+        id_name_color_clc[5125] = ['5.1.2.5 Permanent freshwater lakes (over 8 ha) with aquatic bed vegetation, includes large oxbow lakes with aquatic bed vegetation', 'rgb(156,214,219)'];
+        id_name_color_clc[5126] = ['5.1.2.6 Seasonal/intermittent freshwater lakes (over 8 ha) with aquatic bed vegetation, includes floodplain lakes with aquatic bed vegetation', 'rgb(75,156,145)'];
+        id_name_color_clc[5127] = ['5.1.2.7 Permanent saline/brackish/alkaline lakes with aquatic bed vegetation', 'rgb(28,150,173)'];
+        id_name_color_clc[5128] = ['5.1.2.8 Seasonal/intermittent saline/brackish/alkaline lakes and flats with aquatic bed vegetation', 'rgb(28,99,138)'];
+        id_name_color_clc[5129] = ['5.1.2.9 Aquaculture (e.g., fish/shrimp) ponds', 'rgb(0,101,199)'];
+        id_name_color_clc[5130] = ['5.1.3.0 Ponds, includes farm ponds, stock ponds, small tanks, (generally below 8 ha)', 'rgb(39,127,170)'];
+        id_name_color_clc[513] = ['test', "green"];
+        id_name_color_clc[5131] = ['5.1.3.1 Water storage areas, reservoirs/barrages/dams/impoundments (generally over 8 ha)', 'rgb(0,0,203)'];
+        id_name_color_clc[5132] = ['5.1.3.2 Wastewater treatment areas, sewage farms, settling ponds, oxidation basins, etc', 'rgb(0,39,144)'];
+        id_name_color_clc[52] = ['5.2 Marine waters', 'rgb(122,245,202)'];
+        id_name_color_clc[521] = ['5.2.1 Coastal lagoons', 'rgb(0,255,166)'];
+        id_name_color_clc[5211] = ['5.2.1.1 Coastal brackish/saline lagoons, brackish to saline lagoons with at least one relatively narrow connection to the sea', 'rgb(0,254,165)'];
+        id_name_color_clc[5212] = ['5.2.1.2 Coastal freshwater lagoons, includes freshwater delta lagoons', 'rgb(0,218,116)'];
+        id_name_color_clc[522] = ['5.2.2 Estuaries', 'rgb(166,255,230)'];
+        id_name_color_clc[523] = ['5.2.3 Sea and ocean', 'rgb(230,242,255)'];
+        id_name_color_clc[5231] = ['5.2.3.1 Permanent shallow marine waters in most cases less than six metres deep at low tide, includes sea bays and straits', 'rgb(229,241,254)'];
+        id_name_color_clc[5232] = ['5.2.3.2 Marine subtidal aquatic beds, includes kelp beds, sea-grass beds, tropical marine meadows', 'rgb(199,249,228)'];
+        id_name_color_clc[5233] = ['5.2.3.3 Coral reefs', 'rgb(241,231,218)'];
+
+        var layer_legend_color_maes = [];
+        var layer_legend_color_clc = [];
+        var layer_legend_color_rest = [];
+
+
+        // Full Wetland
+/*
+        for (var pos in data.data.products) {
+            var products = data.data.products.pos;
+            for (var layers in data.data.products[pos]) {
+                if (typeof data.data.products[pos][layers] == 'object') {
+                    for (var layer in data.data.products[pos][layers]) {
+                        if (data.data.products[pos][layers][layer].legend_colors) {
+                            if (data.data.products[pos][layers][layer].identifier.includes("MAES")) {
+                                layer_legend_color_maes[data.data.products[pos][layers][layer].id] = data.data.products[pos][layers][layer].legend_colors;
+                            }
+                            else if (data.data.products[pos][layers][layer].identifier.includes("CLC")) {
+                                layer_legend_color_clc[data.data.products[pos][layers][layer].id] = data.data.products[pos][layers][layer].legend_colors;
+                            }
+                            else {
+                                layer_legend_color_rest[data.data.products[pos][layers][layer].id] = data.data.products[pos][layers][layer].legend_colors;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        for (var layer_clc in layer_legend_color_clc) {
+            for (var legend_entries in layer_legend_color_clc[layer_clc]) {
+                class_id = myRe.exec(layer_legend_color_clc[layer_clc][legend_entries].label);
+                value[class_id] = layer_legend_color_clc[layer_clc][legend_entries].size;
+                //  percent[class_id] = layer_legend_color_clc[layer_clc][legend_entries].percent;
+            }
+
+
+            data = add_no_data_level_clc(value, id_name_color_clc);
+            layer_value_clc[layer_clc] = create_value_legend_clc_data(data[1], data[0]);
+
+            value = [];
+        }
+        */
+
+        $scope.onclickCreate = function (layer) {
+            var value = [];
+            var class_id;
+            var myRe = /[0-9]+/;
+            var layer_value_clc = [];
+
+            for (var legend_entries in layer.legend_colors) {
+                class_id = myRe.exec(layer.legend_colors[legend_entries].label);
+                value[class_id] = layer.legend_colors[legend_entries].size;
+            }
+
+            if (layer.identifier.includes("CLC")) {
+                var data = add_no_data_level_clc(value, id_name_color_clc);
+                layer_value_clc = create_value_legend_clc_data(data[1], data[0]);
+console.log(layer_value_clc);
+
+                $scope.data = layer_value_clc;
+                $scope.options = {
+                    "chart": {
+                        "type": "sunburstChart",
+                        "height": 300,
+                        "width": 350,
+                        "mode": 'size',
+                        "groupColorByParent": false,
+                        color: function (d, i) {
+                            var d2 = d3.selectAll("path").data().filter(function (d1) {
+                                return (d1.name == d)
+                            })[0]
+                        },
+                        duration: 250,
+                        // "showLabels": true,
+                        //"labelFormat":function (d){if(d.size < 5){console.log(d);return d.name}else{return ''}''}
+                        "tooltip": {
+                            "valueFormatter": function (d) {
+                                return d.toFixed(2) + 'ha';
+                            }
+                        }
+                    }
+                };
+
+                var template = '<div style="display: flex;"><nvd3 options="options" data="data[0]" class="with-3d-shadow with-transitions"></nvd3></div>'
+                var charts = angular.element('#diagram_' + layer.id).find('nvd3')
+
+                if (charts.length) {
+                }
+                else {
+                    angular.element('#diagram_' + layer.id).append($compile(template)($scope));
+                }
+            }
+        }
+
+        function add_no_data_level_clc(size, id_name_color_clc) {
+            
+            for (var key2 in size) {
+                var key_level_higher = key2.slice(0, -3);
+                if (size[key_level_higher]) {
+                    size[key_level_higher + "9"] = size[key_level_higher];
+                    size[key_level_higher + "99"] = size[key_level_higher];
+                    size[key_level_higher + "999"] = size[key_level_higher];
+
+                    id_name_color_clc[key_level_higher + "9"] = ['no', 'white'];
+                    id_name_color_clc[key_level_higher + "99"] = ['no', 'white'];
+                    id_name_color_clc[key_level_higher + "999"] = ['no', 'white'];
+                }
+                var key_level_higher = key2.slice(0, -2);
+                if (size[key_level_higher]) {
+                    size[key_level_higher + "9"] = size[key_level_higher];
+                    size[key_level_higher + "99"] = size[key_level_higher];
+
+                    id_name_color_clc[key_level_higher + "9"] = ['no', 'white'];
+                    id_name_color_clc[key_level_higher + "99"] = ['no', 'white'];
+                }
+                var key_level_higher = key2.slice(0, -1);
+                if (size[key_level_higher]) {
+                    size[key_level_higher + "9"] = size[key_level_higher];
+
+                    id_name_color_clc[key_level_higher + "9"] = ['no', 'white'];
+                }
+            }
+            return [size,id_name_color_clc] ;
+        }
+
+        function create_value_legend_clc_data(id_name_color_clc, size_arr) {
+
+            var data = {};
+            data["children"] = [];
+            var data_4 = [];
+            var data_3 = [];
+            var data_2 = [];
+            var data_1 = [];
+            var diagram_data = {};
+            var diagram_data_water = {};
+            var children = [];
+            var children_water = [];
+            var data_4_size_count = [];
+            var data_3_size_count = [];
+            var data_2_size_count = [];
+
+            for (var key in id_name_color_clc) {
+                if (key.length == 4) {
+
+                    var new_key = key.slice(0, -1);
+                    var data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    }
+
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                        data_4_size_count[new_key] = 1;
+                    }
+
+                    if (!data_4[new_key]) {
+                        data_4[new_key] = [];
+                        data_4[new_key].push(data_new);
+                    } else {
+                        data_4[new_key].push(data_new);
+                    }
+                    data_new = {};
+                }
+            }
+            for (var key in id_name_color_clc) {
+                if (key.length == 3) {
+
+                    var new_key = key.slice(0, -1);
+
+                    var data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    }
+
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                        data_3_size_count[new_key] = 1;
+                    }
+
+                    if (data_4[key] && data_4_size_count[key] == 1) {
+                        data_new.children = data_4[key];
+                    }
+
+                    if (!data_3[new_key]) {
+                        data_3[new_key] = [];
+                        data_3[new_key].push(data_new);
+                    } else {
+                        data_3[new_key].push(data_new);
+                    }
+                    data_new = {};
+                }
+            }
+            for (var key in id_name_color_clc) {
+                if (key.length == 2) {
+
+                    var new_key = key.slice(0, -1);
+
+                    var data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    }
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                        data_2_size_count[key] = 1;
+                    }
+
+                    for (var key_lower in data_4_size_count){
+                        if(key_lower.slice(0, -1) == key){
+                            var found = true
+                        }
+                    }
+
+                    if (data_3[key] && (data_3_size_count[key] == 1 || found)){
+                        data_new.children = data_3[key];
+                    }
+
+                    if (!data_2[new_key]) {
+                        data_2[new_key] = [];
+                        data_2[new_key].push(data_new);
+                    } else {
+                        data_2[new_key].push(data_new);
+                    }
+
+                    data_new = {};
+                }
+                found = false;
+            }
+            for (var key in id_name_color_clc) {
+                if (key.length == 1) {
+
+                    var new_key = key.slice(0, -1);
+
+                    var data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    }
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                    }
+                    if (data_2[key] ) {
+                        data_new.children = data_2[key];
+                    }
+
+                    children.push(data_new);
+
+                    if (key == 4 || key == 5) {
+                        children_water.push(data_new);
+                    }
+
+                    data_new = {};
+                }
+            }
+
+
+            // test.push(data_1);
+            diagram_data.name = "Total area";
+            diagram_data.color = "white";
+            diagram_data.children = children;
+
+            diagram_data_water.name = "Water bodies & Wetlands";
+            diagram_data_water.color = "white";
+            diagram_data_water.children = children_water;
+
+            return ([[diagram_data], [diagram_data_water]]);
+        }
+    })
     .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService) {
 
         $scope.addLayer = addLayer;
