@@ -65,7 +65,7 @@
         <tr ng-repeat="item in layer.legend_colors | orderBy : '-percent' ">
             <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
             <td class="legend-label">{{ item.label }}</td>
-            <td class="legend-percent">{{ item.percent.toFixed(2) }}%</td>
+            <td class="legend-percent"><span tooltip="{{ item.size }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>
         </tr>
     </table>
 </div>
