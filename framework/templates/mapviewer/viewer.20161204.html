@@ -196,8 +196,6 @@
                             <div class="div-button-text">Remove all layers</div>
                         </div>
                     </div>
-
-
                     <div class="list-group" dnd-list="mcl.layersMeta" dnd-drop="mcl.prepareIndex(index, item)">
                         <div class="list-group-item clearfix" ng-repeat="layer in mcl.layersMeta" dnd-draggable="layer"
                              dnd-moved="mcl.changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
@@ -217,14 +215,10 @@
                                         <div style="clear:both;"></div>
                                     </div>
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
-
-
-
                                         <div class="item_desc">
                                             <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)" style="width:95%;"></slider>
                                             <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]" ng-change="mcl.updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
                                         </div>
-
                                         <div class="item_icon">
                                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
@@ -288,35 +282,35 @@
                 <!-- Tab panes -->
 
                 <div class="tab-content" style="top:93px">
-                    <div role="tabpanel" class="tab-pane" ng-class="{active: WetlandsService.activeTab==-1}" id="catalog">
+                    <div role="tabpanel" class="tab-pane" ng-class="{active: WetlandsService.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
-                            <select ng-model="filtered_country" ng-change="filterCountry()" style="width: 50%; margin-bottom: 10px;">
+                            <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
-                                <option ng-repeat="option in wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
                             </select>
-                            <select ng-model="filtered_geo_scale" ng-change="filterScale()" style="width: 40%; margin-bottom: 10px;">
+                            <select ng-model="wetlandsFilter.filtered_geo_scale" ng-change="wetlandsFilter.filterScale()" style="width: 40%; margin-bottom: 10px;">
                                 <option value="">- Filter by scale -</option>
-                               <!-- <option ng-repeat="option in wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>-->
+                               <!-- <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>-->
                                 <option value="Small Site">Small Wetland Site</option>
                                 <option value="Medium Site">Medium Wetland Site</option>
                                 <option value="Large Site">Large Wetland Site</option>
                             </select>
-                            <select ng-model="filtered_wetland_type" ng-change="filterWetlandType()" style="width: 50%; margin-bottom: 10px;">
+                            <select ng-model="wetlandsFilter.filtered_wetland_type" ng-change="wetlandsFilter.filterWetlandType()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by wetland type -</option>
-                                <option ng-repeat="option in wetlands_without_geom | unique:'wetland_type'" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'wetland_type'" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
                             </select>
-                            <select ng-model="filtered_site_type" ng-change="filterSiteType()" style="width: 40%;margin-bottom: 10px;">
+                            <select ng-model="wetlandsFilter.filtered_site_type" ng-change="wetlandsFilter.filterSiteType()" style="width: 40%;margin-bottom: 10px;">
                                 <option value="">- Filter by site type -</option>
-                                <option ng-repeat="option in wetlands_without_geom | unique:'site_type'" value="{{option.site_type}}">{{option.site_type}}</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'site_type'" value="{{option.site_type}}">{{option.site_type}}</option>
                             </select>
-                            <select ng-model="filtered_ecoregion" ng-change="filterEcoregion()" style="width: 91%;margin-bottom: 10px;">
+                            <select ng-model="wetlandsFilter.filtered_ecoregion" ng-change="wetlandsFilter.filterEcoregion()" style="width: 91%;margin-bottom: 10px;">
                                 <option value="">- Filter by ecoregion -</option>
-                                <option ng-repeat="option in wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
                             </select>
-                            <select ng-model="filtered_products" ng-change="filterProduct()" style="width: 91%">
+                            <select ng-model="wetlandsFilter.filtered_products" ng-change="wetlandsFilter.filterProduct()" style="width: 91%">
                                 <option value="">- Filter by product -</option>
                                 <!-- products is an array for each wetland, thus first of all manual list of products -->
-                                <!--<option ng-repeat="option in wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
+                                <!--<option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
                                 <option value="FloodReg">Flood Regulation</option>
                                 <option value="LST">Land Surface Temperature Trend</option>
                                 <option value="LULC">Land Use Land Cover</option>
@@ -327,18 +321,23 @@
                             </select>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
-                            <input type="checkbox" ng-model="filtered_testmapping" ng-change="filterTestmapping()"
+                            <input type="checkbox" ng-model="wetlandsFilter.filtered_testmapping" ng-change="wetlandsFilter.filterTestmapping()"
                                    id="cb_testmapping"/><label for="cb_testmapping">Show only wetlands with products</label>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;padding-top: 0;">
-                            <input type="checkbox" ng-model="sortByCountryName" ng-change="setSortOrder()"
+                            <input type="checkbox" ng-model="wetlandsFilter.sortByCountryName" ng-change="wetlandsFilter.setSortOrder()"
                                    id="cb_groupbycountry"><label for="cb_groupbycountry">Sort by country</label>
                         </div>
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
-                        <div ng-if="wetlands_without_geom==0">Loading wetlands... please wait </div>
+                        <div ng-if="wetlandsFilter.wetlands_without_geom==0">Loading wetlands... please wait </div>
 
-                        <div ng-repeat="layer in wetlands_without_geom | filter:search | orderBy: sortOrder " ng-if="layer.show" class="list-group-item clearfix" ng-click="WetlandsService.selectWetland(layer)" ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
+                        <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
+                             ng-if="layer.show" class="list-group-item clearfix"
+                             ng-click="WetlandsService.selectWetland(layer)"
+                             ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
+                             data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}"
+                             data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
                             <div class="catalog-item">
                                 <div class="item_center">
                                     <div class="item_title">{{layer.name}}</div>
@@ -353,270 +352,279 @@
 
                     </div>
 
-                    <div role="tabpanel" class="tab-pane geospatial_data" ng-if="value['id']" ng-class="{active: WetlandsService.activeTab==1, noImage: value.data.image == null}" id="wetland_{{value.id}}">
-                        <!--<h2>{{value.name}}</h2>-->
-                        <div ng-if="value.data.image!=null" class="wetland-image">
-                            <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}"><img src="{{value.data.image}}" width="100%"/></a>
+                    <div role="tabpanel" class="tab-pane geospatial_data" ng-if="value['id']"
+                         ng-class="{active: WetlandsService.activeTab==1, noImage: value.data.image == null}" id="wetland_{{value.id}}">
+                        <!--<h2>{{WetlandsService.value.name}}</h2>-->
+                        <div ng-if="WetlandsService.value.data.image!=null" class="wetland-image">
+                            <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}">
+                                <img ng-src="{{value.data.image}}" width="100%"/>
+                            </a>
                             <div class="panoramio-wapi-tos wetland_image">
                                 <div class="desc">{{value.data.image_desc}}</div>
                                 <div ng-if="value.data.image.indexOf('panoramio') > -1">
-                                    <a href="http://www.panoramio.com" target="_blank"><img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
+                                    <a href="http://www.panoramio.com" target="_blank">
+                                        <img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14">
+                                    </a>
                                     <span style="font-size:12px;">The copyright of the photos hold their owners!</span>
                                 </div>
                             </div>
                         </div>
 
-                        <tabset justified="true">
-                            <!-- Overview -->
-                            <tab class="flaticon-bars" heading="" tooltip="Overview" tooltip-append-to-body="true" select="trackWetlandTab('overview')">
-                                <h4>Wetland specifications</h4>
-                                <div class="properties">
-                                    <strong>Country: </strong>{{value.country}}<br>
-                                    <strong>Scale: </strong>{{value.geo_scale}}<br>
-                                    <strong>Type: </strong>{{value.site_type}} | {{value.wetland_type}}<br>
-                                    <strong>Ecoregion: </strong>{{value.ecoregion}}<br>
-                                    <strong>Size: </strong>{{value.size}} ha<br>
-                                </div>
+                        <div ng-controller="TrackingCtrl as tracking">
+                            <tabset justified="true">
+                                <!-- Overview -->
+                                <tab class="flaticon-bars" heading="" tooltip="Overview" tooltip-append-to-body="true" select="tracking.trackWetlandTab('overview')">
+                                    <h4>Wetland specifications</h4>
+                                    <div class="properties">
+                                        <strong>Country: </strong>{{value.country}}<br>
+                                        <strong>Scale: </strong>{{value.geo_scale}}<br>
+                                        <strong>Type: </strong>{{value.site_type}} | {{value.wetland_type}}<br>
+                                        <strong>Ecoregion: </strong>{{value.ecoregion}}<br>
+                                        <strong>Size: </strong>{{value.size}} ha<br>
+                                    </div>
 
-                                <h4 style="margin-top:15px">Datasets</h4>
-                                <div class="buttons" style="text-align: center;margin-top: 20px;">
-                                    <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()"><div class="flaticon-business"></div>{{value.data.count.indicators}} Indicators</button>
-                                    <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()"><div class="flaticon-layers"></div>{{value.data.count.products}} Products</button>
-                                    <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()"><div class="flaticon-space-satellite-station"></div>{{value.data.count.satdata}} Satellite data</button>
-                                    <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-1 a').click()"><div class="flaticon-technology-1"></div>{{value.data.count.images}} Photos</button>
-                                    <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology a').click()"><div class="flaticon-technology"></div>{{value.data.count.videos}} Videos</button>
-                                    <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()"><div class="flaticon-technology-2"></div>{{value.data.count.externaldb}} External databases</button>
-                                </div>
-                            </tab>
+                                    <h4 style="margin-top:15px">Datasets</h4>
+                                    <div class="buttons" style="text-align: center;margin-top: 20px;">
+                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()"><div class="flaticon-business"></div>{{value.data.count.indicators}} Indicators</button>
+                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()"><div class="flaticon-layers"></div>{{value.data.count.products}} Products</button>
+                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()"><div class="flaticon-space-satellite-station"></div>{{value.data.count.satdata}} Satellite data</button>
+                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-1 a').click()"><div class="flaticon-technology-1"></div>{{value.data.count.images}} Photos</button>
+                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology a').click()"><div class="flaticon-technology"></div>{{value.data.count.videos}} Videos</button>
+                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()"><div class="flaticon-technology-2"></div>{{value.data.count.externaldb}} External databases</button>
+                                    </div>
+                                </tab>
 
-                            <!-- Indicators -->
-                            <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="trackWetlandTab('indicator')">
-                                <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
+                                <!-- Indicators -->
+                                <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
+                                    <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
 
-                                <!--
-                                <ul class="items indicators">
-                                    <li>
-                                        <input type="checkbox" id="indicator_statustrend" /><label for="indicator_statustrend">Status and Trend of Wetland</label>
-                                        <div class="graphic">
-                                            <img src="/swos/static/img/azraq_indicator.png" width="100%" />
+                                    <!--
+                                    <ul class="items indicators">
+                                        <li>
+                                            <input type="checkbox" id="indicator_statustrend" /><label for="indicator_statustrend">Status and Trend of Wetland</label>
+                                            <div class="graphic">
+                                                <img src="/swos/static/img/azraq_indicator.png" width="100%" />
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" id="indicator_inund" /><label for="indicator_inund">Inundation of the Ecosystem</label>
+                                        </li>
+                                        <li>
+                                            <input type="checkbox" id="indicator_wetlandchange" /><label for="indicator_wetlandchange">Change in Wetland</label>
+                                        </li>
+                                    </ul>
+                                    -->
+                                </tab>
+
+                                <!-- Products -->
+                                <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
+                                    <div ng-if="value.data.products.length == 0">No products available!</div>
+                                    <div class="remove-button-wrapper">
+                                        <div class="div-button" ng-click="removeAllLayers()">
+                                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                                            <div class="div-button-text">Remove all layers</div>
                                         </div>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="indicator_inund" /><label for="indicator_inund">Inundation of the Ecosystem</label>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="indicator_wetlandchange" /><label for="indicator_wetlandchange">Change in Wetland</label>
-                                    </li>
-                                </ul>
-                                -->
-                            </tab>
-
-                            <!-- Products -->
-                            <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="trackWetlandTab('product')" id="product">
-                                <div ng-if="value.data.products.length == 0">No products available!</div>
-                                <div class="remove-button-wrapper">
-                                    <div class="div-button" ng-click="removeAllLayers()">
-                                        <div class="glyphicon glyphicon-remove div-button-icon"></div>
-                                        <div class="div-button-text">Remove all layers</div>
+                                        <div class="div-button" style="width: 225px;" ng-click="removeLayersByWetland(value.id)">
+                                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                                            <div class="div-button-text">Remove layers of this Wetland</div>
+                                        </div>
+                                        <div style="clear:both;"></div>
                                     </div>
-                                    <div class="div-button" style="width: 225px;" ng-click="removeLayersByWetland(value.id)">
-                                        <div class="glyphicon glyphicon-remove div-button-icon"></div>
-                                        <div class="div-button-text">Remove layers of this Wetland</div>
-                                    </div>
-                                    <div style="clear:both;"></div>
-                                </div>
-                                <ul class="items products">
+                                    <ul class="items products">
 
+                                        <accordion close-others="false">
+                                            <accordion-group ng-repeat="product in value.data.products"  heading="{{product.name}}" is-open="product.open">
+                                                <accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
+                                                    <span class="project">[SWOS]</span> {{product.name}}
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+                                                </accordion-heading>
+                                                <div class="options">
+                                                    <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                    <div class="products_datasets">
+                                                        <strong>Datasets:</strong>
+                                                        <div class="select" ng-if="product.layers.length > 0">
+                                                            <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
+                                                                <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                            </div>
+                                                        </div>
+                                                        <div class="select" ng-if="product.layers.length == 0">
+                                                            No datasets available.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </accordion-group>
+                                        </accordion>
+                                    </ul>
+                                </tab>
+
+                                <!-- Data -->
+                                <tab class="flaticon-space-satellite-station" heading="" tooltip="Satellite data" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
                                     <accordion close-others="false">
-                                        <accordion-group ng-repeat="product in value.data.products"  heading="{{product.name}}" is-open="product.open">
-                                            <accordion-heading ng-click="trackProduct(product.name, product.open);">
-                                                <span class="project">[SWOS]</span> {{product.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+                                        <accordion-group is-open="satdata_image">
+                                            <accordion-heading>
+                                                Yearly coverage by sensor
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_image, 'glyphicon-chevron-right': !satdata_image}"></i>
                                             </accordion-heading>
-                                            <div class="options">
-                                                <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
-                                                <div class="products_datasets">
-                                                    <strong>Datasets:</strong>
-                                                    <div class="select" ng-if="product.layers.length > 0">
-                                                        <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
-                                                            <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
-                                                            <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                            <a href="/media/cache/satdata_{{value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
+                                        </accordion-group>
+                                        <accordion-group is-open="satdata_table">
+                                            <accordion-heading>
+                                                Total amount by sensor
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_table, 'glyphicon-chevron-right': !satdata_table}"></i>
+                                            </accordion-heading>
+                                            <table class="table data">
+                                                <tr>
+                                                    <!--<th>&nbsp;</th>-->
+                                                    <th>Sensor</th>
+                                                    <th>Scenes</th>
+                                                    <th>Start</th>
+                                                    <th>End</th>
+                                                </tr>
+                                                <tr ng-if="!value.satdata">
+                                                    <td colspan="4">Loading...</td>
+                                                </tr>
+                                                <tr ng-repeat="data in value.satdata" >
+                                                    <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
+                                                    <td>{{data.sensor}}</td>
+                                                    <td>{{data.count}}</td>
+                                                    <td>{{data.begindate}}</td>
+                                                    <td>{{data.enddate}}</td>
+                                                </tr>
+                                            </table>
+                                        </accordion-group>
+                                    </accordion>
+
+                                    <div class="note">
+                                        <strong>Please note: </strong>
+                                        <p>Official satellite data archives have been queried once on 2017-04-15. Regular updates are planned.</p>
+                                        <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
+                                        <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
+                                    </div>
+                                </tab>
+
+                                <!-- Photos -->
+                                <tab class="flaticon-technology-1" heading="" tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
+                                    <div ng-controller="WetlandsImageCtrl as wetlandsImage">
+                                        <accordion ng-if="wetlandsImage.images.photos.length != 0">
+                                            <accordion-group is-open="wetlandsImage.imagesIsOpen">
+                                                <accordion-heading>Images
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.imagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.imagesIsOpen}"></i>
+                                                </accordion-heading>
+                                                <div style="/*height: 185px;overflow-y: auto;*/">
+                                                    <!--<span ng-if="!wetlandsImage.images">Loading...</span>-->
+                                                    <a ng-repeat="image in wetlandsImage.images.photos"
+                                                       ng-click="'{{image.photo_title}}'"
+                                                       class="fancybox" rel="gallery1" data-fancybox-href="{{ image.photo_show_url }}"
+                                                       data-fancybox-title="{{ image.description }}&nbsp;({{ image.date }}) {{image.photo_title}} ({{image.owner_name}})"
+                                                       href="{{image.photo_url_thumb}}" target="_blank"><img
+                                                            ng-src="{{image.photo_url_thumb}}"
+                                                            alt="{{image.photo_title}} ({{image.owner_name}})"
+                                                            title="{{image.photo_title}} ({{image.owner_name}})"
+                                                            style="width: 52px; height: 52px; left: 0; top: 0;margin: 5px;"></a>
+                                                </div>
+                                                <button style="margin-left: 5px;" ng-if="wetlandsImage.images.currentPage > 1" type="button"
+                                                        class="btn btn-prev" ng-click="wetlandsImage.moreImages('prev')">Previous
+                                                </button>
+                                                <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.images.currentPage < wetlandsImage.images.lastPage" type="button"
+                                                        class="btn btn-next" ng-click="wetlandsImage.moreImages('next')">Next
+                                                </button>
+                                            </accordion-group>
+                                        </accordion>
+                                        <accordion ng-if="wetlandsImage.externalImages.photos.length != 0">
+                                            <accordion-group is-open="wetlandsImage.externalImagesIsOpen">
+                                                <accordion-heading>Panoramio images
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.externalImagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.externalImagesIsOpen}"></i>
+                                                </accordion-heading>
+                                                <div style="/*height: 185px;overflow-y: auto;*/">
+                                                    <!--<span ng-if="!wetlandsImage.externalImages">Loading...</span>-->
+                                                    <a ng-repeat="image in wetlandsImage.externalImages.photos"
+                                                       ng-click="tracking.trackShowImage('http://static.panoramio.com/photos/large/{{image.photo_id}}.jpg', '{{image.photo_title}')"
+                                                       class="fancybox" rel="gallery1"
+                                                       data-fancybox-href="http://static.panoramio.com/photos/large/{{image.photo_id}}.jpg"
+                                                       data-fancybox-title="<a href='{{image.photo_url}}' target='_blank'>{{image.photo_title}}</a> (<a href='{{image.owner_url}}' target='_blank'>{{image.owner_name}}</a>)"
+                                                       href="{{image.photo_url}}" target="_blank"><img
+                                                            ng-src="{{image.photo_file_url}}"
+                                                            alt="{{image.photo_title}} ({{image.owner_name}})"
+                                                            title="{{image.photo_title}} ({{image.owner_name}})"
+                                                            style="width: 52px; height: 52px; left: 0; top: 0;margin: 5px;"></a>
+                                                </div>
+                                                <div class="panoramio-wapi-tos"
+                                                     style="width: 396px; color: black !important; background-color: white !important;">
+                                                    <a href="http://www.panoramio.com" target="_top"><img
+                                                            src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
+                                                    <span style="font-size:12px;">The copyright of the photos hold their owners!</span>
+                                                </div>
+                                                <button style="margin-left: 5px;" ng-if="wetlandsImage.externalImages.currentPage > 1" type="button"
+                                                        class="btn btn-prev" ng-click="wetlandsImage.moreExternalImages('prev')">Previous
+                                                </button>
+                                                <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.externalImages.currentPage < wetlandsImage.externalImages.lastPage"
+                                                        type="button" class="btn btn-next" ng-click="wetlandsImage.moreExternalImages('next')">Next
+                                                </button>
+                                            </accordion-group>
+                                        </accordion>
+                                    </div>
+                                </tab>
+
+                                <!-- Videos -->
+                                <tab class="flaticon-technology" heading="" tooltip="Videos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('video')">
+                                    <div>
+                                        <span ng-if="!value.videos">Loading...</span>
+                                        <a ng-repeat="video in value.videos" ng-click="tracking.trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
+                                    </div>
+                                    <button ng-if="!allVideos" type="button" class="btn btn-loadmore" ng-click="loadMoreVideos()">Load more videos</button>
+                                </tab>
+
+                                <!-- External databases -->
+                                <tab class="flaticon-technology-2" heading="" tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
+                                    <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
+                                    <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external databases registered!-->
+                                        <div ><input ng-model="externaldb_search.searchText" placeholder="Search for ...">
+                                            <input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
+                                            <label for="only_layer" style="margin-top: 8px;" >
+                                                <div class="flaticon-layers" style="display: inline-block;"></div> Filter by maps
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <accordion>
+                                        <accordion-group ng-repeat="externaldb_group in value.data.externaldb" is-open="externaldb_group.open">
+                                            <accordion-heading>
+                                                {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ).length }})
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
+                                            </accordion-heading>
+                                            <accordion>
+                                                <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ">
+                                                    <accordion-heading>
+                                                        <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                                        <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                                    </accordion-heading>
+                                                    <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                                    <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                                    <strong>Link:</strong>
+                                                    <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                                    <div class="select" ng-if="externaldb.layers.length > 0">
+                                                        <strong>Datasets:</strong>
+                                                        <div ng-repeat="layer in externaldb.layers"
+                                                             ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                            <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                            <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
                                                             <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
                                                             <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
                                                         </div>
                                                     </div>
-                                                    <div class="select" ng-if="product.layers.length == 0">
-                                                        No datasets available.
-                                                    </div>
-                                                </div>
-                                            </div>
-
+                                                </accordion-group>
+                                            </accordion>
                                         </accordion-group>
                                     </accordion>
-                                </ul>
-                            </tab>
-
-                            <!-- Data -->
-                            <tab class="flaticon-space-satellite-station" heading="" tooltip="Satellite data" tooltip-append-to-body="true"  select="trackWetlandTab('satdata')">
-                                <accordion close-others="false">
-                                    <accordion-group is-open="satdata_image">
-                                        <accordion-heading>
-                                            Yearly coverage by sensor
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_image, 'glyphicon-chevron-right': !satdata_image}"></i>
-                                        </accordion-heading>
-                                        <a href="/media/cache/satdata_{{value.id}}.png" ng-click="trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
-                                    </accordion-group>
-                                    <accordion-group is-open="satdata_table">
-                                        <accordion-heading>
-                                            Total amount by sensor
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_table, 'glyphicon-chevron-right': !satdata_table}"></i>
-                                        </accordion-heading>
-                                        <table class="table data">
-                                            <tr>
-                                                <!--<th>&nbsp;</th>-->
-                                                <th>Sensor</th>
-                                                <th>Scenes</th>
-                                                <th>Start</th>
-                                                <th>End</th>
-                                            </tr>
-                                            <tr ng-if="!value.satdata">
-                                                <td colspan="4">Loading...</td>
-                                            </tr>
-                                            <tr ng-repeat="data in value.satdata" >
-                                                <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
-                                                <td>{{data.sensor}}</td>
-                                                <td>{{data.count}}</td>
-                                                <td>{{data.begindate}}</td>
-                                                <td>{{data.enddate}}</td>
-                                            </tr>
-                                        </table>
-                                    </accordion-group>
-                                </accordion>
-
-                                <div class="note">
-                                    <strong>Please note: </strong>
-                                    <p>Official satellite data archives have been queried once on 2017-04-15. Regular updates are planned.</p>
-                                    <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
-                                    <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
-                                </div>
-                            </tab>
-
-                            <!-- Photos -->
-                            <tab class="flaticon-technology-1" heading="" tooltip="Photos" tooltip-append-to-body="true"  select="trackWetlandTab('images')">
-                                <accordion ng-if="value.pictures.photos.length != 0">
-                                    <accordion-group is-open="pictures_is_open">
-                                        <accordion-heading>Images
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': pictures_is_open, 'glyphicon-chevron-right': !pictures_is_open}"></i>
-                                        </accordion-heading>
-                                        <div style="/*height: 185px;overflow-y: auto;*/">
-                                            <!--<span ng-if="!value.pictures">Loading...</span>-->
-                                            <a ng-repeat="picture in value.pictures.photos"
-                                               ng-click="'{{picture.photo_title}}'"
-                                               class="fancybox" rel="gallery1" data-fancybox-href="{{ picture.photo_show_url }}"
-                                               data-fancybox-title="{{ picture.description }}&nbsp;({{ picture.date }}) {{picture.photo_title}} ({{picture.owner_name}})"
-                                               href="{{picture.photo_url_thumb}}" target="_blank"><img
-                                                    ng-src="{{picture.photo_url_thumb}}"
-                                                    alt="{{picture.photo_title}} ({{picture.owner_name}})"
-                                                    title="{{picture.photo_title}} ({{picture.owner_name}})"
-                                                    style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
-                                        </div>
-                                        <button style="margin-left: 5px;" ng-if="imagesCurrentPage > 1" type="button"
-                                                class="btn btn-prev" ng-click="moreImages('prev')">Previous
-                                        </button>
-                                        <button style="float:right;margin-right: 10px;" ng-if="!allImages" type="button"
-                                                class="btn btn-next" ng-click="moreImages('next')">Next
-                                        </button>
-                                    </accordion-group>
-                                </accordion>
-                                <accordion ng-if="value.external_pictures.photos.length != 0">
-                                    <accordion-group is-open="external_pictures_is_open">
-                                        <accordion-heading>Panoramio images
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': external_pictures_is_open, 'glyphicon-chevron-right': !external_pictures_is_open}"></i>
-                                        </accordion-heading>
-                                        <div style="/*height: 185px;overflow-y: auto;*/">
-                                            <!--<span ng-if="!value.external_pictures">Loading...</span>-->
-                                            <a ng-repeat="picture in value.external_pictures.photos"
-                                               ng-click="trackShowImage('http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg', '{{picture.photo_title}')"
-                                               class="fancybox" rel="gallery1"
-                                               data-fancybox-href="http://static.panoramio.com/photos/large/{{picture.photo_id}}.jpg"
-                                               data-fancybox-title="<a href='{{picture.photo_url}}' target='_blank'>{{picture.photo_title}}</a> (<a href='{{picture.owner_url}}' target='_blank'>{{picture.owner_name}}</a>)"
-                                               href="{{picture.photo_url}}" target="_blank"><img
-                                                    ng-src="{{picture.photo_file_url}}"
-                                                    alt="{{picture.photo_title}} ({{picture.owner_name}})"
-                                                    title="{{picture.photo_title}} ({{picture.owner_name}})"
-                                                    style="width: 52px; height: 52px; left: 0px; top: 0px;margin: 5px;"></a>
-                                        </div>
-                                        <div class="panoramio-wapi-tos"
-                                             style="width: 396px; color: black !important; background-color: white !important;">
-                                            <a href="http://www.panoramio.com" target="_top"><img
-                                                    src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
-                                            <span style="font-size:12px;">The copyright of the photos hold their owners!</span>
-                                        </div>
-                                        <button style="margin-left: 5px;" ng-if="imagesCurrentPage_external > 1" type="button"
-                                                class="btn btn-prev" ng-click="moreImages_external('prev')">Previous
-                                        </button>
-                                        <button style="float:right;margin-right: 10px;" ng-if="!allImages_external"
-                                                type="button" class="btn btn-next" ng-click="moreImages_external('next')">Next
-                                        </button>
-                                    </accordion-group>
-                                </accordion>
-                            </tab>
-
-                            <!-- Videos -->
-                            <tab class="flaticon-technology" heading="" tooltip="Videos" tooltip-append-to-body="true"  select="trackWetlandTab('video')">
-                                <div>
-                                    <span ng-if="!value.videos">Loading...</span>
-                                    <a ng-repeat="video in value.videos" ng-click="trackShowVideo('{{video.url}}')" class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1" href="{{video.url}}" target="_blank"><img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0px; top: 0px;margin: 5px;"></a>
-                                </div>
-                                <button ng-if="!allVideos" type="button" class="btn btn-loadmore" ng-click="loadMoreVideos()">Load more videos</button>
-                            </tab>
-
-                            <!-- External databases -->
-                            <tab class="flaticon-technology-2" heading="" tooltip="External data" tooltip-append-to-body="true" select="trackWetlandTab('externaldb')">
-                                <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
-                                <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external databases registered!-->
-                                    <div ><input ng-model="externaldb_search.searchText" placeholder="Search for ...">
-                                        <input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
-                                        <label for="only_layer" style="margin-top: 8px;" >
-                                            <div class="flaticon-layers" style="display: inline-block;"></div> Filter by maps
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <accordion>
-                                    <accordion-group ng-repeat="externaldb_group in value.data.externaldb" is-open="externaldb_group.open">
-                                        <accordion-heading>
-                                            {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ).length }})
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
-                                        </accordion-heading>
-                                        <accordion>
-                                            <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ">
-                                                <accordion-heading>
-                                                    <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
-                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                                    <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
-                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                                </accordion-heading>
-                                                <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
-                                                <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
-                                                <strong>Link:</strong>
-                                                <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
-                                                <div class="select" ng-if="externaldb.layers.length > 0">
-                                                    <strong>Datasets:</strong>
-                                                    <div ng-repeat="layer in externaldb.layers"
-                                                         ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-                                                        <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-                                                        <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
-                                                        <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                        <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
-                                                    </div>
-                                                </div>
-                                            </accordion-group>
-                                        </accordion>
-                                    </accordion-group>
-                                </accordion>
-                            </tab>
-                        </tabset>
+                                </tab>
+                            </tabset>
+                        </div>
                     </div>
                 </div>
             </div>

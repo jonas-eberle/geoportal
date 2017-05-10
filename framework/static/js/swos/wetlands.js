@@ -15,11 +15,19 @@ angular.module('webgisApp')
         $locationProvider.hashPrefix('');
     })
 
-    .service('WetlandsService', function (djangoRequests, mapviewer, $rootScope) {
+    .constant('mediaConfig', {
+        imagesPerPage: 24,
+        videosPerPage: 9
+    })
+
+    .service('WetlandsService', function WetlandsService(djangoRequests, mapviewer, $rootScope, $q, mediaConfig) {
         var service = {
             olLayer  : null,
             value    : {},
+            externalImages: {},
+            images: {},
             activeTab: -1,
+            wetlands_without_geom: [],
 
             selectFeature: function (wetland) {
                 var extent = wetland.geometry.getExtent();
@@ -72,38 +80,28 @@ angular.module('webgisApp')
                     'url'   : '/swos/wetland/' + wetland.id
                 }).then(function (data) {
                     wetland['data'] = data;
-                    //$scope.wetlands_opened[wetland.id] = wetland;
-                    wetland_service.value = wetland;
+                    Object.assign(wetland_service.value, wetland);
                     wetland_service.data_count = data['count'];
-                    //console.log($scope.data_count);
 
                     wetland_service.videosCurrentPage = 1;
-                    wetland_service.imagesCurrentPage = 1;
                     wetland_service.allVideos = false;
-                    wetland_service.allImages = false;
-                    wetland_service.allImages_external = false;
 
                     djangoRequests.request({
                         'method': "GET",
-                        'url'   : '/swos/wetland/' + wetland.id + '/images.json?start=0&max=24'
+                        'url'   : '/swos/wetland/' + wetland.id + '/images.json?start=0&max=' + mediaConfig.imagesPerPage
                     }).then(function (data) {
-                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
-                        wetland_service.value['pictures'] = data;
-                        if (data['photos'].length < wetland_service.imagesMaxPage) {
-                            wetland_service.allImages = true;
-                        }
+                        data.currentPage = 1;
+                        data.lastPage = Math.ceil(data.count / mediaConfig.imagesPerPage);
+                        Object.assign(wetland_service.images, data);
                     });
 
-
                     djangoRequests.request({
                         'method': "GET",
-                        'url'   : '/swos/wetland/' + wetland.id + '/panoramio.json?start=0&max=24'
+                        'url'   : '/swos/wetland/' + wetland.id + '/panoramio.json?start=0&max=' + mediaConfig.imagesPerPage
                     }).then(function (data) {
-                        //$scope.wetlands_opened[wetland.id]['pictures'] = data;
-                        wetland_service.value['external_pictures'] = data;
-                        if (data['photos'].length < wetland_service.imagesMaxPage) {
-                            wetland_service.allImages_external = true;
-                        }
+                        data.currentPage = 1;
+                        data.lastPage = Math.ceil(data.count / mediaConfig.imagesPerPage);
+                        Object.assign(wetland_service.externalImages, data);
                     });
 
                     djangoRequests.request({
@@ -139,12 +137,6 @@ angular.module('webgisApp')
                 }, function () {
                     bootbox.alert('<h1>Error while loading wetland details</h1>');
                 });
-
-                /*} else {
-                 $('.scroller-right').click();
-                 $('#link_wetland_'+wetland.id).click();
-                 }*/
-
             },
             selectWetlandFromId: function (id) {
                 var wetland = null;
@@ -162,8 +154,27 @@ angular.module('webgisApp')
         };
         return service;
     })
+    .service('TrackingService', function TrackingService() {
+        var service = {
+            trackEvent: function(category, action, name) {
+                try {
+                    _paq.push(['trackEvent', category, action, name]);
+                } catch (err) {
+                }
+            },
+            trackPageView: function(url, title) {
+                try {
+                    _paq.push(['setCustomUrl', url]);
+                    _paq.push(['setDocumentTitle', title]);
+                    _paq.push(['trackPageView']);
+                } catch (err) {
+                }
+            }
+        };
+        return service;
+    })
 
-    .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService) {
+    .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService, TrackingService) {
 
         $scope.addLayer = addLayer;
         $scope.addLayerToMap = addLayerToMap;
@@ -179,12 +190,18 @@ angular.module('webgisApp')
         $scope.removeLayersByWetland = removeLayersByWetland;
         $scope.satdata_image = true;
         $scope.satdata_table = false;
+        $scope.trackAddLayer = trackAddLayer;
         $scope.value = WetlandsService.value;
         $scope.wetlands = [];
         $scope.wetlands_map = {};
         $scope.wetlands_opened = {};
-        $scope.wetlands_without_geom = [];
+        $scope.wetlands_without_geom = WetlandsService.wetlands_without_geom;
         $scope.WetlandsService = WetlandsService;
+
+        $scope.log = log;
+        function log() {
+            console.log("foo");
+        }
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             $scope.layerIdMap = {};
@@ -324,56 +341,14 @@ angular.module('webgisApp')
             $scope.proceed = false;
         });
 
-        $scope.$on('wetland_loaded', function () {
-            $scope.value = WetlandsService.value;
-        });
-
         // IMAGE/VIDEO DISPLAY START
         $scope.data_count = {};
-        $scope.allImages = false;
-        $scope.allImages_external = false;
+
+        // TODO: make this the VideoController
         $scope.allVideos = false;
-        $scope.external_pictures_is_open = true;
-        $scope.imagesCurrentPage = 1;
-        $scope.imagesCurrentPage_external = 1;
-        $scope.imagesMaxPage = 24;
-        $scope.loadMoreImages = loadMoreImages;
-        $scope.loadMoreImages_external = loadMoreImages_external;
         $scope.loadMoreVideos = loadMoreVideos;
-        $scope.moreImages = moreImages;
-        $scope.moreImages_external = moreImages_external;
-        $scope.pictures_is_open = true;
-        $scope.showFoto = showFoto;
         $scope.videosCurrentPage = 1;
         $scope.videosMaxPage = 9;
-
-        function loadMoreImages() {
-            $scope.imagesCurrentPage += 1;
-            var start = $scope.imagesCurrentPage * $scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url'   : '/swos/wetland/' + $scope.value.id + '/images.json?start=' + start + '&max=' + $scope.imagesMaxPage
-            }).then(function (data) {
-                $scope.value['pictures']['photos'].push.apply($scope.value['pictures']['photos'], data['photos']);
-                if (data['photos'].length < $scope.imagesMaxPage) {
-                    $scope.allImages = true;
-                }
-            })
-        }
-
-        function loadMoreImages_external() {
-            $scope.imagesCurrentPage_external += 1;
-            var start = $scope.imagesCurrentPage_external * $scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url'   : '/swos/wetland/' + $scope.value.id + '/panoramio.json?start=' + start + '&max=' + $scope.imagesMaxPage
-            }).then(function (data) {
-                $scope.value['external_pictures']['photos'].push.apply($scope.value['external_pictures']['photos'], data['photos']);
-                if (data['photos'].length < $scope.imagesMaxPage) {
-                    $scope.allImages_external = true;
-                }
-            })
-        }
 
         function loadMoreVideos() {
             $scope.videosCurrentPage += 1;
@@ -390,258 +365,7 @@ angular.module('webgisApp')
                 }
             })
         }
-
-        function moreImages(action) {
-            if (action === 'prev') {
-                $scope.imagesCurrentPage -= 1;
-            } else {
-                $scope.imagesCurrentPage += 1;
-            }
-            var start = $scope.imagesCurrentPage * $scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url'   : '/swos/wetland/' + $scope.value.id + '/panoramio.json?start=' + start + '&max=' + $scope.imagesMaxPage
-            }).then(function (data) {
-                $scope.value['pictures']['photos'] = data['photos'];
-
-                $scope.allImages = (data['photos'].length < $scope.imagesMaxPage);
-            })
-        }
-
-        function moreImages_external(action) {
-            if (action === 'prev') {
-                $scope.imagesCurrentPage_external -= 1;
-            } else {
-                $scope.imagesCurrentPage_external += 1;
-            }
-            var start = $scope.imagesCurrentPage_external * $scope.imagesMaxPage - $scope.imagesMaxPage;
-            djangoRequests.request({
-                'method': "GET",
-                'url'   : '/swos/wetland/' + $scope.value.id + '/panoramio.json?start=' + start + '&max=' + $scope.imagesMaxPage
-            }).then(function (data) {
-                $scope.value['external_pictures']['photos'] = data['photos'];
-
-                $scope.allImages_external = (data['photos'].length < $scope.imagesMaxPage);
-            })
-        }
-
-        function showFoto(picture) {
-            console.log(picture);
-            return false;
-        }
         // IMAGE/VIDEO DISPLAY END
-
-        // FILTER START
-        $scope.filtered_country = '';
-        $scope.filtered_ecoregion = '';
-        $scope.filtered_geo_scale = '';
-        $scope.filtered_products = '';
-        $scope.filtered_site_type = '';
-        $scope.filtered_testmapping = false;
-        $scope.filtered_wetland_type = '';
-        $scope.filterCountry = filterCountry;
-        $scope.filterEcoregion = filterEcoregion;
-        $scope.filterProduct = filterProduct;
-        $scope.filterReset = filterReset;
-        $scope.filterScale = filterScale;
-        $scope.filterSiteType = filterSiteType;
-        $scope.filterTestmapping = filterTestmapping;
-        $scope.filterWetlandType = filterWetlandType;
-        $scope.setSortOrder = setSortOrder;
-        $scope.sortByCountryName = false;
-        $scope.sortOrder = 'name';
-
-        function filterCountry() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function(){
-                this['show'] = ((this['country'] === $scope.filtered_country) || $scope.filtered_country === '');
-            });
-
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_site_type = '';
-            $scope.filtered_products = '';
-            if ($scope.filtered_country == null) {
-                $scope.filterReset();
-            }
-        }
-
-        function filterEcoregion() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function () {
-                this['show'] = ((this['ecoregion'] == $scope.filtered_ecoregion) || ($scope.filtered_ecoregion == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_site_type = '';
-            $scope.filtered_products = '';
-            if ($scope.filtered_ecoregion == null) {
-                $scope.filterReset();
-            }
-        }
-
-        function filterProduct() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function () {
-                this['show'] = ((jQuery.inArray($scope.filtered_products, this['products']) > -1) || ($scope.filtered_products == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_site_type = '';
-            if ($scope.filtered_products == null) {
-                $scope.filterReset();
-            }
-        }
-
-        function filterReset() {
-            $.each($scope.wetlands_without_geom, function () {
-                this['show'] = true;
-            })
-        }
-
-        function filterScale() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function () {
-                this['show'] = ((this['geo_scale'] == $scope.filtered_geo_scale) || ($scope.filtered_geo_scale == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_site_type = '';
-            $scope.filtered_products = '';
-            if ($scope.filtered_geo_scale == null) {
-                $scope.filterReset();
-            }
-        }
-
-        function filterSiteType() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function () {
-                this['show'] = ((this['site_type'] == $scope.filtered_site_type) || ($scope.filtered_site_type == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_products = '';
-            if ($scope.filtered_site_type == null) {
-                $scope.filterReset();
-            }
-        }
-
-        function filterTestmapping() {
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_wetland_type = '';
-            $scope.filtered_site_type = '';
-            $scope.filtered_products = '';
-
-            if ($scope.filtered_testmapping == false) {
-                $scope.filterReset();
-            } else {
-                $.each($scope.wetlands_without_geom, function () {
-                    //this['show'] = (this['id'] <= 9);
-                    this['show'] = (this['products'].length > 0);
-                })
-            }
-        }
-
-        function filterWetlandType() {
-            $scope.filtered_testmapping = false;
-            $scope.sortByCountryName = false;
-            $.each($scope.wetlands_without_geom, function () {
-                this['show'] = ((this['wetland_type'] == $scope.filtered_wetland_type) || ($scope.filtered_wetland_type == ''));
-            });
-            $scope.filtered_country = '';
-            $scope.filtered_geo_scale = '';
-            $scope.filtered_ecoregion = '';
-            $scope.filtered_site_type = '';
-            $scope.filtered_products = '';
-            if ($scope.filtered_wetland_type == null) {
-                $scope.filterReset();
-            }
-        }
-
-        function setSortOrder() {
-            if ($scope.sortByCountryName) {
-                $scope.sortOrder = ['country', 'name'];
-            }
-            else {
-                $scope.sortOrder = 'name';
-            }
-        }
-        // FILTER END
-
-        // TRACKING START
-        $scope.trackAddLayer = trackAddLayer;
-        $scope.trackProduct = trackProduct;
-        $scope.trackShowImage = trackShowImage;
-        $scope.trackShowSatdataImage = trackShowSatdataImage;
-        $scope.trackShowVideo = trackShowVideo;
-        $scope.trackWetlandTab = trackWetlandTab;
-
-        function trackAddLayer(layer) {
-            try {
-                _paq.push(['setCustomUrl', '/wetland/' + $scope.value.name + '/products/' + layer.product_name + '/' + layer.alternate_title]);
-                _paq.push(['setDocumentTitle', 'Map: ' + layer.title]);
-                _paq.push(['trackPageView']);
-            } catch (err) {
-            }
-        }
-
-        function trackProduct(product, open) {
-            if (open) {
-                try {
-                    _paq.push(['setCustomUrl', '/wetland/' + $scope.value.name + '/products/' + product]);
-                    _paq.push(['setDocumentTitle', $scope.value.name + '/products/' + product]);
-                    _paq.push(['trackPageView']);
-                } catch (err) {
-                }
-            }
-        }
-
-        function trackShowImage(url) {
-            try {
-                _paq.push(['trackEvent', 'Show Photo', $scope.value.name, url]);
-            } catch (err) {
-            }
-        }
-
-        function trackShowSatdataImage(image) {
-            try {
-                _paq.push(['trackEvent', 'Show Satdata Image', $scope.value.name, image]);
-            } catch (err) {
-            }
-        }
-
-        function trackShowVideo(url) {
-            try {
-                _paq.push(['trackEvent', 'Show Video', $scope.value.name, url]);
-            } catch (err) {
-            }
-        }
-
-        function trackWetlandTab(type, $location) {
-            window.location.hash = '#/wetland/' + $scope.value.id + '/' + type;
-
-            try {
-                _paq.push(['setCustomUrl', '/wetland/' + $scope.value.name + '/' + type]);
-                _paq.push(['setDocumentTitle', $scope.value.name + '/' + type]);
-                _paq.push(['trackPageView']);
-            } catch (err) {
-            }
-        }
-        // TRACKING END
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -911,8 +635,241 @@ angular.module('webgisApp')
             });
 
         }
+
+        function trackAddLayer(layer) {
+            TrackingService.trackPageView(
+                '/wetland/' + WetlandsService.value.name + '/products/' + layer.product_name + '/' + layer.alternate_title,
+                'Map: ' + layer.title
+            );
+        }
     })
-    .controller('IntroductionTourCtrl', function ($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope) {
+    .controller('WetlandsFilterCtrl', function WetlandsFilterCtrl(WetlandsService) {
+        var wetlandsFilter = this;
+
+        wetlandsFilter.filtered_country = '';
+        wetlandsFilter.filtered_ecoregion = '';
+        wetlandsFilter.filtered_geo_scale = '';
+        wetlandsFilter.filtered_products = '';
+        wetlandsFilter.filtered_site_type = '';
+        wetlandsFilter.filtered_testmapping = false;
+        wetlandsFilter.filtered_wetland_type = '';
+        wetlandsFilter.filterCountry = filterCountry;
+        wetlandsFilter.filterEcoregion = filterEcoregion;
+        wetlandsFilter.filterProduct = filterProduct;
+        wetlandsFilter.filterReset = filterReset;
+        wetlandsFilter.filterScale = filterScale;
+        wetlandsFilter.filterSiteType = filterSiteType;
+        wetlandsFilter.filterTestmapping = filterTestmapping;
+        wetlandsFilter.filterWetlandType = filterWetlandType;
+        wetlandsFilter.setSortOrder = setSortOrder;
+        wetlandsFilter.sortByCountryName = false;
+        wetlandsFilter.sortOrder = 'name';
+        wetlandsFilter.wetlands_without_geom = WetlandsService.wetlands_without_geom;
+
+        function filterCountry() {
+            wetlandsFilter.filtered_testmapping = false;
+            wetlandsFilter.sortByCountryName = false;
+            $.each(wetlandsFilter.wetlands_without_geom, function(){
+                this['show'] = ((this['country'] === wetlandsFilter.filtered_country) || wetlandsFilter.filtered_country === '');
+            });
+
+            wetlandsFilter.filtered_geo_scale = '';
+            wetlandsFilter.filtered_ecoregion = '';
+            wetlandsFilter.filtered_wetland_type = '';
+            wetlandsFilter.filtered_site_type = '';
+            wetlandsFilter.filtered_products = '';
+            if (wetlandsFilter.filtered_country == null) {
+                wetlandsFilter.filterReset();
+            }
+        }
+
+        function filterEcoregion() {
+            wetlandsFilter.filtered_testmapping = false;
+            wetlandsFilter.sortByCountryName = false;
+            $.each(wetlandsFilter.wetlands_without_geom, function () {
+                this['show'] = ((this['ecoregion'] == wetlandsFilter.filtered_ecoregion) || (wetlandsFilter.filtered_ecoregion == ''));
+            });
+            wetlandsFilter.filtered_country = '';
+            wetlandsFilter.filtered_geo_scale = '';
+            wetlandsFilter.filtered_wetland_type = '';
+            wetlandsFilter.filtered_site_type = '';
+            wetlandsFilter.filtered_products = '';
+            if (wetlandsFilter.filtered_ecoregion == null) {
+                wetlandsFilter.filterReset();
+            }
+        }
+
+        function filterProduct() {
+            wetlandsFilter.filtered_testmapping = false;
+            wetlandsFilter.sortByCountryName = false;
+            $.each(wetlandsFilter.wetlands_without_geom, function () {
+                this['show'] = ((jQuery.inArray(wetlandsFilter.filtered_products, this['products']) > -1) || (wetlandsFilter.filtered_products == ''));
+            });
+            wetlandsFilter.filtered_country = '';
+            wetlandsFilter.filtered_geo_scale = '';
+            wetlandsFilter.filtered_ecoregion = '';
+            wetlandsFilter.filtered_wetland_type = '';
+            wetlandsFilter.filtered_site_type = '';
+            if (wetlandsFilter.filtered_products == null) {
+                wetlandsFilter.filterReset();
+            }
+        }
+
+        function filterReset() {
+            $.each(wetlandsFilter.wetlands_without_geom, function () {
+                this['show'] = true;
+            })
+        }
+
+        function filterScale() {
+            wetlandsFilter.filtered_testmapping = false;
+            wetlandsFilter.sortByCountryName = false;
+            $.each(wetlandsFilter.wetlands_without_geom, function () {
+                this['show'] = ((this['geo_scale'] == wetlandsFilter.filtered_geo_scale) || (wetlandsFilter.filtered_geo_scale == ''));
+            });
+            wetlandsFilter.filtered_country = '';
+            wetlandsFilter.filtered_ecoregion = '';
+            wetlandsFilter.filtered_wetland_type = '';
+            wetlandsFilter.filtered_site_type = '';
+            wetlandsFilter.filtered_products = '';
+            if (wetlandsFilter.filtered_geo_scale == null) {
+                wetlandsFilter.filterReset();
+            }
+        }
+
+        function filterSiteType() {
+            wetlandsFilter.filtered_testmapping = false;
+            wetlandsFilter.sortByCountryName = false;
+            $.each(wetlandsFilter.wetlands_without_geom, function () {
+                this['show'] = ((this['site_type'] == wetlandsFilter.filtered_site_type) || (wetlandsFilter.filtered_site_type == ''));
+            });
+            wetlandsFilter.filtered_country = '';
+            wetlandsFilter.filtered_geo_scale = '';
+            wetlandsFilter.filtered_ecoregion = '';
+            wetlandsFilter.filtered_wetland_type = '';
+            wetlandsFilter.filtered_products = '';
+            if (wetlandsFilter.filtered_site_type == null) {
+                wetlandsFilter.filterReset();
+            }
+        }
+
+        function filterTestmapping() {
+            wetlandsFilter.filtered_country = '';
+            wetlandsFilter.filtered_geo_scale = '';
+            wetlandsFilter.filtered_ecoregion = '';
+            wetlandsFilter.filtered_wetland_type = '';
+            wetlandsFilter.filtered_site_type = '';
+            wetlandsFilter.filtered_products = '';
+
+            if (wetlandsFilter.filtered_testmapping == false) {
+                wetlandsFilter.filterReset();
+            } else {
+                $.each(wetlandsFilter.wetlands_without_geom, function () {
+                    //this['show'] = (this['id'] <= 9);
+                    this['show'] = (this['products'].length > 0);
+                })
+            }
+        }
+
+        function filterWetlandType() {
+            wetlandsFilter.filtered_testmapping = false;
+            wetlandsFilter.sortByCountryName = false;
+            $.each(wetlandsFilter.wetlands_without_geom, function () {
+                this['show'] = ((this['wetland_type'] == wetlandsFilter.filtered_wetland_type) || (wetlandsFilter.filtered_wetland_type == ''));
+            });
+            wetlandsFilter.filtered_country = '';
+            wetlandsFilter.filtered_geo_scale = '';
+            wetlandsFilter.filtered_ecoregion = '';
+            wetlandsFilter.filtered_site_type = '';
+            wetlandsFilter.filtered_products = '';
+            if (wetlandsFilter.filtered_wetland_type == null) {
+                wetlandsFilter.filterReset();
+            }
+        }
+
+        function setSortOrder() {
+            if (wetlandsFilter.sortByCountryName) {
+                wetlandsFilter.sortOrder = ['country', 'name'];
+            } else {
+                wetlandsFilter.sortOrder = 'name';
+            }
+        }
+    })
+    .controller('TrackingCtrl', function TrackingCtrl(TrackingService, WetlandsService) {
+        var tracking = this;
+
+        tracking.trackProduct = trackProduct;
+        tracking.trackShowImage = trackShowImage;
+        tracking.trackShowSatdataImage = trackShowSatdataImage;
+        tracking.trackShowVideo = trackShowVideo;
+        tracking.trackWetlandTab = trackWetlandTab;
+
+        function trackProduct(product, open) {
+            if (open) {
+                TrackingService.trackPageView('/wetland/' + WetlandsService.value.name + '/products/' + product, WetlandsService.value.name + '/products/' + product);
+            }
+        }
+
+        function trackShowImage(url) {
+            TrackingService.trackEvent('Show Photo', WetlandsService.value.name, url);
+        }
+
+        function trackShowSatdataImage(image) {
+            TrackingService.trackEvent('Show Satdata Image', WetlandsService.value.name, image);
+        }
+
+        function trackShowVideo(url) {
+            TrackingService.trackEvent('Show Video', WetlandsService.value.name, url);
+        }
+
+        // TODO: replace window with $window, remove $location?
+        function trackWetlandTab(type, $location) {
+            window.location.hash = '#/wetland/' + WetlandsService.value.id + '/' + type;
+            TrackingService.trackPageView('/wetland/' + WetlandsService.value.name + '/' + type, WetlandsService.value.name + '/' + type);
+        }
+    })
+    .controller('WetlandsImageCtrl', function WetlandsImageCtrl(WetlandsService, djangoRequests, mediaConfig) {
+        var wetlandsImage = this;
+
+        wetlandsImage.externalImages = WetlandsService.externalImages;
+        wetlandsImage.externalImagesIsOpen = true;
+        wetlandsImage.images = WetlandsService.images;
+        wetlandsImage.imagesIsOpen = true;
+        wetlandsImage.moreImages = moreImages;
+        wetlandsImage.moreExternalImages = moreExternalImages;
+        wetlandsImage.showFoto = showFoto;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        function loadMore(action, isExternal) {
+            var key = (isExternal ? 'externalImages' : 'images');
+            wetlandsImage[key].currentPage += (action === 'next' ? +1 : -1);
+
+            var start = (wetlandsImage[key].currentPage - 1) * mediaConfig.imagesPerPage;
+            var jsonTarget = (isExternal ? '/panoramio.json' : '/images.json');
+            djangoRequests.request({
+                method: 'GET',
+                url: '/swos/wetland/' + WetlandsService.value.id + jsonTarget + '?start=' + start + '&max=' + mediaConfig.imagesPerPage
+            }).then(function(data) {
+                wetlandsImage[key]['photos'] = data['photos'];
+            })
+        }
+
+        function moreImages(action) {
+            loadMore(action, false);
+        }
+
+        function moreExternalImages(action) {
+            loadMore(action, true);
+        }
+
+        // TODO: still necessary?
+        function showFoto(picture) {
+            console.log(picture);
+            return false;
+        }
+    })
+    .controller('IntroductionTourCtrl', function IntroductionTourCtrl($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope, TrackingService) {
         var introTour = this;
 
         introTour.startAnno = startAnno;
@@ -1174,7 +1131,7 @@ angular.module('webgisApp')
                             // prevent all click events
                             var handler = function (e) {
                                 e.stopPropagation();
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1442,11 +1399,10 @@ angular.module('webgisApp')
                                     if (e.target.id === "layer_vis_" + product_id) {
                                         anno.switchToChainNext();
                                     }
-                                }
-                                else {
+                                } else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1504,11 +1460,10 @@ angular.module('webgisApp')
                                 }
                                 else if ((e.target.className === 'btn btn-default ng-scope' && e.target.parentElement.className === 'item_icon') || (e.target.className.includes('fa') && e.target.parentElement.parentElement.className === 'item_icon')) {
 
-                                }
-                                else {
+                                } else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1615,7 +1570,7 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1666,7 +1621,7 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1719,7 +1674,7 @@ angular.module('webgisApp')
                                 else {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
 
@@ -1771,7 +1726,7 @@ angular.module('webgisApp')
                                 if (e.target.className.includes("fa-info") || e.target.firstChild.className.includes("fa-info") || e.target.className.includes("fa-file") || e.target.firstChild.className.includes("fa-file")) {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             el[0].addEventListener('click', handler, true);
 
                             var el2 = document.getElementsByClassName("item_icon");
@@ -1826,7 +1781,7 @@ angular.module('webgisApp')
                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
 
@@ -1870,7 +1825,7 @@ angular.module('webgisApp')
                                 if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
                                     e.stopPropagation();
                                 }
-                            }
+                            };
                             $target[0].addEventListener('click', handler, true);
                             return handler
                         },
@@ -1938,12 +1893,7 @@ angular.module('webgisApp')
         }
 
         function trackIntroductionTour(title, step) {
-            try {
-                _paq.push(['setCustomUrl', '/introduction/' + step + '_' + title.toLowerCase()]);
-                _paq.push(['setDocumentTitle', 'Introduction Tour: ' + title + ' (' + step + ')']);
-                _paq.push(['trackPageView']);
-            } catch (err) {
-            }
+            TrackingService.trackPageView('/introduction/' + step + '_' + title.toLowerCase(), 'Introduction Tour: ' + title + ' (' + step + ')');
         }
     })
     .directive('repeatDone', function () {
