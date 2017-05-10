@@ -443,6 +443,7 @@ angular.module('webgisApp')
                 }
 
                 layer.showLegend = true;
+                layer.showStatistic = false;
                 this.layers[layer.id] = olLayer;
 
                 if (layer.ogc_time === true) {
@@ -1220,6 +1221,7 @@ angular.module('webgisApp')
         mcl.sliderValues = mapviewer.sliderValues;
         mcl.toggleLayerControls = toggleLayerControls;
         mcl.toggleLegend = toggleLegend;
+        mcl.toggleStatistic = toggleStatistic;
         mcl.toggleStations = toggleStations;
         mcl.toggleWetlandList = toggleWetlandList;
         mcl.updateLayer = updateLayer;
@@ -1584,6 +1586,14 @@ angular.module('webgisApp')
         function toggleLegend(layer) {
             // negate showLegend
             layer.showLegend = !layer.showLegend;
+            layer.showStatistic = false;
+        }
+
+        function toggleStatistic(layer) {
+            // negate showSTatistic
+            layer.showLegend = false;
+            layer.showStatistic = !layer.showStatistic;
+
         }
 
         function toggleStations(layer) {

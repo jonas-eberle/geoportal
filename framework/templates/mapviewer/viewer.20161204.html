@@ -194,6 +194,8 @@
                             <div class="div-button-text">Remove all layers</div>
                         </div>
                     </div>
+
+
                     <div class="list-group" dnd-list="mcl.layersMeta" dnd-drop="mcl.prepareIndex(index, item)">
                         <div class="list-group-item clearfix" ng-repeat="layer in mcl.layersMeta" dnd-draggable="layer"
                              dnd-moved="mcl.changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
@@ -213,10 +215,14 @@
                                         <div style="clear:both;"></div>
                                     </div>
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
+
+
+
                                         <div class="item_desc">
                                             <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)" style="width:95%;"></slider>
                                             <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]" ng-change="mcl.updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
                                         </div>
+
                                         <div class="item_icon">
                                             <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
@@ -668,6 +674,12 @@
     <script src="{% static "lib/jquery-drags.js" %}"></script>
     <script src="{% static "lib/Chart.min.js" %}"></script>
     <script src="{% static "lib/angular-chart.min.js" %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+    <script src="http://krispo.github.io/angular-nvd3/bower_components/nvd3/build/nv.d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
 
     <!-- Add fancyBox -->
     <link rel="stylesheet" href="{% static "lib/fancybox/source/jquery.fancybox.css" %}" type="text/css" media="screen" />

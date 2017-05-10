@@ -8,7 +8,8 @@ angular.module('webgisApp', [
     'dndLists',
     'nsPopover',
     'ui.bootstrap-slider',
-    'angular.filter'
+    'angular.filter',
+    'nvd3'
 ])
     .service('djangoRequests', function djangoRequests($q, $http, $cookies) {
 
@@ -40,9 +41,9 @@ angular.module('webgisApp', [
                         },
                         params: params,
                         data: data
-                    }).success(angular.bind(this, function(data, status){
-                        deferred.resolve(data, status);
-                    })).error(angular.bind(this, function(data, status, headers, config){
+                    }).then((angular.bind(this, function(data, status){
+                        deferred.resolve(data.data, status);
+                    })),(angular.bind(this, function(data, status, headers, config){
                         // Set request status
                         if (typeof(data) == 'object') {
                             data.status = status;
@@ -63,7 +64,7 @@ angular.module('webgisApp', [
                             }
                         }
                         deferred.reject(data, status, headers, config);
-                    }));
+                    })));
                     return deferred.promise;
                 },
                 'initialize': function (url, sessions) {
