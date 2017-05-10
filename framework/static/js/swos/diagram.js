@@ -54,12 +54,21 @@ angular.module('webgisApp')
             var layer_value_clc = [];
 
             for (var legend_entries in layer.legend_colors) {
-                class_id = myRe.exec(layer.legend_colors[legend_entries].label);
+                //class_id = myRe.exec(layer.legend_colors[legend_entries].label);
+                class_id = layer.legend_colors[legend_entries].code;
                 value[class_id] = layer.legend_colors[legend_entries].size;
             }
-
+            console.log('sizes');
+			console.log(value);
+            var data = -1;
             if (layer.identifier.includes("CLC")) {
-                var data = add_no_data_level_clc(value, id_name_color['CLC']);
+                data = id_name_color['CLC'];
+            }
+            if (layer.identifier.includes("MAES")) {
+                data = id_name_color['MAES'];
+            }
+            if (data !== -1) {
+                var data = add_no_data_level_clc(value, data);
                 layer_value_clc = create_value_legend_clc_data(data[1], data[0]);
                 console.log(layer_value_clc);
 
@@ -141,13 +150,17 @@ angular.module('webgisApp')
             var data_2_size_count = [];
 
             for (var key in id_name_color_clc) {
-                if (key.length == 4) {
+                if ((key.length == 4 && key.toString().indexOf('10') === -1) || (key.length == 5 && key.toString().indexOf('10') === 0)) {
 
                     var new_key = key.slice(0, -1);
                     var data_new = {
                         "name": id_name_color_clc[key][0],
                         "color": id_name_color_clc[key][1],
                     }
+
+                    if (!size_arr[key]) {
+                        continue;
+					}
 
                     if (size_arr[key]) {
                         data_new.size = size_arr[key];
@@ -164,7 +177,7 @@ angular.module('webgisApp')
                 }
             }
             for (var key in id_name_color_clc) {
-                if (key.length == 3) {
+                if ((key.length == 3 && key.toString().indexOf('10') === -1) || (key.length == 4 && key.toString().indexOf('10') === 0)) {
 
                     var new_key = key.slice(0, -1);
 
@@ -172,6 +185,10 @@ angular.module('webgisApp')
                         "name": id_name_color_clc[key][0],
                         "color": id_name_color_clc[key][1],
                     }
+
+                    if (!size_arr[key] && !data_4[key]) {
+                        continue;
+					}
 
                     if (size_arr[key]) {
                         data_new.size = size_arr[key];
@@ -192,7 +209,7 @@ angular.module('webgisApp')
                 }
             }
             for (var key in id_name_color_clc) {
-                if (key.length == 2) {
+                if ((key.length == 2 && key.toString().indexOf('10') === -1) || (key.length == 3 && key.toString().indexOf('10') === 0)) {
 
                     var new_key = key.slice(0, -1);
 
@@ -200,6 +217,11 @@ angular.module('webgisApp')
                         "name": id_name_color_clc[key][0],
                         "color": id_name_color_clc[key][1],
                     }
+
+                    if (!size_arr[key] && !data_3[key]) {
+                        continue;
+					}
+
                     if (size_arr[key]) {
                         data_new.size = size_arr[key];
                         data_2_size_count[key] = 1;
@@ -227,14 +249,17 @@ angular.module('webgisApp')
                 found = false;
             }
             for (var key in id_name_color_clc) {
-                if (key.length == 1) {
-
-                    var new_key = key.slice(0, -1);
+                if ((key.length == 1 && key.toString().indexOf('10') === -1) || (key.length == 2 && key.toString().indexOf('10') === 0)) {
 
                     var data_new = {
                         "name": id_name_color_clc[key][0],
                         "color": id_name_color_clc[key][1],
                     }
+
+                    if (!size_arr[key] && !data_2[key]) {
+                        continue;
+					}
+
                     if (size_arr[key]) {
                         data_new.size = size_arr[key];
                     }
