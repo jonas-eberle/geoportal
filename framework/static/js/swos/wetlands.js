@@ -219,7 +219,6 @@ angular.module('webgisApp')
                     this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
                     var prop = this.getProperties();
 
-                    $scope.filtered_testmapping = true;
                     // show: true, when id is less or equal 9
                     prop['show'] = (prop['id'] <= 9);
                     prop['show'] = (prop['products'].length > 0);
@@ -623,7 +622,7 @@ angular.module('webgisApp')
         wetlandsFilter.filtered_geo_scale = '';
         wetlandsFilter.filtered_products = '';
         wetlandsFilter.filtered_site_type = '';
-        wetlandsFilter.filtered_testmapping = false;
+        wetlandsFilter.filtered_testmapping = true;
         wetlandsFilter.filtered_wetland_type = '';
         wetlandsFilter.filterCountry = filterCountry;
         wetlandsFilter.filterEcoregion = filterEcoregion;
