@@ -29,6 +29,7 @@ angular.module('webgisApp')
             olLayer  : null,
             value    : {},
             videos: {},
+            wetlands: [],
             wetlands_without_geom: [],
 
             selectFeature: function (wetland) {
@@ -40,7 +41,6 @@ angular.module('webgisApp')
 
                 var wetlandFeature = this.olLayer.getSource().getFeatureById(wetland.id);
                 wetlandFeature.setStyle(new ol.style.Style({
-
                     stroke: new ol.style.Stroke({
                         color: "#000000",
                         width: 5
@@ -81,7 +81,7 @@ angular.module('webgisApp')
                     'method': "GET",
                     'url'   : '/swos/wetland/' + wetland.id
                 }).then(function (data) {
-                    wetland_service.dataCount = data['count'];
+                    Object.assign(wetland_service.dataCount, data['count']);
                     // we do not need the count in other wetland data
                     delete data['count'];
 
@@ -196,7 +196,7 @@ angular.module('webgisApp')
         $scope.satdata_image = true;
         $scope.satdata_table = false;
         $scope.value = WetlandsService.value;
-        $scope.wetlands = [];
+        $scope.wetlands = WetlandsService.wetlands;
         // $scope.wetlands_opened = {};
         $scope.WetlandsService = WetlandsService;
 
@@ -211,7 +211,7 @@ angular.module('webgisApp')
                 'method': "GET",
                 'url'   : '/swos/wetlands.geojson'
             }).then(function (data) {
-                //$scope.wetlands = data.features;
+                // NOTE: here, we destroy the (Array) Object WetlandsService.wetlands and $scope.wetlands both point to!
                 $scope.wetlands = [];
                 var vectorSource = new ol.source.Vector();
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
@@ -260,7 +260,10 @@ angular.module('webgisApp')
                     }
                 });
 
+                // NOTE: let WetlandsService.wetlands and $scope.wetlands both refer to the same (new) (Array) Object again
+                // removing the following line breaks Angular data binding!
                 WetlandsService.wetlands = $scope.wetlands;
+
                 vectorSource.addFeatures(features);
                 WetlandsService.olLayer = new ol.layer.Vector({
                     name  : 'Wetlands',
