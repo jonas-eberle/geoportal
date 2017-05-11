@@ -182,7 +182,7 @@ angular.module('webgisApp')
         $scope.attributionList = attributionList;
         $scope.closeWetland = closeWetland;
         $scope.externaldb_search = {'searchText': "", 'layer_exist': ""};
-        $scope.foo = foo;
+        // $scope.foo = foo;
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
         $scope.layerIdMap = {};
         $scope.layers = mapviewer.layers;
@@ -503,12 +503,12 @@ angular.module('webgisApp')
             $('#link_wetland_list').click();
         }
 
-        function foo() {
-            //console.log('foo');
-            reAdjust();
-            $('.scroller-right').click();
-            //$('#sidebar-tabs a:last').tab('show')
-        }
+        // function foo() {
+        //     //console.log('foo');
+        //     reAdjust();
+        //     $('.scroller-right').click();
+        //     //$('#sidebar-tabs a:last').tab('show')
+        // }
 
         function loadWetland() {
             var wetland_id = $routeParams.wetland_id;
@@ -2047,67 +2047,67 @@ angular.module('webgisApp')
 ;
 
 
-// copied from http://www.bootply.com/l2ChB4vYmC
-var scrollBarWidths = 40;
-
-var widthOfList = function () {
-    var itemsWidth = 0;
-    $('.list li').each(function () {
-        itemsWidth += $(this).outerWidth();
-    });
-    return itemsWidth;
-};
-
-var widthOfHidden = function () {
-    return (($('.wrapper').outerWidth()) - widthOfList() - getLeftPosi()) - scrollBarWidths;
-};
-
-var getLeftPosi = function () {
-    return $('.list').position().left;
-};
-
-var reAdjust = function () {
-    if (($('.wrapper').outerWidth()) < widthOfList()) {
-        $('.scroller-right').show();
-    }
-    else {
-        $('.scroller-right').hide();
-    }
-
-    if (getLeftPosi() < 0) {
-        $('.scroller-left').show();
-    }
-    else {
-        $('.item').animate({left: "-=" + getLeftPosi() + "px"}, 'slow');
-        $('.scroller-left').hide();
-    }
-};
-
-reAdjust();
-
-$(window).on('resize', function () {
-    reAdjust();
-});
-
-$('.scroller-right').click(function () {
-
-    $('.scroller-left').fadeIn('slow');
-    $('.scroller-right').fadeOut('slow');
-
-    $('.list').animate({left: "+=" + widthOfHidden() + "px"}, 'slow', function () {
-
-    });
-});
-
-$('.scroller-left').click(function () {
-
-    $('.scroller-right').fadeIn('slow');
-    $('.scroller-left').fadeOut('slow');
-
-    $('.list').animate({left: "-=" + getLeftPosi() + "px"}, 'slow', function () {
-
-    });
-});
+// // copied from http://www.bootply.com/l2ChB4vYmC
+// var scrollBarWidths = 40;
+//
+// var widthOfList = function () {
+//     var itemsWidth = 0;
+//     $('.list li').each(function () {
+//         itemsWidth += $(this).outerWidth();
+//     });
+//     return itemsWidth;
+// };
+//
+// var widthOfHidden = function () {
+//     return (($('.wrapper').outerWidth()) - widthOfList() - getLeftPosi()) - scrollBarWidths;
+// };
+//
+// var getLeftPosi = function () {
+//     return $('.list').position().left;
+// };
+//
+// var reAdjust = function () {
+//     if (($('.wrapper').outerWidth()) < widthOfList()) {
+//         $('.scroller-right').show();
+//     }
+//     else {
+//         $('.scroller-right').hide();
+//     }
+//
+//     if (getLeftPosi() < 0) {
+//         $('.scroller-left').show();
+//     }
+//     else {
+//         $('.item').animate({left: "-=" + getLeftPosi() + "px"}, 'slow');
+//         $('.scroller-left').hide();
+//     }
+// };
+//
+// reAdjust();
+//
+// $(window).on('resize', function () {
+//     reAdjust();
+// });
+//
+// $('.scroller-right').click(function () {
+//
+//     $('.scroller-left').fadeIn('slow');
+//     $('.scroller-right').fadeOut('slow');
+//
+//     $('.list').animate({left: "+=" + widthOfHidden() + "px"}, 'slow', function () {
+//
+//     });
+// });
+//
+// $('.scroller-left').click(function () {
+//
+//     $('.scroller-right').fadeIn('slow');
+//     $('.scroller-left').fadeOut('slow');
+//
+//     $('.list').animate({left: "-=" + getLeftPosi() + "px"}, 'slow', function () {
+//
+//     });
+// });
 
 $(document).ready(function () {
     $(".fancybox").fancybox({
