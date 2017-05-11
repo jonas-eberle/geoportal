@@ -22,12 +22,13 @@ angular.module('webgisApp')
 
     .service('WetlandsService', function WetlandsService(djangoRequests, mapviewer, $rootScope, $q, mediaConfig) {
         var service = {
-            olLayer  : null,
-            value    : {},
+            activeTab: -1,
+            dataCount: {},
             externalImages: {},
             images: {},
+            olLayer  : null,
+            value    : {},
             videos: {},
-            activeTab: -1,
             wetlands_without_geom: [],
 
             selectFeature: function (wetland) {
@@ -80,9 +81,12 @@ angular.module('webgisApp')
                     'method': "GET",
                     'url'   : '/swos/wetland/' + wetland.id
                 }).then(function (data) {
+                    wetland_service.dataCount = data['count'];
+                    // we do not need the count in other wetland data
+                    delete data['count'];
+
                     wetland['data'] = data;
                     Object.assign(wetland_service.value, wetland);
-                    wetland_service.data_count = data['count'];
 
                     wetland_service.videosCurrentPage = 1;
                     wetland_service.allVideos = false;
@@ -111,7 +115,7 @@ angular.module('webgisApp')
                     }).then(function (data) {
                         Object.assign(wetland_service.videos, {
                             currentPage: 1,
-                            lastPage: Math.ceil(wetland_service.data_count['videos'] / mediaConfig.videosPerPage),
+                            lastPage: Math.ceil(wetland_service.dataCount['videos'] / mediaConfig.videosPerPage),
                             videos: data
                         });
                     });
@@ -180,6 +184,7 @@ angular.module('webgisApp')
         $scope.addLayer = addLayer;
         $scope.addLayerToMap = addLayerToMap;
         // $scope.closeWetland = closeWetland;
+        $scope.dataCount = WetlandsService.dataCount;
         $scope.externaldb_search = {'searchText': "", 'layer_exist': ""};
         // $scope.foo = foo;
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
@@ -328,8 +333,6 @@ angular.module('webgisApp')
         $scope.$on("StopLoadingWetlandFromURL", function () {
             proceed = false;
         });
-
-        $scope.data_count = {};
 
         //--------------------------------------------------------------------------------------------------------------
 
