@@ -58,7 +58,7 @@
 
 <div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showStatistic">
     <div id="diagram_{{ layer.id }}" style="display:none;">
-      <div><strong>Interactive chart with absolute area proportions</strong></div><div style="font-size:0.9em;">(Move your mouse over or click on the classes for more details)</div>
+      <div><strong>Interactive chart with absolute area proportions</strong></div><div style="font-size:0.9em;" class="hint" style="display:none;">(Move your mouse over or click on the classes for more details)</div>
     </div>
     <strong>Relative area proportions</strong>
     <table ng-if="layer.legend_colors" style="width:100%;">
