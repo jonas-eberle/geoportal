@@ -36,7 +36,7 @@ Prior to any mapviewer request you need to edit the mapviewer and adjust the tem
 * Bootstrap v3.3.1
 * OpenLayers v4.1.0
 * jQuery v1.11.1
-* AngularJS v1.6.1
+* AngularJS v1.6.4
 * bootbox.js v4.3.0
 
 ## Anchors to wetlands and products
