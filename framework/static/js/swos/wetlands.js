@@ -179,29 +179,25 @@ angular.module('webgisApp')
 
         $scope.addLayer = addLayer;
         $scope.addLayerToMap = addLayerToMap;
-        $scope.attributionList = attributionList;
-        $scope.closeWetland = closeWetland;
+        // $scope.closeWetland = closeWetland;
         $scope.externaldb_search = {'searchText': "", 'layer_exist': ""};
         // $scope.foo = foo;
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
         $scope.layerIdMap = {};
         $scope.layers = mapviewer.layers;
-        $scope.proceed = true;
+        var proceed = true;
         $scope.removeAllLayers = removeAllLayers;
         $scope.removeLayersByWetland = removeLayersByWetland;
         $scope.satdata_image = true;
         $scope.satdata_table = false;
-        $scope.trackAddLayer = trackAddLayer;
         $scope.value = WetlandsService.value;
         $scope.wetlands = [];
-        $scope.wetlands_map = {};
-        $scope.wetlands_opened = {};
-        $scope.wetlands_without_geom = WetlandsService.wetlands_without_geom;
+        // $scope.wetlands_opened = {};
         $scope.WetlandsService = WetlandsService;
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             $scope.layerIdMap = {};
-            $scope.attributionList();
+            attributionList();
         });
 
         $scope.$on('mapviewer.catalog_loaded', function () {
@@ -213,16 +209,13 @@ angular.module('webgisApp')
                 //$scope.wetlands = data.features;
                 $scope.wetlands = [];
                 var vectorSource = new ol.source.Vector();
-                //var features = (new ol.format.GeoJSON()).readFeatures(data.data);
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
                 $.each(features, function () {
                     this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
+
                     var prop = this.getProperties();
-
-                    // show: true, when id is less or equal 9
-                    prop['show'] = (prop['id'] <= 9);
-                    prop['show'] = (prop['products'].length > 0);
-
+                    // set show to true, when id is less or equal 9 OR at least one product
+                    prop['show'] = (prop['id'] <= 9) || (prop['products'].length > 0);
                     $scope.wetlands.push(prop);
 
                     if (prop["country"].includes("-")) {
@@ -241,7 +234,7 @@ angular.module('webgisApp')
                                 "products"    : prop["products"]
                             };
 
-                            $scope.wetlands_without_geom.push(without_geom);
+                            WetlandsService.wetlands_without_geom.push(without_geom);
                         }
                     }
                     else {
@@ -258,7 +251,7 @@ angular.module('webgisApp')
                             "products"    : prop["products"]
                         };
 
-                        $scope.wetlands_without_geom.push(without_geom);
+                        WetlandsService.wetlands_without_geom.push(without_geom);
                     }
                 });
 
@@ -324,7 +317,7 @@ angular.module('webgisApp')
         $scope.$on("mapviewer.layerremoved", function ($broadcast, id) {
             if (id !== undefined && id !== null) {
                 $scope.layerIdMap[id] = undefined;
-                $scope.attributionList();
+                attributionList();
             }
         });
 
@@ -333,7 +326,7 @@ angular.module('webgisApp')
         });
 
         $scope.$on("StopLoadingWetlandFromURL", function () {
-            $scope.proceed = false;
+            proceed = false;
         });
 
         $scope.data_count = {};
@@ -354,7 +347,7 @@ angular.module('webgisApp')
             //changeWetlandFeatureStyle(); // change Style (remove fill)
 
             if (checkbox.checked) {
-                $scope.trackAddLayer(layer);
+                trackAddLayer(layer);
 
                 var layerObj = mapviewer.addLayer(layer).get("layerObj");
                 // store the mapping between django_id and hash-like id
@@ -442,7 +435,7 @@ angular.module('webgisApp')
                     }
                 });
             }
-            $scope.attributionList();
+            attributionList();
         }
 
         function attributionList() {
@@ -452,7 +445,7 @@ angular.module('webgisApp')
                 var layer = this.get('layerObj');
 
                 if (typeof layer !== 'undefined') {
-                    if (attribution_arr.indexOf(layer.ogc_attribution) == -1) {
+                    if (attribution_arr.indexOf(layer.ogc_attribution) === -1) {
                         if (layer.ogc_attribution != 'null') {
                             attribution_arr.push(layer.ogc_attribution);
                         }
@@ -494,13 +487,13 @@ angular.module('webgisApp')
             mapviewer.selectInteraction.getFeatures().push(wetlandFeatureNewStyle);
         }
 
-        function closeWetland(id) {
-            $('#link_wetland_' + id).remove();
-            $('#wetland_' + id).remove();
-            delete $scope.wetlands_opened[id];
-            $('.scroller-left').click();
-            $('#link_wetland_list').click();
-        }
+        // function closeWetland(id) {
+        //     $('#link_wetland_' + id).remove();
+        //     $('#wetland_' + id).remove();
+        //     delete $scope.wetlands_opened[id];
+        //     $('.scroller-left').click();
+        //     $('#link_wetland_list').click();
+        // }
 
         // function foo() {
         //     //console.log('foo');
@@ -513,7 +506,7 @@ angular.module('webgisApp')
             var wetland_id = $routeParams.wetland_id;
             var type_name = $routeParams.type_name;
             var layer_id = $routeParams.layer_id;
-            if (wetland_id && $scope.proceed) {
+            if (wetland_id && proceed) {
                 WetlandsService.selectWetlandFromId(wetland_id).then(function () {
                     var target = "overview";
                     if (type_name) {
@@ -544,7 +537,7 @@ angular.module('webgisApp')
                             } catch (e) {
                             }
 
-                            if (layer_id && $scope.proceed) {
+                            if (layer_id && proceed) {
                                 var layer_ids = layer_id.split("_");
 
                                 $.each(layer_ids, function (i, value) {
@@ -566,13 +559,13 @@ angular.module('webgisApp')
                                     $(last_layer_id).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
                                     $(last_layer_id).closest('.panel').find('a').trigger('click'); // find headline and open accordion
                                 }
-                            } else if ($scope.proceed == false) {
+                            } else if (proceed === false) {
                                 //return ([wetland_id, type_name, layer_id]);
                             }
                         });
                     }
                 });
-            } else if (!$scope.proceed) {
+            } else if (!proceed) {
                 // return ([wetland_id, type_name, layer_id]);
             }
         }
