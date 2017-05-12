@@ -263,7 +263,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3 sidebar first" id="sidebar" ng-controller="WetlandsCtrl">
+            <div class="col-md-3 sidebar first" id="sidebar" ng-controller="WetlandsCtrl as wetlands">
                 <!-- Nav tabs -->
 
                 <!--<div class="scroller scroller-left"><i class="glyphicon glyphicon-chevron-left"></i></div>-->
@@ -271,10 +271,10 @@
                 <div class="wrapper">
 
                     <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
-                        <li role="presentation"  ng-class="{active: data.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="data.activeTab = -1" ><span> Wetlands </span></a></li>
+                        <li role="presentation"  ng-class="{active: wetlands.data.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="wetlands.data.activeTab = -1" ><span> Wetlands </span></a></li>
                         <!--<li role="presentation"><a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current</a></li>-->
-                        <li role="presentation" ng-if="value.id != null" ng-class="{active: data.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
-                        <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: data.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo()" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
+                        <li role="presentation" ng-if="wetlands.value.id != null" ng-class="{active: wetlands.data.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{wetlands.value.id}}" aria-controls="wetland_{{wetlands.value.id}}" role="tab" data-toggle="tab" ng-bind="wetlands.value.name"></a></li>
+                        <!--<li ng-repeat="(key, value) in wetlands.wetlands_opened" ng-class="{active: wetlands.data.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="wetlands.foo()" ng-click="wetlands.closeWetland(value.id)">&#10006;</span></a> </li>-->
                     </ul>
 
                 </div>
@@ -282,7 +282,7 @@
                 <!-- Tab panes -->
 
                 <div class="tab-content" style="top:93px">
-                    <div role="tabpanel" class="tab-pane" ng-class="{active: data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
+                    <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
@@ -334,7 +334,7 @@
 
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
-                             ng-click="WetlandsService.selectWetland(layer)" title="{{layer.title}}">
+                             ng-click="wetlands.WetlandsService.selectWetland(layer)" title="{{layer.title}}">
                             <!-- ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
                              data-trigger="manual" data-placement="left" data-container="body"
                              data-html="true" data-content="{{layer.abstract}}" ns-popover ns-popover-template="close"
@@ -355,16 +355,16 @@
                         </div>
                     </div>
 
-                    <div role="tabpanel" class="tab-pane geospatial_data" ng-if="value['id']"
-                         ng-class="{active: data.activeTab==1, noImage: value.data.image == null}" id="wetland_{{value.id}}">
-                        <!--<h2>{{WetlandsService.value.name}}</h2>-->
-                        <div ng-if="WetlandsService.value.data.image!=null" class="wetland-image">
-                            <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}">
-                                <img ng-src="{{value.data.image}}" width="100%"/>
+                    <div role="tabpanel" class="tab-pane geospatial_data" ng-if="wetlands.value['id']"
+                         ng-class="{active: wetlands.data.activeTab==1, noImage: wetlands.value.data.image == null}" id="wetland_{{wetlands.value.id}}">
+                        <!--<h2>{{wetlands.value.name}}</h2>-->
+                        <div ng-if="wetlands.value.data.image!=null" class="wetland-image">
+                            <a href="{{wetlands.value.data.image}}" class="fancybox" rel="wetland_{{wetlands.value.id}}" title="{{wetlands.value.data.image_desc}}">
+                                <img ng-src="{{wetlands.value.data.image}}" width="100%"/>
                             </a>
                             <div class="panoramio-wapi-tos wetland_image">
-                                <div class="desc">{{value.data.image_desc}}</div>
-                                <div ng-if="value.data.image.indexOf('panoramio') > -1">
+                                <div class="desc">{{wetlands.value.data.image_desc}}</div>
+                                <div ng-if="wetlands.value.data.image.indexOf('panoramio') > -1">
                                     <a href="http://www.panoramio.com" target="_blank">
                                         <img src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14">
                                     </a>
@@ -379,33 +379,33 @@
                                 <tab class="flaticon-bars" heading="" tooltip="Overview" tooltip-append-to-body="true" select="tracking.trackWetlandTab('overview')">
                                     <h4>Wetland specifications</h4>
                                     <div class="properties">
-                                        <strong>Country: </strong>{{value.country}}<br>
-                                        <strong>Scale: </strong>{{value.geo_scale}}<br>
-                                        <strong>Type: </strong>{{value.site_type}} | {{value.wetland_type}}<br>
-                                        <strong>Ecoregion: </strong>{{value.ecoregion}}<br>
-                                        <strong>Size: </strong>{{value.size}} ha<br>
+                                        <strong>Country: </strong>{{wetlands.value.country}}<br>
+                                        <strong>Scale: </strong>{{wetlands.value.geo_scale}}<br>
+                                        <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
+                                        <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
+                                        <strong>Size: </strong>{{wetlands.value.size}} ha<br>
                                     </div>
 
                                     <h4 style="margin-top:15px">Datasets</h4>
                                     <div class="buttons" style="text-align: center;margin-top: 20px;">
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()">
-                                            <div class="flaticon-business"></div>{{dataCount.indicators}} Indicators</button>
+                                            <div class="flaticon-business"></div>{{wetlands.dataCount.indicators}} Indicators</button>
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()">
-                                            <div class="flaticon-layers"></div>{{dataCount.products}} Products</button>
+                                            <div class="flaticon-layers"></div>{{wetlands.dataCount.products}} Products</button>
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()">
-                                            <div class="flaticon-space-satellite-station"></div>{{dataCount.satdata}} Satellite data</button>
+                                            <div class="flaticon-space-satellite-station"></div>{{wetlands.dataCount.satdata}} Satellite data</button>
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-1 a').click()">
-                                            <div class="flaticon-technology-1"></div>{{dataCount.images}} Photos</button>
+                                            <div class="flaticon-technology-1"></div>{{wetlands.dataCount.images}} Photos</button>
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology a').click()">
-                                            <div class="flaticon-technology"></div>{{dataCount.videos}} Videos</button>
+                                            <div class="flaticon-technology"></div>{{wetlands.dataCount.videos}} Videos</button>
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()">
-                                            <div class="flaticon-technology-2"></div>{{dataCount.externaldb}} External databases</button>
+                                            <div class="flaticon-technology-2"></div>{{wetlands.dataCount.externaldb}} External databases</button>
                                     </div>
                                 </tab>
 
                                 <!-- Indicators -->
                                 <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
-                                    <div ng-if="value.data.indicators.length == 0">No indicators available!</div>
+                                    <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
 
                                     <!--
                                     <ul class="items indicators">
@@ -427,13 +427,13 @@
 
                                 <!-- Products -->
                                 <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
-                                    <div ng-if="value.data.products.length == 0">No products available!</div>
+                                    <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
                                     <div class="remove-button-wrapper">
-                                        <div class="div-button" ng-click="removeAllLayers()">
+                                        <div class="div-button" ng-click="wetlands.removeAllLayers()">
                                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                                             <div class="div-button-text">Remove all layers</div>
                                         </div>
-                                        <div class="div-button" style="width: 225px;" ng-click="removeLayersByWetland(value.id)">
+                                        <div class="div-button" style="width: 225px;" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
                                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                                             <div class="div-button-text">Remove layers of this Wetland</div>
                                         </div>
@@ -442,7 +442,7 @@
                                     <ul class="items products">
 
                                         <accordion close-others="false">
-                                            <accordion-group ng-repeat="product in value.data.products"  heading="{{product.name}}" is-open="product.open">
+                                            <accordion-group ng-repeat="product in wetlands.value.data.products"  heading="{{product.name}}" is-open="product.open">
                                                 <accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
                                                     <span class="project">[SWOS]</span> {{product.name}}
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
@@ -453,10 +453,10 @@
                                                         <strong>Datasets:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">
                                                             <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
-                                                                <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
-                                                                <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                                 <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                                <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                             </div>
                                                         </div>
                                                         <div class="select" ng-if="product.layers.length == 0">
@@ -473,17 +473,17 @@
                                 <!-- Data -->
                                 <tab class="flaticon-space-satellite-station" heading="" tooltip="Satellite data" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
                                     <accordion close-others="false">
-                                        <accordion-group is-open="satdata_image">
+                                        <accordion-group is-open="wetlands.satdata_image">
                                             <accordion-heading>
                                                 Yearly coverage by sensor
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_image, 'glyphicon-chevron-right': !satdata_image}"></i>
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
                                             </accordion-heading>
-                                            <a href="/media/cache/satdata_{{value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{value.id}}_small.png" width="100%" /></a>
+                                            <a href="/media/cache/satdata_{{wetlands.value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{wetlands.value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{wetlands.value.id}}_small.png" width="100%" /></a>
                                         </accordion-group>
-                                        <accordion-group is-open="satdata_table">
+                                        <accordion-group is-open="wetlands.satdata_table">
                                             <accordion-heading>
                                                 Total amount by sensor
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': satdata_table, 'glyphicon-chevron-right': !satdata_table}"></i>
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_table, 'glyphicon-chevron-right': !wetlands.satdata_table}"></i>
                                             </accordion-heading>
                                             <table class="table data">
                                                 <tr>
@@ -493,10 +493,10 @@
                                                     <th>Start</th>
                                                     <th>End</th>
                                                 </tr>
-                                                <tr ng-if="!value.satdata">
+                                                <tr ng-if="!wetlands.value.satdata">
                                                     <td colspan="4">Loading...</td>
                                                 </tr>
-                                                <tr ng-repeat="data in value.satdata" >
+                                                <tr ng-repeat="data in wetlands.value.satdata" >
                                                     <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
                                                     <td>{{data.sensor}}</td>
                                                     <td>{{data.count}}</td>
@@ -595,10 +595,10 @@
 
                                 <!-- External databases -->
                                 <tab class="flaticon-technology-2" heading="" tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
-                                    <div ng-if="value.data.externaldb.length == 0">No external databases registered!</div>
-                                    <div ng-if="value.data.externaldb.length != 0"><!--{{ value.data.externaldb.length }} external databases registered!-->
-                                        <div ><input ng-model="externaldb_search.searchText" placeholder="Search for ...">
-                                            <input  type="checkbox" ng-model="externaldb_search.layer_exist" id="only_layer">
+                                    <div ng-if="wetlands.value.data.externaldb.length == 0">No external databases registered!</div>
+                                    <div ng-if="wetlands.value.data.externaldb.length != 0"><!--{{ wetlands.value.data.externaldb.length }} external databases registered!-->
+                                        <div ><input ng-model="wetlands.externaldb_search.searchText" placeholder="Search for ...">
+                                            <input  type="checkbox" ng-model="wetlands.externaldb_search.layer_exist" id="only_layer">
                                             <label for="only_layer" style="margin-top: 8px;" >
                                                 <div class="flaticon-layers" style="display: inline-block;"></div> Filter by maps
                                             </label>
@@ -606,13 +606,13 @@
                                     </div>
 
                                     <accordion>
-                                        <accordion-group ng-repeat="externaldb_group in value.data.externaldb" is-open="externaldb_group.open">
+                                        <accordion-group ng-repeat="externaldb_group in wetlands.value.data.externaldb" is-open="externaldb_group.open">
                                             <accordion-heading>
-                                                {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ).length }})
+                                                {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ).length }})
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
                                             </accordion-heading>
                                             <accordion>
-                                                <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:externaldb_search.searchText | filter:externaldb.layer_exist = externaldb_search.layer_exist ">
+                                                <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
                                                     <accordion-heading>
                                                         <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
@@ -627,10 +627,10 @@
                                                         <strong>Datasets:</strong>
                                                         <div ng-repeat="layer in externaldb.layers"
                                                              ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-                                                            <input ng-if="layerIdMap[layer.id] === undefined" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-                                                            <input ng-if="layerIdMap[layer.id]" type="checkbox" ng-click="addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                            <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                            <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
                                                             <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                            <swos-layer-controls ng-if="layers[layerIdMap[layer.id]]" layer-hash="{{ layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                            <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                         </div>
                                                     </div>
                                                 </accordion-group>

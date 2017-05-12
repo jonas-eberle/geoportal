@@ -62,6 +62,7 @@ angular.module('webgisApp')
             },
 
             selectWetland: function (wetland) {
+                var wetland_service = this;
                 /*
                  try {
                  _paq.push(['setCustomUrl', '/wetland/'+wetland.name]);
@@ -69,7 +70,7 @@ angular.module('webgisApp')
                  _paq.push(['trackPageView']);
                  } catch (err) {}
                  */
-                var wetland_service = this;
+
                 //wetland.id;
                 //$('#sidebar-tabs li').removeClass('active');
                 //$('#sidebar .tab-content .tab-pane').removeClass('active');
@@ -181,29 +182,32 @@ angular.module('webgisApp')
     })
 
     .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService, TrackingService) {
+        var wetlands = this;
 
-        $scope.addLayer = addLayer;
-        $scope.addLayerToMap = addLayerToMap;
-        // $scope.closeWetland = closeWetland;
-        $scope.data = WetlandsService.data;
-        $scope.dataCount = WetlandsService.dataCount;
-        $scope.externaldb_search = {'searchText': "", 'layer_exist': ""};
-        // $scope.foo = foo;
+        // TODO: remove from scope?
+        wetlands.addLayer = addLayer;
+
+        wetlands.addLayerToMap = addLayerToMap;
+        // wetlands.closeWetland = closeWetland;
+        wetlands.data = WetlandsService.data;
+        wetlands.dataCount = WetlandsService.dataCount;
+        wetlands.externaldb_search = {'searchText': "", 'layer_exist': ""};
+        // wetlands.foo = foo;
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
-        $scope.layerIdMap = {};
-        $scope.layers = mapviewer.layers;
+        wetlands.layerIdMap = {};
+        wetlands.layers = mapviewer.layers;
         var proceed = true;
-        $scope.removeAllLayers = removeAllLayers;
-        $scope.removeLayersByWetland = removeLayersByWetland;
-        $scope.satdata_image = true;
-        $scope.satdata_table = false;
-        //$scope.selectWetland = WetlandsService.selectWetland;
-        $scope.value = WetlandsService.value;
-        // $scope.wetlands_opened = {};
-        $scope.WetlandsService = WetlandsService;
+        wetlands.removeAllLayers = removeAllLayers;
+        wetlands.removeLayersByWetland = removeLayersByWetland;
+        wetlands.satdata_image = true;
+        wetlands.satdata_table = false;
+        // wetlands.selectWetland = WetlandsService.selectWetland;
+        wetlands.value = WetlandsService.value;
+        // wetlands.wetlands_opened = {};
+        wetlands.WetlandsService = WetlandsService;
 
         $scope.$on("mapviewer.alllayersremoved", function () {
-            $scope.layerIdMap = {};
+            wetlands.layerIdMap = {};
             attributionList();
         });
 
@@ -321,7 +325,7 @@ angular.module('webgisApp')
 
         $scope.$on("mapviewer.layerremoved", function ($broadcast, id) {
             if (id !== undefined && id !== null) {
-                $scope.layerIdMap[id] = undefined;
+                wetlands.layerIdMap[id] = undefined;
                 attributionList();
             }
         });
@@ -354,7 +358,7 @@ angular.module('webgisApp')
 
                 var layerObj = mapviewer.addLayer(layer).get("layerObj");
                 // store the mapping between django_id and hash-like id
-                $scope.layerIdMap[layerObj.django_id] = layerObj.id;
+                wetlands.layerIdMap[layerObj.django_id] = layerObj.id;
 
                 // check intersection, if no, please zoom to the new layer!
                 var mapExtent = mapviewer.map.getView().calculateExtent(mapviewer.map.getSize());
@@ -493,7 +497,7 @@ angular.module('webgisApp')
         // function closeWetland(id) {
         //     $('#link_wetland_' + id).remove();
         //     $('#wetland_' + id).remove();
-        //     delete $scope.wetlands_opened[id];
+        //     delete wetlands.wetlands_opened[id];
         //     $('.scroller-left').click();
         //     $('#link_wetland_list').click();
         // }
@@ -585,7 +589,7 @@ angular.module('webgisApp')
                     checkbox.checked = "";
                 }
             }
-            $scope.layerIdMap = {};
+            wetlands.layerIdMap = {};
         }
 
         function removeLayersByWetland(wetlandId) {
