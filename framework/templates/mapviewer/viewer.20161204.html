@@ -271,10 +271,10 @@
                 <div class="wrapper">
 
                     <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
-                        <li role="presentation"  ng-class="{active: WetlandsService.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="WetlandsService.activeTab = -1" ><span> Wetlands </span></a></li>
+                        <li role="presentation"  ng-class="{active: data.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="data.activeTab = -1" ><span> Wetlands </span></a></li>
                         <!--<li role="presentation"><a href="#current" aria-controls="current" role="tab" data-toggle="tab">Current</a></li>-->
-                        <li role="presentation" ng-if="value.id != null" ng-class="{active: WetlandsService.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
-                        <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: WetlandsService.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo()" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
+                        <li role="presentation" ng-if="value.id != null" ng-class="{active: data.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab" ng-bind="value.name"></a></li>
+                        <!--<li ng-repeat="(key, value) in wetlands_opened" ng-class="{active: data.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="foo()" ng-click="closeWetland(value.id)">&#10006;</span></a> </li>-->
                     </ul>
 
                 </div>
@@ -282,7 +282,7 @@
                 <!-- Tab panes -->
 
                 <div class="tab-content" style="top:93px">
-                    <div role="tabpanel" class="tab-pane" ng-class="{active: WetlandsService.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
+                    <div role="tabpanel" class="tab-pane" ng-class="{active: data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
@@ -334,26 +334,29 @@
 
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
-                             ng-click="WetlandsService.selectWetland(layer)"
-                             ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
-                             data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}"
-                             data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
+                             ng-click="WetlandsService.selectWetland(layer)" title="{{layer.title}}">
+                            <!-- ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
+                             data-trigger="manual" data-placement="left" data-container="body"
+                             data-html="true" data-content="{{layer.abstract}}" ns-popover ns-popover-template="close"
+                             ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme"
+                             ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
                             <div class="catalog-item">
                                 <div class="item_center">
                                     <div class="item_title">{{layer.name}}</div>
                                     <div class="item_desc">{{layer.country}}</div>
                                 </div>
                                 <div class="item_right">
-                                    <button tooltip-placement="bottom" tooltip="Show metadata" ng-click="showMetadata(layer)" type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" ><i class="fa fa-file-text-o fa-lg "></i></button>
+                                    <button type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" >
+                                        <!-- tooltip-placement="bottom" tooltip="Show metadata" ng-click="showMetadata(layer)" -->
+                                        <i class="fa fa-file-text-o fa-lg "></i>
+                                    </button>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
 
                     <div role="tabpanel" class="tab-pane geospatial_data" ng-if="value['id']"
-                         ng-class="{active: WetlandsService.activeTab==1, noImage: value.data.image == null}" id="wetland_{{value.id}}">
+                         ng-class="{active: data.activeTab==1, noImage: value.data.image == null}" id="wetland_{{value.id}}">
                         <!--<h2>{{WetlandsService.value.name}}</h2>-->
                         <div ng-if="WetlandsService.value.data.image!=null" class="wetland-image">
                             <a href="{{value.data.image}}" class="fancybox" rel="wetland_{{value.id}}" title="{{value.data.image_desc}}">

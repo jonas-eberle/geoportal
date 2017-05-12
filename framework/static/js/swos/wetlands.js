@@ -22,7 +22,9 @@ angular.module('webgisApp')
 
     .service('WetlandsService', function WetlandsService(djangoRequests, mapviewer, $rootScope, $q, mediaConfig) {
         var service = {
-            activeTab: -1,
+            data: {
+                activeTab: -1
+            },
             dataCount: {},
             externalImages: {},
             images: {},
@@ -136,7 +138,7 @@ angular.module('webgisApp')
                     });
                     wetland_service.selectFeature(wetland_service.wetland_found);
                     $rootScope.$broadcast("wetland_loaded");
-                    wetland_service.activeTab = 1;
+                    wetland_service.data.activeTab = 1;
 
                 }, function () {
                     bootbox.alert('<h1>Error while loading wetland details</h1>');
@@ -183,6 +185,7 @@ angular.module('webgisApp')
         $scope.addLayer = addLayer;
         $scope.addLayerToMap = addLayerToMap;
         // $scope.closeWetland = closeWetland;
+        $scope.data = WetlandsService.data;
         $scope.dataCount = WetlandsService.dataCount;
         $scope.externaldb_search = {'searchText': "", 'layer_exist': ""};
         // $scope.foo = foo;
@@ -194,6 +197,7 @@ angular.module('webgisApp')
         $scope.removeLayersByWetland = removeLayersByWetland;
         $scope.satdata_image = true;
         $scope.satdata_table = false;
+        //$scope.selectWetland = WetlandsService.selectWetland;
         $scope.value = WetlandsService.value;
         // $scope.wetlands_opened = {};
         $scope.WetlandsService = WetlandsService;
