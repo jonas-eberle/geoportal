@@ -182,10 +182,8 @@ angular.module('webgisApp')
     })
 
     .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService, TrackingService) {
+        var proceed = true;
         var wetlands = this;
-
-        // TODO: remove from scope?
-        wetlands.addLayer = addLayer;
 
         wetlands.addLayerToMap = addLayerToMap;
         // wetlands.closeWetland = closeWetland;
@@ -196,15 +194,13 @@ angular.module('webgisApp')
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
         wetlands.layerIdMap = {};
         wetlands.layers = mapviewer.layers;
-        var proceed = true;
         wetlands.removeAllLayers = removeAllLayers;
         wetlands.removeLayersByWetland = removeLayersByWetland;
         wetlands.satdata_image = true;
         wetlands.satdata_table = false;
-        // wetlands.selectWetland = WetlandsService.selectWetland;
+        wetlands.selectWetland = selectWetland;
         wetlands.value = WetlandsService.value;
         // wetlands.wetlands_opened = {};
-        wetlands.WetlandsService = WetlandsService;
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             wetlands.layerIdMap = {};
@@ -339,14 +335,6 @@ angular.module('webgisApp')
         });
 
         //--------------------------------------------------------------------------------------------------------------
-
-        function addLayer(product) {
-            if (product.layers.length > 0) {
-                mapviewer.addLayer(product.layers[0]);
-            } else {
-                alert('No layer found');
-            }
-        }
 
         function addLayerToMap(layer, $event) {
             var checkbox = $event.target;
@@ -605,6 +593,10 @@ angular.module('webgisApp')
                 mapviewer.removeLayer(this.id, layersMetaIndex);
             });
 
+        }
+
+        function selectWetland(layer) {
+            WetlandsService.selectWetland(layer);
         }
 
         function trackAddLayer(layer) {

@@ -334,7 +334,7 @@
 
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
-                             ng-click="wetlands.WetlandsService.selectWetland(layer)" title="{{layer.title}}">
+                             ng-click="wetlands.selectWetland(layer)" title="{{layer.title}}">
                             <!-- ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
                              data-trigger="manual" data-placement="left" data-container="body"
                              data-html="true" data-content="{{layer.abstract}}" ns-popover ns-popover-template="close"
