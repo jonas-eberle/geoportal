@@ -29,7 +29,7 @@ angular.module('webgisApp')
             olLayer  : null,
             value    : {},
             videos: {},
-            wetlands: [],
+            wetlandList: [],
             wetlands_without_geom: [],
 
             selectFeature: function (wetland) {
@@ -74,7 +74,6 @@ angular.module('webgisApp')
 
                 //if (!(wetland.id in $scope.wetlands_opened)) {
 
-                // wetland_service.value = [];
                 wetland_service.wetland_found = false;
 
                 return djangoRequests.request({
@@ -129,7 +128,7 @@ angular.module('webgisApp')
                     });
 
 
-                    $.each(wetland_service.wetlands, function () {
+                    $.each(wetland_service.wetlandList, function () {
                         if (this['id'] == wetland.id) {
                             wetland_service.wetland_found = this;
                             return false;
@@ -145,7 +144,7 @@ angular.module('webgisApp')
             },
             selectWetlandFromId: function (id) {
                 var wetland = null;
-                $.each(this.wetlands, function () {
+                $.each(this.wetlandList, function () {
                     if (this['id'] == id) {
                         wetland = this;
                         return false;
@@ -196,7 +195,6 @@ angular.module('webgisApp')
         $scope.satdata_image = true;
         $scope.satdata_table = false;
         $scope.value = WetlandsService.value;
-        $scope.wetlands = WetlandsService.wetlands;
         // $scope.wetlands_opened = {};
         $scope.WetlandsService = WetlandsService;
 
@@ -211,8 +209,7 @@ angular.module('webgisApp')
                 'method': "GET",
                 'url'   : '/swos/wetlands.geojson'
             }).then(function (data) {
-                // NOTE: here, we destroy the (Array) Object WetlandsService.wetlands and $scope.wetlands both point to!
-                $scope.wetlands = [];
+                WetlandsService.wetlandList = [];
                 var vectorSource = new ol.source.Vector();
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
                 $.each(features, function () {
@@ -221,7 +218,7 @@ angular.module('webgisApp')
                     var prop = this.getProperties();
                     // set show to true, when id is less or equal 9 OR at least one product
                     prop['show'] = (prop['id'] <= 9) || (prop['products'].length > 0);
-                    $scope.wetlands.push(prop);
+                    WetlandsService.wetlandList.push(prop);
 
                     if (prop["country"].includes("-")) {
                         var country_array = prop["country"].split("-");
@@ -259,10 +256,6 @@ angular.module('webgisApp')
                         WetlandsService.wetlands_without_geom.push(without_geom);
                     }
                 });
-
-                // NOTE: let WetlandsService.wetlands and $scope.wetlands both refer to the same (new) (Array) Object again
-                // removing the following line breaks Angular data binding!
-                WetlandsService.wetlands = $scope.wetlands;
 
                 vectorSource.addFeatures(features);
                 WetlandsService.olLayer = new ol.layer.Vector({
@@ -970,7 +963,7 @@ angular.module('webgisApp')
                     }
                 }, 0, false);
 
-                $.each(WetlandsService.wetlands, function () {
+                $.each(WetlandsService.wetlandList, function () {
                     if (this['id'] == current_wetland_id) {
                         WetlandsService.selectFeature(this);
                         return false;
