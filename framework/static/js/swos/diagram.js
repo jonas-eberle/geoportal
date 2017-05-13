@@ -152,7 +152,10 @@ angular.module('webgisApp')
         }
 
         function add_no_data_level_clc(size, id_name_color_clc) {
-            
+
+            var no_data_color = "#fcfcfc";
+            var no_date_text = "";
+
             for (var key2 in size) {
                 var key_level_higher = key2.slice(0, -3);
                 if (size[key_level_higher]) {
@@ -160,23 +163,23 @@ angular.module('webgisApp')
                     size[key_level_higher + "99"] = size[key_level_higher];
                     size[key_level_higher + "999"] = size[key_level_higher];
 
-                    id_name_color_clc[key_level_higher + "9"] = ['no', 'white'];
-                    id_name_color_clc[key_level_higher + "99"] = ['no', 'white'];
-                    id_name_color_clc[key_level_higher + "999"] = ['no', 'white'];
+                    id_name_color_clc[key_level_higher + "9"] = [no_date_text, no_data_color];
+                    id_name_color_clc[key_level_higher + "99"] = [no_date_text, no_data_color];
+                    id_name_color_clc[key_level_higher + "999"] = [no_date_text, no_data_color];
                 }
                 var key_level_higher = key2.slice(0, -2);
                 if (size[key_level_higher]) {
                     size[key_level_higher + "9"] = size[key_level_higher];
                     size[key_level_higher + "99"] = size[key_level_higher];
 
-                    id_name_color_clc[key_level_higher + "9"] = ['no', 'white'];
-                    id_name_color_clc[key_level_higher + "99"] = ['no', 'white'];
+                    id_name_color_clc[key_level_higher + "9"] = [no_date_text, no_data_color];
+                    id_name_color_clc[key_level_higher + "99"] = [no_date_text, no_data_color];
                 }
                 var key_level_higher = key2.slice(0, -1);
                 if (size[key_level_higher]) {
                     size[key_level_higher + "9"] = size[key_level_higher];
 
-                    id_name_color_clc[key_level_higher + "9"] = ['no', 'white'];
+                    id_name_color_clc[key_level_higher + "9"] = [no_date_text, no_data_color];
                 }
             }
             return [size,id_name_color_clc] ;

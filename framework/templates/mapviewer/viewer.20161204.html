@@ -37,6 +37,8 @@
     <link href="{% static "lib/ol.css" %}?v=41" rel="stylesheet" />
 
     <link href="{% static "css/anno.css" %}" rel="stylesheet" />
+    <link href="{% static "css/nv.d3.min.css" %}" rel="stylesheet" />
+
 
     <link href="{% static "css/swos.css" %}?v=20170510_v2" rel="stylesheet">
 
@@ -675,9 +677,9 @@
     <script src="{% static "lib/Chart.min.js" %}"></script>
     <script src="{% static "lib/angular-chart.min.js" %}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
-    <script src="http://krispo.github.io/angular-nvd3/bower_components/nvd3/build/nv.d3.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min.js"></script>
+    <script src="{% static "lib/d3.min.js" %}/"></script>
+    <script src="{% static "lib/nv.d3_adjusted_swos.js" %}/"></script>
+    <script src="{% static "lib/angular-nvd3.min.js" %}"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
 
