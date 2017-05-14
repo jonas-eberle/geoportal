@@ -176,6 +176,7 @@ angular.module('webgisApp')
                     id_name_color_clc[key_level_higher + "99"] = [no_data_text, no_data_color];
                 }
                 var key_level_higher = key2.slice(0, -1);
+
                 if (size[key_level_higher]) {
                     size[key_level_higher + "9"] = size[key_level_higher];
 
@@ -205,6 +206,7 @@ angular.module('webgisApp')
                 if ((key.length == 4 && key.toString().indexOf('10') === -1) || (key.length == 5 && key.toString().indexOf('10') === 0)) {
 
                     var new_key = key.slice(0, -1);
+                    if(new_key == 513){new_key = 512};
                     var data_new = {
                         "name": id_name_color_clc[key][0],
                         "color": id_name_color_clc[key][1],
@@ -250,6 +252,7 @@ angular.module('webgisApp')
                     if (data_4[key] && data_4_size_count[key] == 1) {
                         data_new.children = data_4[key];
                     }
+
 
                     if (!data_3[new_key]) {
                         data_3[new_key] = [];

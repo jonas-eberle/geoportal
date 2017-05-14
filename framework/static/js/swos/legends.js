@@ -92,7 +92,6 @@ id_name_color['CLC'][5127] = ['5.1.2.7 Permanent saline/brackish/alkaline lakes 
 id_name_color['CLC'][5128] = ['5.1.2.8 Seasonal/intermittent saline/brackish/alkaline lakes and flats with aquatic bed vegetation', 'rgb(28,99,138)'];
 id_name_color['CLC'][5129] = ['5.1.2.9 Aquaculture (e.g., fish/shrimp) ponds', 'rgb(0,101,199)'];
 id_name_color['CLC'][5130] = ['5.1.3.0 Ponds, includes farm ponds, stock ponds, small tanks, (generally below 8 ha)', 'rgb(39,127,170)'];
-id_name_color['CLC'][513] = ['test', "green"];
 id_name_color['CLC'][5131] = ['5.1.3.1 Water storage areas, reservoirs/barrages/dams/impoundments (generally over 8 ha)', 'rgb(0,0,203)'];
 id_name_color['CLC'][5132] = ['5.1.3.2 Wastewater treatment areas, sewage farms, settling ponds, oxidation basins, etc', 'rgb(0,39,144)'];
 id_name_color['CLC'][52] = ['5.2 Marine waters', 'rgb(122,245,202)'];
@@ -220,8 +219,3 @@ id_name_color['MAES'][9312] = ['9.3.1.2 Artificial water bodies', 'rgb(128,242,2
 id_name_color['MAES'][10] = ['10 Marine (other)', 'rgb(230,242,255)'];
 id_name_color['MAES'][101] = ['10.1 Marine (other)', 'rgb(230,242,255)'];
 id_name_color['MAES'][1011] = ['10.1.1 Marine (other)', 'rgb(230,242,255)'];
-
-
-var layer_legend_color_maes = [];
-var layer_legend_color_clc = [];
-var layer_legend_color_rest = [];
