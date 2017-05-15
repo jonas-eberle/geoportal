@@ -130,9 +130,9 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs"><i
+                        <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs"><i
+                        <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
                         <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>

@@ -34,7 +34,7 @@ angular.module('webgisApp')
             'resolutions': undefined,
             'zoom_init': 4,
             'zoom_min': 0,
-            'zoom_max': 28,
+            'zoom_max': 20,
             'data': {
                 'layersCount': 0,
                 'addexternallayer': false
@@ -51,7 +51,10 @@ angular.module('webgisApp')
                     draggable: false,
                     disableDoubleClickZoom: true,
                     scrollwheel: false,
-                    streetViewControl: false
+                    streetViewControl: false,
+                    maxZoom: this.zoom_max,
+                    minZoom: this.zoom_min,
+                    zoom: this.zoom_init
                 });
 
                 var view = new ol.View({
@@ -91,7 +94,7 @@ angular.module('webgisApp')
                         mouseWheelZoom: false
                     }).extend([
                         new ol.interaction.DragPan({kinetic: null}),
-                        new ol.interaction.MouseWheelZoom({duration: 0})
+                        new ol.interaction.MouseWheelZoom({duration: 0, constrainResolution: true})
                     ])
                 });
                 //console.log(id);
@@ -1029,9 +1032,14 @@ angular.module('webgisApp')
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
         }
 
-        function zoomIn() {
-            //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() / 2);
-            mapviewer.map.getView().setZoom(mapviewer.map.getView().getZoom()+1);
+        function zoomIn(event) {
+            var currentZoomLevel = mapviewer.map.getView().getZoom();
+            if (currentZoomLevel < mapviewer.zoom_max) {
+                mapviewer.map.getView().setZoom(currentZoomLevel + 1);
+
+                event.target.disabled = (currentZoomLevel + 1 === mapviewer.zoom_max);
+                $('#zoomOutButton').attr('disabled', false);
+            }
         }
 
         function zoomMaxExtent() {
@@ -1040,9 +1048,14 @@ angular.module('webgisApp')
             );
         }
 
-        function zoomOut() {
-            //mapviewer.map.getView().setResolution(mapviewer.map.getView().getResolution() * 2);
-            mapviewer.map.getView().setZoom(mapviewer.map.getView().getZoom()-1);
+        function zoomOut(event) {
+            var currentZoomLevel = mapviewer.map.getView().getZoom();
+            if (currentZoomLevel > mapviewer.zoom_min) {
+                mapviewer.map.getView().setZoom(currentZoomLevel - 1);
+
+                event.target.disabled = (currentZoomLevel - 1 === mapviewer.zoom_min);
+                $('#zoomInButton').attr('disabled', false);
+            }
         }
     })
     .controller('MapSettingsCtrl', function($scope, mapviewer, djangoRequests, $modal){
