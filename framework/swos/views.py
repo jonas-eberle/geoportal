@@ -223,7 +223,7 @@ class Panoramio(APIView):
         start = int(request.query_params.get('start', 0))
         max = int(request.query_params.get('max', -1))
         photos = wetland.panoramio(start=start, max=max)
-        return Response(photos);
+        return Response(photos)
 
 class WetlandImages(APIView):
 
