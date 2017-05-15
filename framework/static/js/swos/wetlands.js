@@ -34,31 +34,32 @@ angular.module('webgisApp')
             wetlandList: [],
             wetlands_without_geom: [],
 
-            selectFeature: function (wetland) {
-                var extent = wetland.geometry.getExtent();
-                //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
-                //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
-                //mapviewer.map.beforeRender(pan, zoom)
-                mapviewer.map.getView().fit(extent, {size: mapviewer.map.getSize()});
+            selectFeature: function (id) {
+                if (this.wetlandList[id]) {
+                    var extent = this.wetlandList[id].geometry.getExtent();
+                    //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
+                    //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
+                    //mapviewer.map.beforeRender(pan, zoom)
+                    mapviewer.map.getView().fit(extent, {size: mapviewer.map.getSize()});
 
-                var wetlandFeature = this.olLayer.getSource().getFeatureById(wetland.id);
-                wetlandFeature.setStyle(new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: "#000000",
-                        width: 5
-                    })
-                }));
+                    var wetlandFeature = this.olLayer.getSource().getFeatureById(id);
+                    wetlandFeature.setStyle(new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: "#000000",
+                            width: 5
+                        })
+                    }));
 
-                mapviewer.selectInteraction.getFeatures().clear();
-                mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
+                    mapviewer.selectInteraction.getFeatures().clear();
+                    mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
 
-                // reset style of previously selected feature
-                if (mapviewer.currentFeature !== null && mapviewer.currentFeature.getId() !== wetlandFeature.getId()) {
-                    mapviewer.currentFeature.setStyle(null);
+                    // reset style of previously selected feature
+                    if (mapviewer.currentFeature !== null && mapviewer.currentFeature.getId() !== wetlandFeature.getId()) {
+                        mapviewer.currentFeature.setStyle(null);
+                    }
+                    // save the currently selected feature
+                    mapviewer.currentFeature = wetlandFeature;
                 }
-                // save the currently selected feature
-                mapviewer.currentFeature = wetlandFeature;
-
             },
 
             selectWetland: function (wetland) {
@@ -76,8 +77,6 @@ angular.module('webgisApp')
                 //$('#sidebar .tab-content .tab-pane').removeClass('active');
 
                 //if (!(wetland.id in $scope.wetlands_opened)) {
-
-                wetland_service.wetland_found = false;
 
                 return djangoRequests.request({
                     'method': "GET",
@@ -131,13 +130,7 @@ angular.module('webgisApp')
                     });
 
 
-                    $.each(wetland_service.wetlandList, function () {
-                        if (this['id'] == wetland.id) {
-                            wetland_service.wetland_found = this;
-                            return false;
-                        }
-                    });
-                    wetland_service.selectFeature(wetland_service.wetland_found);
+                    wetland_service.selectFeature(wetland.id);
                     $rootScope.$broadcast("wetland_loaded");
                     wetland_service.data.activeTab = 1;
 
@@ -146,14 +139,8 @@ angular.module('webgisApp')
                 });
             },
             selectWetlandFromId: function (id) {
-                var wetland = null;
-                $.each(this.wetlandList, function () {
-                    if (this['id'] == id) {
-                        wetland = this;
-                        return false;
-                    }
-                });
-                if (wetland) {
+                var wetland;
+                if (wetland = this.wetlandList[id]) {
                     return this.selectWetland(wetland);
                 }
                 return $q.reject();
@@ -222,7 +209,7 @@ angular.module('webgisApp')
                     var prop = this.getProperties();
                     // set show to true, when id is less or equal 9 OR at least one product
                     prop['show'] = (prop['id'] <= 9) || (prop['products'].length > 0);
-                    WetlandsService.wetlandList.push(prop);
+                    WetlandsService.wetlandList[ prop['id'] ] = prop;
 
                     if (prop["country"].includes("-")) {
                         var country_array = prop["country"].split("-");
@@ -963,12 +950,7 @@ angular.module('webgisApp')
                     }
                 }, 0, false);
 
-                $.each(WetlandsService.wetlandList, function () {
-                    if (this['id'] == current_wetland_id) {
-                        WetlandsService.selectFeature(this);
-                        return false;
-                    }
-                });
+                WetlandsService.selectFeature(current_wetland_id);
             }
         }
 
