@@ -1,11 +1,17 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('webgisApp')
-    .service('csw', function csw(djangoRequests, $rootScope, $modal) {
+    angular.module('webgisApp')
+        .service('csw', csw)
+        .controller('SearchBoxCtrl', SearchBoxCtrl)
+        .controller('SearchResultsModalCtrl', SearchResultsModalCtrl);
+
+    csw.$inject = ['djangoRequests', '$modal'];
+    function csw(djangoRequests, $modal) {
         var service = {
             'server': null,
             'setMapViewer': function(id) {
-              this.server = id;
+                this.server = id;
             },
             'results': {
                 totalCount: 0,
@@ -60,8 +66,10 @@ angular.module('webgisApp')
             }
         };
         return service;
-    })
-    .controller('SearchBoxCtrl', function(csw){
+    }
+
+    SearchBoxCtrl.$inject = ['csw'];
+    function SearchBoxCtrl(csw){
         var sb = this;
 
         sb.search = search;
@@ -73,8 +81,10 @@ angular.module('webgisApp')
             csw.setMapViewer(mapId);
             csw.search(sb.text);
         }
-    })
-    .controller('SearchResultsModalCtrl', function (csw, mapviewer, $modal, $modalInstance, djangoRequests, title, results, searchData) {
+    }
+
+    SearchResultsModalCtrl.$inject = ['csw', 'mapviewer', '$modal', '$modalInstance', 'djangoRequests', 'title', 'results', 'searchData'];
+    function SearchResultsModalCtrl(csw, mapviewer, $modal, $modalInstance, djangoRequests, title, results, searchData) {
         var srm = this;
 
         srm.addLayerToMap = addLayerToMap;
@@ -125,4 +135,5 @@ angular.module('webgisApp')
             });
 
         }
-    });
+    }
+})();

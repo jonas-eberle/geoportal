@@ -1,26 +1,44 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('webgisApp')
+    angular.module('webgisApp')
+        .config(['$routeProvider', function($routeProvider) {
+            $routeProvider
+                .when('/wetland/:wetland_id', {controller: 'WetlandsCtrl'})
+                .when('/wetland/:wetland_id/:type_name', {controller: 'WetlandsCtrl'})
+                .when('/wetland/:wetland_id/:type_name/:layer_id', {controller: 'WetlandsCtrl'})
+            ;
+        }])
+        .config(['$locationProvider', function($locationProvider) {
+            $locationProvider.hashPrefix('');
+        }])
+        .constant('mediaConfig', {
+            imagesPerPage: 24,
+            videosPerPage: 9
+        })
+        .service('WetlandsService', WetlandsService)
+        .service('TrackingService', TrackingService)
+        .controller('WetlandsCtrl', WetlandsCtrl)
+        .controller('WetlandsFilterCtrl', WetlandsFilterCtrl)
+        .controller('TrackingCtrl', TrackingCtrl)
+        .controller('WetlandsImageCtrl', WetlandsImageCtrl)
+        .controller('WetlandsVideoCtrl', WetlandsVideoCtrl)
+        .controller('IntroductionTourCtrl', IntroductionTourCtrl)
+        // .directive('repeatDone', function () {
+        //     return function (scope, element, attrs) {
+        //         scope.$eval(attrs.repeatDone);
+        //     }
+        // })
+        .directive('swosLayerControls', swosLayerControls)
+        //copied from https://github.com/lorenooliveira/ng-text-truncate/blob/master/ng-text-truncate.js
+        .directive("ngTextTruncate", ngTextTruncate)
+        .factory("ValidationServices", ValidationServices)
+        .factory("CharBasedTruncation", CharBasedTruncation)
+        .factory("WordBasedTruncation", WordBasedTruncation)
+    ;
 
-    .config(['$routeProvider', function ($routeProvider) {
-        $routeProvider
-            .when('/wetland/:wetland_id', {controller: 'WetlandsCtrl'})
-            .when('/wetland/:wetland_id/:type_name', {controller: 'WetlandsCtrl'})
-            .when('/wetland/:wetland_id/:type_name/:layer_id', {controller: 'WetlandsCtrl'})
-        ;
-
-    }])
-
-    .config(function ($locationProvider) {
-        $locationProvider.hashPrefix('');
-    })
-
-    .constant('mediaConfig', {
-        imagesPerPage: 24,
-        videosPerPage: 9
-    })
-
-    .service('WetlandsService', function WetlandsService(djangoRequests, mapviewer, $rootScope, $q, mediaConfig) {
+    WetlandsService.$inject = ['djangoRequests', 'mapviewer', '$rootScope', '$q', 'mediaConfig'];
+    function WetlandsService(djangoRequests, mapviewer, $rootScope, $q, mediaConfig) {
         var service = {
             data: {
                 activeTab: -1
@@ -147,8 +165,10 @@ angular.module('webgisApp')
             }
         };
         return service;
-    })
-    .service('TrackingService', function TrackingService() {
+    }
+
+    TrackingService.$inject = [];
+    function TrackingService() {
         var service = {
             trackEvent: function(category, action, name) {
                 try {
@@ -166,9 +186,10 @@ angular.module('webgisApp')
             }
         };
         return service;
-    })
+    }
 
-    .controller('WetlandsCtrl', function ($scope, $compile, mapviewer, djangoRequests, $modal, $rootScope, $cookies, Attribution, $routeParams, $q, $timeout, WetlandsService, TrackingService, $location) {
+    WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location'];
+    function WetlandsCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location) {
         var proceed = true;
         var wetlands = this;
 
@@ -589,8 +610,10 @@ angular.module('webgisApp')
                 'Map: ' + layer.title
             );
         }
-    })
-    .controller('WetlandsFilterCtrl', function WetlandsFilterCtrl(WetlandsService) {
+    }
+
+    WetlandsFilterCtrl.$inject = ['WetlandsService'];
+    function WetlandsFilterCtrl(WetlandsService) {
         var wetlandsFilter = this;
 
         wetlandsFilter.filtered_country = '';
@@ -741,8 +764,10 @@ angular.module('webgisApp')
                 wetlandsFilter.sortOrder = 'name';
             }
         }
-    })
-    .controller('TrackingCtrl', function TrackingCtrl(TrackingService, WetlandsService, $location) {
+    }
+
+    TrackingCtrl.$inject = ['TrackingService', 'WetlandsService', '$location'];
+    function TrackingCtrl(TrackingService, WetlandsService, $location) {
         var tracking = this;
 
         tracking.trackProduct = trackProduct;
@@ -773,8 +798,10 @@ angular.module('webgisApp')
             $location.path('/wetland/' + WetlandsService.value.id + '/' + type);
             TrackingService.trackPageView('/wetland/' + WetlandsService.value.name + '/' + type, WetlandsService.value.name + '/' + type);
         }
-    })
-    .controller('WetlandsImageCtrl', function WetlandsImageCtrl(WetlandsService, djangoRequests, mediaConfig) {
+    }
+
+    WetlandsImageCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mediaConfig'];
+    function WetlandsImageCtrl(WetlandsService, djangoRequests, mediaConfig) {
         var wetlandsImage = this;
 
         wetlandsImage.externalImages = WetlandsService.externalImages;
@@ -807,8 +834,10 @@ angular.module('webgisApp')
         function moreExternalImages(action) {
             loadMore(action, true);
         }
-    })
-    .controller('WetlandsVideoCtrl', function WetlandsVideoCtrl(WetlandsService, djangoRequests, mediaConfig) {
+    }
+
+    WetlandsVideoCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mediaConfig'];
+    function WetlandsVideoCtrl(WetlandsService, djangoRequests, mediaConfig) {
         var wetlandsVideo = this;
 
         wetlandsVideo.loadMoreVideos = loadMoreVideos;
@@ -827,8 +856,10 @@ angular.module('webgisApp')
                 Array.prototype.push.apply(wetlandsVideo.videos.videos, data);
             });
         }
-    })
-    .controller('IntroductionTourCtrl', function IntroductionTourCtrl($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope, TrackingService, $location) {
+    }
+
+    IntroductionTourCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', '$timeout', '$cookies', '$rootScope', 'TrackingService', '$location'];
+    function IntroductionTourCtrl($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope, TrackingService, $location) {
         var introTour = this;
 
         introTour.startAnno = startAnno;
@@ -1833,13 +1864,10 @@ angular.module('webgisApp')
         function trackIntroductionTour(title, step) {
             TrackingService.trackPageView('/introduction/' + step + '_' + title.toLowerCase(), 'Introduction Tour: ' + title + ' (' + step + ')');
         }
-    })
-    // .directive('repeatDone', function () {
-    //     return function (scope, element, attrs) {
-    //         scope.$eval(attrs.repeatDone);
-    //     }
-    // })
-    .directive('swosLayerControls', ["mapviewer", function(mapviewer) {
+    }
+
+    swosLayerControls.$inject = ['mapviewer'];
+    function swosLayerControls(mapviewer) {
         var directive = {
             restrict: "E",
             scope: true,
@@ -1859,10 +1887,10 @@ angular.module('webgisApp')
             // TODO: no need to pass the whole layer to the view, extract only required properties
             scope.slc.layer = mapviewer.getLayerById(iAttr.layerHash).get("layerObj");
         }
-    }])
-    //copied from https://github.com/lorenooliveira/ng-text-truncate/blob/master/ng-text-truncate.js
-    .directive("ngTextTruncate", ["$compile", "ValidationServices", "CharBasedTruncation", "WordBasedTruncation",
-        function ($compile, ValidationServices, CharBasedTruncation, WordBasedTruncation) {
+    }
+
+    ngTextTruncate.$inject = ['ValidationServices', 'CharBasedTruncation', 'WordBasedTruncation'];
+    function ngTextTruncate(ValidationServices, CharBasedTruncation, WordBasedTruncation) {
             return {
                 restrict  : "A",
                 scope     : {
@@ -1879,7 +1907,7 @@ angular.module('webgisApp')
 
                     $scope.useToggling = $attrs.ngTtNoToggling === undefined;
                 },
-                link      : function ($scope, $element, $attrs) {
+                link      : function ($scope, $element) {
                     $scope.open = false;
 
                     ValidationServices.failIfWrongThreshouldConfig($scope.charsThreshould, $scope.wordsThreshould);
@@ -1907,8 +1935,9 @@ angular.module('webgisApp')
                 }
             };
         }
-    ])
-    .factory("ValidationServices", function () {
+
+    ValidationServices.$inject = [];
+    function ValidationServices() {
         return {
             failIfWrongThreshouldConfig: function (firstThreshould, secondThreshould) {
                 if ((!firstThreshould && !secondThreshould) || (firstThreshould && secondThreshould)) {
@@ -1916,8 +1945,10 @@ angular.module('webgisApp')
                 }
             }
         };
-    })
-    .factory("CharBasedTruncation", ["$compile", function ($compile) {
+    }
+
+    CharBasedTruncation.$inject = ['$compile'];
+    function CharBasedTruncation($compile) {
         return {
             truncationApplies: function ($scope, threshould) {
                 return $scope.text.length > threshould;
@@ -1948,8 +1979,10 @@ angular.module('webgisApp')
                 }
             }
         };
-    }])
-    .factory("WordBasedTruncation", ["$compile", function ($compile) {
+}
+
+    WordBasedTruncation.$inject = ['$compile'];
+    function WordBasedTruncation($compile) {
         return {
             truncationApplies: function ($scope, threshould) {
                 return $scope.text.split(" ").length > threshould;
@@ -1981,9 +2014,8 @@ angular.module('webgisApp')
                 }
             }
         };
-    }])
-;
-
+    }
+})();
 
 // // copied from http://www.bootply.com/l2ChB4vYmC
 // var scrollBarWidths = 40;

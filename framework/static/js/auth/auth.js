@@ -1,7 +1,44 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('webgisApp')
-    .service('djangoAuth', function djangoAuth($q, $http, $cookies, $rootScope, djangoRequests) {
+    angular.module('webgisApp')
+        .service('djangoAuth', djangoAuth)
+        .config(routeConfig)
+        .controller('LoginCtrl', LoginCtrl)
+        .controller('RegisterUserCtrl', RegisterUserCtrl)
+        .controller('ResetPasswordCtrl', ResetPasswordCtrl)
+        .controller('NewPasswordCtrl', NewPasswordCtrl)
+        .controller('NewPasswordInstanceCtrl', NewPasswordInstanceCtrl)
+        .controller('EditProfileCtrl', EditProfileCtrl)
+        .run(['djangoAuth', function(djangoAuth) {
+            djangoAuth.initialize('/authapi/rest', true);
+        }]);
+
+    routeConfig.$inject = ['$routeProvider'];
+    function routeConfig($routeProvider) {
+        $routeProvider
+            .when('/verify_success', {
+                template: '',
+                controller: 'RouteAlertCtrl',
+                alertType: 'success',
+                alertMsg: 'Verification successful. Please use the log in form.'
+            })
+            .when('/verify_error', {
+                template: '',
+                controller: 'RouteAlertCtrl',
+                alertType: 'danger',
+                alertMsg: 'An error occurred during email verification!'
+            })
+            .when('/password-reset-confirm/:uid/:token', {
+                template: '',
+                bindToController: true,
+                controller: 'NewPasswordCtrl',
+                controllerAs: 'np'
+            });
+    }
+
+    djangoAuth.$inject = ['$q', '$http', '$cookies', '$rootScope', 'djangoRequests'];
+    function djangoAuth($q, $http, $cookies, $rootScope, djangoRequests) {
         // AngularJS will instantiate a singleton by calling "new" on this function
         var service = {
             /* START CUSTOMIZATION HERE */
@@ -190,29 +227,10 @@ angular.module('webgisApp')
 
         };
         return service;
-    })
-    .config(function ($routeProvider) {
-        $routeProvider
-            .when('/verify_success', {
-                template: '',
-                controller: 'RouteAlertCtrl',
-                alertType: 'success',
-                alertMsg: 'Verification successful. Please use the log in form.'
-            })
-            .when('/verify_error', {
-                template: '',
-                controller: 'RouteAlertCtrl',
-                alertType: 'danger',
-                alertMsg: 'An error occurred during email verification!'
-            })
-            .when('/password-reset-confirm/:uid/:token', {
-                template: '',
-                bindToController: true,
-                controller: 'NewPasswordCtrl',
-                controllerAs: 'np'
-            });
-    })
-    .controller('LoginCtrl', function ($scope, $location, djangoAuth, $modal) {
+    }
+
+    LoginCtrl.$inject = ['$scope', 'djangoAuth', '$modal'];
+    function LoginCtrl($scope, djangoAuth, $modal) {
         var lc = this;
 
         lc.authenticated = false;
@@ -303,8 +321,8 @@ angular.module('webgisApp')
                         controllerAs: 'mi',
                         template: '<div modal-draggable class="modal-header"><h1>Error while logging in!</h1></div><div class="modal-body">' + errors + '</div><div class="modal-footer"><button class="btn btn-primary" ng-click="mi.close()">Close</button></div>',
                         resolve: {
-                                data: function() {return {};},
-                                title: function() {return '';}
+                            data: function() {return {};},
+                            title: function() {return '';}
                         }
                     });
                 });
@@ -334,8 +352,10 @@ angular.module('webgisApp')
                 templateUrl: subdir+'/static/includes/auth-reset-password.html'
             });
         }
-    })
-    .controller('RegisterUserCtrl', function ($modalInstance, djangoAuth) {
+    }
+
+    RegisterUserCtrl.$inject = ['$modalInstance', 'djangoAuth'];
+    function RegisterUserCtrl($modalInstance, djangoAuth) {
         var ru = this;
 
         ru.close = $modalInstance.close;
@@ -376,8 +396,10 @@ angular.module('webgisApp')
                     bootbox.alert('<h2>Error while registration!</h2><ul>' + errors + '</ul>');
                 });
         }
-    })
-    .controller('ResetPasswordCtrl', function ($modalInstance, djangoAuth, djangoRequests) {
+    }
+
+    ResetPasswordCtrl.$inject = ['$modalInstance', 'djangoAuth', 'djangoRequests'];
+    function ResetPasswordCtrl($modalInstance, djangoAuth, djangoRequests) {
         var rp = this;
 
         rp.close = $modalInstance.close;
@@ -396,8 +418,10 @@ angular.module('webgisApp')
                 bootbox.alert(error.email);
             });
         }
-    })
-    .controller('NewPasswordCtrl', function ($modal, $routeParams) {
+    }
+
+    NewPasswordCtrl.$inject = ['$modal', '$routeParams'];
+    function NewPasswordCtrl($modal, $routeParams) {
         var np = this;
 
         np.token = $routeParams.token;
@@ -425,10 +449,12 @@ angular.module('webgisApp')
                 controllerAs: 'npi'
             });
         }
-    })
-    .controller('NewPasswordInstanceCtrl', function ($modalInstance, uid, token, djangoAuth, AlertService) {
+    }
+
+    NewPasswordInstanceCtrl.$inject = ['$modalInstance', 'uid', 'token', 'djangoAuth', 'AlertService'];
+    function NewPasswordInstanceCtrl($modalInstance, uid, token, djangoAuth, AlertService) {
         var npi = this;
-        
+
         npi.changePassword = changePassword;
         npi.close = $modalInstance.close;
         npi.uid = uid;
@@ -452,8 +478,10 @@ angular.module('webgisApp')
                 bootbox.alert(error);
             });
         }
-    })
-    .controller('EditProfileCtrl', function ($modalInstance, djangoAuth, AlertService) {
+    }
+
+    EditProfileCtrl.$inject = ['$modalInstance', 'djangoAuth', 'AlertService'];
+    function EditProfileCtrl($modalInstance, djangoAuth, AlertService) {
         var ep = this;
 
         ep.close = $modalInstance.close;
@@ -504,7 +532,5 @@ angular.module('webgisApp')
                 });
             }
         }
-    })
-    .run(function (djangoAuth) {
-        djangoAuth.initialize('/authapi/rest', true);
-    });
+    }
+})();

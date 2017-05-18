@@ -1,5 +1,4 @@
-'use strict';
-
+// TODO: move into config objects
 var fill = new ol.style.Fill({
     //color: 'rgba(12, 216, 247, 1)'
     color: 'rgba(255, 255, 255, 0.6)'
@@ -10,13 +9,37 @@ var stroke = new ol.style.Stroke({
     width: 1.25
 });
 
-var popup;
-var stationPopup;
 
-//var mapColors = {};
+(function() {
+    'use strict';
 
-angular.module('webgisApp')
-    .service('mapviewer', function mapviewer(djangoRequests, $rootScope) {
+    var popup;
+    var stationPopup;
+
+    //var mapColors = {};
+
+    angular.module('webgisApp')
+        .service('mapviewer', mapviewer)
+        .service('Attribution', Attribution)
+        .controller('MapViewerCtrl', MapViewerCtrl)
+        .controller('MapSettingsCtrl', MapSettingsCtrl)
+        .controller('MapCatalogCtrl', MapCatalogCtrl)
+        .controller('MapCurrentLayersCtrl', MapCurrentLayersCtrl)
+        .controller('MapAddOwnLayerCtrl', MapAddOwnLayerCtrl)
+        .controller('MapCurrentLayersTabCtrl', MapCurrentLayersTabCtrl)
+        .controller('ClimateChartCtrl', ClimateChartCtrl)
+        .directive('chart', chart)
+        .filter('reverse', function() {
+            return function(items) {
+                return items.slice().reverse();
+            };
+        })
+        .run(['mapviewer', function(mapviewer) {
+            mapviewer.initialize(mapId, 'map', true); //id of mapviewer
+        }]);
+
+    mapviewer.$inject = ['djangoRequests', '$rootScope'];
+    function mapviewer(djangoRequests, $rootScope) {
         var service = {
             'baseLayers': [],
             'layers': {},
@@ -641,8 +664,10 @@ angular.module('webgisApp')
             }
         };
         return service;
-    })
-    .service('Attribution', function ($rootScope) {
+    }
+
+    Attribution.$inject = ['$rootScope'];
+    function Attribution($rootScope) {
         var list = "";
         var getList = function(){
             return list;
@@ -656,9 +681,10 @@ angular.module('webgisApp')
             getList: getList,
             setList: setList
         };
-    })
+    }
 
-    .controller('MapViewerCtrl', function($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
+    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$modal', '$rootScope', '$window', '$timeout', '$cookies', 'Attribution'];
+    function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
         var mv = this;
 
         mv.changeSitesVisibility = changeSitesVisibility;
@@ -1061,8 +1087,10 @@ angular.module('webgisApp')
                 $('#zoomInButton').attr('disabled', false);
             }
         }
-    })
-    .controller('MapSettingsCtrl', function($scope, mapviewer, djangoRequests, $modal){
+    }
+
+    MapSettingsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$modal'];
+    function MapSettingsCtrl($scope, mapviewer, djangoRequests, $modal){
         var mapSettings = this;
 
         mapSettings.baseLayers = [];
@@ -1116,8 +1144,10 @@ angular.module('webgisApp')
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
         }
-    })
-    .controller('MapCatalogCtrl', function($scope, mapviewer, djangoRequests, $modal){
+    }
+
+    MapCatalogCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$modal'];
+    function MapCatalogCtrl($scope, mapviewer, djangoRequests, $modal){
         var mapCatalog = this;
 
         mapCatalog.activeLayer = -1;
@@ -1210,8 +1240,10 @@ angular.module('webgisApp')
                 bootbox.alert('<h1>No Metadata information available!</h1>');
             })
         }
-    })
-    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams, $window, $location) {
+    }
+
+    MapCurrentLayersCtrl.$inject = ['$scope', 'mapviewer', '$modal', 'djangoRequests', '$rootScope', '$routeParams', '$window', '$location'];
+    function MapCurrentLayersCtrl($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams, $window, $location) {
         var mcl = this;
 
         mcl.addDrawBox = addDrawBox;
@@ -1237,8 +1269,8 @@ angular.module('webgisApp')
         mcl.sliderValues = mapviewer.sliderValues;
         mcl.toggleLayerControls = toggleLayerControls;
         mcl.toggleLegend = toggleLegend;
-        mcl.toggleStatistic = toggleStatistic;
         mcl.toggleStations = toggleStations;
+        mcl.toggleStatistic = toggleStatistic;
         mcl.toggleWetlandList = toggleWetlandList;
         mcl.updateLayer = updateLayer;
         //mcl.wetlandListGlyph = "glyphicon-chevron-right";
@@ -1603,13 +1635,6 @@ angular.module('webgisApp')
             layer.showStatistic = false;
         }
 
-        function toggleStatistic(layer) {
-            // negate showSTatistic
-            layer.showLegend = false;
-            layer.showStatistic = !layer.showStatistic;
-
-        }
-
         function toggleStations(layer) {
             //load stations if no one available
             if (typeof layer.stations === 'undefined') {
@@ -1625,6 +1650,13 @@ angular.module('webgisApp')
 
             // negate showStations
             layer.showStations = !layer.showStations;
+        }
+
+        function toggleStatistic(layer) {
+            // negate showSTatistic
+            layer.showLegend = false;
+            layer.showStatistic = !layer.showStatistic;
+
         }
 
         function toggleWetlandList(action) {
@@ -1717,8 +1749,10 @@ angular.module('webgisApp')
             $(element).popover('show');
             $('.ol-overlay-container .popover .arrow').show();
         }
-    })
-    .controller('MapAddOwnLayerCtrl', function($modalInstance, djangoRequests, mapviewer, title) {
+    }
+
+    MapAddOwnLayerCtrl.$inject = ['$modalInstance', 'djangoRequests', 'mapviewer', 'title'];
+    function MapAddOwnLayerCtrl($modalInstance, djangoRequests, mapviewer, title) {
         var maol = this;
 
         maol.capabilitiesURL = '';
@@ -1861,13 +1895,17 @@ angular.module('webgisApp')
                 //console.log(err);
             });
         }
-    })
-    .controller('MapCurrentLayersTabCtrl', function(mapviewer) {
+    }
+
+    MapCurrentLayersTabCtrl.$inject = ['mapviewer'];
+    function MapCurrentLayersTabCtrl(mapviewer) {
         var mclt = this;
 
         mclt.data = mapviewer.data;
-    })
-    .controller('ClimateChartCtrl', function ($modalInstance, djangoRequests, mapviewer, layer, feature, title) {
+    }
+
+    ClimateChartCtrl.$inject = ['$modalInstance', 'djangoRequests', 'mapviewer', 'layer', 'feature', 'title'];
+    function ClimateChartCtrl($modalInstance, djangoRequests, mapviewer, layer, feature, title) {
         var cc = this;
 
         cc.addChart = addChart;
@@ -2043,21 +2081,15 @@ angular.module('webgisApp')
 
             cc.openedStart = true;
         }
-    })
-    .directive('chart', function () {
+    }
+
+    chart.$inject = [];
+    function chart() {
         return {
             restrict: 'A',
             link: function($scope, element) {
                 $scope.addChart(element);
             }
         };
-    })
-    .filter('reverse', function() {
-        return function(items) {
-            return items.slice().reverse();
-        };
-    })
-    .run(function (mapviewer) {
-        mapviewer.initialize(mapId, 'map', true); //id of mapviewer
-    })
-;
+    }
+})();

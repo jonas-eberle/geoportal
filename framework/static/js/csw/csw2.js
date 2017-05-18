@@ -1,5 +1,9 @@
-angular.module('webgisApp')
-    .controller('SearchBoxCtrl', function($modal){
+(function() {
+    angular.module('webgisApp')
+        .controller('SearchBoxCtrl', SearchBoxCtrl);
+
+    SearchBoxCtrl.$inject = ['$modal'];
+    function SearchBoxCtrl($modal){
         var sb2 = this;
 
         sb2.search = search;
@@ -21,4 +25,5 @@ angular.module('webgisApp')
                 }
             });
         }
-    });
+    }
+})();

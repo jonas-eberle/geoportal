@@ -7,10 +7,12 @@
                                                        ng-options="o as o for o in layer.ogc_times"></select></div>
     </div>
     <div class="item_icon">
-        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend"
+                type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
-        <button ng-controller="WetlandsDiagramCtrl" ng-if="layer.legend_colors" tooltip-placement="bottom" tooltip="Show statistic" type="button" ng-click="mcl.toggleStatistic(slc.layer);onclickCreate(layer);"
+        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors" tooltip-placement="bottom" tooltip="Show statistic"
+                type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.onclickCreate(layer);"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
