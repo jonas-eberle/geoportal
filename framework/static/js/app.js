@@ -58,7 +58,7 @@
                     deferred.resolve(data.data, status);
                 })),(angular.bind(this, function(data, status, headers, config){
                     // Set request status
-                    if (typeof(data) == 'object') {
+                    if (typeof data  === 'object') {
                         data.status = status;
                     }
                     if (status == 0) {

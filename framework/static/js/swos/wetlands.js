@@ -113,39 +113,39 @@
                     djangoRequests.request({
                         'method': "GET",
                         'url'   : '/swos/wetland/' + wetland.id + '/images.json?start=0&max=' + mediaConfig.imagesPerPage
-                    }).then(function (data) {
+                    }).then((function (data) {
                         data.currentPage = 1;
                         data.lastPage = Math.ceil(data.count / mediaConfig.imagesPerPage);
                         Object.assign(wetland_service.images, data);
-                    });
+                    }),(function(){}));
 
                     djangoRequests.request({
                         'method': "GET",
                         'url'   : '/swos/wetland/' + wetland.id + '/panoramio.json?start=0&max=' + mediaConfig.imagesPerPage
-                    }).then(function (data) {
+                    }).then((function (data) {
                         data.currentPage = 1;
                         data.lastPage = Math.ceil(data.count / mediaConfig.imagesPerPage);
                         Object.assign(wetland_service.externalImages, data);
-                    });
+                    }),(function(){}));
 
                     djangoRequests.request({
                         'method': "GET",
                         'url'   : '/swos/wetland/' + wetland.id + '/youtube.json?start=0&max=' + mediaConfig.videosPerPage
-                    }).then(function (data) {
+                    }).then((function (data) {
                         Object.assign(wetland_service.videos, {
                             currentPage: 1,
                             lastPage: Math.ceil(wetland_service.dataCount['videos'] / mediaConfig.videosPerPage),
                             videos: data
                         });
-                    });
+                    }),(function(){}));
 
                     djangoRequests.request({
                         'method': "GET",
                         'url'   : '/swos/wetland/' + wetland.id + '/satdata.json'
-                    }).then(function (data) {
+                    }).then((function (data) {
                         //$scope.wetlands_opened[wetland.id]['satdata'] = data;
                         wetland_service.value['satdata'] = data;
-                    });
+                    }),(function(){}));
 
 
                     wetland_service.selectFeature(wetland.id);
