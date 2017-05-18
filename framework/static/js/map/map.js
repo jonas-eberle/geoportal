@@ -479,7 +479,7 @@ angular.module('webgisApp')
             },
             'getIndexFromLayer': function(title) {
                 for (var i=0; i<this.layersMeta.length; i++) {
-                    if (title == this.layersMeta[i].name) {
+                    if (title === this.layersMeta[i].name) {
                         return i;
                     }
                 }
@@ -539,7 +539,7 @@ angular.module('webgisApp')
                         $('#center').hide();
                         $('#nav-top-right2').hide();
                         bootbox.alert('<h2>Authentication error</h2>'+data.error, function(){$('.login').click()});
-                        return
+                        return;
                     }
 
                     $('#center').show();
@@ -653,8 +653,8 @@ angular.module('webgisApp')
         };
 
         return {
-            setList: setList,
-            getList: getList
+            getList: getList,
+            setList: setList
         };
     })
 
@@ -884,7 +884,7 @@ angular.module('webgisApp')
 
         //--------------------------------------------------------------------------------------------------------------
 
-        function changeSitesVisibility(id, $event) {
+        function changeSitesVisibility($event) {
             var olLayer = mapviewer.map.getLayers().getArray()[1];
             var checkbox = $event.target;
 
@@ -897,7 +897,10 @@ angular.module('webgisApp')
                 mv.visibility_state_wetland_layer = true;
             } else {
                 olLayer.setVisible(false);
-                mv.selectedFeature = mapviewer.selectInteraction.getFeatures().pop();
+                var features = mapviewer.selectInteraction.getFeatures();
+                if (features.getLength() > 0) {
+                    mv.selectedFeature = features.pop();
+                }
                 mv.visibility_state_wetland_layer = false;
             }
         }
@@ -1150,7 +1153,7 @@ angular.module('webgisApp')
         }
 
         function downloadLayer(layer) {
-            if (layer.download_type == 'wcs') {
+            if (layer.download_type === 'wcs') {
                 alert('TODO');
             } else {
                 window.open(subdir + '/layers/detail/' + layer.id + '/download', 'download_' + layer.id);
@@ -1165,7 +1168,7 @@ angular.module('webgisApp')
             }, 300);
         }
 
-        function hoverLayer(elem, layerID, $event) {
+        function hoverLayer(layerID, $event) {
             var $popover = $('body .popover');
             if (mapCatalog.activeLayer === layerID && $popover.length > 0) {
                 return false;
@@ -1208,7 +1211,7 @@ angular.module('webgisApp')
             })
         }
     })
-    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams) {
+    .controller('MapCurrentLayersCtrl', function($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams, $window, $location) {
         var mcl = this;
 
         mcl.addDrawBox = addDrawBox;
@@ -1298,7 +1301,7 @@ angular.module('webgisApp')
                         geometryFunction: geometryFunction,
                         maxPoints: maxPoints
                     });
-                    draw.on('drawstart', function (e) {
+                    draw.on('drawstart', function () {
                         source.clear();
                         source_2.clear();
                     });
@@ -1373,7 +1376,7 @@ angular.module('webgisApp')
 
         function downloadLayer(layer) {
             console.log(layer);
-            if (layer.download_type == 'wcs') {
+            if (layer.download_type === 'wcs') {
                 mcl.requestWCS(layer);
             } else {
                 window.open(subdir + '/layers/detail/' + layer.id + '/download', 'download_' + layer.id);
@@ -1402,7 +1405,7 @@ angular.module('webgisApp')
 
         function removeDrawBox() {
             mapviewer.map.getLayers().forEach(function (layer, i) {
-                if (layer.get('name') == "draw_box" || layer.get('name') == "draw_box_2") {
+                if (layer.get('name') === "draw_box" || layer.get('name') === "draw_box_2") {
                     mapviewer.map.removeLayer(layer);
                 }
             });
@@ -1439,7 +1442,7 @@ angular.module('webgisApp')
                         callback: function () {
                             mcl.removeDrawBox();
 
-                            var bbox = $('#west').val() + ',' + $('#south').val() + ',' + $('#east').val() + ',' + $('#north').val()
+                            var bbox = $('#west').val() + ',' + $('#south').val() + ',' + $('#east').val() + ',' + $('#north').val();
                             var url = subdir + '/layers/detail/' + layer.django_id + '/download?bbox=' + bbox + '&outputformat=' + $('#output_format').val();
                             mcl.removeDrawBox();
                             window.open(url, 'download_' + layer.django_id);
@@ -1455,7 +1458,7 @@ angular.module('webgisApp')
                 }
             });
             var output = '<div  class="modal-body">' +
-                '<div style="display: inline-flex;  white-space: nowrap;">Please select an output format:' +
+                '<div style="display: inline-flex; white-space: nowrap;">Please select an output format:' +
                 '<select name="output_format" id="output_format" class="form-control" style="margin-left: 16px;">' +
                 '<option>GeoTiff</option>' +
                 '</select>' +
@@ -1485,19 +1488,17 @@ angular.module('webgisApp')
 
             $("input[type=radio][name=extent_type]").change(function () {
 
-                if (this.value == "bbox") {
-                    var extent = mcl.currentBBOX;
+                var extent;
+                if (this.value === "bbox") {
+                    extent = mcl.currentBBOX;
                     $('#east').val(extent[2].toFixed(2));
                     $('#north').val(extent[3].toFixed(2));
                     $('#south').val(extent[1].toFixed(2));
                     $('#west').val(extent[0].toFixed(2));
-                }
-                if (this.value == "full_extent") {
+                } else if (this.value === "full_extent") {
                     full_extent();
-                }
-                if (this.value == "current_view") {
-
-                    var extent = ol.proj.transformExtent(mapviewer.map.getView().calculateExtent(mapviewer.map.getSize()), 'EPSG:3857', 'EPSG:4326');
+                } else if (this.value === "current_view") {
+                    extent = ol.proj.transformExtent(mapviewer.map.getView().calculateExtent(mapviewer.map.getSize()), 'EPSG:3857', 'EPSG:4326');
                     $('#east').val(extent[2].toFixed(2));
                     $('#north').val(extent[3].toFixed(2));
                     $('#south').val(extent[1].toFixed(2));
@@ -1518,7 +1519,7 @@ angular.module('webgisApp')
                 var map_epsg = mapviewer.map.getView().getProjection().getCode();
 
                 //reduce extent to fit to mercator projection (Google)
-                if (layerObj["epsg"] == 4326 && (map_epsg == "EPSG:3857" || map_epsg == "EPSG:900913")) {
+                if (layerObj["epsg"] === 4326 && (map_epsg === "EPSG:3857" || map_epsg === "EPSG:900913")) {
                     if (south < -85) {
                         south = -85
                     }
@@ -1536,7 +1537,7 @@ angular.module('webgisApp')
         }
 
         function shareLink(id) {
-            var host = document.location.protocol +"//"+ document.location.hostname + document.location.pathname;
+            var host = $location.protocol() +"://"+ $location.host() + $window.location.pathname;
             var hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;
             var url = host+hash;
             bootbox.alert('<h4>Share dataset link</h4><div class="share_link">Please use the following link to share the dataset: <br /><a href="'+url+'" target="_blank">'+url+'</a></div>');

@@ -165,7 +165,7 @@
                                         <!-- List GROUP -->
                                         <div class="list-group">
 
-                                            <div ng-repeat="layer in group.layers" class="list-group-item clearfix" ng-mouseenter="mapCatalog.hoverLayer(this, layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
+                                            <div ng-repeat="layer in group.layers" class="list-group-item clearfix" ng-mouseenter="mapCatalog.hoverLayer(layer.id, $event)" data-toggle="popover" data-trigger="manual" data-placement="left" data-container="body" title="{{layer.title}}" data-html="true" data-content="{{layer.abstract}}"> <!-- ns-popover ns-popover-template="close" ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme" ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
                                                 <div class="catalog-item">
                                                     <div class="item_center">
                                                         <div class="item_title">{{layer.title}}</div>
