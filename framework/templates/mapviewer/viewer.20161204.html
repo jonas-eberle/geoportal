@@ -8,6 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
     <title>SWOS WebGIS</title>
+    {% load assets %}
 
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
@@ -31,10 +32,9 @@
     <link href="{% static "css/jonas.css" %}" rel="stylesheet">
     <link href="{% static "css/swos.css" %}?v=20170510_v2" rel="stylesheet">
 
-    <script src="{% static "lib/turf.min.js" %}"></script>
-    <script src="{% static "lib/ol.js" %}?v=41"></script>
-    <script src="{% static "lib/dygraph-combined.js" %}"></script>
-    <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
+    {% assets "vendorJsHeadBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
 
     {% verbatim %}
     <script type="text/ng-template" id="close">
@@ -664,49 +664,13 @@
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">May 1, 2017</p>
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static "lib/jquery.min.js" %}"></script>
-    <script src="{% static "lib/bootstrap.min.js" %}"></script>
-    <!--  <script src="js/popover.js"></script> -->
-    <!-- <script src="assets/js/docs.min.js"></script> -->
+    {% assets "vendorJsContentBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
 
-    <script src="{% static "lib/angular.min.js" %}?v=1.6.1" type="text/javascript"></script>
-    <script src="{% static "lib/angular-resource.min.js" %}?v=1.4.5"></script>
-    <script src="{% static "lib/angular-cookies.min.js" %}?v=1.4.5"></script>
-    <script src="{% static "lib/angular-route.min.js" %}?v=1.6.1"></script>
-    <script src="{% static "lib/angular-drag-and-drop-lists.min.js" %}"></script>
-    <script src="{% static "lib/angular-filter.min.js" %}"></script>
-    <script src="{% static "lib/ui-bootstrap-tpls-0.12.0.min.js" %}"></script>
-    <script src="{% static "lib/nsPopover.js" %}"></script>
-    <script src="{% static "lib/bootbox.min.js" %}"></script>
-    <script src="{% static "lib/bootstrap-slider.min.js" %}"></script>
-    <script src="{% static "lib/angular-bootstrap-slider.js" %}"></script>
-    <script src="{% static "lib/jquery-drags.js" %}"></script>
-    <script src="{% static "lib/Chart.min.js" %}"></script>
-    <script src="{% static "lib/angular-chart.min.js" %}"></script>
-
-    <script src="{% static "lib/d3.min.js" %}/"></script>
-    <script src="{% static "lib/nv.d3_adjusted_swos.js" %}/"></script>
-    <script src="{% static "lib/angular-nvd3.min.js" %}"></script>
-
-    <!-- Add fancyBox -->
-    <script type="text/javascript" src="{% static "lib/fancybox/source/jquery.fancybox.pack.js" %}"></script>
-
-
-    <script src="{% static "js/app.js" %}?v=20170510_v1"></script>
-    <script src="{% static "js/auth/auth.js" %}?v=20170423"></script>
-    <script src="{% static "js/map/map.js" %}?v=20170510"></script>
-    <script src="{% static "js/csw/csw.js" %}?v=20170423"></script>
-
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170510"></script>
-    <script src="{% static "js/swos/legends.js" %}?v=20170510"></script>
-    <script src="{% static "js/swos/diagram.js" %}?v=20170510"></script>
-
-    <script src="{% static "js/dashboard.js" %}"></script>
-
-    <script src="{% static "lib/anno.js" %}"></script>
+    {% assets "appJsContentBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
 
     <div ng-view></div>
 

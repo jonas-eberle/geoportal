@@ -20,9 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '9c=-i7dqc1_=31hk8qt8i$2zyi40w!p!!8&d*8d9on1#jsd^7%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True 
+DEBUG = True
 
 TEMPLATE_DEBUG = True
+
+ASSETS_DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de']
 
@@ -49,7 +51,8 @@ INSTALLED_APPS = (
     'mapviewer',
     'layers',
     'csw',
-    'swos'
+    'swos',
+    'django_assets'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -113,6 +116,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
+ASSETS_ROOT = STATICFILES_DIRS[0]
 
 #MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'
 #MEDIA_ROOT = '/var/www/webgis.essi-services.net/media/'
