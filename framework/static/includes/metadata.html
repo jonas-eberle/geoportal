@@ -99,7 +99,7 @@
             <div ng-if="mi.value_passed.dataset_contact_new.last_name">
                 Contact: {{ mi.value_passed.dataset_contact_new.first_name }} {{ mi.value_passed.dataset_contact_new.last_name }}</div>
             <div ng-if="mi.value_passed.dataset_contact_new.email">
-                Email: {{ value_passed.dataset_contact_new.email }}</div>
+                Email: <a href="mailto:{{ mi.value_passed.dataset_contact_new.email }}">{{ mi.value_passed.dataset_contact_new.email }}</a></div>
         </div>
     </div>
 </div>
