@@ -44,15 +44,11 @@
 
 <div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showLegend">
     <div><strong>Legend</strong></div>
-    <a ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}" target="_blank">
-        <img ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
-    </a>
-    <a ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" target="_blank">
-        <img ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
-    </a>
+    <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ slc.layer.legend_url }}.jpg" ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
+    <img ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
     <table ng-if="layer.legend_colors" style="width:100%;">
         <tr ng-repeat="item in layer.legend_colors track by $index">
-            <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
+            <td class="legend-color" ng-attr-style="background-color:{{ item.color }};">&nbsp;</td>
             <td class="legend-label">{{ item.label }}</td>
         </tr>
     </table>
