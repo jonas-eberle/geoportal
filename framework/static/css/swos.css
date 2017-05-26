@@ -168,7 +168,7 @@ h4 {
     position: absolute;
     display: inline-block;
     width: calc(100% - 350px);
-    max-width: 300px;
+    max-width: 200px;
     z-index: 1025;
 }
 
@@ -179,19 +179,22 @@ h4 {
 #wetland_sites {
     color: white;
     display: inline-block;
-    margin-right: 20px;
-    margin-top: 5px;
-    margin-left: 13px;
+    margin-right: 10px;
     z-index: 1022;
+    padding-bottom: 2px;
 }
 
 #wetland_attribution {
     position: absolute;
-    right: 8px;
-    top: 55px;
+    right: 0;
+    top: 0;
     color: white;
     z-index: 1022;
     float: right;
+    background-color: rgba(0,0,0,0.5);
+    padding: 3px 10px;
+    width: 100%;
+    text-align: right;
 }
 
 #wetland_opened .accordion .panel-body {
@@ -412,24 +415,27 @@ button.btn-loadmore:hover {
 }
 
 .map-controls-wrapper {
-    background-color:rgba(0,0,0,0.5);
-    height: 53px;
+    height: 53px !important;
     position: absolute;
-    right: 0;
-    width: 100%;
-    z-index: 1010;
-    padding-top: 20px;
+    top: 60px;
+    width: calc(100% - 400px);
+    z-index: 1040;
+    padding-top: 10px;
 }
 
 @media (min-width: 1050px) {
     .map-controls-wrapper {
-        width: 645px;
+        width: 545px;
+        top: 70px;
+        right: 405px;
     }
 }
 
 @media (min-width: 1360px) {
     .map-controls-wrapper {
-        padding-top: 10px;
+        top: 0px;
+		left: calc(50% - 350px);
+		right: auto;
     }
 }
 
@@ -542,4 +548,13 @@ button.btn-loadmore:hover {
 	font-size: 0.9em;
     padding-left: 5px;
     text-align: right;
+}
+
+.partners img {
+    margin-left: 25px;
+    float: right;
+}
+
+#nav-top-right2 li.dropdown {
+	width: 110px;
 }

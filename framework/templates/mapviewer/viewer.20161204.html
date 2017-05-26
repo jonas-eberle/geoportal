@@ -69,10 +69,16 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl as lc" style="padding-right:0;">
                     <li>
-                        <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;">
+                        <!--<div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;">
                             <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" align="left" style="margin-right: 4px;"/></a>
                             <img src="/static/img/eu.png" alt="EU Logo" align="right" height="45"/>
                             <div style="font-size: 0.8em;">This portal is developed by the SWOS project, which has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
+                        </div>-->
+						<div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;" class="partners">
+                            <a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/GEO_wetland_color_pos_45.png" border="0"></a>
+                            <img src="/static/img/eu.png" alt="EU Logo" height="45">
+                            <a href="http://www.eo.uni-jena.de" target="_blank"><img src="http://swos-service.eu/wp-content/uploads/2015/06/Logo-FSU-Bildmarke.jpg" border="0" height="45"></a>
+                            <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" style="margin-left: 0;"></a>
                         </div>
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
@@ -102,51 +108,50 @@
 
     <div class="container-fluid" id="center">
         <div class="row" ng-controller="MapCurrentLayersCtrl as mcl">
+          <div  ng-controller="MapViewerCtrl as mv">
+            <div class="map-controls-wrapper">
 
-            <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
-            <div ng-controller="MapViewerCtrl as mv" class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
-
-                <div class="map-controls-wrapper">
-
-                    <div id="wetland_sites">
-                        <input type="checkbox" ng-click="mv.changeSitesVisibility($event)" id="layer_sites"
-                               checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
-                    </div>
-                    <div id="map_icons">
-                        <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
-                                class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
-                                class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
-                                class="fa-globe fa fa-lg"></i></button>
-                        <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
-                    </div>
-
-                    <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
-                        <form ng-submit="sb.search();">
-                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..."
-                                   id="search_desktop">
-                            <br style="clear:both"/>
-                            <div id="search-extend">
-                                <!--
-                                <div style="float: left; padding-top: 10px;">
-                                  <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
-                                </div>
-                                -->
-                                <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">
-                                    Search
-                                </button>
-                                <br style="clear:both;"/>
-                            </div>
-
-                        </form>
-                    </div>
-
-                    <div id="wetland_attribution"></div>
-                    <!-- /input-group -->
+                <div id="wetland_sites" class="btn btn-primary">
+                    <input type="checkbox" ng-click="mv.changeSitesVisibility($event)" id="layer_sites"
+                           checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
+                </div>
+                <div id="map_icons">
+                    <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                            class="fa-plus fa fa-lg"></i></button>
+                    <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                            class="fa-minus fa fa-lg"></i></button>
+                    <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                            class="fa-globe fa fa-lg"></i></button>
+                    <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
+                    <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
                 </div>
 
+                <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                    <form ng-submit="sb.search();">
+                        <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..."
+                               id="search_desktop">
+                        <br style="clear:both"/>
+                        <div id="search-extend">
+                            <!--
+                            <div style="float: left; padding-top: 10px;">
+                              <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
+                            </div>
+                            -->
+                            <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">
+                                Search
+                            </button>
+                            <br style="clear:both;"/>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- /input-group -->
+            </div>
+            <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
+            <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
+
+                <div id="wetland_attribution"></div>
                 <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
 
                 <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
@@ -158,7 +163,7 @@
                 </div>
 
             </div>
-
+          </div>
             <div class="layer-list">
                 <div id="current" ng-show="mcl.wetlandListState">
 
