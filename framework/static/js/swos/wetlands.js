@@ -2184,7 +2184,7 @@
 
 $(document).ready(function () {
     $(".fancybox").fancybox({
-        openEffect : 'none',
+        openEffect: 'none',
         closeEffect: 'none'
     });
 });
