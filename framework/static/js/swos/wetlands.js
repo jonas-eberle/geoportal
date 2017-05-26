@@ -868,6 +868,7 @@
         var extdb_id = "2551"; // Global Surface Water: Water Occurence (1984-2015)
         var product_id = "3001"; // Camargue:  Land Surface Temperature Trend 2000 to 2016
         var wetland_id = 4; // Camargue
+        var step_count = 14;
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -1090,6 +1091,14 @@
                         className: 'anno-width-500',
                         buttons  : [
                             {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
+                            {
                                 text : 'Start',
                                 click: function (anno) {
                                     anno.switchToChainNext();
@@ -1120,7 +1129,7 @@
                             $target[0].removeEventListener('click', handler, true)
                         },
 
-                        content: '<h4>Welcome</h4><div><p>Welcome to the introduction tour of the <strong>SWOS and GEO-Wetlands Community Portal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
+                        content: '<div class="anno-step-of">(Step 1 of '+ step_count +')</div><h4>Welcome </h4><p>Welcome to the introduction tour of the <strong>SWOS and GEO-Wetlands Community Portal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
                         '<p>Please notice that certain functions are deactivated during the tour. If you would like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information on each card.</p> ' +
                         '<p>You can always stop the tour with a click on the semi-transparent black area. To <strong>start</strong> the <strong>tour again </strong>go to the <span class="fa fa-question fa-lg"></span> on the top. Here you will also find information on how to contact us.</p>' +
                         '</div>'
@@ -1134,6 +1143,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                             {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1166,7 +1183,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content      : '<h4>Wetlands catalog</h4><div><p>All wetland sites of the <strong>SWOS project</strong> are listed here.</p> ' +
+                        content      : '<div class="anno-step-of">(Step 2 of '+ step_count +')</div><h4>Wetlands catalog</h4><div><p>All wetland sites of the <strong>SWOS project</strong> are listed here.</p> ' +
                         '<p>The preselected wetlands already have products developed within the project.</p>' +
                         '<p>To see the full list of wetlands of the SWOS project please unselect the checkbox <span class="anno-highlight">Show only wetlands with products</span> or use the provided filter to search for wetlands.</p>' +
                         '</div>'
@@ -1180,6 +1197,14 @@
                         className    : 'anno-width-400',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1214,7 +1239,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content      : '<h4>Wetland selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
+                        content      : '<div class="anno-step-of">(Step 3 of '+ step_count +')</div><h4>Wetland selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
                         '<p>In the <strong>next step</strong> we will use the <span class="anno-highlight">Camargue</span> wetland in France.</p></div>'
                     }, // Wetland selection
                     {
@@ -1226,6 +1251,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1265,7 +1298,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                         },
-                        content      : '<h4>Overview of selected wetland</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
+                        content      : '<div class="anno-step-of">(Step 4 of '+ step_count +')</div><h4>Overview of selected wetland</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
                         '<ol style="list-style:disc outside;">' +
                         '<li><strong>Indicators: </strong>Wetland indicators derived on the basis of satellite data and SWOS products.</li>' +
                         '<li><strong>Products: </strong>Maps produced with the SWOS software toolbox.</li>' +
@@ -1284,6 +1317,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1318,7 +1359,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content      : '<h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
+                        content      : '<div class="anno-step-of">(Step 5 of '+ step_count +')</div><h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
                         '<ol style="list-style:disc outside;">' +
                         '<li>Water Quality</li>' +
                         '<li>Land Surface Temperature Trend</li>' +
@@ -1343,6 +1384,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1386,7 +1435,7 @@
                             $cookies.hasNotifiedAboutLayers = false;
 
                         },
-                        content      : '<h4>Detailed product information</h4><div><p></p>' +
+                        content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Detailed product information</h4><div><p></p>' +
                         '<p>All available datasets of a product are listed here below a short description of the product. Each dataset can be added to the map using the checkbox in front of the dataset name.</p>' +
 
                         '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2016</span> dataset to the map.</p></div>'
@@ -1400,6 +1449,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1446,7 +1503,7 @@
                             $cookies.hasNotifiedAboutLayers = false;
 
                         },
-                        content      : '<h4>Dataset information and tools</h4><div><p></p>' +
+                        content      : '<div class="anno-step-of">(Step 7 of '+ step_count +')</div><h4>Dataset information and tools</h4><div><p></p>' +
                         '<p>You can change the transparency for each layer (slider) and:' +
                         '<ol style="list-style: disc outside;">' +
                         '<li><p><span class="fa fa-list fa-lg"></span> hide the legend,</p></li>' +
@@ -1513,6 +1570,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1549,7 +1614,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content      : '<h4>Satellite data</h4><div>' +
+                        content      : '<div class="anno-step-of">(Step 8 of '+ step_count +')</div><h4>Satellite data</h4><div>' +
                         '<p>An overview about free available satellite data (Landsat and Sentinel) covering the wetland area is given here. Please click on the <span class="anno-highlight">Yearly coverage by sensor</span> image to enlarge it. You will also find the total amount of data by sensor as a table below. </p>' +
                         '<p>In the <strong>future</strong> it will be also possible to download<strong> pre-processed satellite data</strong> clipped to the wetland area.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will move to the <span class="anno-highlight">External databases</span> tab <span class="flaticon-technology-2"><a style="text-decoration: none;"></a></span>.</p></div>'
@@ -1563,6 +1628,14 @@
                         className    : 'anno-width-500',
                         arrowPosition: 'center-right',
                         buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1599,7 +1672,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content      : '<h4>External databases</h4><div>' +
+                        content      : '<div class="anno-step-of">(Step 9 of '+ step_count +')</div><h4>External databases</h4><div>' +
                         '<p>In this tab external databases and information sources related to the selected wetland on the regional, country, continental and global level are shown. To search for external layers that can be visualized in the map use the <span class="anno-highlight"><span class="flaticon-layers"><a style="text-decoration: none;"></a></span> Filter by maps</span> checkbox. You can add those layers in the same way as the product maps.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will discover and add one of the Global Surface Water maps from JRC/Google as an external global resource to the map (<span class="anno-highlight">Global</span> -> <span class="anno-highlight">Global Surface Water</span>).</p></div>'
                     }, // External DB
@@ -1613,6 +1686,14 @@
                         className    : 'anno-width-500',
 
                         buttons: [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1652,7 +1733,7 @@
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content: '<h4>Information and tools on selected resource</h4><div>' +
+                        content: '<div class="anno-step-of">(Step 10 of '+ step_count +')</div><h4>Information and tools on selected resource</h4><div>' +
                         '<p>For each external resource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
                         '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected layers.</p></div>'
                     }, // Select external Layer
@@ -1665,6 +1746,14 @@
                         className: 'anno-width-500',
 
                         buttons: [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1718,7 +1807,7 @@
                             el2[0].addEventListener('click', handler, true);
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content: '<h4>Active layers</h4><div>' +
+                        content: '<div class="anno-step-of">(Step 11 of '+ step_count +')</div><h4>Active layers</h4><div>' +
                         '<p>All layers activated and added to the map are listed in the <span class="anno-highlight">Active layer</span> box on the left. You can hide, remove or change the order of the layers. In addition you can do the same actions as on the right side (e.g. view the metadata, change the transparency, show legend).</p>' +
                         '<p></p><p>In the <strong>next step </strong> we will show the general map functions.</p></div>'
                     }, // Active Layer
@@ -1726,6 +1815,14 @@
                         target  : '.map-controls-wrapper',
                         position: 'left',
                         buttons : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1760,7 +1857,7 @@
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content : '<h4>Wetland sites</h4><div>' +
+                        content : '<div class="anno-step-of">(Step 12 of '+ step_count +')</div><h4>Wetland sites</h4><div>' +
                         '<p>Unselect <span class="anno-highlight">Show Wetland sites</span> to hide the wetland boundaries in the map.</p>' +
                         '<p>In the <strong>next step</strong> we show you the general map control elements.</p>' +
                         '</div>'
@@ -1770,6 +1867,14 @@
                         position : 'center-bottom',
                         className: 'anno-width-500',
                         buttons  : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
                             AnnoButton.BackButton,
                             {
                                 text : 'Next',
@@ -1803,7 +1908,7 @@
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content  : '<h4>Map control</h4><div><p></p>' +
+                        content  : '<div class="anno-step-of">(Step 13 of '+ step_count +')</div><h4>Map control</h4><div><p></p>' +
                         '<p>You can' +
                         '<ol style="list-style: disc outside;">' +
                         '<li><p><span class="fa fa-plus fa-lg"></span> zoom into the map,</p></li>' +
@@ -1851,7 +1956,7 @@
                             move_map_elements_higher("reset");
                             $cookies.hasNotifiedAboutLayers = false;
                         },
-                        content: '<h4>Search</h4><div><p></p>' +
+                        content: '<div class="anno-step-of">(Step 14 of '+ step_count +')</div><h4>Search</h4><div><p></p>' +
                         '<p>Using this text field you can search for our datasets. Requests will be send to the SWOS Catalog Services for Web (CSW). In the <strong>future</strong> it will contain all datasets from the SWOS project as well as datasets from <a href="http://www.geoportal.org" target="_blank">GEOSS</a>. The service will be also available for external applications.</p>' +
                         '<p></p><p></p>' +
                         '<p><strong>Congratulations</strong>, you reached the end of the tour. <strong>Now it\'s your turn!</strong> We will remove all added layer and guide you back to the start page.</p>'
