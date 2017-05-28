@@ -14,6 +14,9 @@
         <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors" tooltip-placement="bottom" tooltip="Show statistic"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.onclickCreate(layer);"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
+        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram"  ng-if="layer.ogc_times" tooltip-placement="bottom" tooltip="Create time series"
+                type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.requestTimeSeries(layer);"
+                class="btn btn-default" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-download fa-lg"></i></button>
@@ -58,7 +61,7 @@
     <div id="diagram_{{ layer.id }}" style="display:none;">
       <div><strong>Interactive chart with absolute area proportions</strong></div><div style="font-size:0.9em;" class="hint" style="display:none;">(Move your mouse over or click on the classes for more details)</div>
     </div>
-    <strong>Relative area proportions</strong>
+    <strong ng-if="layer.legend_colors">Relative area proportions</strong>
     <table ng-if="layer.legend_colors" style="width:100%;">
         <tr ng-repeat="item in layer.legend_colors | orderBy : '-percent' ">
             <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
@@ -66,4 +69,9 @@
             <td class="legend-percent"><span tooltip="{{ item.size }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>
         </tr>
     </table>
+</div>
+<div id="diagram_wq_text_{{ layer.id }}" style="display: none">
+    <p><strong>Please select a point in the map to create a time series</strong></p>
+    <div id="diagram_wq_{{ layer.id }}" style="display:none;">
+    </div>
 </div>
