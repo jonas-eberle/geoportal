@@ -71,7 +71,10 @@
     </table>
 </div>
 <div id="diagram_wq_text_{{ layer.id }}" style="display: none">
-    <p><strong>Please select a point in the map to create a time series</strong></p>
+    <p><strong>Please select a point in the map to create a time series.</strong></p>
+    <p id="diagram_outside_{{ layer.id }}" style="display: none">Please select a point within the map extent.</p>
+    <p id="diagram_wait_{{ layer.id }}" style="display: none">Please wait ...</p>
+    <p id="diagram_no_data_{{ layer.id }}" style="display: none">No data returned.</p>
     <div id="diagram_wq_{{ layer.id }}" style="display:none;">
     </div>
 </div>

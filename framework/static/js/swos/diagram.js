@@ -346,6 +346,7 @@
             console.log("requestTimeSeries");
             $('#diagram_wq_text_' + layer.id).show();
 
+
             var type;
             var options = {};
             var data = -1;
@@ -360,111 +361,121 @@
                 delete $http.defaults.headers.common["If-Modified-Since"];
                 $http.defaults.headers.common["Content-type"] = "application/x-www-form-urlencoded; charset=UTF-8";
 
+                // check if selected point is within extent -> will not work around 0 #todo replace with geometry function
+                if (Math.abs(lonlat[1]) < Math.abs(layer.north) &&  Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)){
+                    $('#diagram_outside_' + layer.id).hide();
+                    $('#diagram_wait_' + layer.id).show();
+                    $('#diagram_no_data_' + layer.id).hide();
+                    $http({
+                        method: 'POST',
+                        url: 'http://artemis.geogr.uni-jena.de/ocpu/user/opencpu/library/swos/R/extractWQName/json',
+                        data: 'x=' + lonlat[0] + '&y=' + lonlat[1] + '&layer=%22' + layer.identifier + '%22',
 
-                $http({
-                    method: 'POST',
-                    url: 'http://artemis.geogr.uni-jena.de/ocpu/user/opencpu/library/swos/R/extractWQName/json',
-                    data: 'x=' + lonlat[0] + '&y=' + lonlat[1] + '&layer=%22' + layer.identifier + '%22',
+                    }).then(function successCallback(response) {
 
-                }).then(function successCallback(response) {
+                        var data_value;
+                        var data_obj = [];
 
-                    var data_value;
-                    var data_obj = [];
+                        for (var key in response.data.dates) {
 
-                    for (var key in response.data.dates) {
+                            var format = d3.time.format("%Y-%m-%d");
 
-                        var format = d3.time.format("%Y-%m-%d");
-
-                        if (response.data.values[key] != "NA") {
-                            data_value = {
-                                "x": parseInt((new Date(response.data.dates[key])).getTime()),
-                                "y": response.data.values[key],
-                            }
-                            data_obj.push(data_value);
-                        }
-                    }
-                    if (data_obj) {
-                        point_count++;
-                        var new_data = {
-                            "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
-                            "values": data_obj
-                        };
-                        if (data.length == undefined) {
-                            data = [
-                                {
-                                    "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
-                                    "values": data_obj
+                            if (response.data.values[key] != "NA") {
+                                data_value = {
+                                    "x": parseInt((new Date(response.data.dates[key])).getTime()),
+                                    "y": response.data.values[key],
                                 }
-                            ];
-                        } else {
-                            data.push(new_data);
-                            if (data.length > 4) {
-                                data.shift();
+                                data_obj.push(data_value);
                             }
                         }
-                        type = 'lineWithFocusChart';
-                        options['height'] = 300;
-                        options['width'] = 350
-                        options['x'] = function (d) {
-                            return d.x;
-                        };
-                        options['y'] = function (d) {
-                            return d.y;
-                        };
+                        if (data_obj) {
+                            point_count++;
+                            var new_data = {
+                                "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
+                                "values": data_obj
+                            };
+                            if (data.length == undefined) {
+                                data = [
+                                    {
+                                        "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
+                                        "values": data_obj
+                                    }
+                                ];
+                            } else {
+                                data.push(new_data);
+                                if (data.length > 4) {
+                                    data.shift();
+                                }
+                            }
+                            type = 'lineWithFocusChart';
+                            options['height'] = 300;
+                            options['width'] = 350
+                            options['x'] = function (d) {
+                                return d.x;
+                            };
+                            options['y'] = function (d) {
+                                return d.y;
+                            };
 
 
-                        if (data !== -1) {
-                            $scope.data = data;
-                            $scope.options = {
-                                "chart": {
-                                    "type": type,
-                                    "width": 375,
-                                    "useInteractiveGuideline": true,
-                                    "xAxis": {
-                                        tickFormat: function (d) {
-                                            return d3.time.format("%Y-%m-%d")(new Date(d))
-                                        }
-                                    },
-                                    "x2Axis": {
-                                        tickFormat: function (d) {
-                                            return d3.time.format("%Y-%m-%d")(new Date(d))
-                                        }
-                                    },
-                                    duration: 250,
-                                    "interactiveLayer": {
-                                        "tooltip": {
-                                            enabled: true,
-                                            contentGenerator: function (d) {
-                                                var header = d3.time.format("%Y-%m-%d")(new Date(parseInt(d.value)));
-                                                var headerhtml = "<thead><tr><td colspan='3'><strong class='x-value'>" + header + "</strong></td></tr></thead>";
-                                                var bodyhtml = "<tbody>";
-                                                var series = d.series;
-                                                series.forEach(function (c) {
-                                                    bodyhtml = bodyhtml + "<tr><td class='legend-color-guide'><div style='background-color: " + c.color + ";'></div></td><td class='key'>" + c.key + "</td><td class='value'>" + c.value + "</td></tr>";
-                                                });
-                                                bodyhtml = bodyhtml + "</tbody>";
-                                                return "<table>" + headerhtml + '' + bodyhtml + "</table>";
+                            if (data !== -1) {
+                                $scope.data = data;
+                                $scope.options = {
+                                    "chart": {
+                                        "type": type,
+                                        "width": 375,
+                                        "useInteractiveGuideline": true,
+                                        "xAxis": {
+                                            tickFormat: function (d) {
+                                                return d3.time.format("%Y-%m-%d")(new Date(d))
+                                            }
+                                        },
+                                        "x2Axis": {
+                                            tickFormat: function (d) {
+                                                return d3.time.format("%Y-%m-%d")(new Date(d))
+                                            }
+                                        },
+                                        duration: 250,
+                                        "interactiveLayer": {
+                                            "tooltip": {
+                                                enabled: true,
+                                                contentGenerator: function (d) {
+                                                    var header = d3.time.format("%Y-%m-%d")(new Date(parseInt(d.value)));
+                                                    var headerhtml = "<thead><tr><td colspan='3'><strong class='x-value'>" + header + "</strong></td></tr></thead>";
+                                                    var bodyhtml = "<tbody>";
+                                                    var series = d.series;
+                                                    series.forEach(function (c) {
+                                                        bodyhtml = bodyhtml + "<tr><td class='legend-color-guide'><div style='background-color: " + c.color + ";'></div></td><td class='key'>" + c.key + "</td><td class='value'>" + c.value + "</td></tr>";
+                                                    });
+                                                    bodyhtml = bodyhtml + "</tbody>";
+                                                    return "<table>" + headerhtml + '' + bodyhtml + "</table>";
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            };
-                            $.extend($scope.options['chart'], options);
+                                };
+                                $.extend($scope.options['chart'], options);
 
-                            var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>';
-                            $('#diagram_wq_' + layer.id).show();
-                            if (data.length == 1) {
-                                angular.element('#diagram_wq_' + layer.id).append($compile(template)($scope));
+                                var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>';
+                                $('#diagram_wq_' + layer.id).show();
+                                if (data.length == 1) {
+                                    angular.element('#diagram_wq_' + layer.id).append($compile(template)($scope));
+                                }
+                                $('#diagram_wait_' + layer.id).hide();
                             }
                         }
-                    }
 
-                }, function errorCallback(response) {
-                    console.log("no data");
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
-                })
-            });
+                    }, function errorCallback(response) {
+                         $('#diagram_no_data_' + layer.id).show();
+                         $('#diagram_wait_' + layer.id).hide();
+                        // called asynchronously if an error occurs
+                        // or server returns response with an error status.
+                    })
+
+                }
+                else {
+                    $('#diagram_outside_' + layer.id).show();
+            }  });
         }
 
 
