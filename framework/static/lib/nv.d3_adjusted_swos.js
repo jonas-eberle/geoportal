@@ -589,8 +589,12 @@ nv.models.tooltip = function() {
     var contentGenerator = function(d) {
 
 //-- add lines for SWOS
-        if (d.data.name == ""){
-            return '';
+        if (d.hasOwnProperty("data")) {
+            if (d.data.hasOwnProperty("name")) {
+                if (d.data.name == "") {
+                    return '';
+                }
+            }
         }
 //-- end
 
