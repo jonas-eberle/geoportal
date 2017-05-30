@@ -4,6 +4,7 @@ click==6.6
 click-plugins==1.0.3
 cligj==0.4.0
 cryptography==1.4
+cssmin==0.2.0
 cycler==0.10.0
 Django==1.7.5
 django-allauth==0.19.1

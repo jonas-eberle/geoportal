@@ -88,3 +88,5 @@ ENV/
 
 # Misc
 .idea
+
+framework/static/build

@@ -60,4 +60,26 @@ vendorJsContent = [
     'lib/fancybox/source/jquery.fancybox.pack.js'
 ]
 
-make_bundle('vendorJsContentBundle', vendorJsContent, filters=None, output='build/vendor.content.bundle.js')
+make_bundle('vendorJsContentBundle', vendorJsContent, filters='rjsmin', output='build/vendor.content.bundle.js')
+
+vendorCss = [
+    'css/bootstrap.min.css',
+    'css/bootstrap.diff.css',
+    'css/bootstrap-slider.min.css',
+    'css/font-awesome.min.css',
+    'css/nv.d3.min.css',
+    'css/nsPopover.css',
+    'lib/fancybox/source/jquery.fancybox.css',
+    'css/ol.css',
+    'css/anno.css'
+]
+
+make_bundle('vendorCssBundle', vendorCss, filters='cssmin', output='build/vendor.bundle.css')
+
+appCss = [
+    'css/dashboard.css',
+    'css/jonas.css',
+    'css/swos.css'
+]
+
+make_bundle('appCssBundle', appCss, filters='cssmin', output='build/app.bundle.css')

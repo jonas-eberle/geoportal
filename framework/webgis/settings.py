@@ -24,6 +24,8 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+# True: deliver JavaScript and CSS files as usual (e.g. for development)
+# False: deliver bundled/minified files (e.g. for live system)
 ASSETS_DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de']
