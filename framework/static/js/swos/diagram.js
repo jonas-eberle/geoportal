@@ -4,13 +4,21 @@
     angular.module('webgisApp')
         .controller('WetlandsDiagramCtrl', WetlandsDiagramCtrl);
 
-    WetlandsDiagramCtrl.$inject = ['$scope', '$compile', 'mapviewer', '$http'];
-    function WetlandsDiagramCtrl($scope, $compile, mapviewer, $http) {
+    WetlandsDiagramCtrl.$inject = ['$scope', '$compile', '$http','mapviewer'];
+    function WetlandsDiagramCtrl($scope, $compile, $http, mapviewer) {
         var wetlandsDiagram = this;
+
+
 
         wetlandsDiagram.infoEventKey = null;
         wetlandsDiagram.onclickCreate = onclickCreate;
         wetlandsDiagram.requestTimeSeries = requestTimeSeries;
+
+        wetlandsDiagram.data = [];
+        wetlandsDiagram.options = [];
+
+        wetlandsDiagram.data_vals = "";
+
         //--------------------------------------------------------------------------------------------------------------
 
         function add_no_data_level_clc(size, id_name_color_clc) {
@@ -345,27 +353,85 @@
         function requestTimeSeries(layer) {
             console.log("requestTimeSeries");
             $('#diagram_wq_text_' + layer.id).show();
+            $('#diagram_wq_text_window_' + layer.id).show();
 
-
+            var window_open = false;
             var type;
             var options = {};
             var data = -1;
             var point_count = 0;
 
+            var features = [];
+            var vectorSource = new ol.source.Vector({
+                features: features      //add an array of features
+            });
+
+            var vectorLayer = new ol.layer.Vector({
+                source: vectorSource
+            });
+
+            var color = [];
+            color[1] = "rgb(255, 127, 14)";
+            color[2] = "rgb(33, 165, 35)";
+            color[3] = "rgb(33, 125, 165)";
+            color[4] = "rgb(174, 199, 232)";
+            color[5] = "rgb(124, 33, 165)";
+            color[6] = "rgb(165, 33, 60)";
+            color[7] = "rgb(247, 246, 42)";
+            color[8] = "rgb(48, 142, 49)";
+            color[9] = "rgb(106, 197, 175)";
+            color[10] = "rgb(39, 93, 232)";
+
+            var svgPathToURI = function (color) {
+                var svgPath = '<svg  width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg" ><circle cx="25" cy="25" r="5" stroke="black" stroke-width="3" fill="';
+                svgPath += color;
+                svgPath += '"/></svg>';
+                return "data:image/svg+xml;base64," + btoa(svgPath);
+            };
+
+            mapviewer.map.addLayer(vectorLayer);
+
+
+
+
             wetlandsDiagram.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
                 var viewResolution = mapviewer.map.getView().getResolution();
                 var lonlat = ol.proj.transform(evt.coordinate, mapviewer.map.getView().getProjection(), 'EPSG:4326');
 
-                // needs to be solved better
+                // add marker to map
+
+                var pointInMap = new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.transform([lonlat[0], lonlat[1]], 'EPSG:4326', 'EPSG:3857'))
+                });
+
+                point_count++;
+
+
+                var color_pos = point_count;
+                if (color_pos > 10) {
+                    color_pos = color_pos % 10;
+                }
+
+                  pointInMap.setStyle(new ol.style.Style({
+                    image: new ol.style.Icon(( {
+                        src: svgPathToURI(color[color_pos])
+                    } ))
+                }));
+
+                vectorSource.addFeature(pointInMap);
+
+
+                // needs to be solved better #todo check if permanently removed
                 delete $http.defaults.headers.common.Pragma;
                 delete $http.defaults.headers.common["If-Modified-Since"];
                 $http.defaults.headers.common["Content-type"] = "application/x-www-form-urlencoded; charset=UTF-8";
 
                 // check if selected point is within extent -> will not work around 0 #todo replace with geometry function
-                if (Math.abs(lonlat[1]) < Math.abs(layer.north) &&  Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)){
-                    $('#diagram_outside_' + layer.id).hide();
+                if (Math.abs(lonlat[1]) < Math.abs(layer.north) && Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)) {
+                    $('#diagram_outside_window_' + layer.id).hide();
                     $('#diagram_wait_' + layer.id).show();
-                    $('#diagram_no_data_' + layer.id).hide();
+                    $('#diagram_wait_window_' + layer.id).show();
+                    $('#diagram_no_data_window_' + layer.id).hide();
                     $http({
                         method: 'POST',
                         url: 'http://artemis.geogr.uni-jena.de/ocpu/user/opencpu/library/swos/R/extractWQName/json',
@@ -380,36 +446,44 @@
 
                             var format = d3.time.format("%Y-%m-%d");
 
-                            if (response.data.values[key] != "NA") {
+                            //#todo adjust value range when using NaN
+                               if (response.data.values[key] == "NA") {
+                                   response.data.values[key] = NaN;
+                               }
+                            //else{
+                               //if (response.data.values[key] != "NA") {
                                 data_value = {
                                     "x": parseInt((new Date(response.data.dates[key])).getTime()),
                                     "y": response.data.values[key],
-                                }
+                                };
                                 data_obj.push(data_value);
-                            }
+
+                            //}
                         }
                         if (data_obj) {
-                            point_count++;
+
                             var new_data = {
                                 "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
+                                "color": color[color_pos],
                                 "values": data_obj
                             };
                             if (data.length == undefined) {
                                 data = [
                                     {
                                         "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
+                                        "color": color[color_pos],
                                         "values": data_obj
                                     }
                                 ];
                             } else {
                                 data.push(new_data);
-                                if (data.length > 4) {
+                                if (data.length > 10) {
                                     data.shift();
                                 }
                             }
                             type = 'lineWithFocusChart';
                             options['height'] = 300;
-                            options['width'] = 350
+                            options['width'] = 550;
                             options['x'] = function (d) {
                                 return d.x;
                             };
@@ -425,6 +499,7 @@
                                         "type": type,
                                         "width": 375,
                                         "useInteractiveGuideline": true,
+                                       // "forceY": ([0]),
                                         "xAxis": {
                                             tickFormat: function (d) {
                                                 return d3.time.format("%Y-%m-%d")(new Date(d))
@@ -456,20 +531,71 @@
                                 };
                                 $.extend($scope.options['chart'], options);
 
+                                var output = '<div  class="modal-body ts_diagram">' +
+                                    '<div id="diagram_wq_text_window_' + layer.id + '" style="display: none">' +
+                                    '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
+                                    '<p id="diagram_outside_window_' + layer.id + '" style="display: none">Please select a point within the map extent.</p>' +
+                                    '<p id="diagram_wait_window_' + layer.id + '" style="display: none">Please wait ...</p>' +
+                                    '<p id="diagram_no_data_window_' + layer.id + '" style="display: none">No data returned.</p>' +
+                                    '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
+                                    '</div>' +
+                                    '</div>';
+
+                                if (window_open == false){
+                                    window_open = true;
+                                    var dialog = bootbox.dialog({
+                                        title: layer.title,
+                                        message: output,
+                                        backdrop: false,
+                                        closeButton: false,
+                                        buttons: {
+                                            cancel: {
+                                                label: "Cancel",
+                                                className: "btn-default",
+                                                callback: function () {
+                                                    ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
+                                                    window_open = false;
+                                                    vectorSource.clear();
+                                                    $('#diagram_wq_text_' + layer.id).hide();
+                                                }
+                                            }
+                                        }
+                                    });
+
+
+                                    dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+                                    var width = $(document).width() / 2 - 300;
+                                    if (width < 0) {
+                                        width = '2%';
+                                    }
+                                    $('.modal-content', dialog).css('left', width);
+                                    $('#loading-div').removeClass('nobg').hide();
+                                }
+
+                                $('#diagram_wq_text_' + layer.id).show();
+                                $('#diagram_wq_text_window_' + layer.id).show();
+
                                 var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>';
-                                $('#diagram_wq_' + layer.id).show();
+                                $('#diagram_wq_window_' + layer.id).show();
+                                wetlandsDiagram.data[layer.id] = $scope.data;
+                                wetlandsDiagram.options[layer.id] = $scope.options;
+                                wetlandsDiagram.data_vals = $compile(template)($scope);
+                               // console.log(wetlandsDiagram.data_vals);
                                 if (data.length == 1) {
-                                    angular.element('#diagram_wq_' + layer.id).append($compile(template)($scope));
+                                    angular.element('#diagram_wq_window_' + layer.id).append($compile(template)($scope));
                                 }
                                 $('#diagram_wait_' + layer.id).hide();
+                                $('#diagram_wait_window_' + layer.id).hide();
                             }
                         }
 
                     }, function errorCallback(response) {
-                         $('#diagram_no_data_' + layer.id).show();
+                         $('#diagram_no_data_window_' + layer.id).show();
                          $('#diagram_wait_' + layer.id).hide();
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
+                         $('#diagram_wait_window_' + layer.id).hide();
+
+                         vectorSource.removeFeature(pointInMap);
+                         point_count = point_count-1;
                     })
 
                 }
@@ -477,7 +603,6 @@
                     $('#diagram_outside_' + layer.id).show();
             }  });
         }
-
 
         // Full Wetland
         // for (var pos in data.data.products) {
