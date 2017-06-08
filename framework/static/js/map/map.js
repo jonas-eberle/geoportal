@@ -469,7 +469,6 @@ var stroke = new ol.style.Stroke({
                 }
 
                 layer.showLegend = true;
-                layer.showStatistic = false;
                 this.layers[layer.id] = olLayer;
 
                 if (layer.ogc_time === true) {
@@ -1271,7 +1270,6 @@ var stroke = new ol.style.Stroke({
         mcl.toggleLayerControls = toggleLayerControls;
         mcl.toggleLegend = toggleLegend;
         mcl.toggleStations = toggleStations;
-        mcl.toggleStatistic = toggleStatistic;
         mcl.toggleWetlandList = toggleWetlandList;
         mcl.updateLayer = updateLayer;
         //mcl.wetlandListGlyph = "glyphicon-chevron-right";
@@ -1635,7 +1633,6 @@ var stroke = new ol.style.Stroke({
         function toggleLegend(layer) {
             // negate showLegend
             layer.showLegend = !layer.showLegend;
-            layer.showStatistic = false;
         }
 
         function toggleStations(layer) {
@@ -1655,12 +1652,6 @@ var stroke = new ol.style.Stroke({
             layer.showStations = !layer.showStations;
         }
 
-        function toggleStatistic(layer) {
-            // negate showSTatistic
-            layer.showLegend = false;
-            layer.showStatistic = !layer.showStatistic;
-
-        }
 
         function toggleWetlandList(action) {
             $('.toggle-button-wrapper > button').blur();
