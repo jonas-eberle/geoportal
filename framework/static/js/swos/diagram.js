@@ -484,9 +484,12 @@
                                 var csvContent = "data:text/csv;charset=utf-8,";
                                 var data_arr = [];
                                 var value = "";
+                                var header = "#date";
 
-                                $scope.data.forEach(function (infoArray, index) {
-                                    infoArray.values.forEach(function (data, index2) {
+                                $scope.data.forEach(function (series, index) {
+                                    var latlong = series.coordinates;
+                                    header = header + "," + series.key + "(" + latlong[0].toFixed(2) + " " + latlong[1].toFixed(2) + ")";
+                                    series.values.forEach(function (data, index2) {
 
                                         if (isNaN(data.y)) {
                                             value = -9999;
@@ -506,7 +509,7 @@
                                         }
                                     })
                                 });
-
+                                csvContent += header + "\n";
                                 for (var key in data_arr) {
                                     var dataString = data_arr[key].join(",");
                                     csvContent += key + "," + dataString + "\n";
@@ -514,7 +517,8 @@
                                 var encodedUri = encodeURI(csvContent);
                                 var link = document.createElement("a");
                                 link.setAttribute("href", encodedUri);
-                                link.setAttribute("download", "my_data.csv");
+                                var name = layer.title;
+                                link.setAttribute("download", name.replace(" ", "_") +".csv");
                                 document.body.appendChild(link); // Required for FF
 
                                 link.click();
@@ -639,6 +643,7 @@
                             var new_data = {
                                 "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
                                 "color": color[color_pos],
+                                "coordinates": lonlat,
                                 "values": data_obj
                             };
                             if (data.length == undefined) {
@@ -646,6 +651,7 @@
                                     {
                                         "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
                                         "color": color[color_pos],
+                                        "coordinates": lonlat,
                                         "values": data_obj
                                     }
                                 ];
