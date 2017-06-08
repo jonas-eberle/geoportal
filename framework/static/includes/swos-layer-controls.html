@@ -7,12 +7,18 @@
                                                        ng-options="o as o for o in layer.ogc_times"></select></div>
     </div>
     <div class="item_icon">
+        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Hide layer"
+                type="button"  ng-click="mcl.changeVisibility(slc.layer.id, $event)" ng-if="mcl.getVisibility(slc.layer.id)" class="btn btn-default" aria-label="Left Align"><i
+                class="fa fa-eye fa-lg"></i></button>
+        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show layer"
+                type="button"  ng-click="mcl.changeVisibility(slc.layer.id, $event)" ng-if="!mcl.getVisibility(slc.layer.id)" class="btn btn-default" aria-label="Left Align"><i
+                class="fa fa-eye-slash fa-lg"></i></button>
         <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend"
                 type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
         <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors" tooltip-placement="bottom" tooltip="Show statistic"
-                type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.onclickCreate(layer);"
+                type="button" ng-click="wetlandsDiagram.onclickCreate(layer);"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram"  ng-if="layer.ogc_times" tooltip-placement="bottom" tooltip="Create time series"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.requestTimeSeries(layer);"
@@ -57,24 +63,4 @@
     </table>
 </div>
 
-<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showStatistic">
-    <div id="diagram_{{ layer.id }}" style="display:none;">
-      <div><strong>Interactive chart with absolute area proportions</strong></div><div style="font-size:0.9em;" class="hint" style="display:none;">(Move your mouse over or click on the classes for more details)</div>
-    </div>
-    <strong ng-if="layer.legend_colors">Relative area proportions</strong>
-    <table ng-if="layer.legend_colors" style="width:100%;">
-        <tr ng-repeat="item in layer.legend_colors | orderBy : '-percent' ">
-            <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
-            <td class="legend-label">{{ item.label }}</td>
-            <td class="legend-percent"><span tooltip="{{ item.size }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>
-        </tr>
-    </table>
-</div>
-<div id="diagram_wq_text_{{ layer.id }}" style="display: none">
-    <p><strong>Please select a point in the map to create a time series.</strong></p>
-    <p id="diagram_outside_{{ layer.id }}" style="display: none">Please select a point within the map extent.</p>
-    <p id="diagram_wait_{{ layer.id }}" style="display: none">Please wait ...</p>
-   <!-- <p id="diagram_no_data_{{ layer.id }}" style="display: none">No data returned.</p>
-    <div id="diagram_wq_{{ layer.id }}" style="display:none;">-->
-    </div>
-</div>
+

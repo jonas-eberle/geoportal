@@ -143,3 +143,15 @@
     font-size: 0.9em;
     padding-left: 5px;
 }
+
+.nvtooltip {
+    z-index: 2000000 !important;
+}
+
+/* Show data points in nvd3 line chart
+.nv-point {
+	stroke-width: 3px;
+	fill-opacity: 1 !important;
+	stroke-opacity: 0.7 !important;
+	}
+*/
