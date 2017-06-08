@@ -477,7 +477,51 @@
                     backdrop: false,
                     closeButton: false,
                     buttons: {
+                        "Export as CSV": {
+                            label: "Export as CSV",
+                            className: "btn-default",
+                            callback: function () {
+                                var csvContent = "data:text/csv;charset=utf-8,";
+                                var data_arr = [];
+                                var value = "";
 
+                                $scope.data.forEach(function (infoArray, index) {
+                                    infoArray.values.forEach(function (data, index2) {
+
+                                        if (isNaN(data.y)) {
+                                            value = -9999;
+                                        }
+                                        else {
+                                            value = data.y;
+                                        }
+
+                                        var date = d3.time.format("%Y-%m-%d")(new Date(data.x))
+
+                                        if (data_arr[date] == undefined) {
+                                            data_arr[date] = [];
+                                            data_arr[date].push(value);
+                                        }
+                                        else {
+                                            data_arr[date].push(value);
+                                        }
+                                    })
+                                });
+
+                                for (var key in data_arr) {
+                                    var dataString = data_arr[key].join(",");
+                                    csvContent += key + "," + dataString + "\n";
+                                };
+                                var encodedUri = encodeURI(csvContent);
+                                var link = document.createElement("a");
+                                link.setAttribute("href", encodedUri);
+                                link.setAttribute("download", "my_data.csv");
+                                document.body.appendChild(link); // Required for FF
+
+                                link.click();
+
+                                return false;
+                            }
+                        },
                         cancel: {
                             label: "Close",
                             className: "btn-default",
@@ -672,13 +716,10 @@
                                 wetlandsDiagram.data[layer.id] = $scope.data;
                                 wetlandsDiagram.options[layer.id] = $scope.options;
                                 wetlandsDiagram.data_vals = $compile(template)($scope);
-                                // console.log(wetlandsDiagram.data_vals);
                                 if (data.length == 1) {
                                     angular.element('#diagram_wq_window_' + layer.id).append($compile(template)($scope));
                                 }
                                 $('#diagram_wait_window_' + layer.id).hide();
-                                $('.nv-point-2').css('fill', 'green');
-                                $('.nv-point-2').css('stroke', 'green');
                             }
                         }
                     }, function errorCallback(response) {
