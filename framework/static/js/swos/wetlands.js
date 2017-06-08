@@ -457,10 +457,11 @@
             });
             var attr_list = attribution_arr.join(' | \u00A9 ');
 
-            var www_list = attr_list.match(/\([a-zA-Z., ]*\)/g);
+            var www_list = attr_list.match(/\((http)s?:\/\/(\w+\.){1,}\w+[\w./?=&#%]*, ?[\w ]+\)/g);
+            console.log(www_list);
             if (www_list) {
                 $.each(www_list, function () {
-                    var new_ = '<a href="http:\\\\' + this.substr(1, this.indexOf(',')) + '" target = "_blank" style="text-decoration-line: underline; color: #d6d6d6;">' + this.substr(this.indexOf(',') + 1, this.substr(this.indexOf(',') + 1).length - 1) + "</a>";
+                    var new_ = '<a href="' + this.substr(1, this.indexOf(',')-1) + '" target = "_blank" style="text-decoration-line: underline; color: #d6d6d6;">' + this.substr(this.indexOf(',') + 1, this.substr(this.indexOf(',') + 1).length - 1) + "</a>";
                     attr_list = attr_list.replace(this, new_);
                 });
             }
