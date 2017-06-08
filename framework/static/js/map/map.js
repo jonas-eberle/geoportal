@@ -1251,6 +1251,7 @@ var stroke = new ol.style.Stroke({
         mcl.changeLayer = changeLayer;
         mcl.changeOpacity = changeOpacity;
         mcl.changeVisibility = changeVisibility;
+        mcl.getVisibility = getVisibility;
         mcl.currentBBOX = null;
         mcl.download = downloadLayer;
         mcl.layersMeta = mapviewer.layersMeta;
@@ -1397,13 +1398,11 @@ var stroke = new ol.style.Stroke({
         }
 
         function changeVisibility(id, $event) {
+
             var olLayer = mapviewer.getLayerById(id);
-            var checkbox = $event.target;
-            if (checkbox.checked) {
-                olLayer.setVisible(true);
-            } else {
-                olLayer.setVisible(false);
-            }
+
+            var status = olLayer.getVisible();
+            olLayer.setVisible(!status);
         }
 
         function downloadLayer(layer) {
@@ -1413,6 +1412,10 @@ var stroke = new ol.style.Stroke({
             } else {
                 window.open(subdir + '/layers/detail/' + layer.id + '/download', 'download_' + layer.id);
             }
+        }
+
+        function getVisibility(id){
+            return mapviewer.getLayerById(id).getVisible();
         }
 
         function prepareIndex(index, item) {

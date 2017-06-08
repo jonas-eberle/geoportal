@@ -207,16 +207,26 @@
 
                             <div class="catalog-item">
                                 <div class="item_left" style="padding-top:12px;">
-                                    <input type="checkbox" ng-click="mcl.changeVisibility(layer.id, $event)"
-                                           id="id_{{ layer.id }}" checked="checked"/>
-                                    <label for="id_{{ layer.id }}"></label>
+                                    <button tooltip-append-to-body="true" tooltip-placement="right"
+                                            tooltip="Hide layer"
+                                            type="button" ng-click="mcl.changeVisibility(layer.id, $event)"
+                                            ng-if="mcl.getVisibility(layer.id)" class="btn btn-default"
+                                            style="padding: 0;border-color: white;"
+                                            aria-label="Left Align"><i
+                                            class="fa fa-eye fa-lg"></i></button>
+                                    <button tooltip-append-to-body="true" tooltip-placement="right"
+                                            tooltip="Show layer"
+                                            type="button" ng-click="mcl.changeVisibility(layer.id, $event)"
+                                            ng-if="!mcl.getVisibility(layer.id)" class="btn btn-default"
+                                            style="padding: 0;border-color: white;"
+                                            aria-label="Left Align"><i
+                                            class="fa fa-eye-slash fa-lg"></i></button>
                                 </div>
                                 <div class="item_catalog">
                                     <div class="layer-title-wrapper">
-                                        <div class="item_title" style="float: left;width:206px;" ng-click="mcl.zoomToLayer(layer.id)" ng-bind="layer.title"></div>
-                                        <div class="glyphicon glyphicon-chevron-down" ng-click="mcl.toggleLayerControls(layer.id, $event)">
-                                            &nbsp;
-                                        </div>
+                                        <div tooltip-placement="bottom" tooltip="Show/Hide details" class="glyphicon glyphicon-chevron-down" style="float: left; width: 0px;padding-left: 0px; padding-top: 20px" ng-click="mcl.toggleLayerControls(layer.id, $event)"></div>
+                                        <div class="item_title" style="float: left;width:206px;padding-left: 20px;" ng-click="mcl.zoomToLayer(layer.id)" ng-bind="layer.title"></div>
+                                        <div tooltip-placement="bottom" tooltip="Remove layer" class="glyphicon glyphicon-remove" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)"></div>
                                         <div style="clear:both;"></div>
                                     </div>
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
@@ -230,7 +240,7 @@
                                             <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
                                             <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>
+                                           <!-- <button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
                                         </div>
                                     </div>
                                 </div>
@@ -714,7 +724,6 @@
     <!-- Add fancyBox -->
     <link rel="stylesheet" href="{% static "lib/fancybox/source/jquery.fancybox.css" %}" type="text/css" media="screen" />
     <script type="text/javascript" src="{% static "lib/fancybox/source/jquery.fancybox.pack.js" %}"></script>
-
 
     <script src="{% static "js/app.js" %}?v=20170526"></script>
     <script src="{% static "js/auth/auth.js" %}?v=20170526"></script>

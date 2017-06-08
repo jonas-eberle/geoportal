@@ -419,7 +419,7 @@ button.btn-loadmore:hover {
     position: absolute;
     top: 60px;
     width: calc(100% - 400px);
-    z-index: 1020;
+    z-index: 1040;
     padding-top: 10px;
 }
 
@@ -434,16 +434,15 @@ button.btn-loadmore:hover {
 @media (min-width: 1360px) {
     .map-controls-wrapper {
         top: 0px;
-        z-index: 2040;
-        left: calc(50% - 350px);
-        right: auto;
+		left: calc(50% - 350px);
+		right: auto;
     }
 }
 
 /* extends bootstrap-slider's .tooltip */
 .tooltip {
     pointer-events: none;
-    z-index: 1520;
+    z-index: 9999999;
 }
 
 .ol-scale-line {
@@ -558,4 +557,8 @@ button.btn-loadmore:hover {
 
 #nav-top-right2 li.dropdown {
 	width: 110px;
+}
+
+.item_left button:hover{
+  background-color: white;
 }

@@ -245,7 +245,7 @@
                 data = add_no_data_level_clc(value, data);
                 data = create_value_legend_clc_data(data[1], data[0])[0];
                 type = 'sunburstChart';
-                options['height'] = 300;
+                options['height'] = 450;
                 options['showLabels'] = false;
             }
             if (layer.identifier.includes("MAES") && layer.identifier.includes("LULC_")) {
@@ -253,7 +253,7 @@
                 data = add_no_data_level_clc(value, data);
                 data = create_value_legend_clc_data(data[1], data[0])[0];
                 type = 'sunburstChart';
-                options['height'] = 300;
+                options['height'] = 450;
                 options['showLabels'] = false;
             }
             if (layer.identifier.includes("LULCC")) {
@@ -271,9 +271,16 @@
                 type = 'discreteBarChart';
                 options['height'] = 200;
                 options['showXAxis'] = false;
+
                 options['x'] = function (d) {
-                    return d.label.split(' - ')[0];
+                    //return d.label.split(' - ')[0];
+                    return d.label;
                 };
+                options['yAxis'] = [];
+                options['yAxis']['axisLabel'] = "Area in ha";
+                options['yAxis']['rotateYLabel'] = false;
+                options['margin'] = [];
+                options['margin']['top'] = 30;
                 options['y'] = function (d) {
                     return d.size;
                 };
@@ -286,7 +293,7 @@
             if (layer.identifier.includes("SWD_TD")) {
                 data = layer.legend_colors;
                 type = 'pieChart';
-                options['height'] = 200;
+                options['height'] = 450;
                 options['x'] = function (d) {
                     return d.label;
                 };
@@ -302,8 +309,8 @@
                     values: layer.legend_colors
                 }];
                 type = 'multiBarHorizontalChart';
-                options['height'] = 200;
-                options['width'] = 350;
+                options['height'] = 400;
+                options['width'] = 450;
                 options['x'] = function (d) {
                     return d.label;
                 };
@@ -322,7 +329,8 @@
                 $scope.options = {
                     "chart": {
                         "type": type,
-                        "width": 375,
+                        "heigth": 200,
+                        "width": 600,
                         "mode": 'size',
                         "groupColorByParent": false,
                         /*color: function (d, i) {
@@ -334,14 +342,56 @@
                         //"labelFormat":function (d){if(d.size < 5){console.log(d);return d.name}else{return ''}''}
                         "tooltip": {
                             "valueFormatter": function (d) {
-                                return d.toFixed(2) + 'ha';
+                                return new Intl.NumberFormat('en-US').format(d.toFixed(2)) + ' ha';
                             }
                         }
                     }
                 };
                 $.extend($scope.options['chart'], options);
 
-                var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>';
+                var output = '<div  class="modal-body ts_diagram">' +
+                    ' ' +
+                    '<div id="diagram_' + layer.id +'" style="display:none;">' +
+                    '' +
+                    '</div>' +
+
+                '</div>';
+
+                var dialog = bootbox.dialog({
+                    title: layer.title,
+                    message: output,
+                    backdrop: false,
+                    closeButton: false,
+                    buttons: {
+                        cancel: {
+                            label: "Close",
+                            className: "btn-default",
+                            callback: function () {
+
+                            }
+                        }
+                    }
+                });
+
+                dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+                var width = $(document).width() / 2 - 300;
+                if (width < 0) {
+                    width = '2%';
+                }
+                $('.modal-content', dialog).css('left', width);
+                $('#loading-div').removeClass('nobg').hide();
+
+                var template = '<div><tabset justified="true"> <tab heading="Interactive Chart">' +
+                    '<div style="text-align: center;"><strong>Absolute area proportions</strong></div><div style="font-size:0.9em;text-align: center;" class="hint">(Move your mouse over or click on the classes for more details)</div>' +
+                    '<div style="display: flex;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div></tab><tab heading="Data"><div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"> <strong ng-if=layer.legend_colors>Relative area proportions</strong>' +
+                    '<table ng-if="layer.legend_colors" style="width:100%;">' +
+                    '<tr ng-repeat="item in layer.legend_colors | orderBy : \'-percent\' ">' +
+                    '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
+                    '<td class="legend-label">{{ item.label }}</td>' +
+                    '<td class="legend-percent"><span tooltip="{{ item.size }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '</div></tab></tabset></div>';
                 $('#diagram_' + layer.id).show();
                 if (layer.identifier.includes("LULC_")) {
                     $('#diagram_' + layer.id + ' .hint').show();
@@ -370,6 +420,24 @@
                 source: vectorSource
             });
 
+            var unit = "";
+            var yaxix_title = "";
+            if(layer.title.includes("CDOM")){
+                var str = "-1";
+                unit = "m" + str.sup();
+                yaxix_title = "CDOM in m^-1";
+            }
+            if(layer.title.includes("CHL")){
+                unit = "µg/l";
+                yaxix_title = "CHL in" + unit;
+            }
+            if(layer.title.includes("TSM")){
+                unit = "mg/l";
+                yaxix_title = "TSM in" + unit;
+            }
+
+
+
             var color = [];
             color[1] = "rgb(255, 127, 14)";
             color[2] = "rgb(33, 165, 35)";
@@ -391,7 +459,49 @@
 
             mapviewer.map.addLayer(vectorLayer);
 
+            var output = '<div  class="modal-body ts_diagram">' +
+                '<div id="diagram_wq_text_window_' + layer.id + '" style="display: none">' +
+                '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
+                '<p id="diagram_outside_window_' + layer.id + '" style="display: none">Please select a point within the map extent.</p>' +
+                '<p id="diagram_wait_window_' + layer.id + '" style="display: none">Please wait ...</p>' +
+                '<p id="diagram_no_data_window_' + layer.id + '" style="display: none">No data returned.</p>' +
+                '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
+                '</div>' +
+                '</div>';
 
+            if (window_open == false) {
+                window_open = true;
+                var dialog = bootbox.dialog({
+                    title: layer.title,
+                    message: output,
+                    backdrop: false,
+                    closeButton: false,
+                    buttons: {
+
+                        cancel: {
+                            label: "Close",
+                            className: "btn-default",
+                            callback: function () {
+                                ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
+                                window_open = false;
+                                vectorSource.clear();
+                                $('#diagram_wq_text_' + layer.id).hide();
+                            }
+                        }
+                    }
+                });
+
+
+                    dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+                    var width = $(document).width() / 2 - 300;
+                    if (width < 0) {
+                        width = '2%';
+                    }
+                    $('.modal-content', dialog).css('left', width);
+                    $('#loading-div').removeClass('nobg').hide();
+                }
+
+                $('#diagram_wq_text_window_' + layer.id).show();
 
 
             wetlandsDiagram.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
@@ -412,13 +522,34 @@
                     color_pos = color_pos % 10;
                 }
 
-                  pointInMap.setStyle(new ol.style.Style({
-                    image: new ol.style.Icon(( {
-                        src: svgPathToURI(color[color_pos])
-                    } ))
-                }));
+                pointInMap.setStyle(
+                    new ol.style.Style({
+                        image: new ol.style.Icon(( {
+                            src: svgPathToURI(color[color_pos])
+                        } )),
+                        text: new ol.style.Text({
+                            textAlign: "start",
+                            textBaseline: "middle",
+                            font: 'Normal 12px Arial',
+                            text: 'Point ' + point_count,
+                            scale: 1.3,
+                            fill: new ol.style.Fill({
+                                color: color[color_pos]
+                            }),
+                            stroke: new ol.style.Stroke({
+                                color: '#000000',
+                                width: 3
+                            }),
+                            offsetX: 20,
+                            offsetY: 0,
+                            rotation: 0
+                        })
+                    }));
 
                 vectorSource.addFeature(pointInMap);
+
+
+
 
 
                 // needs to be solved better #todo check if permanently removed
@@ -429,7 +560,6 @@
                 // check if selected point is within extent -> will not work around 0 #todo replace with geometry function
                 if (Math.abs(lonlat[1]) < Math.abs(layer.north) && Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)) {
                     $('#diagram_outside_window_' + layer.id).hide();
-                    $('#diagram_wait_' + layer.id).show();
                     $('#diagram_wait_window_' + layer.id).show();
                     $('#diagram_no_data_window_' + layer.id).hide();
                     $http({
@@ -499,7 +629,13 @@
                                         "type": type,
                                         "width": 375,
                                         "useInteractiveGuideline": true,
-                                       // "forceY": ([0]),
+                                        "margin": {
+                                            bottom: 60
+                                        },
+                                        "forceY": ([0]),
+                                        "yAxis": {
+                                            "axisLabel": yaxix_title
+                                        },
                                         "xAxis": {
                                             tickFormat: function (d) {
                                                 return d3.time.format("%Y-%m-%d")(new Date(d))
@@ -520,7 +656,7 @@
                                                     var bodyhtml = "<tbody>";
                                                     var series = d.series;
                                                     series.forEach(function (c) {
-                                                        bodyhtml = bodyhtml + "<tr><td class='legend-color-guide'><div style='background-color: " + c.color + ";'></div></td><td class='key'>" + c.key + "</td><td class='value'>" + c.value + "</td></tr>";
+                                                        bodyhtml = bodyhtml + "<tr><td class='legend-color-guide'><div style='background-color: " + c.color + ";'></div></td><td class='key'>" + c.key + "</td><td class='value'>" + c.value + " " + unit + "</td></tr>";
                                                     });
                                                     bodyhtml = bodyhtml + "</tbody>";
                                                     return "<table>" + headerhtml + '' + bodyhtml + "</table>";
@@ -531,67 +667,22 @@
                                 };
                                 $.extend($scope.options['chart'], options);
 
-                                var output = '<div  class="modal-body ts_diagram">' +
-                                    '<div id="diagram_wq_text_window_' + layer.id + '" style="display: none">' +
-                                    '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
-                                    '<p id="diagram_outside_window_' + layer.id + '" style="display: none">Please select a point within the map extent.</p>' +
-                                    '<p id="diagram_wait_window_' + layer.id + '" style="display: none">Please wait ...</p>' +
-                                    '<p id="diagram_no_data_window_' + layer.id + '" style="display: none">No data returned.</p>' +
-                                    '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
-                                    '</div>' +
-                                    '</div>';
-
-                                if (window_open == false){
-                                    window_open = true;
-                                    var dialog = bootbox.dialog({
-                                        title: layer.title,
-                                        message: output,
-                                        backdrop: false,
-                                        closeButton: false,
-                                        buttons: {
-                                            cancel: {
-                                                label: "Cancel",
-                                                className: "btn-default",
-                                                callback: function () {
-                                                    ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
-                                                    window_open = false;
-                                                    vectorSource.clear();
-                                                    $('#diagram_wq_text_' + layer.id).hide();
-                                                }
-                                            }
-                                        }
-                                    });
-
-
-                                    dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
-                                    var width = $(document).width() / 2 - 300;
-                                    if (width < 0) {
-                                        width = '2%';
-                                    }
-                                    $('.modal-content', dialog).css('left', width);
-                                    $('#loading-div').removeClass('nobg').hide();
-                                }
-
-                                $('#diagram_wq_text_' + layer.id).show();
-                                $('#diagram_wq_text_window_' + layer.id).show();
-
-                                var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>';
+                                var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions" data-points="true"></nvd3></div>';
                                 $('#diagram_wq_window_' + layer.id).show();
                                 wetlandsDiagram.data[layer.id] = $scope.data;
                                 wetlandsDiagram.options[layer.id] = $scope.options;
                                 wetlandsDiagram.data_vals = $compile(template)($scope);
-                               // console.log(wetlandsDiagram.data_vals);
+                                // console.log(wetlandsDiagram.data_vals);
                                 if (data.length == 1) {
                                     angular.element('#diagram_wq_window_' + layer.id).append($compile(template)($scope));
                                 }
-                                $('#diagram_wait_' + layer.id).hide();
                                 $('#diagram_wait_window_' + layer.id).hide();
+                                $('.nv-point-2').css('fill', 'green');
+                                $('.nv-point-2').css('stroke', 'green');
                             }
                         }
-
                     }, function errorCallback(response) {
                          $('#diagram_no_data_window_' + layer.id).show();
-                         $('#diagram_wait_' + layer.id).hide();
                          $('#diagram_wait_window_' + layer.id).hide();
 
                          vectorSource.removeFeature(pointInMap);
