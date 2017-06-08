@@ -434,8 +434,9 @@ button.btn-loadmore:hover {
 @media (min-width: 1360px) {
     .map-controls-wrapper {
         top: 0px;
-		left: calc(50% - 350px);
-		right: auto;
+        z-index: 2040;
+	left: calc(50% - 350px);
+	right: auto;
     }
 }
 
