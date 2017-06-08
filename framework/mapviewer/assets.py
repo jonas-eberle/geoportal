@@ -1,13 +1,7 @@
 from django_assets import Bundle, register
-from django.conf import settings
 
 
 def make_bundle(bundle_name, file_list, filters, output):
-    staticdir = settings.STATICFILES_DIRS[0]
-
-    if not settings.ASSETS_DEBUG:
-        file_list = map((staticdir + "/{0}").format, file_list)
-
     bundle = Bundle(*file_list, filters=filters, output=output)
     register(bundle_name, bundle)
 
@@ -26,52 +20,53 @@ appJs = [
 make_bundle('appJsContentBundle', appJs, filters='rjsmin', output='build/app.bundle.js')
 
 vendorJsHead = [
-    'lib/turf.min.js',
-    'lib/ol.js',
-    'lib/dygraph-combined.js',
-    'lib/dygraph-interaction-api.js'
+    '@turf/turf/turf.min.js',
+    'openlayers/dist/ol.js',
+    # 'lib/dygraph-combined.js',
+    'dygraphs/dist/dygraph.min.js'
 ]
 
 make_bundle('vendorJsHeadBundle', vendorJsHead, filters=None, output='build/vendor.head.bundle.js')
 
 vendorJsContent = [
-    'lib/jquery.min.js',
-    'lib/bootstrap.min.js',
+    'jquery/dist/jquery.min.js',
+    'bootstrap/dist/js/bootstrap.min.js',
     # 'js/popover.js',
-    # 'assets/js/docs.min.js',
-    'lib/angular.min.js',
-    'lib/angular-resource.min.js',
-    'lib/angular-cookies.min.js',
-    'lib/angular-route.min.js',
-    'lib/angular-drag-and-drop-lists.min.js',
-    'lib/angular-filter.min.js',
-    'lib/ui-bootstrap-tpls-0.12.0.min.js',
-    'lib/nsPopover.js',
-    'lib/bootbox.min.js',
-    'lib/bootstrap-slider.min.js',
-    'lib/angular-bootstrap-slider.js',
-    'lib/jquery-drags.js',
-    'lib/Chart.min.js',
-    'lib/angular-chart.min.js',
-    'lib/d3.min.js',
-    'lib/nv.d3_adjusted_swos.js',
-    'lib/angular-nvd3.min.js',
-    'lib/anno.js',
-    'lib/fancybox/source/jquery.fancybox.pack.js'
+    # 'lib/docs.min.js',
+    'angular/angular.min.js',
+    'angular-resource/angular-resource.min.js',
+    'angular-cookies/angular-cookies.min.js',
+    'angular-route/angular-route.min.js',
+    'angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js',
+    'angular-filter/dist/angular-filter.min.js',
+    'angular-ui-bootstrap/ui-bootstrap-tpls.min.js',
+    'nx-popover/dist/nsPopover.js',
+    'bootbox/bootbox.min.js',
+    'bootstrap-slider/dist/bootstrap-slider.min.js',
+    'angular-bootstrap-slider/slider.js',
+    'lib/jquery-drags.js',      # not on npmjs.com
+    'chart.js/dist/Chart.min.js',
+    'angular-chart.js/dist/angular-chart.min.js',
+    'd3/d3.min.js',
+    'lib/nv.d3_adjusted_swos.js',   # not on npmjs.com
+    'angular-nvd3/dist/angular-nvd3.min.js',
+    'anno.js/dist/anno.js',
+    'lib/jquery.fancybox.pack_adjusted.js'
 ]
 
 make_bundle('vendorJsContentBundle', vendorJsContent, filters='rjsmin', output='build/vendor.content.bundle.js')
 
 vendorCss = [
-    'css/bootstrap.min.css',
-    'css/bootstrap.diff.css',
-    'css/bootstrap-slider.min.css',
-    'css/font-awesome.min.css',
-    'css/nv.d3.min.css',
-    'css/nsPopover.css',
-    'lib/fancybox/source/jquery.fancybox.css',
-    'css/ol.css',
-    'css/anno.css'
+    'bootstrap/dist/css/bootstrap.min.css',
+    'css/bootstrap.diff.css',   # changes from modified less files
+    'bootstrap-slider/dist/css/bootstrap-slider.min.css',
+    'font-awesome/css/font-awesome.min.css',
+    'nvd3/build/nv.d3.min.css',
+    'nx-popover/dist/nsPopover.css',
+    'fancybox/dist/css/jquery.fancybox.css',
+    'openlayers/dist/ol.css',
+    'anno.js/dist/anno.css',
+    'dygraphs/dist/dygraph.min.css'
 ]
 
 make_bundle('vendorCssBundle', vendorCss, filters='cssmin', output='build/vendor.bundle.css')

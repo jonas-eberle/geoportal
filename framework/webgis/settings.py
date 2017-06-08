@@ -119,7 +119,20 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
+ASSETS_LOAD_PATH = [
+    os.path.join(os.path.dirname(BASE_DIR), 'node_modules'),
+    STATICFILES_DIRS[0]
+]
 ASSETS_ROOT = STATICFILES_DIRS[0]
+
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "npm.finders.NpmFinder"
+)
+
+NPM_ROOT_PATH = os.path.join(os.path.dirname(BASE_DIR))
+
 
 #MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'
 #MEDIA_ROOT = '/var/www/webgis.essi-services.net/media/'
