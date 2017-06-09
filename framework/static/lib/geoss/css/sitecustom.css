@@ -1,0 +1,78 @@
+.clearfix:after {
+	clear: both;
+}
+
+#geoss-search-widget {
+    height: 600px;
+    width: 100%;
+}
+
+
+/**** Search part *****/
+
+#geoss-search-widget .search {
+	height: 60px;
+}
+
+.gsw_search {
+	width: 100%;
+	height: 100%;
+	padding: 5px;
+	background-color: #42a195;
+}
+
+#gsw_query_search {
+	float: left;
+	width: calc(100% - 80px);
+	height: 40px;
+}
+
+#gsw_search_button {
+	float: left;
+	width: 40px;
+	height: 40px;
+	margin: 0;
+}
+
+#gsw_search_button::before {
+	content: url("../images/img/search.png");
+	position: relative;
+	top: 2px;
+	right: 5px;
+}
+
+#gsw_clear_button {
+	float: left;
+	width: 40px;
+	height: 40px;
+    margin: 0;
+}
+
+#gsw_clear_button::before {
+	content: url("../images/img/closeX.png");
+	position: relative;
+	top: 2px;
+	right: 1px;
+}
+
+
+/***** Results part *****/
+
+#geoss-search-widget .results {
+	background-color: #acc;
+	height: calc(100% - 60px);
+	overflow-y: scroll;
+}
+
+.gsw_result-wrap {
+	overflow-x: hidden;
+	overflow-y: auto;
+	display: flex;
+    flex-direction: column;
+}
+
+.gsw_list-result {
+	background-color: #fff;
+	padding: 25px 19px 0px 25px;
+	position: relative;
+}

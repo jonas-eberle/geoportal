@@ -1,0 +1,21 @@
+<div modal-draggable class="modal-header"><h1>Search within GEOSS</h1></div>
+<div class="modal-body" style="padding: 0;">
+    <div id="geoss-search-widget" class="geoss clearfix">
+        <div class="search">
+        	<div class="gsw_search clearfix">
+                <input placeholder="Enter search words ..." id="gsw_query_search" type="search" value="{{ gsrm.searchData.text }}" ng-keyup="gsrm.searchKeyUp($event)">
+                <button id="gsw_search_button" title="Search" ng-click="gsrm.submitQuery()"></span>
+                <button id="gsw_clear_button" title="Clear All" type="button" ng-click="gsrm.clearAll()"></button>
+            </div>
+        </div>
+        <div class="results"></div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div style="float: left;text-align: left;font-size: 0.8em;position: absolute;bottom: 9px;">
+	   Powered by: <br>
+	   <a href="http://www.earthobservations.org" target="_blank"><img src="/static/img/geoss/top_banner_main_l_new_35px.png" height="35"></a>
+       <a href="http://www.geoportal.org" target="_blank" style="margin-left: 20px;"><img src="/static/img/geoss/geossportal-trans.png?v=1" height="35"></a>
+    </div>
+	<button class="btn btn-primary" ng-click="gsrm.close()">Close</button>
+</div>
