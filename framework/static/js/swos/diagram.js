@@ -484,7 +484,7 @@
                                     series.values.forEach(function (data) {
 
                                         if (isNaN(data.y)) {
-                                            value = -9999;
+                                            value = "";
                                         }
                                         else {
                                             value = data.y;
