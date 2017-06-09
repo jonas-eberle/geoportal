@@ -12,7 +12,9 @@
 
         wetlandsDiagram.infoEventKey = null;
         wetlandsDiagram.onclickCreate = onclickCreate;
+        wetlandsDiagram.formatValue = formatValue;
         wetlandsDiagram.requestTimeSeries = requestTimeSeries;
+
 
         wetlandsDiagram.data = [];
         wetlandsDiagram.options = [];
@@ -342,7 +344,7 @@
                         //"labelFormat":function (d){if(d.size < 5){console.log(d);return d.name}else{return ''}''}
                         "tooltip": {
                             "valueFormatter": function (d) {
-                                return new Intl.NumberFormat('en-US').format(d.toFixed(2)) + ' ha';
+                                return wetlandsDiagram.formatValue(d.toFixed(2)) + ' ha';
                             }
                         }
                     }
@@ -388,7 +390,7 @@
                     '<tr ng-repeat="item in layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}</td>' +
-                    '<td class="legend-percent"><span tooltip="{{ item.size }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>' +
+                    '<td class="legend-percent"><span tooltip=" {{ wetlandsDiagram.formatValue( item.size.toFixed(2)  ) }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>' +
                     '</tr>' +
                     '</table>' +
                     '</div></tab></tabset></div>';
@@ -398,6 +400,10 @@
                 }
                 angular.element('#diagram_' + layer.id).append($compile(template)($scope));
             }
+        }
+
+        function formatValue(value){
+            return new Intl.NumberFormat('en-US').format(value);
         }
 
         function requestTimeSeries(layer) {
