@@ -137,7 +137,7 @@ right: 90px;}
 
 .mymodal .modal-dialog .modal-content {
     width: 650px;
-    z-index: 999999;
+    z-index: 999999 !important;
 }
 
 .ol-overlaycontainer-stopevent {
@@ -420,7 +420,7 @@ nav.navbar.navbar-default.navbar-fixed-top {
 #nav-top-right2 li.dropdown {border-right: 1px solid #eee; width: 50px;text-align: center;}
 
 .modal {
-    z-index: 2000;
+    z-index: 2050 !important;
 }
 
 
