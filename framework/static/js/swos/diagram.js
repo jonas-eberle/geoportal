@@ -403,9 +403,6 @@
         function requestTimeSeries(layer) {
             console.log("requestTimeSeries");
 
-            $('#diagram_wq_text_' + layer.id).show();
-            $('#diagram_wq_text_window_' + layer.id).show();
-
             var window_open = false;
             var type;
             var options = {};
@@ -459,11 +456,7 @@
             mapviewer.map.addLayer(vectorLayer);
 
             var output = '<div  class="modal-body ts_diagram">' +
-                '<div id="diagram_wq_text_window_' + layer.id + '" style="display: none">' +
                 '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
-                '<p id="diagram_outside_window_' + layer.id + '" style="display: none">Please select a point within the map extent.</p>' +
-                '<p id="diagram_wait_window_' + layer.id + '" style="display: none">Please wait ...</p>' +
-                '<p id="diagram_no_data_window_' + layer.id + '" style="display: none">No data returned.</p>' +
                 '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
                 '</div>' +
                 '</div>';
@@ -491,7 +484,7 @@
                                     series.values.forEach(function (data) {
 
                                         if (isNaN(data.y)) {
-                                            value = -9999;
+                                            value = "";
                                         }
                                         else {
                                             value = data.y;
@@ -532,7 +525,6 @@
                                 ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
                                 window_open = false;
                                 vectorSource.clear();
-                                $('#diagram_wq_text_' + layer.id).hide();
                             }
                         }
                     }
@@ -547,8 +539,6 @@
                 $('.modal-content', dialog).css('left', width);
                 $('#loading-div').removeClass('nobg').hide();
             }
-
-            $('#diagram_wq_text_window_' + layer.id).show();
 
 
             wetlandsDiagram.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
@@ -600,9 +590,9 @@
 
                 // check if selected point is within extent -> will not work around 0 #todo replace with geometry function
                 if (Math.abs(lonlat[1]) < Math.abs(layer.north) && Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)) {
-                    $('#diagram_outside_window_' + layer.id).hide();
-                    $('#diagram_wait_window_' + layer.id).show();
-                    $('#diagram_no_data_window_' + layer.id).hide();
+
+                    $("#loading-div").show()
+
                     $http({
                         method: 'POST',
                         url: 'http://artemis.geogr.uni-jena.de/ocpu/user/opencpu/library/swos/R/extractWQName/json',
@@ -714,12 +704,12 @@
                                 if (data.length == 1) {
                                     angular.element('#diagram_wq_window_' + layer.id).append($compile(template)($scope));
                                 }
-                                $('#diagram_wait_window_' + layer.id).hide();
+                                $("#loading-div").hide();
                             }
                         }
                     }, function errorCallback(response) {
-                        $('#diagram_no_data_window_' + layer.id).show();
-                        $('#diagram_wait_window_' + layer.id).hide();
+                        bootbox.alert('No data returned.');
+                        $("#loading-div").hide();
 
                         vectorSource.removeFeature(pointInMap);
                         point_count = point_count - 1;
@@ -727,7 +717,9 @@
 
                 }
                 else {
-                    $('#diagram_outside_window_' + layer.id).show();
+                    vectorSource.removeFeature(pointInMap);
+                    point_count = point_count - 1;
+                    bootbox.alert('Please select a point within the map extent.');
                 }
             });
         }
@@ -768,4 +760,4 @@
 
 
     }
-})();
+    })();
