@@ -127,62 +127,61 @@
 
     <div class="container-fluid" id="center">
         <div class="row" ng-controller="MapCurrentLayersCtrl as mcl">
-          <div  ng-controller="MapViewerCtrl as mv">
-            <div class="map-controls-wrapper">
+            <div  ng-controller="MapViewerCtrl as mv">
+                <div class="map-controls-wrapper">
 
-                <div id="wetland_sites" class="btn btn-primary">
-                    <input type="checkbox" ng-click="mv.changeSitesVisibility($event)" id="layer_sites"
-                           checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
-                </div>
-                <div id="map_icons">
-                    <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
-                            class="fa-plus fa fa-lg"></i></button>
-                    <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
-                            class="fa-minus fa fa-lg"></i></button>
-                    <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
-                            class="fa-globe fa fa-lg"></i></button>
-                    <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                    <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
-                </div>
+                    <div id="wetland_sites" class="btn btn-primary">
+                        <input type="checkbox" ng-click="mv.changeSitesVisibility($event)" id="layer_sites"
+                               checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
+                    </div>
+                    <div id="map_icons">
+                        <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                                class="fa-plus fa fa-lg"></i></button>
+                        <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                                class="fa-minus fa fa-lg"></i></button>
+                        <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                                class="fa-globe fa fa-lg"></i></button>
+                        <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
+                        <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+                    </div>
 
-                <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
-                    <form ng-submit="sb.search();">
-                        <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..."
-                               id="search_desktop">
-                        <br style="clear:both"/>
-                        <div id="search-extend">
-                            <!--
-                            <div style="float: left; padding-top: 10px;">
-                              <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
+                    <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                        <form ng-submit="sb.search();">
+                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..."
+                                   id="search_desktop">
+                            <br style="clear:both"/>
+                            <div id="search-extend">
+                                <!--
+                                <div style="float: left; padding-top: 10px;">
+                                  <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
+                                </div>
+                                -->
+                                <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">
+                                    Search
+                                </button>
+                                <br style="clear:both;"/>
                             </div>
-                            -->
-                            <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">
-                                Search
-                            </button>
-                            <br style="clear:both;"/>
-                        </div>
 
-                    </form>
-                </div>
+                        </form>
+                    </div>
 
                 <!-- /input-group -->
-            </div>
-            <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
-            <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
-				
-                <div id="wetland_attribution"></div>
-                <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
-
-                <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
-
-                <div id="map_legend"></div>
-
-                <div id="slider" style="display:none">
-                    <div class="input"><input type="text" /></div>
                 </div>
+                <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
+                <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
 
+                    <div id="wetland_attribution"></div>
+                    <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
+
+                    <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
+
+                    <div id="map_legend"></div>
+
+                    <div id="slider" style="display:none">
+                        <div class="input"><input type="text" /></div>
+                    </div>
+                </div>
             </div>
-          </div>
             <div class="layer-list">
                 <div id="current" ng-show="mcl.wetlandListState">
 
@@ -681,7 +680,7 @@
     <div id="welcome_text" style="display:none">
         <p>Welcome to the first version of the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
         <p>The SWOS team has made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
-		<p>You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
+        <p>You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">May 1, 2017</p>
     </div>
@@ -725,6 +724,7 @@
     <link rel="stylesheet" href="{% static "lib/fancybox/source/jquery.fancybox.css" %}" type="text/css" media="screen" />
     <script type="text/javascript" src="{% static "lib/fancybox/source/jquery.fancybox.pack.js" %}"></script>
 
+    <script src="{% static "js/polyfills.js" %}?v=20170526"></script>
     <script src="{% static "js/app.js" %}?v=20170526"></script>
     <script src="{% static "js/auth/auth.js" %}?v=20170526"></script>
     <script src="{% static "js/map/map.js" %}?v=20170526"></script>

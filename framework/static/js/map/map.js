@@ -60,7 +60,8 @@ var stroke = new ol.style.Stroke({
             'zoom_max': 20,
             'data': {
                 'layersCount': 0,
-                'addexternallayer': false
+                'addexternallayer': false,
+                'canRequestFeatureInfo': false
             },
             'maxExtent': [-10, 14, 60, 64],
 
@@ -468,6 +469,11 @@ var stroke = new ol.style.Stroke({
                     this.selectedLayerDates[layer.id] = layer.ogc_times[layer.ogc_times.length-1];
                 }
 
+                // true: button is already enabled OR layer that allows GetFeatureInfoRequests is added
+                this.data.canRequestFeatureInfo = (
+                    this.data.canRequestFeatureInfo || layer['ogc_type'] === 'WMS' || layer['ogc_type'] === 'WMTS'
+                );
+
                 layer.showLegend = true;
                 layer.showStatistic = false;
                 this.layers[layer.id] = olLayer;
@@ -482,16 +488,6 @@ var stroke = new ol.style.Stroke({
                     $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '60px');
                     $slider.show();
                 }
-
-                // if (mapColors[layer.django_id] === undefined) {
-                //     djangoRequests.request({
-                //         'method': "GET",
-                //         'url'   : '/swos/wetland/layer/' + layer.django_id + '/colors.json'
-                //     }).then(function (data) {
-                //         mapColors[layer.django_id] = data;
-                //         layer.legendColors = data;
-                //     });
-                // }
 
                 this.layersMeta.unshift(layer);
                 this.data.layersCount = this.data.layersCount+1;
@@ -517,6 +513,15 @@ var stroke = new ol.style.Stroke({
                     this.map.removeLayer(olLayer);
                     this.data.layersCount = this.data.layersCount-1;
                     $rootScope.$broadcast("mapviewer.layerremoved", olLayer.get("layerObj")["django_id"] || null);
+
+                    // returns true if there is at least one WMS or WMTS layer on the map
+                    this.data.canRequestFeatureInfo = this.layersMeta.some(function(layer) {
+                        return (layer['ogc_type'] === 'WMS' || layer['ogc_type'] === 'WMTS');
+                    });
+
+                    if (!this.data.canRequestFeatureInfo) {
+                        $rootScope.$broadcast('turn_off_request_info');
+                    }
 
                     var timeIndex = jQuery.inArray(id, this.layersTime);
                     if (timeIndex > -1) {
@@ -687,6 +692,7 @@ var stroke = new ol.style.Stroke({
     function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
         var mv = this;
 
+        mv.data = mapviewer.data;
         mv.changeSitesVisibility = changeSitesVisibility;
         mv.closeCookieNote = closeCookieNote;
         mv.hideCookieNote = false;
@@ -906,6 +912,12 @@ var stroke = new ol.style.Stroke({
                     mapviewer.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
                 }, 2);
             });
+        });
+
+        $scope.$on('turn_off_request_info', function () {
+            if (mv.infoStatus){
+                requestInfo();
+            }
         });
 
         //--------------------------------------------------------------------------------------------------------------
