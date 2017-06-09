@@ -419,7 +419,7 @@ button.btn-loadmore:hover {
     position: absolute;
     top: 60px;
     width: calc(100% - 400px);
-    z-index: 1040;
+    z-index: 1029;
     padding-top: 10px;
 }
 
