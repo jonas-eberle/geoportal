@@ -1508,8 +1508,10 @@
                         content      : '<div class="anno-step-of">(Step 7 of '+ step_count +')</div><h4>Dataset information and tools</h4><div><p></p>' +
                         '<p>You can change the transparency for each layer (slider) and:' +
                         '<ol style="list-style: disc outside;">' +
+                        '<li><p><span class="fa fa-eye fa-lg"></span> hide your layer,</p></li>' +
                         '<li><p><span class="fa fa-list fa-lg"></span> hide the legend,</p></li>' +
                         '<li><p><span class="fa fa-file-text-o fa-lg"></span> view metadata, </p></li>' +
+                        '<li><p><span class="fa fa-line-chart fa-lg"></span> view statistics* / create time series* (* if available), </p></li>' +
                         '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer,</p></li>' +
                         '<li><p><span class="fa fa-share-alt fa-lg"></span> and create a permanent link to share it.</p></li></ol></p>' +
 
