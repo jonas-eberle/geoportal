@@ -404,7 +404,7 @@
 
                 // if this the first time the user added a second layer to map, notify them
                 // about it. using cookies to prevent the dialog from popping up everytime.
-                if (mapviewer.layersMeta.length > 1 && !$cookies.hasNotifiedAboutLayers) {
+                if (mapviewer.layersMeta.length > 1 && $cookies.get('hasNotifiedAboutLayers') === undefined) {
                     bootbox.dialog({
                         title      : "Warning",
                         message    : "More than one layer has been added to the map. This means " +
@@ -413,7 +413,7 @@
                         closeButton: false,
                         buttons    : {
                             "Do not show again": function () {
-                                $cookies.hasNotifiedAboutLayers = true;
+                                $cookies.put('hasNotifiedAboutLayers', true);
                             },
                             cancel             : {
                                 label: "Close"
@@ -1407,7 +1407,7 @@
                             select_tab("product");
 
                             // prevent more than one layer warning
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
 
                             //add layer (max one layer)
                             load_and_show_layer(wetland_id, "product", product_id, "no");
@@ -1433,7 +1433,7 @@
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
 
                         },
                         content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Detailed product information</h4><div><p></p>' +
@@ -1472,7 +1472,7 @@
                             select_tab("product");
 
                             // prevent more than one layer warning
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
 
                             //add layer (max one layer)
                             load_and_show_layer(wetland_id, "product", product_id, "yes");
@@ -1501,7 +1501,7 @@
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
 
                         },
                         content      : '<div class="anno-step-of">(Step 7 of '+ step_count +')</div><h4>Dataset information and tools</h4><div><p></p>' +
@@ -1709,7 +1709,7 @@
                             introTour.trackIntroductionTour('External2', '10');
                             //ensure products is shown
                             //select_tab("externaldb");
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
                             load_and_show_layer(wetland_id, "externaldb", extdb_id, "yes");
 
                             //reset on close Anno
@@ -1734,7 +1734,7 @@
                         },
                         onHide : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
                         },
                         content: '<div class="anno-step-of">(Step 10 of '+ step_count +')</div><h4>Information and tools on selected resource</h4><div>' +
                         '<p>For each external resource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
@@ -1767,7 +1767,7 @@
                         ],
                         onShow : function () {
                             introTour.trackIntroductionTour('ActiveLayers', '11');
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
 
                             //select_tab("externaldb");
                             load_and_show_layer(wetland_id, "externaldb", extdb_id, "yes");
@@ -1808,7 +1808,7 @@
                             el[0].addEventListener('click', handler, true);
                             var el2 = document.getElementsByClassName("item_icon");
                             el2[0].addEventListener('click', handler, true);
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
                         },
                         content: '<div class="anno-step-of">(Step 11 of '+ step_count +')</div><h4>Active layers</h4><div>' +
                         '<p>All layers activated and added to the map are listed in the <span class="anno-highlight">Active layer</span> box on the left. You can hide, remove or change the order of the layers. In addition you can do the same actions as on the right side (e.g. view the metadata, change the transparency, show legend).</p>' +
@@ -1836,7 +1836,7 @@
                         ],
                         onShow  : function (anno, $target) {
                             introTour.trackIntroductionTour('WetlandSites', '12');
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
 
                             move_map_elements_higher();
 
@@ -1858,7 +1858,7 @@
                         onHide  : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
                         },
                         content : '<div class="anno-step-of">(Step 12 of '+ step_count +')</div><h4>Wetland sites</h4><div>' +
                         '<p>Unselect <span class="anno-highlight">Show Wetland sites</span> to hide the wetland boundaries in the map.</p>' +
@@ -1888,7 +1888,7 @@
                         ],
                         onShow   : function (anno, $target) {
                             introTour.trackIntroductionTour('MapControls', '13');
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
 
                             move_map_elements_higher();
 
@@ -1909,7 +1909,7 @@
                         onHide   : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
                         },
                         content  : '<div class="anno-step-of">(Step 13 of '+ step_count +')</div><h4>Map control</h4><div><p></p>' +
                         '<p>You can' +
@@ -1937,7 +1937,7 @@
                         ],
                         onShow : function (anno, $target) {
                             introTour.trackIntroductionTour('Search', '14');
-                            $cookies.hasNotifiedAboutLayers = true;
+                            $cookies.put('hasNotifiedAboutLayers', true);
 
                             move_map_elements_higher();
 
@@ -1957,7 +1957,7 @@
                         onHide : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             move_map_elements_higher("reset");
-                            $cookies.hasNotifiedAboutLayers = false;
+                            $cookies.remove('hasNotifiedAboutLayers');
                         },
                         content: '<div class="anno-step-of">(Step 14 of '+ step_count +')</div><h4>Search</h4><div><p></p>' +
                         '<p>Using this text field you can search for our datasets. Requests will be send to the SWOS Catalog Services for Web (CSW). In the <strong>future</strong> it will contain all datasets from the SWOS project as well as datasets from <a href="http://www.geoportal.org" target="_blank">GEOSS</a>. The service will be also available for external applications.</p>' +

@@ -33,8 +33,8 @@
             'use_session': true,
             'request': function(args){
                 // Let's retrieve the token from the cookie, if available
-                if ($cookies.token) {
-                    $http.defaults.headers.common.Authorization = 'Token ' + $cookies.token;
+                if ($cookies.get('token')) {
+                    $http.defaults.headers.common.Authorization = 'Token ' + $cookies.get('token');
                 }
                 $http.defaults.headers.common["Cache-Control"] = "no-cache";
                 $http.defaults.headers.common.Pragma = "no-cache";
@@ -50,7 +50,7 @@
                     withCredentials: this.use_session,
                     method: method.toUpperCase(),
                     headers: {
-                        'X-CSRFToken': $cookies['csrftoken']
+                        'X-CSRFToken': $cookies.get('csrftoken')
                     },
                     params: params,
                     data: data
