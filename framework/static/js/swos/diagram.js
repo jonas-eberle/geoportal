@@ -661,8 +661,9 @@
                                     data.shift();
                                 }
                             }
-                            type = 'lineWithFocusChart';
-                            options['height'] = 300;
+                            //type = 'lineWithFocusChart';
+                            type ='lineChart';
+                            options['height'] = 400;
                             options['width'] = 550;
                             options['x'] = function (d) {
                                 return d.x;
@@ -677,7 +678,6 @@
                                 $scope.options = {
                                     "chart": {
                                         "type": type,
-                                        "width": 375,
                                         "useInteractiveGuideline": true,
                                         "margin": {
                                             bottom: 60
@@ -691,11 +691,11 @@
                                                 return d3.time.format("%Y-%m-%d")(new Date(d))
                                             }
                                         },
-                                        "x2Axis": {
+                                        /*"x2Axis": {
                                             tickFormat: function (d) {
                                                 return d3.time.format("%Y-%m-%d")(new Date(d))
                                             }
-                                        },
+                                        },*/
                                         duration: 250,
                                         "interactiveLayer": {
                                             "tooltip": {
