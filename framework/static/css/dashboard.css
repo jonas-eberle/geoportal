@@ -137,7 +137,7 @@ right: 90px;}
 
 .mymodal .modal-dialog .modal-content {
     width: 650px;
-    z-index: 999999 !important;
+    z-index: 2050 !important;
 }
 
 .ol-overlaycontainer-stopevent {
@@ -693,4 +693,8 @@ caption.featureInfo {
 .modal-dialog .modal-body .bootbox-body table {
     overflow: auto;
     display: block;
+}
+
+.bootbox-alert {
+    z-index: 2055 !important;
 }
