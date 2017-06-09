@@ -458,7 +458,6 @@
             var attr_list = attribution_arr.join(' | \u00A9 ');
 
             var www_list = attr_list.match(/\((http)s?:\/\/(\w+\.){1,}\w+[\w./?=&#%]*, ?[\w ]+\)/g);
-            console.log(www_list);
             if (www_list) {
                 $.each(www_list, function () {
                     var new_ = '<a href="' + this.substr(1, this.indexOf(',')-1) + '" target = "_blank" style="text-decoration-line: underline; color: #d6d6d6;">' + this.substr(this.indexOf(',') + 1, this.substr(this.indexOf(',') + 1).length - 1) + "</a>";
@@ -2192,40 +2191,3 @@ $(document).ready(function () {
         closeEffect: 'none'
     });
 });
-
-if (!String.prototype.includes) {
-    String.prototype.includes = function (search, start) {
-        'use strict';
-        if (typeof start !== 'number') {
-            start = 0;
-        }
-
-        if (start + search.length > this.length) {
-            return false;
-        } else {
-            return this.indexOf(search, start) !== -1;
-        }
-    };
-}
-
-if (typeof Object.assign != 'function') {
-  Object.assign = function(target) {
-    'use strict';
-    if (target == null) {
-      throw new TypeError('Cannot convert undefined or null to object');
-    }
-
-    target = Object(target);
-    for (var index = 1; index < arguments.length; index++) {
-      var source = arguments[index];
-      if (source != null) {
-        for (var key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
-          }
-        }
-      }
-    }
-    return target;
-  };
-}
