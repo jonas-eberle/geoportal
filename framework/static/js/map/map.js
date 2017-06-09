@@ -720,7 +720,7 @@ var stroke = new ol.style.Stroke({
         });
 
         $scope.$on('mapviewer.map_created', function () {
-            if ($cookies.hideCookieNote) {
+            if ($cookies.get('hideCookieNote')) {
                 mv.hideCookieNote = true;
             }
 
@@ -943,7 +943,7 @@ var stroke = new ol.style.Stroke({
         }
 
         function closeCookieNote() {
-            $cookies.hideCookieNote = true;
+            $cookies.put('hideCookieNote', true);
             mv.hideCookieNote =  true;
         }
 

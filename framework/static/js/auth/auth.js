@@ -83,7 +83,7 @@
                 }).then(function (data) {
                     if (!djangoRequests.use_session) {
                         $http.defaults.headers.common.Authorization = 'Token ' + data.key;
-                        $cookies.token = data.key;
+                        $cookies.put('token', data.key);
                     }
                     djangoAuth.authenticated = true;
                     djangoAuth.profile().then(function (data) {
@@ -105,7 +105,7 @@
                     'url': this.API_URL+"/logout/"
                 }).then(function () {
                     delete $http.defaults.headers.common.Authorization;
-                    delete $cookies.token;
+                    $cookies.remove('token');
                     djangoAuth.authenticated = false;
                     djangoAuth.user = null;
                     djangoAuth.userData = {};
