@@ -447,17 +447,15 @@ button.btn-loadmore:hover {
 }
 
 .ol-scale-line {
-	right: 10px !important;
+    right: 10px !important;
     left: auto !important;
-    bottom: 18px !important;
+    bottom: 28px !important;
 }
 
 .ol-mouse-position {
-	right: 100px !important;
-    left: auto;
-    bottom: 19px;
-    height: 20px;
-    padding-top: 3px;
+    left: 10px !important;
+    bottom: 28px;
+    padding: 0px !important;
     font-size: 0.8em;
 }
 
@@ -484,25 +482,25 @@ button.btn-loadmore:hover {
 }
 
 #disclaimer, #cookienote {
-    bottom: 40px;
+    bottom: 0px;
     height: auto;
-    padding: 5px;
+    padding: 3px;
     color: white;
     text-align: center;
     width: 100%;
-    font-size: 1.1em;
-    background-color: rgba(0,0,0,0.5);
+    font-size: 1em;
+    background-color: rgba(0,0,0,0.3);
     position: absolute;
     right: 0;
-    z-index: 1010;
+    z-index: 1;
 }
 
 #cookienote {
-	bottom: 0;
+	bottom: 30px;
 }
 
 #cookienote button {
-	height: 21px;
+    height: 21px;
     font-size: 0.8em;
     background-color: #336a5c;
     margin-left: 10px;
