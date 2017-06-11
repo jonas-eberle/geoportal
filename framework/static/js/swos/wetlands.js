@@ -1816,7 +1816,7 @@
                     }, // Active Layer
                     {
                         target  : '.map-controls-wrapper',
-                        position: 'left',
+                        position: 'bottom',
                         buttons : [
                             {
                                 text: 'Exit',
