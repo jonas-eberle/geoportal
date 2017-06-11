@@ -128,7 +128,8 @@ ASSETS_ROOT = STATICFILES_DIRS[0]
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "npm.finders.NpmFinder"
+    "npm.finders.NpmFinder",
+    "django_assets.finders.AssetsFinder"
 )
 
 NPM_ROOT_PATH = os.path.join(os.path.dirname(BASE_DIR))

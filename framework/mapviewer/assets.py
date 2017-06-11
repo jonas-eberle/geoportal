@@ -1,21 +1,31 @@
 from django_assets import Bundle, register
+from os import path
+from glob import glob
+from django.conf import settings
+
+
+def glob_files(path_str):
+    globbed_files = glob(path.join(settings.STATICFILES_DIRS[0], path_str))
+    return [path.relpath(x, settings.STATICFILES_DIRS[0]) for x in globbed_files]
 
 
 def make_bundle(bundle_name, file_list, filters, output):
     bundle = Bundle(*file_list, filters=filters, output=output)
     register(bundle_name, bundle)
 
-
-appJs = [
-    'js/app.js',
-    'js/auth/auth.js',
-    'js/map/map.js',
-    'js/csw/csw.js',
-    'js/swos/wetlands.js',
-    'js/swos/diagram.js',
-    'js/swos/legends.js',
-    'js/dashboard.js'
-]
+# TODO: find a better way to allow globbing in bundles (for ASSETS_DEBUG=True)
+# resolve globs here to not have to mess around with django-assets/webassets
+appJs = []
+[appJs.extend(x) for x in [
+    ['js/polyfills.js'],
+    glob_files('js/app/*.js'),
+    glob_files('js/app/core/*.js'),
+    glob_files('js/app/auth/*.js'),
+    glob_files('js/app/csw/*.js'),
+    glob_files('js/app/map/*.js'),
+    glob_files('js/app/swos/*.js'),
+    ['js/dashboard.js']
+]]
 
 make_bundle('appJsContentBundle', appJs, filters='rjsmin', output='build/app.bundle.js')
 

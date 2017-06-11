@@ -1,7 +1,8 @@
 (function() {
     'use strict';
 
-    angular.module('webgisApp')
+    angular
+        .module('webgisApp')
         .controller('WetlandsDiagramCtrl', WetlandsDiagramCtrl);
 
     WetlandsDiagramCtrl.$inject = ['$scope', '$compile', '$http','mapviewer'];
@@ -760,4 +761,4 @@
 
 
     }
-    })();
+})();
