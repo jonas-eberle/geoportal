@@ -1,10 +1,12 @@
-## Database setup
+## Setup
+
+### Database setup
 ```
 $ createdb -U swos swos
 $ psql swos < swos3_20160907.db
 ```
 
-## Backend setup
+### Backend setup
 ```
 # install python2 versions of pip and virtualenv
 
@@ -17,16 +19,16 @@ $ source venv/bin/activate
 $ pip install -r framework/requirements.txt
 ```
 
-## Frontend setup
+### Frontend setup
 ```
 # install npm (preferrably via distro package manager)
 
 $ cd path/to/cloned-repo
-# install all packages listed in packages.json
+## install all packages listed in npm-shrinkwrap.json and packages.json
 $ npm install
 ```
 
-## Django setup
+### Django setup
 ```
 $ vi webgis/settings.py
 Adjust DATABASES dictionary
@@ -36,7 +38,7 @@ $ python manage.py collectstatic
 Yes, files can be overwritten
 ```
 
-## Apache WSGI
+### Apache WSGI
 ```
 $ vi index.wsgi
 Adjust your local virtual environment directory
@@ -54,9 +56,11 @@ Restart apache "gracefully"
 Prior to any mapviewer request you need to edit the mapviewer and adjust the template selection, because complete path is stored in the database!
 
 ## Frontend maintenance
-For a list of required, external JavaScript libraries, see `packages.json`.
+For a list of required, external JavaScript libraries, see `packages.json`. For a detailed list of required, external JavaScript libraries and their dependencies, including exact version numbers, see `npm-shrinkwrap.json`.
 
-Required JavaScript and CSS files are bundled and minified via the Django app "django-assets". The configuration of these bundles is done in `framework/mapviewer/assets.py`, Django is configured to search in `framework/static` and in `node_modules` for the given files. Bundles are stored in `static/build`, which is ignored by git. Most libraries only have JavaScript or CSS code, but some also come with fonts or images. These additional files have been copied from the libraries' `node_modules` to our `static` directory, while keeping the directory structure intact. At the moment, this applies to the following libraries:
+Required JavaScript and CSS files are bundled and minified via the Django app "django-assets". The configuration of these bundles is done in `framework/mapviewer/assets.py`, Django is configured to search in `framework/static` and in `node_modules` for the given files. Bundles are stored in `static/build`, which is ignored by git.
+
+Most libraries only have JavaScript or CSS code, but some also come with fonts or images. These additional files have been copied from the libraries' `node_modules` to our `static` directory, while keeping the directory structure intact. At the moment, this applies to the following libraries:
 
 * Bootstrap
 * Font Awesome
@@ -67,15 +71,21 @@ During development, bundling and minification might be undesired. It can be easi
 
 ### Library installation/updates
 
+When installing/updating a library, it is necessary to check, if the library has font files, images etc. that have to be copied into our `static` directory.
+
 ```
-# installing a library + saving in packages.json
+# installing a library + saving in npm-shrinkwrap.json and packages.json
 npm install --save "jquery@1.12.4"
 
-# updating a library to the latest minor + saving in packages.json
+# check, which packages can be updated
+# current: installed version
+# wanted: latest version taking version constraint from packages.json into account
+# latest: actual latest version (might have breaking changes!)
+npm outdated
+
+# updating a library to the latest minor + saving in npm-shrinkwrap.json and packages.json
 npm update --save "jquery"
 ```
-
-When updating a library, it is necessary to check, if the library has font files, images etc. that have to be copied into our `static` directory.
 
 
 ## Anchors to wetlands and products

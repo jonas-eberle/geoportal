@@ -15,6 +15,7 @@ def make_bundle(bundle_name, file_list, filters, output):
 
 # TODO: find a better way to allow globbing in bundles (for ASSETS_DEBUG=True)
 # resolve globs here to not have to mess around with django-assets/webassets
+# see: https://github.com/miracle2k/django-assets/issues/5
 appJs = []
 [appJs.extend(x) for x in [
     ['js/polyfills.js'],
@@ -27,18 +28,12 @@ appJs = []
     ['js/dashboard.js']
 ]]
 
-make_bundle('appJsContentBundle', appJs, filters='rjsmin', output='build/app.bundle.js')
+make_bundle('appJsBundle', appJs, filters='uglifyjs', output='build/app.bundle.js')
 
-vendorJsHead = [
+vendorJs = [
     '@turf/turf/turf.min.js',
     'openlayers/dist/ol.js',
-    # 'lib/dygraph-combined.js',
-    'dygraphs/dist/dygraph.min.js'
-]
-
-make_bundle('vendorJsHeadBundle', vendorJsHead, filters=None, output='build/vendor.head.bundle.js')
-
-vendorJsContent = [
+    'dygraphs/dist/dygraph.min.js',  # previously: 'lib/dygraph-combined.js', 'lib/dygraph-interaction-api.js'
     'jquery/dist/jquery.min.js',
     'bootstrap/dist/js/bootstrap.min.js',
     # 'js/popover.js',
@@ -61,10 +56,11 @@ vendorJsContent = [
     'lib/nv.d3_adjusted_swos.js',   # not on npmjs.com
     'angular-nvd3/dist/angular-nvd3.min.js',
     'anno.js/dist/anno.js',
-    'lib/jquery.fancybox.pack_adjusted.js'
+    'lib/jquery.fancybox.pack_adjusted.js'  # not on npmjs.com
 ]
 
-make_bundle('vendorJsContentBundle', vendorJsContent, filters='rjsmin', output='build/vendor.content.bundle.js')
+# NOTE: we include some unminified libs, so apply basic minification to the whole bundle
+make_bundle('vendorJsBundle', vendorJs, filters='rjsmin', output='build/vendor.bundle.js')
 
 vendorCss = [
     'bootstrap/dist/css/bootstrap.min.css',

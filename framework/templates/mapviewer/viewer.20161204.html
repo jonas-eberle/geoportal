@@ -24,10 +24,6 @@
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
 
-    {% assets "vendorJsHeadBundle" %}
-    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
-    {% endassets %}
-
     {% verbatim %}
     <script type="text/ng-template" id="close">
         <div class="triangle"></div>
@@ -74,7 +70,7 @@
                             <img src="/static/img/eu.png" alt="EU Logo" align="right" height="45"/>
                             <div style="font-size: 0.8em;">This portal is developed by the SWOS project, which has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
                         </div>-->
-						<div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;" class="partners">
+                        <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;" class="partners">
                             <a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/GEO_wetland_color_pos_45.png" border="0"></a>
                             <img src="/static/img/eu.png" alt="EU Logo" height="45">
                             <a href="http://www.eo.uni-jena.de" target="_blank"><img src="http://swos-service.eu/wp-content/uploads/2015/06/Logo-FSU-Bildmarke.jpg" border="0" height="45"></a>
@@ -108,7 +104,7 @@
 
     <div class="container-fluid" id="center">
         <div class="row" ng-controller="MapCurrentLayersCtrl as mcl">
-            <div  ng-controller="MapViewerCtrl as mv">
+            <div ng-controller="MapViewerCtrl as mv">
                 <div class="map-controls-wrapper">
 
                     <div id="wetland_sites" class="btn btn-primary">
@@ -204,7 +200,7 @@
                                 </div>
                                 <div class="item_catalog">
                                     <div class="layer-title-wrapper">
-                                        <div tooltip-placement="bottom" tooltip="Show/Hide details" class="glyphicon glyphicon-chevron-down" style="float: left; width: 0px;padding-left: 0px; padding-top: 20px" ng-click="mcl.toggleLayerControls(layer.id, $event)"></div>
+                                        <div tooltip-placement="bottom" tooltip="Show/Hide details" class="glyphicon glyphicon-chevron-down" style="float: left; width: 0;padding-left: 0; padding-top: 20px" ng-click="mcl.toggleLayerControls(layer.id, $event)"></div>
                                         <div class="item_title" style="float: left;width:206px;padding-left: 20px;" ng-click="mcl.zoomToLayer(layer.id)" ng-bind="layer.title"></div>
                                         <div tooltip-placement="bottom" tooltip="Remove layer" class="glyphicon glyphicon-remove" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)"></div>
                                         <div style="clear:both;"></div>
@@ -274,7 +270,7 @@
 
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
-                        <div class="filter" style="padding: 10px;padding-bottom: 0px;">
+                        <div class="filter" style="padding: 10px;padding-bottom: 0;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
                                 <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
@@ -666,14 +662,12 @@
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">May 1, 2017</p>
     </div>
 
-    {% assets "vendorJsContentBundle" %}
+    {% assets "vendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
 
-    {% assets "appJsContentBundle" %}
-    <script src="{{ ASSET_URL }}" type="text/javascript" ></script>
-
-
+    {% assets "appJsBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
 
     <div ng-view></div>

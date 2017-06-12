@@ -24,9 +24,13 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+# WARNING: disable ASSETS_DEBUG in production!
 # True: deliver JavaScript and CSS files as usual (e.g. for development)
 # False: deliver bundled/minified files (e.g. for live system)
 ASSETS_DEBUG = True
+# WARNING: disable ASSETS_AUTO_BUILD in production!
+# True: automatically rebuild bundles if source files have changed
+ASSETS_AUTO_BUILD = True
 
 ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de']
 
@@ -134,6 +138,11 @@ STATICFILES_FINDERS = (
 
 NPM_ROOT_PATH = os.path.join(os.path.dirname(BASE_DIR))
 
+UGLIFYJS_BIN = os.path.join(os.path.dirname(BASE_DIR), 'node_modules/.bin/uglifyjs')
+UGLIFYJS_EXTRA_ARGS = (
+    '--mangle "reserved=[$,angular]"',
+    '--compress',
+)
 
 #MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'
 #MEDIA_ROOT = '/var/www/webgis.essi-services.net/media/'

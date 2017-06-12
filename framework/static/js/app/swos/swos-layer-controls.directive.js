@@ -10,10 +10,7 @@
         var directive = {
             restrict: "E",
             scope: true,
-            controller: function ($scope) {
-                // necessary so we can use controllerAs syntax
-                var slc = this;
-            },
+            controller: swosLayerControlsCtrl,
             controllerAs: "slc",
             transclude: true,
             bindToController: true,
@@ -26,5 +23,11 @@
             // TODO: no need to pass the whole layer to the view, extract only required properties
             scope.slc.layer = mapviewer.getLayerById(iAttr.layerHash).get("layerObj");
         }
+    }
+
+    swosLayerControlsCtrl.$inject = ['$scope'];
+    function swosLayerControlsCtrl($scope) {
+        // necessary so we can use controllerAs syntax
+        var slc = this;
     }
 })();

@@ -24,5 +24,5 @@ var stationPopup;
     runBlock.$inject = ['mapviewer'];
     function runBlock(mapviewer) {
         mapviewer.initialize(mapId, 'map', true); //id of mapviewer
-    };
+    }
 })();
