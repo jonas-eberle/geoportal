@@ -228,8 +228,8 @@
                     this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
 
                     var prop = this.getProperties();
-                    // set show to true, when id is less or equal 9 OR at least one product
-                    prop['show'] = (prop['id'] <= 9) || (prop['products'].length > 0);
+                    // set show to true, when there is at least one product
+                    prop['show'] = (prop['products'].length > 0);
                     WetlandsService.wetlandList[ prop['id'] ] = prop;
 
                     var without_geom;
