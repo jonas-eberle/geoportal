@@ -315,7 +315,26 @@
                             </select>
                             <select ng-model="wetlandsFilter.filtered_ecoregion" ng-change="wetlandsFilter.filterEcoregion()" style="width: 91%;margin-bottom: 10px;">
                                 <option value="">- Filter by ecoregion -</option>
-                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
+                              <!--  <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>-->
+                                <option value="Boreal Forests/Taiga">Boreal Forests/Taiga</option>
+                                <option value="Deserts">Deserts</option>
+                                <option value="Deserts and Xeric Shrublands">Deserts and Xeric Shrublands</option>
+                                <option value="Flooded Grasslands and Savannas">Flooded Grasslands and Savannas</option>
+                                <option value="Lake">Lake</option>
+                                <option value="Mediterranean Forests">Mediterranean Forests</option>
+                                <option value="Savannas">Savannas</option>
+                                <option value="Savannas and Shrublands">Savannas and Shrublands</option>
+                                <option value="Shrublands">Shrublands</option>
+                                <option value="Temperate Broadleaf and Mixed Forests">Temperate Broadleaf and Mixed Forests</option>
+                                <option value="Temperate Conifer Forests">Temperate Conifer Forests</option>
+                                <option value="Temperate Grasslands">Temperate Grasslands</option>
+                                <option value="Tropical and Subtropical Grasslands">Tropical and Subtropical Grasslands</option>
+                                <option value="Tropical and Subtropical Grasslands and Savannas">Tropical and Subtropical Grasslands and Savannas</option>
+                                <option value="Tropical and Subtropical Moist Broadleaf Forests">Tropical and Subtropical Moist Broadleaf Forests</option>
+                                <option value="Tundra">Tundra</option>
+                                <option value="Woodlands and Scrub">Woodlands and Scrub</option>
+                                <option value="Xeric Shrublands">Xeric Shrublands</option>
+
                             </select>
                             <select ng-model="wetlandsFilter.filtered_products" ng-change="wetlandsFilter.filterProduct()" style="width: 91%">
                                 <option value="">- Filter by product -</option>

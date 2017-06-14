@@ -657,7 +657,7 @@
             wetlandsFilter.filtered_testmapping = false;
             wetlandsFilter.sortByCountryName = false;
             $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = ((this['ecoregion'] === wetlandsFilter.filtered_ecoregion) || (wetlandsFilter.filtered_ecoregion === ''));
+                this['show'] = ((this['ecoregion'].includes(wetlandsFilter.filtered_ecoregion) || (wetlandsFilter.filtered_ecoregion === '')));
             });
             wetlandsFilter.filtered_country = '';
             wetlandsFilter.filtered_geo_scale = '';
