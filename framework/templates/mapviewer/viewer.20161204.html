@@ -70,6 +70,7 @@
     </script>
 </head>
 <body>
+
     <div id="loading-div">
         <div class="loading">
             <i class="fa fa-circle-o-notch fa-spin"></i>
@@ -119,11 +120,11 @@
     <!-- NAVBAR SEARCH SMARTPHONE - Zweite Version, die auf dem Smartphone in einer separaten Zeile angezeigt wird.-->
     <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl as sb">
         <div class="container-fluid">
-            <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
+          <!--  <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
                 <div class="form-group">
                     <input type="text" class="form-control" ng-model="sb.text" placeholder="Search">
                 </div>
-            </form>
+            </form>-->
             <button class="btn btn-primary" type="submit"  id="toggle-sidebar">Menu</button>
         </div>
     </nav><!-- END NAVBAR SEARCH SMARTPHONE -->
