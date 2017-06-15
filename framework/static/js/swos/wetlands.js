@@ -245,7 +245,7 @@
                     }
                         without_geom = {
                             "name"        : prop["name"],
-                            "country"     : prop["country"],
+                            "country"     : prop["country"].replace(/-/g, ", "),
                             "id"          : prop["id"],
                             "show"        : prop["show"],
                             "geo_scale"   : prop["geo_scale"],
