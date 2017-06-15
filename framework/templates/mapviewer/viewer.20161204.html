@@ -135,14 +135,14 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
@@ -749,9 +749,9 @@
     <script src="{% static "js/map/map.js" %}?v=20170526"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20170526"></script>
 
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170528"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170615a"></script>
     <script src="{% static "js/swos/legends.js" %}?v=20170526"></script>
-    <script src="{% static "js/swos/diagram.js" %}?v=20170528"></script>
+    <script src="{% static "js/swos/diagram.js" %}?v=20170615"></script>
 
     <script src="{% static "js/dashboard.js" %}?v=20170526"></script>
 
