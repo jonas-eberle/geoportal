@@ -382,7 +382,10 @@
                 }
                 $('.modal-content', dialog).css('left', width);
                 $('#loading-div').removeClass('nobg').hide();
-
+                var sum = 0;
+                for (value in layer.legend_colors){
+                    sum += layer.legend_colors[value].size;
+                }
                 var template = '<div><tabset justified="true"> <tab heading="Interactive Chart">' +
                     '<div style="text-align: center;"><strong>Absolute area proportions</strong></div><div style="font-size:0.9em;text-align: center;" class="hint">(Move your mouse over or click on the classes for more details)</div>' +
                     '<div style="display: flex;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div></tab><tab heading="Data"><div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"> <strong ng-if=layer.legend_colors>Relative area proportions</strong>' +
@@ -390,9 +393,12 @@
                     '<tr ng-repeat="item in layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}</td>' +
-                    '<td class="legend-percent"><span tooltip=" {{ wetlandsDiagram.formatValue( item.size.toFixed(2)  ) }} ha" tooltip-append-to-body="true">{{ item.percent.toFixed(2) }}%</span></td>' +
+                    '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
+                    '<td class="legend-percent"><span > {{ wetlandsDiagram.formatValue( item.size.toFixed(2)  ) }} ha</span></td>' +
                     '</tr>' +
+                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + wetlandsDiagram.formatValue(sum.toFixed(2)) + 'ha</td></tr>'
                     '</table>' +
+
                     '</div></tab></tabset></div>';
                 $('#diagram_' + layer.id).show();
                 if (layer.identifier.includes("LULC_")) {
