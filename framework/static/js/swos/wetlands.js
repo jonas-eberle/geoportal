@@ -249,7 +249,7 @@
                             "id"          : prop["id"],
                             "show"        : prop["show"],
                             "geo_scale"   : prop["geo_scale"],
-                            "size"        : prop["size"],
+                            "size"        : formatValue(prop["size"]),
                             "ecoregion"   : prop["ecoregion"],
                             "wetland_type": prop["wetland_type"],
                             "site_type"   : prop["site_type"],
@@ -495,6 +495,10 @@
         //     $('.scroller-right').click();
         //     //$('#sidebar-tabs a:last').tab('show')
         // }
+
+        function formatValue(value){
+            return new Intl.NumberFormat('en-US').format(value);
+        }
 
         function loadWetland() {
             var wetland_id = $routeParams.wetland_id;
