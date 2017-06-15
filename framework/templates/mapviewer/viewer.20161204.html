@@ -295,7 +295,7 @@
                     <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
-                                <option value="">- Filter by country -</option>{{ wetlandsFilter.country_list }}
+                                <option value="">- Filter by country -</option>
                                <option ng-repeat="option in wetlandsFilter.country_list | unique" value="{{option}}">{{option}}</option>-->
                             </select>
                             <select ng-model="wetlandsFilter.filtered_geo_scale" ng-change="wetlandsFilter.filterScale()" style="width: 40%; margin-bottom: 10px;">
