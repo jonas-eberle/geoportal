@@ -51,6 +51,7 @@
             videos: {},
             wetlandList: [],
             wetlands_without_geom: [],
+            country_list: [],
 
             selectFeature: function (id) {
                 if (this.wetlandList[id]) {
@@ -233,25 +234,15 @@
                     WetlandsService.wetlandList[ prop['id'] ] = prop;
 
                     var without_geom;
+                    var country_list;
                     if (prop["country"].includes("-")) {
                         var country_array = prop["country"].split("-");
                         for (var key in country_array) {
-                            without_geom = {
-                                "name"        : prop["name"],
-                                "country"     : country_array[key],
-                                "id"          : prop["id"],
-                                "show"        : prop["show"],
-                                "geo_scale"   : prop["geo_scale"],
-                                "size"        : prop["size"],
-                                "ecoregion"   : prop["ecoregion"],
-                                "wetland_type": prop["wetland_type"],
-                                "site_type"   : prop["site_type"],
-                                "products"    : prop["products"]
-                            };
-
-                            WetlandsService.wetlands_without_geom.push(without_geom);
+                            WetlandsService.country_list.push(country_array[key])
                         }
-                    } else {
+                    }else{
+                        WetlandsService.country_list.push(prop["country"]);
+                    }
                         without_geom = {
                             "name"        : prop["name"],
                             "country"     : prop["country"],
@@ -266,7 +257,7 @@
                         };
 
                         WetlandsService.wetlands_without_geom.push(without_geom);
-                    }
+
                 });
 
                 vectorSource.addFeatures(features);
@@ -635,12 +626,13 @@
         wetlandsFilter.sortByCountryName = false;
         wetlandsFilter.sortOrder = 'name';
         wetlandsFilter.wetlands_without_geom = WetlandsService.wetlands_without_geom;
+        wetlandsFilter.country_list = WetlandsService.country_list;
 
         function filterCountry() {
             wetlandsFilter.filtered_testmapping = false;
             wetlandsFilter.sortByCountryName = false;
             $.each(wetlandsFilter.wetlands_without_geom, function(){
-                this['show'] = ((this['country'] === wetlandsFilter.filtered_country) || wetlandsFilter.filtered_country === '');
+                this['show'] = ((this['country'].includes(wetlandsFilter.filtered_country) || wetlandsFilter.filtered_country === ''));
             });
 
             wetlandsFilter.filtered_geo_scale = '';
