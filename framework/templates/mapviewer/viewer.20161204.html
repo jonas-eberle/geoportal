@@ -70,7 +70,12 @@
     </script>
 </head>
 <body>
-    <div id="loading-div"><div class="loading"><i class="fa fa-circle-o-notch fa-spin"></i></div></div>
+    <div id="loading-div">
+        <div class="loading">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+            <button class="btn btn-default btn-primary btn-sm" onclick="$('#loading-div').hide()" style="margin-left: -15px;margin-top: -65px;">Hide loading</button>
+        </div>
+    </div>
 
     {% verbatim %}
     <div id="alerts" ng-controller="AlertCtrl as ac">
