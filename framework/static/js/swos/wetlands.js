@@ -980,6 +980,9 @@
 
         function reset() {
             // #todo replace remove and zoom once the function is available via service / move back to start URL
+
+            $('li.flaticon-bars a').click(); // activate overview
+
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
                 if (layer) {
