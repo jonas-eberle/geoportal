@@ -1073,16 +1073,15 @@ var stroke = new ol.style.Stroke({
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
         }
 
-        function zoomIn(event) {
+        function zoomIn() {
             var currentZoomLevel = mapviewer.map.getView().getZoom();
             if (currentZoomLevel < mapviewer.zoom_max) {
                 mapviewer.map.getView().setZoom(currentZoomLevel + 1);
 
                 if (currentZoomLevel + 1 === mapviewer.zoom_max) {
-                    event.target.disabled = true;
-                    $(event.target).addClass('disabled');
+                    angular.element('#zoomInButton').addClass('disabled');
                 }
-                $('#zoomOutButton').attr('disabled', false).removeClass('disabled');
+                angular.element('#zoomOutButton').removeClass('disabled');
             }
         }
 
@@ -1092,16 +1091,15 @@ var stroke = new ol.style.Stroke({
             );
         }
 
-        function zoomOut(event) {
+        function zoomOut() {
             var currentZoomLevel = mapviewer.map.getView().getZoom();
             if (currentZoomLevel > mapviewer.zoom_min) {
                 mapviewer.map.getView().setZoom(currentZoomLevel - 1);
 
                 if (currentZoomLevel - 1 === mapviewer.zoom_min) {
-                    event.target.disabled = true;
-                    $(event.target).addClass('disabled');
+                    angular.element('#zoomOutButton').addClass('disabled');
                 }
-                $('#zoomInButton').attr('disabled', false).removeClass('disabled');
+                angular.element('#zoomInButton').removeClass('disabled');
             }
         }
     }
