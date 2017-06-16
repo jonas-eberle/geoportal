@@ -394,9 +394,9 @@
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}</td>' +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
-                    '<td class="legend-percent"><span > {{ wetlandsDiagram.formatValue( item.size.toFixed(2)  ) }} ha</span></td>' +
+                    '<td class="legend-percent"><span > {{ wetlandsDiagram.formatValue(item.size) }} ha</span></td>' +
                     '</tr>' +
-                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + wetlandsDiagram.formatValue(sum.toFixed(2)) + 'ha</td></tr>'
+                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + wetlandsDiagram.formatValue(sum) + ' ha</td></tr>'
                     '</table>' +
 
                     '</div></tab></tabset></div>';
@@ -409,7 +409,7 @@
         }
 
         function formatValue(value){
-            return new Intl.NumberFormat('en-US').format(value);
+            return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(value);
         }
 
         function requestTimeSeries(layer) {
