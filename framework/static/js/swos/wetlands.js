@@ -1362,14 +1362,13 @@
                         },
                         content      : '<div class="anno-step-of">(Step 5 of '+ step_count +')</div><h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
                         '<ol style="list-style:disc outside;">' +
-                        '<li>Water Quality</li>' +
                         '<li>Land Surface Temperature Trend</li>' +
-                        '<li>Surface Water Dynamics</li>' +
-                        '<li>Flood Regulation</li>' +
-                        '<li>Potential Wetland areas</li>' +
                         '<li>Land Use Land Cover</li>' +
                         '<li>Land Use Land Cover Change</li>' +
+                        '<li>Potential Wetland Areas</li>' +
                         '<li>Surface Soil Moisture</li>' +
+                        '<li>Surface Water Dynamics</li>' +
+                        '<li>Water Quality</li>' +
                         '</ol>' +
 
                         '<p>(Please keep in mind that not all products can and will be derived for each wetland.)</p>' +

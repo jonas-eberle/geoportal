@@ -40,7 +40,7 @@
     <link href="{% static "css/nv.d3.min.css" %}" rel="stylesheet" />
 
 
-    <link href="{% static "css/swos.css" %}?v=20170616f" rel="stylesheet">
+    <link href="{% static "css/swos.css" %}?v=20170617" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -354,11 +354,10 @@
                                 <option value="">- Filter by product -</option>
                                 <!-- products is an array for each wetland, thus first of all manual list of products -->
                                 <!--<option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
-                                <option value="FloodReg">Flood Regulation</option>
                                 <option value="LST">Land Surface Temperature Trend</option>
                                 <option value="LULC">Land Use Land Cover</option>
                                 <option value="LULCC_L">Land Use Land Cover Change</option>
-                                <option value="PotWet">Potential Wetland areas</option>
+                                <option value="PotWet">Potential Wetland Areas</option>
                                 <option value="SWD">Surface Water Dynamics</option>
                                 <option value="WQ">Water Quality</option>
                             </select>
@@ -757,19 +756,19 @@
     <link rel="stylesheet" href="{% static "lib/fancybox/source/jquery.fancybox.css" %}" type="text/css" media="screen" />
     <script type="text/javascript" src="{% static "lib/fancybox/source/jquery.fancybox.pack.js" %}"></script>
 
-    <script src="{% static "js/polyfills.js" %}?v=20170526"></script>
-    <script src="{% static "js/app.js" %}?v=20170526"></script>
-    <script src="{% static "js/auth/auth.js" %}?v=20170526"></script>
-    <script src="{% static "js/map/map.js" %}?v=20170526"></script>
-    <script src="{% static "js/csw/csw.js" %}?v=20170526"></script>
+    <script src="{% static "js/polyfills.js" %}?v=20170616"></script>
+    <script src="{% static "js/app.js" %}?v=20170616"></script>
+    <script src="{% static "js/auth/auth.js" %}?v=20170616"></script>
+    <script src="{% static "js/map/map.js" %}?v=20170616"></script>
+    <script src="{% static "js/csw/csw.js" %}?v=20170616"></script>
 
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170616"></script>
-    <script src="{% static "js/swos/legends.js" %}?v=20170526"></script>
-    <script src="{% static "js/swos/diagram.js" %}?v=20170616a"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170617a"></script>
+    <script src="{% static "js/swos/legends.js" %}?v=20170617"></script>
+    <script src="{% static "js/swos/diagram.js" %}?v=20170617"></script>
 
-    <script src="{% static "js/dashboard.js" %}?v=20170526"></script>
+    <script src="{% static "js/dashboard.js" %}?v=20170616"></script>
 
-    <script src="{% static "lib/anno.js" %}?v=20170526"></script>
+    <script src="{% static "lib/anno.js" %}?v=20170616"></script>
 
     <div ng-view></div>
 
