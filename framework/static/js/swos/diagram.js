@@ -394,9 +394,9 @@
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}</td>' +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
-                    '<td class="legend-percent"><span > {{ wetlandsDiagram.formatValue(item.size) }} ha</span></td>' +
+                    '<td class="legend-percent"><span > {{ wetlandsDiagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
-                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + wetlandsDiagram.formatValue(sum) + ' ha</td></tr>'
+                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + wetlandsDiagram.formatValue(sum) + '&nbsp;ha</td></tr>'
                     '</table>' +
 
                     '</div></tab></tabset></div>';
