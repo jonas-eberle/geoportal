@@ -209,6 +209,7 @@
         wetlands.satdata_table = false;
         wetlands.selectWetland = selectWetland;
         wetlands.value = WetlandsService.value;
+        wetlands.formatValue = formatValue;
         // wetlands.wetlands_opened = {};
 
         $scope.$on("mapviewer.alllayersremoved", function () {
@@ -249,7 +250,7 @@
                             "id"          : prop["id"],
                             "show"        : prop["show"],
                             "geo_scale"   : prop["geo_scale"],
-                            "size"        : formatValue(prop["size"]),
+                            "size"        : prop["size"],
                             "ecoregion"   : prop["ecoregion"],
                             "wetland_type": prop["wetland_type"],
                             "site_type"   : prop["site_type"],
