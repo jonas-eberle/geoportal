@@ -40,17 +40,28 @@
 }
 
 #sidebar-tabs {
-	overflow-y: hidden;
-    height: 39px;
+    overflow-y: hidden;
+    /*height: 39px;*/
     overflow-x: auto;
     position: absolute;
     left: 0px;
-    min-width: 3000px;
-	background-color: #336a5c; /* #003251 */
+    /*min-width: 3000px;*/
+    background-color: #336a5c; /* #003251 */
+}
+
+#sidebar-tabs li {
+    display: table-cell;
+    width: 1%;
+}
+
+@media (min-width: 768px) {
+    #sidebar-tabs {
+        height: 39px;
+    }
 }
 
 .tabcount-all > li {
-	width: auto !important;
+    width: auto !important;
 }
 
 .badge {
@@ -205,26 +216,45 @@ h4 {
     position: absolute;
     bottom: 0;
     height: calc(100% - 277px);
-	height: -moz-calc(100% - 285px);
+    height: -moz-calc(100% - 285px);
     overflow: auto;
     width: 100%;
 }
 
 .geospatial_data.noImage .tab-content {
-	height: calc(100% - 50px);
-	height: -moz-calc(100% - 50px);
+    height: calc(100% - 50px);
+    height: -moz-calc(100% - 50px);
+}
+
+@media (max-width: 800px) {
+    .geospatial_data .tab-content {
+        height: calc(100% - 50px);
+        height: -moz-calc(100% - 50px);
+    }
 }
 
 .wetland-image {
-	max-height: 225px;
+    max-height: 225px;
     overflow: hidden;
+    display:none;
+}
+
+.partners {
+    display: none;
+}
+
+@media (min-width: 800px) {
+    .wetland-image {
+        display: block;
+    }
+    .partners { display: block; }
 }
 
 .btn-wetland {
-	color: white;
-	background-color: #063B52;
-	border-color: #063B52; /* #063B52 */
-	width: 40%;
+    color: white;
+    background-color: #063B52;
+    border-color: #063B52; /* #063B52 */
+    width: 40%;
     height: 70px;
     margin-bottom: 10px;
     margin-left: 10px;
@@ -418,9 +448,15 @@ button.btn-loadmore:hover {
     height: 53px !important;
     position: absolute;
     top: 60px;
-    width: calc(100% - 400px);
+    width: auto;
     z-index: 1029;
     padding-top: 10px;
+}
+
+@media (min-width: 768px) {
+    .map-controls-wrapper {
+        width: calc(100% - 400px);
+    }
 }
 
 @media (min-width: 1050px) {
@@ -560,4 +596,24 @@ button.btn-loadmore:hover {
 
 .item_left button:hover{
   background-color: white;
+}
+
+#draft {
+    left: 0px;
+    height: auto;
+    padding: 3px;
+    color: white;
+    text-align: center;
+    width: 100%;
+    font-size: 1.5em;
+    background-color: rgba(0,0,0,0.3);
+    position: absolute;
+    top: 34px;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .sidebar > .tab-content {
+        bottom: 0;
+    }
 }

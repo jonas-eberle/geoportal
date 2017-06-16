@@ -14,7 +14,7 @@
     <link href="{% static "less/bootstrap.css" %}" rel="stylesheet">
     <link href="{% static "lib/bootstrap-slider.min.css" %}" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+    <link href="{% static "css/dashboard.css" %}?v=4" rel="stylesheet">
 
     <!-- Jonas CSS -->
     <link href="{% static "css/jonas.css" %}" rel="stylesheet">
@@ -40,7 +40,7 @@
     <link href="{% static "css/nv.d3.min.css" %}" rel="stylesheet" />
 
 
-    <link href="{% static "css/swos.css" %}?v=20170529" rel="stylesheet">
+    <link href="{% static "css/swos.css" %}?v=20170616f" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -87,7 +87,7 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html" target="_blank"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
+                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
             </div>
 
             <!-- TOOLBAR in Navigation für Tablet und Desktop -->
@@ -148,7 +148,7 @@
                         <button type="button" tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
@@ -463,7 +463,7 @@
                                 <!-- Products -->
                                 <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                     <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
-                                    <div class="remove-button-wrapper">
+                                    <div class="remove-button-wrapper hidden-xs">
                                         <div class="div-button" ng-click="wetlands.removeAllLayers()">
                                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                                             <div class="div-button-text">Remove all layers</div>
@@ -705,9 +705,9 @@
     <div id="welcome_text" style="display:none">
         <p>Welcome to the first version of the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
         <p>The SWOS team has made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
-        <p>You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
+        <p class="hidden-xs">You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
-        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">May 1, 2017</p>
+        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2017</p>
     </div>
 
     <!-- Bootstrap core JavaScript
@@ -755,7 +755,7 @@
     <script src="{% static "js/map/map.js" %}?v=20170526"></script>
     <script src="{% static "js/csw/csw.js" %}?v=20170526"></script>
 
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170615a"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170615c"></script>
     <script src="{% static "js/swos/legends.js" %}?v=20170526"></script>
     <script src="{% static "js/swos/diagram.js" %}?v=20170615"></script>
 

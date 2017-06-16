@@ -300,6 +300,7 @@
                     buttons : {
                         confirm: {
                             label   : 'Start Tour',
+                            className: 'hidden-xs',
                             callback: function () {
                                 var sidebar = document.getElementById('wetland_sites');
                                 var scope = angular.element(sidebar).scope();

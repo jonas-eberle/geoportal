@@ -173,7 +173,7 @@ right: 90px;}
 		visibility:visible;
 	}
 	
-	#bs-example-navbar-collapse-1 .dropdown {display: inline-block; width: 37px!important;}
+	/*#bs-example-navbar-collapse-1 .dropdown {display: inline-block; width: 37px!important;}*/
 	#bs-example-navbar-collapse-1 .dropdown a {padding:10px 0; text-align: center;}
 	#bs-example-navbar-collapse-1 .dropdown-menu {
 		position: absolute;
@@ -188,11 +188,9 @@ right: 90px;}
 		left: 2%;
 		right: 2%;
 		bottom: 80px;
-		top: 50px;
+		top: 60px !important;
 		overflow: auto;
 	}
-	
-	#sidebar-tabs {height: 38px;}
 }
 
 
@@ -697,4 +695,13 @@ caption.featureInfo {
 
 .bootbox-alert {
     z-index: 2055 !important;
+}
+
+.geospatial_data .nav-tabs.nav-justified > li {
+    display: table-cell;
+    width: 1%;
+}
+
+.modal-help img {
+    max-width: 100%;
 }
