@@ -384,8 +384,11 @@
                 $('#loading-div').removeClass('nobg').hide();
                 var sum = 0;
                 for (value in layer.legend_colors){
-                    sum += layer.legend_colors[value].size;
+                    if (layer.legend_colors.hasOwnProperty(value)) {
+                        sum += layer.legend_colors[value].size;
+                    }
                 }
+
                 var template = '<div><tabset justified="true"> <tab heading="Interactive Chart">' +
                     '<div style="text-align: center;"><strong>Absolute area proportions</strong></div><div style="font-size:0.9em;text-align: center;" class="hint">(Move your mouse over or click on the classes for more details)</div>' +
                     '<div style="display: flex;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div></tab><tab heading="Data"><div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"> <strong ng-if=layer.legend_colors>Relative area proportions</strong>' +
