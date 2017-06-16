@@ -1959,10 +1959,8 @@
                             move_map_elements_higher("reset");
                             $cookies.remove('hasNotifiedAboutLayers');
                         },
-                        content: '<div class="anno-step-of">(Step 14 of '+ step_count +')</div><h4>Search</h4><div><p></p>' +
-                        '<p>Using this text field you can search for our datasets. Requests will be send to the SWOS Catalog Services for Web (CSW). In the <strong>future</strong> it will contain all datasets from the SWOS project as well as datasets from <a href="http://www.geoportal.org" target="_blank">GEOSS</a>. The service will be also available for external applications.</p>' +
-                        '<p></p><p></p>' +
-                        '<p><strong>Congratulations</strong>, you reached the end of the tour. <strong>Now it\'s your turn!</strong> We will remove all added layer and guide you back to the start page.</p>'
+                        content: '<div class="anno-step-of">(Step 14 of '+ step_count +')</div><h4>Congratulations</h4><div><p></p>' +
+                        '<p>You reached the end of the tour. <strong>Now it\'s your turn!</strong> We will remove all added layer and guide you back to the start page.</p>'
                     } // Search
                 ]
             );
