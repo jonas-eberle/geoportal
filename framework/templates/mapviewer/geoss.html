@@ -14,7 +14,7 @@
     <link href="{% static "less/bootstrap.css" %}" rel="stylesheet">
     <link href="{% static "lib/bootstrap-slider.min.css" %}" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+    <link href="{% static "css/dashboard.css" %}?v=20170617" rel="stylesheet">
 
     <!-- Jonas CSS -->
     <link href="{% static "css/jonas.css" %}" rel="stylesheet">
@@ -42,9 +42,9 @@
     <link href="{% static "lib/geoss/css/jquery-ui.css" %}" rel="stylesheet">
     <link href="{% static "lib/geoss/css/jquery-ui-2.css" %}" rel="stylesheet">
     <link href="{% static "lib/geoss/css/custom.min.css" %}" rel="stylesheet" type="text/css">
-	<link href="{% static "lib/geoss/css/sitecustom.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "lib/geoss/css/sitecustom.css" %}" rel="stylesheet" type="text/css">
 
-    <link href="{% static "css/swos.css" %}?v=20170529" rel="stylesheet">
+    <link href="{% static "css/swos.css" %}?v=20170617" rel="stylesheet">
 
     <script src="{% static "lib/dygraph-combined.js" %}"></script>
     <script src="{% static "lib/dygraph-interaction-api.js" %}"></script>
@@ -74,7 +74,13 @@
     </script>
 </head>
 <body>
-    <div id="loading-div"><div class="loading"><i class="fa fa-circle-o-notch fa-spin"></i></div></div>
+
+    <div id="loading-div">
+        <div class="loading">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+            <button class="btn btn-default btn-primary btn-sm" onclick="$('#loading-div').hide()" style="margin-left: -35px;margin-top: -65px;">Hide loading overlay</button>
+        </div>
+    </div>
 
     {% verbatim %}
     <div id="alerts" ng-controller="AlertCtrl as ac">
@@ -85,7 +91,7 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html" target="_blank"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
+                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
             </div>
 
             <!-- TOOLBAR in Navigation für Tablet und Desktop -->
@@ -118,11 +124,11 @@
     <!-- NAVBAR SEARCH SMARTPHONE - Zweite Version, die auf dem Smartphone in einer separaten Zeile angezeigt wird.-->
     <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl as sb">
         <div class="container-fluid">
-            <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
+          <!--  <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
                 <div class="form-group">
                     <input type="text" class="form-control" ng-model="sb.text" placeholder="Search">
                 </div>
-            </form>
+            </form>-->
             <button class="btn btn-primary" type="submit"  id="toggle-sidebar">Menu</button>
         </div>
     </nav><!-- END NAVBAR SEARCH SMARTPHONE -->
@@ -139,20 +145,20 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
                         <form ng-submit="sb.search();">
                             <input type="text" ng-model="sb.text" class="form-control" placeholder="Search within GEOSS"
-                                   id="search_desktop" autocomplete="off">
+                                   id="search_desktop">
                             <br style="clear:both"/>
                             <div id="search-extend">
                                 <!--
@@ -173,7 +179,7 @@
                 </div>
                 <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
                 <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
-
+                    <div id="draft"><strong>DRAFT PORTAL FOR GEOSS</strong><br>For any other purposes please use <a href="http://portal.swos-service.eu" style="color:white;text-decoration:underline;">this portal</a>.</div>
                     <div id="wetland_attribution"></div>
                     <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
 
@@ -300,7 +306,7 @@
                         <div class="filter" style="padding: 10px;padding-bottom: 0px;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
-                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'country' | orderBy: 'country'" value="{{option.country}}">{{option.country}}</option>
+                               <option ng-repeat="option in wetlandsFilter.country_list | unique | orderBy " value="{{option}}">{{option}}</option>-->
                             </select>
                             <select ng-model="wetlandsFilter.filtered_geo_scale" ng-change="wetlandsFilter.filterScale()" style="width: 40%; margin-bottom: 10px;">
                                 <option value="">- Filter by scale -</option>
@@ -319,7 +325,26 @@
                             </select>
                             <select ng-model="wetlandsFilter.filtered_ecoregion" ng-change="wetlandsFilter.filterEcoregion()" style="width: 91%;margin-bottom: 10px;">
                                 <option value="">- Filter by ecoregion -</option>
-                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>
+                              <!--  <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>-->
+                                <option value="Boreal Forests/Taiga">Boreal Forests/Taiga</option>
+                                <option value="Deserts">Deserts</option>
+                                <option value="Deserts and Xeric Shrublands">Deserts and Xeric Shrublands</option>
+                                <option value="Flooded Grasslands and Savannas">Flooded Grasslands and Savannas</option>
+                                <option value="Lake">Lake</option>
+                                <option value="Mediterranean Forests">Mediterranean Forests</option>
+                                <option value="Savannas">Savannas</option>
+                                <option value="Savannas and Shrublands">Savannas and Shrublands</option>
+                                <option value="Shrublands">Shrublands</option>
+                                <option value="Temperate Broadleaf and Mixed Forests">Temperate Broadleaf and Mixed Forests</option>
+                                <option value="Temperate Conifer Forests">Temperate Conifer Forests</option>
+                                <option value="Temperate Grasslands">Temperate Grasslands</option>
+                                <option value="Tropical and Subtropical Grasslands">Tropical and Subtropical Grasslands</option>
+                                <option value="Tropical and Subtropical Grasslands and Savannas">Tropical and Subtropical Grasslands and Savannas</option>
+                                <option value="Tropical and Subtropical Moist Broadleaf Forests">Tropical and Subtropical Moist Broadleaf Forests</option>
+                                <option value="Tundra">Tundra</option>
+                                <option value="Woodlands and Scrub">Woodlands and Scrub</option>
+                                <option value="Xeric Shrublands">Xeric Shrublands</option>
+
                             </select>
                             <select ng-model="wetlandsFilter.filtered_products" ng-change="wetlandsFilter.filterProduct()" style="width: 91%">
                                 <option value="">- Filter by product -</option>
@@ -442,7 +467,7 @@
                                 <!-- Products -->
                                 <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                     <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
-                                    <div class="remove-button-wrapper">
+                                    <div class="remove-button-wrapper hidden-xs">
                                         <div class="div-button" ng-click="wetlands.removeAllLayers()">
                                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                                             <div class="div-button-text">Remove all layers</div>
@@ -680,19 +705,13 @@
             </button>
         </div>
     </div>
-	
-	<!-- GEOSS search widget HTML 
-	<div id="geoss-search-widget" class="geoss clearfix">
-        <div class="search"></div>
-        <div class="results"></div>
-    </div>-->
 
     <div id="welcome_text" style="display:none">
         <p>Welcome to the first version of the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
         <p>The SWOS team has made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
-        <p>You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
+        <p class="hidden-xs">You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
-        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">May 1, 2017</p>
+        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2017</p>
     </div>
 
     <!-- Bootstrap core JavaScript
@@ -729,9 +748,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min.js"></script>
 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
-	
-	<!-- Add GEOSS widget -->
-	<script src="{% static "lib/geoss/js/jquery-ui.min.js" %}"></script>
+    
+    <!-- Add GEOSS widget -->
+    <script src="{% static "lib/geoss/js/jquery-ui.min.js" %}"></script>
     <script src="{% static "lib/geoss/js/jquery.dotdotdot.min.js" %}"></script>
     <script src="{% static "lib/geoss/js/elasticsearch.jquery.min.js" %}"></script>
 
@@ -743,18 +762,18 @@
     <script src="{% static "js/app.js" %}?v=20170526"></script>
     <script src="{% static "js/auth/auth.js" %}?v=20170526"></script>
     <script src="{% static "js/map/map.js" %}?v=20170526"></script>
-    <script src="{% static "js/csw/csw_geoss.js" %}?v=20170608_7"></script>
+    <script src="{% static "js/csw/csw_geoss.js" %}?v=20170526"></script>
 
-    <script src="{% static "js/swos/wetlands.js" %}?v=20170528"></script>
+    <script src="{% static "js/swos/wetlands.js" %}?v=20170616"></script>
     <script src="{% static "js/swos/legends.js" %}?v=20170526"></script>
-    <script src="{% static "js/swos/diagram.js" %}?v=20170608"></script>
+    <script src="{% static "js/swos/diagram.js" %}?v=20170616a"></script>
 
     <script src="{% static "js/dashboard.js" %}?v=20170526"></script>
 
     <script src="{% static "lib/anno.js" %}?v=20170526"></script>
-	
-	<!-- Add GEOSS widget -->
-	<script src="{% static "lib/geoss/js/geossSearchWidget.min.js" %}"></script>
+    
+    <!-- Add GEOSS widget -->
+    <script src="{% static "lib/geoss/js/geossSearchWidget.min.js" %}"></script>
 
     <div ng-view></div>
 
