@@ -120,7 +120,7 @@ var stroke = new ol.style.Stroke({
                     }).extend([
                         new ol.interaction.DragPan({kinetic: null}),
                         new ol.interaction.MouseWheelZoom({duration: 0, constrainResolution: true}),
-                        new ol.interaction.PinchZoom({constrainResolution: true})
+                        new ol.interaction.PinchZoom({duration: 0, constrainResolution: true})
                     ])
                 });
                 //console.log(id);
@@ -1075,15 +1075,16 @@ var stroke = new ol.style.Stroke({
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
         }
 
-        function zoomIn() {
+        function zoomIn(event) {
             var currentZoomLevel = mapviewer.map.getView().getZoom();
             if (currentZoomLevel < mapviewer.zoom_max) {
                 mapviewer.map.getView().setZoom(currentZoomLevel + 1);
 
                 if (currentZoomLevel + 1 === mapviewer.zoom_max) {
-                    angular.element('#zoomInButton').addClass('disabled');
+                    event.target.disabled = true;
+                    $(event.target).addClass('disabled');
                 }
-                angular.element('#zoomOutButton').removeClass('disabled');
+                $('#zoomOutButton').attr('disabled', false).removeClass('disabled');
             }
         }
 
@@ -1093,15 +1094,16 @@ var stroke = new ol.style.Stroke({
             );
         }
 
-        function zoomOut() {
+        function zoomOut(event) {
             var currentZoomLevel = mapviewer.map.getView().getZoom();
             if (currentZoomLevel > mapviewer.zoom_min) {
                 mapviewer.map.getView().setZoom(currentZoomLevel - 1);
 
                 if (currentZoomLevel - 1 === mapviewer.zoom_min) {
-                    angular.element('#zoomOutButton').addClass('disabled');
+                    event.target.disabled = true;
+                    $(event.target).addClass('disabled');
                 }
-                angular.element('#zoomInButton').removeClass('disabled');
+                $('#zoomInButton').attr('disabled', false).removeClass('disabled');
             }
         }
     }
