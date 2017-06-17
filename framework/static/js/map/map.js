@@ -87,7 +87,8 @@ var stroke = new ol.style.Stroke({
                     zoom: this.zoom_init,
                     minZoom: this.zoom_min,
                     maxZoom: this.zoom_max,
-                    resolutions: this.resolutions
+                    resolutions: this.resolutions,
+                    enableRotation: false
                 });
 
                 var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
@@ -118,7 +119,8 @@ var stroke = new ol.style.Stroke({
                         mouseWheelZoom: false
                     }).extend([
                         new ol.interaction.DragPan({kinetic: null}),
-                        new ol.interaction.MouseWheelZoom({duration: 0, constrainResolution: true})
+                        new ol.interaction.MouseWheelZoom({duration: 0, constrainResolution: true}),
+                        new ol.interaction.PinchZoom({constrainResolution: true})
                     ])
                 });
                 //console.log(id);
