@@ -19,10 +19,10 @@
                 class="fa fa-list fa-lg"></i></button>
         <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors && layer.legend_colors[0].size" tooltip-placement="bottom" tooltip="Show statistic"
                 type="button" ng-click="wetlandsDiagram.onclickCreate(layer);"
-                class="btn btn-default" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
+                class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram"  ng-if="layer.ogc_times" tooltip-placement="bottom" tooltip="Create time series"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.requestTimeSeries(layer);"
-                class="btn btn-default" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
+                class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-download fa-lg"></i></button>
