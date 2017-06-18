@@ -100,6 +100,16 @@ var stroke = new ol.style.Stroke({
                     _this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
                 });
                 view.on('change:resolution', function() {
+                    if (view.getZoom() >= _this.zoom_max) {
+                        angular.element('#zoomInButton').addClass('disabled');
+                    } else {
+                        angular.element('#zoomInButton').removeClass('disabled');
+                    }
+                    if (view.getZoom() <= _this.zoom_min) {
+                        angular.element('#zoomOutButton').addClass('disabled');
+                    } else {
+                        angular.element('#zoomOutButton').removeClass('disabled');
+                    }
                     _this.gmap.setZoom(view.getZoom());
                 });
                 //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
@@ -1079,11 +1089,6 @@ var stroke = new ol.style.Stroke({
             var currentZoomLevel = mapviewer.map.getView().getZoom();
             if (currentZoomLevel < mapviewer.zoom_max) {
                 mapviewer.map.getView().setZoom(currentZoomLevel + 1);
-
-                if (currentZoomLevel + 1 === mapviewer.zoom_max) {
-                    angular.element('#zoomInButton').addClass('disabled');
-                }
-                angular.element('#zoomOutButton').removeClass('disabled');
             }
         }
 
@@ -1097,11 +1102,6 @@ var stroke = new ol.style.Stroke({
             var currentZoomLevel = mapviewer.map.getView().getZoom();
             if (currentZoomLevel > mapviewer.zoom_min) {
                 mapviewer.map.getView().setZoom(currentZoomLevel - 1);
-
-                if (currentZoomLevel - 1 === mapviewer.zoom_min) {
-                    engular.element('#zoomOutButton').addClass('disabled');
-                }
-                angular.element('#zoomInButton').removeClass('disabled');
             }
         }
     }
