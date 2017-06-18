@@ -149,9 +149,9 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
                         <button type="button" tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
@@ -425,7 +425,7 @@
                                         <strong>Scale: </strong>{{wetlands.value.geo_scale}}<br>
                                         <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
-                                        <strong>Size: </strong>{{wetlands.value.size}} ha<br>
+                                        <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
                                     </div>
 
                                     <h4 style="margin-top:15px">Datasets</h4>
