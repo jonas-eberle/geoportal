@@ -1,10 +1,34 @@
-## Database setup
+## Setup
+
+### Database setup
 ```
 $ createdb -U swos swos
 $ psql swos < swos3_20160907.db
 ```
 
-## Django setup
+### Backend setup
+```
+# install python2 versions of pip and virtualenv
+
+$ cd path/to/cloned-repo
+# create a virtualenv
+$ virtualenv --python=python2 venv
+# activate the virtualenv
+$ source venv/bin/activate
+# install all packages listed in requirements.txt
+$ pip install -r framework/requirements.txt
+```
+
+### Frontend setup
+```
+# install npm (preferrably via distro package manager)
+
+$ cd path/to/cloned-repo
+## install all packages listed in npm-shrinkwrap.json and packages.json
+$ npm install
+```
+
+### Django setup
 ```
 $ vi webgis/settings.py
 Adjust DATABASES dictionary
@@ -14,7 +38,7 @@ $ python manage.py collectstatic
 Yes, files can be overwritten
 ```
 
-## Apache WSGI
+### Apache WSGI
 ```
 $ vi index.wsgi
 Adjust your local virtual environment directory
@@ -31,13 +55,38 @@ Restart apache "gracefully"
 ## Django Configuration
 Prior to any mapviewer request you need to edit the mapviewer and adjust the template selection, because complete path is stored in the database!
 
-## Main frontend libraries
+## Frontend maintenance
+For a list of required, external JavaScript libraries, see `packages.json`. For a detailed list of required, external JavaScript libraries and their dependencies, including exact version numbers, see `npm-shrinkwrap.json`.
 
-* Bootstrap v3.3.1
-* OpenLayers v4.1.0
-* jQuery v1.11.1
-* AngularJS v1.6.4
-* bootbox.js v4.3.0
+Required JavaScript and CSS files are bundled and minified via the Django app "django-assets". The configuration of these bundles is done in `framework/mapviewer/assets.py`, Django is configured to search in `framework/static` and in `node_modules` for the given files. Bundles are stored in `static/build`, which is ignored by git.
+
+Most libraries only have JavaScript or CSS code, but some also come with fonts or images. These additional files have been copied from the libraries' `node_modules` to our `static` directory, while keeping the directory structure intact. At the moment, this applies to the following libraries:
+
+* Bootstrap
+* Font Awesome
+* Fancybox
+
+### Debugging
+During development, bundling and minification might be undesired. It can be easily disabled by setting `ASSETS_DEBUG=True` in `settings.py`. In production mode, this should be changed to `FALSE`.
+
+### Library installation/updates
+
+When installing/updating a library, it is necessary to check, if the library has font files, images etc. that have to be copied into our `static` directory.
+
+```
+# installing a library + saving in npm-shrinkwrap.json and packages.json
+npm install --save "jquery@1.12.4"
+
+# check, which packages can be updated
+# current: installed version
+# wanted: latest version taking version constraint from packages.json into account
+# latest: actual latest version (might have breaking changes!)
+npm outdated
+
+# updating a library to the latest minor + saving in npm-shrinkwrap.json and packages.json
+npm update --save "jquery"
+```
+
 
 ## Anchors to wetlands and products
 #/wetland/4/ --> open wetland with id 4  

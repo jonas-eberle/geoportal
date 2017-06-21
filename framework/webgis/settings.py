@@ -20,9 +20,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '9c=-i7dqc1_=31hk8qt8i$2zyi40w!p!!8&d*8d9on1#jsd^7%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True 
+DEBUG = True
 
 TEMPLATE_DEBUG = True
+
+# WARNING: disable ASSETS_DEBUG in production!
+# True: deliver JavaScript and CSS files as usual (e.g. for development)
+# False: deliver bundled/minified files (e.g. for live system)
+ASSETS_DEBUG = True
+# WARNING: disable ASSETS_AUTO_BUILD in production!
+# True: automatically rebuild bundles if source files have changed
+ASSETS_AUTO_BUILD = True
 
 ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de']
 
@@ -49,7 +57,8 @@ INSTALLED_APPS = (
     'mapviewer',
     'layers',
     'csw',
-    'swos'
+    'swos',
+    'django_assets'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,6 +121,27 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
+)
+
+ASSETS_LOAD_PATH = [
+    os.path.join(os.path.dirname(BASE_DIR), 'node_modules'),
+    STATICFILES_DIRS[0]
+]
+ASSETS_ROOT = STATICFILES_DIRS[0]
+
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "npm.finders.NpmFinder",
+    "django_assets.finders.AssetsFinder"
+)
+
+NPM_ROOT_PATH = os.path.join(os.path.dirname(BASE_DIR))
+
+UGLIFYJS_BIN = os.path.join(os.path.dirname(BASE_DIR), 'node_modules/.bin/uglifyjs')
+UGLIFYJS_EXTRA_ARGS = (
+    '--mangle "reserved=[$,angular]"',
+    '--compress',
 )
 
 #MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'

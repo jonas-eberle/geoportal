@@ -88,3 +88,6 @@ ENV/
 
 # Misc
 .idea
+
+framework/static/build
+node_modules
