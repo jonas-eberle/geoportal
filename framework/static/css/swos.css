@@ -617,3 +617,8 @@ button.btn-loadmore:hover {
         bottom: 0;
     }
 }
+.modal-body{
+    max-height: 60vh;
+    overflow-y: visible;
+    overflow-x: hidden;
+}

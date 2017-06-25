@@ -351,7 +351,7 @@
                 };
                 $.extend($scope.options['chart'], options);
 
-                var output = '<div  class="modal-body ts_diagram">' +
+                var output = '<div  class="ts_diagram">' +
                     ' ' +
                     '<div id="diagram_' + layer.id +'" style="display:none;">' +
                     '' +
@@ -367,7 +367,7 @@
                     buttons: {
                         cancel: {
                             label: "Close",
-                            className: "btn-default",
+                            className: "btn-primary",
                             callback: function () {
 
                             }
@@ -469,7 +469,7 @@
 
             mapviewer.map.addLayer(vectorLayer);
 
-            var output = '<div  class="modal-body ts_diagram">' +
+            var output = '<div  class="ts_diagram">' +
                 '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
                 '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
                 '</div>' +
@@ -534,7 +534,7 @@
                         },
                         cancel: {
                             label: "Close",
-                            className: "btn-default",
+                            className: "btn-primary",
                             callback: function () {
                                 ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
                                 window_open = false;
