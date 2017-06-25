@@ -622,3 +622,10 @@ button.btn-loadmore:hover {
     overflow-y: visible;
     overflow-x: hidden;
 }
+
+.divider_feature_info {
+    background-color: #555555;
+    height: 2px;
+    margin: 9px 0px 9px;
+    overflow: hidden;
+}

@@ -365,17 +365,22 @@
                             url   : '/layers/info?url=' + urls.join('||') + '&names=' + names.join('||'),
                             method: 'GET'
                         }).then(function (data) {
-                            var dialog = bootbox.dialog({
-                                title   : 'Feature Info Response',
-                                message : coordinate + data,
-                                backdrop: false
-                            });
-                            dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
-                            var width = $(document).width() / 2 - 300;
-                            if (width < 0) {
-                                width = '2%';
+                            if (!angular.element('#feature_info').length) {
+                                var dialog = bootbox.dialog({
+                                    title: 'Feature Info Response',
+                                    message: '<p id="feature_info"></p>' + coordinate + data,
+                                    backdrop: false
+                                });
+                                dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+                                var width = $(document).width() / 2 - 300;
+                                if (width < 0) {
+                                    width = '2%';
+                                }
+                                $('.modal-content', dialog).css('left', width);
                             }
-                            $('.modal-content', dialog).css('left', width);
+                            else {
+                                $(coordinate + data + '<div class="divider_feature_info"></div>').insertAfter('#feature_info');
+                            }
                             $('#loading-div').removeClass('nobg').hide();
                         }, function (err) {
                             $('#loading-div').removeClass('nobg').hide();
