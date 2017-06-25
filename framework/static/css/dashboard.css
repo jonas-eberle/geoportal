@@ -321,25 +321,19 @@ body {
     }
 
     #title-left {
-        height: 65px;
-        font-size: 25px;
-        padding-top: 25px;
-        width: 220px;
-    }
-
-    #title-left {
         background: white; /* fallback */
         background: -moz-linear-gradient(135deg, transparent 14px, #fff 10px);
         background: -o-linear-gradient(135deg, transparent 14px, #fff 10px);
         background: -webkit-linear-gradient(45deg, transparent 0px, #fff 0px), -webkit-linear-gradient(135deg, transparent 14px, #fff 0px);
-    }
-
-    #title-left {
-    background-position: bottom left, bottom right, top right, top left;
-    background-size: 50% 50%;
-        -moz-background-size: 50% 50%;
-        -webkit-background-size: 50% 50%;
-    background-repeat: no-repeat;
+        background-position: bottom left, bottom right, top right, top left;
+        background-repeat: no-repeat;
+        background-size: 50% 50%;
+            -moz-background-size: 50% 50%;
+            -webkit-background-size: 50% 50%;
+        font-size: 25px;
+        height: 65px;
+        padding-top: 25px;
+        width: 220px;
     }
 
     #sidebar > .tab-content {
