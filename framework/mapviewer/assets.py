@@ -62,6 +62,16 @@ vendorJs = [
 # NOTE: we include some unminified libs, so apply basic minification to the whole bundle
 make_bundle('vendorJsBundle', vendorJs, filters='rjsmin', output='build/vendor.bundle.js')
 
+# NOTE: do not use globbing for this bundle, to prevent including OpenLayers, jQuery and Bootstrap twice
+geossVendorJs = [
+    'lib/geoss/js/jquery-ui.min.js',
+    'lib/geoss/js/jquery.dotdotdot.min.js',
+    'lib/geoss/js/elasticsearch.jquery.min.js',
+    'lib/geoss/js/geossSearchWidget.min.js'
+]
+
+make_bundle('geossVendorJsBundle', geossVendorJs, filters='rjsmin', output='lib/geoss/js/geoss.vendor.bundle.js')
+
 vendorCss = [
     'bootstrap/dist/css/bootstrap.min.css',
     'css/bootstrap.diff.css',   # changes from modified less files
@@ -76,6 +86,15 @@ vendorCss = [
 ]
 
 make_bundle('vendorCssBundle', vendorCss, filters='cssmin', output='build/vendor.bundle.css')
+
+geossVendorCss = [
+    'lib/geoss/css/jquery-ui.css',
+    'lib/geoss/css/jquery-ui-2.css',
+    'lib/geoss/css/custom.min.css',
+    'lib/geoss/css/sitecustom.css'
+]
+
+make_bundle('geossVendorCssBundle', geossVendorCss, filters='cssmin', output='lib/geoss/css/geoss.vendor.bundle.css')
 
 appCss = [
     'css/dashboard.css',
