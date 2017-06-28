@@ -13,14 +13,14 @@
 
     {% load staticfiles %}
     {% load assets %}
-    {% assets "vendorCssBundle" %}
+    {% assets "swosVendorCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
 
     {# requires fonts and css to be in the same directory, so no inclusion in bundle #}
     <link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet" />
 
-    {% assets "appCssBundle" %}
+    {% assets "swosAppCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
 
@@ -687,11 +687,11 @@
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2017</p>
     </div>
 
-    {% assets "vendorJsBundle" %}
+    {% assets "swosVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
 
-    {% assets "appJsBundle" %}
+    {% assets "swosAppJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
 
