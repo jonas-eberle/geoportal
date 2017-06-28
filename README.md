@@ -56,7 +56,7 @@ Restart apache "gracefully"
 Prior to any mapviewer request you need to edit the mapviewer and adjust the template selection, because complete path is stored in the database!
 
 ## Frontend maintenance
-For a list of required, external JavaScript libraries, see `packages.json`. For a detailed list of required, external JavaScript libraries and their dependencies, including exact version numbers, see `npm-shrinkwrap.json`.
+For a list of required, external JavaScript libraries, see `packages.json`. For a detailed list of required, external JavaScript libraries and their dependencies, including exact version numbers, see `npm-shrinkwrap.json`. For a list of actually included JavaScript and CSS files, see `framework/mapviewer/assets.py`.
 
 Required JavaScript and CSS files are bundled and minified via the Django app "django-assets". The configuration of these bundles is done in `framework/mapviewer/assets.py`, Django is configured to search in `framework/static` and in `node_modules` for the given files. Bundles are stored in `static/build`, which is ignored by git.
 
@@ -86,6 +86,19 @@ npm outdated
 # updating a library to the latest minor + saving in npm-shrinkwrap.json and packages.json
 npm update --save "jquery"
 ```
+
+### Bundling/Bundle configuration
+
+To include JavaScript or CSS files, they have to be added to the right bundle in `framework/mapviewer/assets.py`. The idea is to have 4 file lists containing all files required by all Mapviewers:
+- baseVendorJs: external JavaScript files
+- baseAppJs: our own AngularJS files
+- baseVendorCss: external CSS files
+- baseAppCss: our own CSS files
+
+These 4 lists serve as the base for defining bundles specific for a Mapviewer. E.g. bundles for a Mapviewer called "foo" would look like this:
+- baseVendorJs + foo-specific JS files => fooVendorJsBundle
+- baseAppJs + foo-specific app JS files => fooAppJsBundle
+- ...
 
 
 ## Anchors to wetlands and products
