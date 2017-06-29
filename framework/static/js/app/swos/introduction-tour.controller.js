@@ -388,7 +388,7 @@
                                     e.stopPropagation();
                                 }
                             };
-                            [0].addEventListener('click', handler, true);
+                            $target[0].addEventListener('click', handler, true);
                             return handler;
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
