@@ -320,6 +320,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
                                 console.log(e);
@@ -374,6 +376,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of Wetland selection)
                             var handler = function (e) {
                                 if (e.target.htmlFor === "cb_testmapping" || e.target.id === "cb_testmapping" || e.target.htmlFor === "cb_groupbycountry" || e.target.id === "cb_groupbycountry" || e.target.id === "link_wetland_list" || e.target.innerText === "Camargue") {
@@ -384,11 +388,12 @@
                                     e.stopPropagation();
                                 }
                             };
-                            $target[0].addEventListener('click', handler, true);
+                            [0].addEventListener('click', handler, true);
                             return handler;
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 3 of '+ step_count +')</div><h4>Wetland selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
                         '<p>In the <strong>next step</strong> we will use the <span class="anno-highlight">Camargue</span> wetland in France.</p></div>'
@@ -431,6 +436,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
 
@@ -448,6 +455,7 @@
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 4 of '+ step_count +')</div><h4>Overview of selected wetland</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
                         '<ol style="list-style:disc outside;">' +
@@ -494,6 +502,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of ...)
                             var handler = function (e) {
 
@@ -508,7 +518,8 @@
                             return handler;
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 5 of '+ step_count +')</div><h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
                         '<ol style="list-style:disc outside;">' +
@@ -567,6 +578,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of ... )
                             var handler = function (e) {
                                 // Allow preselection of overview tab; allow selection of products
@@ -584,6 +597,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.remove('hasNotifiedAboutLayers');
+                            $('.sidebar').css( 'zIndex', '');
 
                         },
                         content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Detailed product information</h4><div><p></p>' +
@@ -632,6 +646,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of ... )
                             var handler = function (e) {
 
@@ -652,7 +668,7 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.remove('hasNotifiedAboutLayers');
-
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 7 of '+ step_count +')</div><h4>Dataset information and tools</h4><div><p></p>' +
                         '<p>You can change the transparency for each layer (slider) and:' +
@@ -749,6 +765,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
 
@@ -765,7 +783,8 @@
                             return handler;
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 8 of '+ step_count +')</div><h4>Satellite data</h4><div>' +
                         '<p>An overview about free available satellite data (Landsat and Sentinel) covering the wetland area is given here. Please click on the <span class="anno-highlight">Yearly coverage by sensor</span> image to enlarge it. You will also find the total amount of data by sensor as a table below. </p>' +
@@ -807,6 +826,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             // prevent all click events (except of checkboxes)
                             var handler = function (e) {
 
@@ -823,7 +844,8 @@
                             return handler;
                         },
                         onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true)
+                            $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 9 of '+ step_count +')</div><h4>External databases</h4><div>' +
                         '<p>In this tab external databases and information sources related to the selected wetland on the regional, country, continental and global level are shown. To search for external layers that can be visualized in the map use the <span class="anno-highlight"><span class="flaticon-layers"><a style="text-decoration: none;"></a></span> Filter by maps</span> checkbox. You can add those layers in the same way as the product maps.</p>' +
@@ -867,6 +889,8 @@
                                 reset();
                             });
 
+                            $('.sidebar').css( 'zIndex', '1501');
+
                             var handler = function (e) {
 
                                 // Allow preselection of overview tab; allow selection of products
@@ -885,6 +909,7 @@
                         onHide : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true);
                             $cookies.remove('hasNotifiedAboutLayers');
+                            $('.sidebar').css( 'zIndex', '');
                         },
                         content: '<div class="anno-step-of">(Step 10 of '+ step_count +')</div><h4>Information and tools on selected resource</h4><div>' +
                         '<p>For each external resource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
