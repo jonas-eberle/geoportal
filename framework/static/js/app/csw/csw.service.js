@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.csw')
         .service('csw', csw);
 
     csw.$inject = ['djangoRequests', '$modal'];

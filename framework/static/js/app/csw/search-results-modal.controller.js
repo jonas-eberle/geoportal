@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.csw')
         .controller('SearchResultsModalCtrl', SearchResultsModalCtrl);
 
     SearchResultsModalCtrl.$inject = ['csw', 'mapviewer', '$modal', '$modalInstance', 'djangoRequests', 'title', 'results', 'searchData'];

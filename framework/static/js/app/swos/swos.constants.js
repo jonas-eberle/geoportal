@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.swos')
         .constant('mediaConfig', {
             imagesPerPage: 24,
             videosPerPage: 9

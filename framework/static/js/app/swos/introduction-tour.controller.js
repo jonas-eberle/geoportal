@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.swos')
         .controller('IntroductionTourCtrl', IntroductionTourCtrl);
 
     IntroductionTourCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', '$timeout', '$cookies', '$rootScope', 'TrackingService', '$location'];

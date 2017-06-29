@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .service('djangoAuth', djangoAuth);
 
     djangoAuth.$inject = ['$q', '$http', '$cookies', '$rootScope', 'djangoRequests'];

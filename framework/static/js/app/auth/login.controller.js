@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .controller('LoginCtrl', LoginCtrl);
 
     LoginCtrl.$inject = ['$scope', 'djangoAuth', '$modal'];

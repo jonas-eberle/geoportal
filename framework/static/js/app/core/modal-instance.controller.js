@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.core')
         .controller('ModalInstanceCtrl', ModalInstanceCtrl);
 
     // TODO: remove $modal if not needed

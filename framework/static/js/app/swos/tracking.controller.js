@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.swos')
         .controller('TrackingCtrl', TrackingCtrl);
 
     TrackingCtrl.$inject = ['TrackingService', 'WetlandsService', '$location'];

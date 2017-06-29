@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .controller('MapAddOwnLayerCtrl', MapAddOwnLayerCtrl);
 
     MapAddOwnLayerCtrl.$inject = ['$modalInstance', 'djangoRequests', 'mapviewer', 'title'];

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .directive('chart', chart);
 
     chart.$inject = [];

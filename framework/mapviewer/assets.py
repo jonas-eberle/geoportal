@@ -82,10 +82,15 @@ make_bundle('geossVendorJsBundle', geossVendorJs, filters='rjsmin', output='lib/
 baseAppJs = []
 [baseAppJs.extend(x) for x in [
     ['js/polyfills.js'],
+    ['js/app/app.module.js'],
     glob_files('js/app/*.js'),
+    ['js/app/core/core.module.js'],
     glob_files('js/app/core/*.js'),
+    ['js/app/auth/auth.module.js'],
     glob_files('js/app/auth/*.js'),
+    ['js/app/csw/csw.module.js'],
     glob_files('js/app/csw/*.js'),
+    ['js/app/map/map.module.js'],
     glob_files('js/app/map/*.js'),
     ['js/dashboard.js']
 ]]
@@ -93,6 +98,7 @@ baseAppJs = []
 swosAppJs = []
 [swosAppJs.extend(x) for x in [
     baseAppJs,
+    ['js/app/swos/swos.module.js'],
     glob_files('js/app/swos/*.js')
 ]]
 make_bundle('swosAppJsBundle', swosAppJs, filters='uglifyjs', output='build/swos.app.bundle.js')

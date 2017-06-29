@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .run(runBlock);
 
     runBlock.$inject = ['djangoAuth'];

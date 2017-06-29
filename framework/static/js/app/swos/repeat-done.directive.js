@@ -2,7 +2,7 @@
 //     'use strict';
 //
 //     angular
-//         .module('webgisApp')
+//         .module('webgisApp.swos')
 //         .directive('repeatDone', repeatDone);
 //
 //     function repeatDone() {

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.core')
         .controller('InfoCtrl', InfoCtrl);
 
     InfoCtrl.$inject = ['$modal', 'mapviewer'];

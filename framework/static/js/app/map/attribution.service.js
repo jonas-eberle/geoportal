@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .service('Attribution', Attribution);
 
     Attribution.$inject = ['$rootScope'];

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .controller('EditProfileCtrl', EditProfileCtrl);
 
     EditProfileCtrl.$inject = ['$modalInstance', 'djangoAuth', 'AlertService'];

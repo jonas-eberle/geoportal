@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .controller('ResetPasswordCtrl', ResetPasswordCtrl);
 
     ResetPasswordCtrl.$inject = ['$modalInstance', 'djangoAuth', 'djangoRequests'];

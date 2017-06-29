@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.swos')
         .service('WetlandsService', WetlandsService);
 
     WetlandsService.$inject = ['djangoRequests', 'mapviewer', '$rootScope', '$q', 'mediaConfig'];

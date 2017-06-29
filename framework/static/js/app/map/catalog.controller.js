@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .controller('MapCatalogCtrl', MapCatalogCtrl);
 
     MapCatalogCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$modal'];

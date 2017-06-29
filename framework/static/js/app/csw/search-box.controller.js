@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.csw')
         .controller('SearchBoxCtrl', SearchBoxCtrl);
 
     SearchBoxCtrl.$inject = ['csw'];

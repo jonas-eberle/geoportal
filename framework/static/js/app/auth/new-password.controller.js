@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .controller('NewPasswordCtrl', NewPasswordCtrl);
 
     NewPasswordCtrl.$inject = ['$modal', '$routeParams'];

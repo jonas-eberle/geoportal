@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.core')
         .service('AlertService', AlertService);
 
     AlertService.$inject = ['$rootScope'];

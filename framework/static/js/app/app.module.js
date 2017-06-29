@@ -2,14 +2,11 @@
     'use strict';
 
     angular.module('webgisApp', [
-        'ngCookies',
-        'ngResource',
-        'ngRoute',
-        'ui.bootstrap',
-        'dndLists',
-        'nsPopover',
-        'ui.bootstrap-slider',
-        'angular.filter',
-        'nvd3'
+        /* Shared modules */
+        'webgisApp.core',
+        'webgisApp.auth',
+        'webgisApp.csw',
+        'webgisApp.map',
+        'webgisApp.swos'
     ]);
 })();

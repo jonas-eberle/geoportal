@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.swos')
         .controller('WetlandsImageCtrl', WetlandsImageCtrl);
 
     WetlandsImageCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mediaConfig'];

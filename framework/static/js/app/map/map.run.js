@@ -18,7 +18,7 @@ var stationPopup;
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .run(runBlock);
     
     runBlock.$inject = ['mapviewer'];

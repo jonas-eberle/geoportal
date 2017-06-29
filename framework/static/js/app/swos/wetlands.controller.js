@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.swos')
         .controller('WetlandsCtrl', WetlandsCtrl);
 
     WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location'];

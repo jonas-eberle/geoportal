@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .service('mapviewer', mapviewer);
 
     mapviewer.$inject = ['djangoRequests', '$rootScope'];

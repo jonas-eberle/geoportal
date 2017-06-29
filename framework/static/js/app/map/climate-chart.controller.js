@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .controller('ClimateChartCtrl', ClimateChartCtrl);
 
     ClimateChartCtrl.$inject = ['$modalInstance', 'djangoRequests', 'mapviewer', 'layer', 'feature', 'title'];

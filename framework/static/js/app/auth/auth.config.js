@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .config(routeConfig);
 
     routeConfig.$inject = ['$routeProvider'];

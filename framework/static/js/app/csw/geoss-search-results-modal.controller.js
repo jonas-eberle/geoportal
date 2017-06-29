@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('webgisApp')
+    angular.module('webgisApp.csw')
         .controller('GEOSSSearchResultsModalCtrl', GEOSSSearchResultsModalCtrl);
 
     GEOSSSearchResultsModalCtrl.$inject = ['$modalInstance', 'searchData'];

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.core')
         .directive('modalDraggable', modalDraggable);
 
     modalDraggable.$inject = [];

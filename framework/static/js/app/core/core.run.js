@@ -2,11 +2,11 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.core')
         .run(runBlock);
 
     runBlock.$inject = ['djangoRequests'];
     function runBlock(djangoRequests) {
-            djangoRequests.initialize(subdir, true);
-        }
+        djangoRequests.initialize(subdir, true);
+    }
 })();

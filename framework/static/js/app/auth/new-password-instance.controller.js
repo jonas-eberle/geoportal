@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.auth')
         .controller('NewPasswordInstanceCtrl', NewPasswordInstanceCtrl);
 
     NewPasswordInstanceCtrl.$inject = ['$modalInstance', 'uid', 'token', 'djangoAuth', 'AlertService'];

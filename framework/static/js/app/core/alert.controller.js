@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.core')
         .controller('AlertCtrl', AlertCtrl);
 
     AlertCtrl.$inject = ['$scope', 'AlertService'];

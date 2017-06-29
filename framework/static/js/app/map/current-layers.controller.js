@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp')
+        .module('webgisApp.map')
         .controller('MapCurrentLayersCtrl', MapCurrentLayersCtrl);
 
     MapCurrentLayersCtrl.$inject = ['$scope', 'mapviewer', '$modal', 'djangoRequests', '$rootScope', '$routeParams', '$window', '$location'];
