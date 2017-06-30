@@ -2,21 +2,22 @@
     'use strict';
 
     angular
-        .module('webgisApp.swos')
+        .module('webgisApp.truncation')
         //copied from https://github.com/lorenooliveira/ng-text-truncate/blob/master/ng-text-truncate.js
-        .factory("CharBasedTruncation", CharBasedTruncation);
+        .factory("WordBasedTruncation", WordBasedTruncation);
 
-    CharBasedTruncation.$inject = ['$compile'];
-    function CharBasedTruncation($compile) {
+    WordBasedTruncation.$inject = ['$compile'];
+    function WordBasedTruncation($compile) {
         return {
             truncationApplies: function ($scope, threshould) {
-                return $scope.text.length > threshould;
+                return $scope.text.split(" ").length > threshould;
             },
 
             applyTruncation: function (threshould, $scope, $element) {
+                var splitText = $scope.text.split(" ");
                 if ($scope.useToggling) {
                     var el = angular.element("<span>" +
-                        $scope.text.substr(0, threshould) +
+                        splitText.slice(0, threshould).join(" ") + " " +
                         "<span ng-show='!open'>...</span>" +
                         "<span class='btn-link ngTruncateToggleText' " +
                         "ng-click='toggleShow()'" +
@@ -24,7 +25,7 @@
                         " " + ($scope.customMoreLabel ? $scope.customMoreLabel : "More") +
                         "</span>" +
                         "<span ng-show='open'>" +
-                        $scope.text.substring(threshould) +
+                        splitText.slice(threshould, splitText.length).join(" ") +
                         "<span class='btn-link ngTruncateToggleText'" +
                         "ng-click='toggleShow()'>" +
                         " " + ($scope.customLessLabel ? $scope.customLessLabel : "Less") +
@@ -34,9 +35,9 @@
                     $compile(el)($scope);
                     $element.append(el);
                 } else {
-                    $element.append($scope.text.substr(0, threshould) + "...");
+                    $element.append(splitText.slice(0, threshould).join(" ") + "...");
                 }
             }
         };
-}
+    }
 })();

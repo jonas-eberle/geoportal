@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp.swos')
+        .module('webgisApp.truncation')
         //copied from https://github.com/lorenooliveira/ng-text-truncate/blob/master/ng-text-truncate.js
         .directive("ngTextTruncate", ngTextTruncate);
 

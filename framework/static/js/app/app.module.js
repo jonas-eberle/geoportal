@@ -7,6 +7,6 @@
         'webgisApp.auth',
         'webgisApp.csw',
         'webgisApp.map',
-        'webgisApp.swos'
+        'webgisApp.truncation'
     ]);
 })();

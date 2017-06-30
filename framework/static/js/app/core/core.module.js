@@ -11,7 +11,6 @@
         'dndLists',
         'nsPopover',
         'ui.bootstrap-slider',
-        'angular.filter',
-        'nvd3'
+        'angular.filter'
     ]);
 })();
