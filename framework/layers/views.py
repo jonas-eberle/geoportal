@@ -1,6 +1,6 @@
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
