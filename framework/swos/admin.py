@@ -4,6 +4,12 @@ from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, E
 
 from layers.admin import LayersAdmin
 
+import django
+if django.VERSION < (1, 10): #todo remove
+    from suit.admin import SortableModelAdmin
+else:
+    from suit.sortables import SortableModelAdmin
+
 def make_publishable(modeladmin, request, queryset):
     queryset.update(publishable=True)
 make_publishable.short_description = "Mark selected layers as fit for publication"
@@ -63,7 +69,6 @@ class WetlandVideoAdmin(admin.OSMGeoAdmin):
     list_filter = ('wetland', 'source')
     search_fields=('name',)
 
-from suit.admin import SortableModelAdmin
 class ProductAdmin(SortableModelAdmin):
     sortable = 'order'
     filter_horizontal = ('wetlands',)

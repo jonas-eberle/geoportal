@@ -7,36 +7,36 @@
                                                        ng-options="o as o for o in layer.ogc_times"></select></div>
     </div>
     <div class="item_icon">
-        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Hide layer"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Hide layer"
                 type="button"  ng-click="mcl.changeVisibility(slc.layer.id, $event)" ng-if="mcl.getVisibility(slc.layer.id)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-eye fa-lg"></i></button>
-        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show layer"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Show layer"
                 type="button"  ng-click="mcl.changeVisibility(slc.layer.id, $event)" ng-if="!mcl.getVisibility(slc.layer.id)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-eye-slash fa-lg"></i></button>
-        <button tooltip-append-to-body="true" tooltip-placement="bottom" tooltip="Show/Hide legend"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Show/Hide legend"
                 type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
-        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors && layer.legend_colors[0].size" tooltip-placement="bottom" tooltip="Show statistic"
+        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors && layer.legend_colors[0].size" tooltip-placement="bottom"  uib-tooltip="Show statistic"
                 type="button" ng-click="wetlandsDiagram.onclickCreate(layer);"
                 class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
-        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram"  ng-if="layer.ogc_times" tooltip-placement="bottom" tooltip="Create time series"
+        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram"  ng-if="layer.ogc_times" tooltip-placement="bottom"  uib-tooltip="Create time series"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.requestTimeSeries(layer);"
                 class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button"
+        <button tooltip-placement="bottom"  uib-tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-download fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
+        <button tooltip-placement="bottom"  uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button"
+        <button tooltip-placement="bottom"  uib-tooltip="Show/Hide station list" type="button"
                 ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(slc.layer)" class="btn btn-default"
                 aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
+        <button tooltip-placement="bottom"  uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-        <button tooltip-placement="bottom" tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)"
+        <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
 
-        <!--<button tooltip-placement="bottom" tooltip="Remove layer" type="button"
+        <!--<button tooltip-placement="bottom"  uib-tooltip="Remove layer" type="button"
                 ng-click="mcl.removeLayer(slc.layer.id, $index, slc.layer.django_id)" class="btn btn-default"
                 aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
     </div>

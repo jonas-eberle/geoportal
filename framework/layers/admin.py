@@ -1,6 +1,12 @@
 from django import forms
 from django.contrib import admin
-from suit.admin import SortableTabularInline
+
+import django
+if django.VERSION < (1, 10): #todo remove
+    from suit.admin import SortableTabularInline
+else:
+    from suit.sortables import SortableTabularInline
+
 from .models import Layergroup, LayerInline, Layer, Contact
 
 
