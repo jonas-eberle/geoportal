@@ -5,7 +5,7 @@
         .module('webgisApp.auth')
         .controller('NewPasswordCtrl', NewPasswordCtrl);
 
-    NewPasswordCtrl.$inject = ['$modal', '$routeParams'];
+    NewPasswordCtrl.$inject = ['$uibModal', '$routeParams'];
     function NewPasswordCtrl($modal, $routeParams) {
         var np = this;
 

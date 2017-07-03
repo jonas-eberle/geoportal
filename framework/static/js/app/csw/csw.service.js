@@ -5,7 +5,7 @@
         .module('webgisApp.csw')
         .service('csw', csw);
 
-    csw.$inject = ['djangoRequests', '$modal'];
+    csw.$inject = ['djangoRequests', '$uibModal'];
     function csw(djangoRequests, $modal) {
         var service = {
             'server': null,

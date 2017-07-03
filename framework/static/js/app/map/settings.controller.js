@@ -5,7 +5,7 @@
         .module('webgisApp.map')
         .controller('MapSettingsCtrl', MapSettingsCtrl);
 
-    MapSettingsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$modal'];
+    MapSettingsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$uibModal'];
     function MapSettingsCtrl($scope, mapviewer, djangoRequests, $modal){
         var mapSettings = this;
 

@@ -5,7 +5,7 @@
         .module('webgisApp.map')
         .controller('MapCurrentLayersCtrl', MapCurrentLayersCtrl);
 
-    MapCurrentLayersCtrl.$inject = ['$scope', 'mapviewer', '$modal', 'djangoRequests', '$rootScope', '$routeParams', '$window', '$location'];
+    MapCurrentLayersCtrl.$inject = ['$scope', 'mapviewer', '$uibModal', 'djangoRequests', '$rootScope', '$routeParams', '$window', '$location'];
     function MapCurrentLayersCtrl($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams, $window, $location) {
         var mcl = this;
 

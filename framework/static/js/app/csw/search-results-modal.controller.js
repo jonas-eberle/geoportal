@@ -5,7 +5,7 @@
         .module('webgisApp.csw')
         .controller('SearchResultsModalCtrl', SearchResultsModalCtrl);
 
-    SearchResultsModalCtrl.$inject = ['csw', 'mapviewer', '$modal', '$modalInstance', 'djangoRequests', 'title', 'results', 'searchData'];
+    SearchResultsModalCtrl.$inject = ['csw', 'mapviewer', '$uibModal', '$uibModalInstance', 'djangoRequests', 'title', 'results', 'searchData'];
     function SearchResultsModalCtrl(csw, mapviewer, $modal, $modalInstance, djangoRequests, title, results, searchData) {
         var srm = this;
 

@@ -5,7 +5,7 @@
         .module('webgisApp.auth')
         .controller('LoginCtrl', LoginCtrl);
 
-    LoginCtrl.$inject = ['$scope', 'djangoAuth', '$modal'];
+    LoginCtrl.$inject = ['$scope', 'djangoAuth', '$uibModal'];
     function LoginCtrl($scope, djangoAuth, $modal) {
         var lc = this;
 
