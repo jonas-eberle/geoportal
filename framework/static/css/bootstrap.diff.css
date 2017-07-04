@@ -4,10 +4,11 @@ body {
 a {
   color: #1d5d86;
 }
-a:hover,
+
+/*a:hover,
 a:focus {
   color: #2b89c5;
-}
+}*/
 .img-thumbnail {
   border-radius: 3px;
 }
