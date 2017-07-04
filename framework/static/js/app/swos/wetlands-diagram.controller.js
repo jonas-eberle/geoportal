@@ -5,8 +5,8 @@
         .module('webgisApp.swos')
         .controller('WetlandsDiagramCtrl', WetlandsDiagramCtrl);
 
-    WetlandsDiagramCtrl.$inject = ['$scope', '$compile', '$http','mapviewer'];
-    function WetlandsDiagramCtrl($scope, $compile, $http, mapviewer) {
+    WetlandsDiagramCtrl.$inject = ['$scope', '$compile', '$http','mapviewer', 'lulcLegend'];
+    function WetlandsDiagramCtrl($scope, $compile, $http, mapviewer, lulcLegend) {
         var wetlandsDiagram = this;
 
 
@@ -243,7 +243,7 @@
             var options = {};
             var data = -1;
             if (layer.identifier.includes("CLC") && layer.identifier.includes("LULC_")) {
-                data = id_name_color['CLC'];
+                data = lulcLegend.CLC;
                 data = add_no_data_level_clc(value, data);
                 data = create_value_legend_clc_data(data[1], data[0])[0];
                 type = 'sunburstChart';
@@ -251,7 +251,7 @@
                 options['showLabels'] = false;
             }
             if (layer.identifier.includes("MAES") && layer.identifier.includes("LULC_")) {
-                data = id_name_color['MAES'];
+                data = lulcLegend.MAES;
                 data = add_no_data_level_clc(value, data);
                 data = create_value_legend_clc_data(data[1], data[0])[0];
                 type = 'sunburstChart';
