@@ -606,8 +606,7 @@ class Indicator(models.Model):
     csv_ident = models.CharField(max_length=200, null=True)
     calculation = models.BooleanField(default=False)
     calculation_input = models.ManyToManyField("self", related_name="input_indicator", verbose_name="Input Indicator for Calculation", blank=True,)
-    caluculation_reference_
-    percent = models.ForeignKey('self', related_name="hundred_indicator", verbose_name="100% Reference", null=True, blank=True)
+    caluculation_reference_100_percent = models.ForeignKey('self', related_name="hundred_indicator", verbose_name="100% Reference", null=True, blank=True)
     order = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
