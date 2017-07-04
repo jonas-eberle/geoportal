@@ -5,7 +5,7 @@
         .module('webgisApp.core')
         .controller('InfoCtrl', InfoCtrl);
 
-    InfoCtrl.$inject = ['$modal', 'mapviewer'];
+    InfoCtrl.$inject = ['$uibModal', 'mapviewer'];
     function InfoCtrl($modal, mapviewer) {
         var ic = this;
 

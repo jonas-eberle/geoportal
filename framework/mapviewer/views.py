@@ -127,7 +127,7 @@ class MapViewerDetail(APIView):
             layer = layers.LayerSerializer(inlineBase.baselayer)
             layerdata = layer.data
             if baselayer.wmts_projection != None:
-                layer['projection'] = 'EPSG:'+str(baselayer.wmts_projection)
+                layerdata['projection'] = 'EPSG:'+str(baselayer.wmts_projection)
             jsonBaseLayers.append(layerdata)
 
         # extent data from mapviewer serializer with layergroup and baselayer information

@@ -6,7 +6,7 @@
         .controller('ModalInstanceCtrl', ModalInstanceCtrl);
 
     // TODO: remove $modal if not needed
-    ModalInstanceCtrl.$inject = ['$modal', '$uibModalInstance', 'data', 'title'];
+    ModalInstanceCtrl.$inject = ['$uibModal', '$uibModalInstance', 'data', 'title'];
     function ModalInstanceCtrl($modal, $modalInstance, data, title) {
         var mi = this;
 

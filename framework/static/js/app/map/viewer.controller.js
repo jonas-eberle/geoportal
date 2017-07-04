@@ -5,7 +5,7 @@
         .module('webgisApp.map')
         .controller('MapViewerCtrl', MapViewerCtrl);
 
-    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$modal', '$rootScope', '$window', '$timeout', '$cookies', 'Attribution'];
+    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$uibModal', '$rootScope', '$window', '$timeout', '$cookies', 'Attribution'];
     function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
         var mv = this;
 
