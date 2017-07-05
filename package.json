@@ -4,17 +4,17 @@
   "description": "",
   "main": "framework/index.wsgi",
   "dependencies": {
-    "@turf/turf": "^4.3.1",
-    "angular": "^1.6.4",
+    "@turf/turf": "^4.5.2",
+    "angular": "^1.6.5",
     "angular-animate": "^1.6.5",
     "angular-bootstrap-slider": "github:seiyria/angular-bootstrap-slider#master",
     "angular-chart.js": "^1.1.1",
-    "angular-cookies": "^1.6.4",
+    "angular-cookies": "^1.6.5",
     "angular-drag-and-drop-lists": "^2.1.0",
     "angular-filter": "^0.5.16",
     "angular-nvd3": "^1.0.9",
-    "angular-resource": "^1.6.4",
-    "angular-route": "^1.6.4",
+    "angular-resource": "^1.6.5",
+    "angular-route": "^1.6.5",
     "angular-ui-bootstrap": "^0.14.3",
     "anno.js": "^1.0.3",
     "bootbox": "^4.4.0",
@@ -26,11 +26,11 @@
     "fancybox": "^2.1.8",
     "font-awesome": "^4.7.0",
     "jquery": "^1.12.4",
-    "leaflet": "^1.0.3",
+    "leaflet": "^1.1.0",
     "leaflet.coordinates": "^0.1.5",
     "nvd3": "^1.8.5",
     "nx-popover": "^0.6.12",
-    "openlayers": "^4.1.1"
+    "openlayers": "^4.2.0"
   },
   "devDependencies": {
     "uglify-js": "^3.0.16"
