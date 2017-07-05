@@ -23,6 +23,7 @@ baseVendorJs = [
     'bootstrap/dist/js/bootstrap.min.js',
     # 'js/popover.js',
     # 'lib/docs.min.js',
+    'angular-animate/angular-animate.min.js',
     'angular/angular.min.js',
     'angular-resource/angular-resource.min.js',
     'angular-cookies/angular-cookies.min.js',
