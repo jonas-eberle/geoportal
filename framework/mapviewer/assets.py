@@ -30,7 +30,7 @@ baseVendorJs = [
     'angular-route/angular-route.min.js',
     'angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js',
     'angular-filter/dist/angular-filter.min.js',
-    'angular-ui-bootstrap/ui-bootstrap-tpls.min.js',
+    'angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
     'nx-popover/dist/nsPopover.js',
     'bootbox/bootbox.min.js',
     'bootstrap-slider/dist/bootstrap-slider.min.js',

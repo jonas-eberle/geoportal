@@ -579,9 +579,9 @@
       "resolved": "https://registry.npmjs.org/angular-route/-/angular-route-1.6.5.tgz"
     },
     "angular-ui-bootstrap": {
-      "version": "0.14.3",
-      "from": "angular-ui-bootstrap@0.14.3",
-      "resolved": "https://registry.npmjs.org/angular-ui-bootstrap/-/angular-ui-bootstrap-0.14.3.tgz"
+      "version": "2.5.0",
+      "from": "angular-ui-bootstrap@2.5.0",
+      "resolved": "https://registry.npmjs.org/angular-ui-bootstrap/-/angular-ui-bootstrap-2.5.0.tgz"
     },
     "anno.js": {
       "version": "1.0.3",

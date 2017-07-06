@@ -53,7 +53,7 @@
                     $location.path('/wetland/' + wetland_id + '/product/' + layer_id);
 
                     if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                        $(layer_id_).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
                     }
 
                     $timeout(function () {  //scroll page down
@@ -66,10 +66,10 @@
                     $location.path('/wetland/' + wetland_id + '/externaldb/' + layer_id);
 
                     if ($(layer_id_).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
-                        $(layer_id_).closest('.panel').parents().eq(4).find('a').trigger('click'); //open parent accordion
+                        $(layer_id_).closest('.panel').parents().eq(4).find('a').first().trigger('click'); //open parent accordion
                     }
                     if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                        $(layer_id_).closest('.panel').find('a').trigger('click'); // find headline and open accordion
+                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
                     }
                     $timeout(function () {  //scroll page down
                         $(".tab-content").animate({

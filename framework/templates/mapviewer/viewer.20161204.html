@@ -456,7 +456,7 @@
                                     <ul class="items products">
 
                                         <uib-accordion close-others="false">
-                                            <uib-accordion-group ng-repeat="product in wetlands.value.data.products"  heading="{{product.name}}" is-open="product.open">
+                                            <div uib-accordion-group ng-repeat="product in wetlands.value.data.products"  heading="{{product.name}}" is-open="product.open">
                                                 <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
                                                     <span class="project">[SWOS]</span> {{product.name}}
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
@@ -479,7 +479,7 @@
                                                     </div>
                                                 </div>
 
-                                            </uib-accordion-group>
+                                            </div uib-accordion-group>
                                         </uib-accordion>
                                     </ul>
                                 </uib-tab>
@@ -487,14 +487,14 @@
                                 <!-- Data -->
                                 <uib-tab class="flaticon-space-satellite-station" heading="" uib-tooltip="Satellite data" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
                                     <uib-accordion close-others="false">
-                                        <uib-accordion-group is-open="wetlands.satdata_image">
+                                        <div uib-accordion-group is-open="wetlands.satdata_image">
                                             <uib-accordion-heading>
                                                 Yearly coverage by sensor
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
                                             </uib-accordion-heading>
                                             <a href="/media/cache/satdata_{{wetlands.value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{wetlands.value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{wetlands.value.id}}_small.png" width="100%" /></a>
-                                        </uib-accordion-group>
-                                        <uib-accordion-group is-open="wetlands.satdata_table">
+                                        </div uib-accordion-group>
+                                        <div uib-accordion-group is-open="wetlands.satdata_table">
                                             <uib-accordion-heading>
                                                 Total amount by sensor
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_table, 'glyphicon-chevron-right': !wetlands.satdata_table}"></i>
@@ -518,7 +518,7 @@
                                                     <td>{{data.enddate}}</td>
                                                 </tr>
                                             </table>
-                                        </uib-accordion-group>
+                                        </div uib-accordion-group>
                                     </uib-accordion>
 
                                     <div class="note">
@@ -533,7 +533,7 @@
                                 <uib-tab class="flaticon-technology-1" heading="" uib-tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
                                     <div ng-controller="WetlandsImageCtrl as wetlandsImage">
                                         <uib-accordion ng-if="wetlandsImage.images.photos.length > 0">
-                                            <uib-accordion-group is-open="wetlandsImage.imagesIsOpen">
+                                            <div uib-accordion-group is-open="wetlandsImage.imagesIsOpen">
                                                 <uib-accordion-heading>Images
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.imagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.imagesIsOpen}"></i>
                                                 </uib-accordion-heading>
@@ -555,10 +555,10 @@
                                                 <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.images.currentPage < wetlandsImage.images.lastPage" type="button"
                                                         class="btn btn-next" ng-click="wetlandsImage.moreImages('next')">Next
                                                 </button>
-                                            </uib-accordion-group>
+                                            </div uib-accordion-group>
                                         </uib-accordion>
                                         <uib-accordion ng-if="wetlandsImage.externalImages.photos.length > 0">
-                                            <uib-accordion-group is-open="wetlandsImage.externalImagesIsOpen">
+                                            <div uib-accordion-group is-open="wetlandsImage.externalImagesIsOpen">
                                                 <uib-accordion-heading>Panoramio images
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.externalImagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.externalImagesIsOpen}"></i>
                                                 </uib-accordion-heading>
@@ -587,7 +587,7 @@
                                                 <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.externalImages.currentPage < wetlandsImage.externalImages.lastPage"
                                                         type="button" class="btn btn-next" ng-click="wetlandsImage.moreExternalImages('next')">Next
                                                 </button>
-                                            </uib-accordion-group>
+                                            </div uib-accordion-group>
                                         </uib-accordion>
                                     </div>
                                 </uib-tab>
@@ -620,13 +620,13 @@
                                     </div>
 
                                     <uib-accordion>
-                                        <uib-accordion-group ng-repeat="externaldb_group in wetlands.value.data.externaldb" is-open="externaldb_group.open">
+                                        <div uib-accordion-group ng-repeat="externaldb_group in wetlands.value.data.externaldb" is-open="externaldb_group.open">
                                             <uib-accordion-heading>
                                                 {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ).length }})
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
                                             </uib-accordion-heading>
                                             <uib-accordion>
-                                                <uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
+                                                <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
                                                     <uib-accordion-heading>
                                                         <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
@@ -647,9 +647,9 @@
                                                             <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                         </div>
                                                     </div>
-                                                </uib-accordion-group>
+                                                </div uib-accordion-group>
                                             </uib-accordion>
-                                        </uib-accordion-group>
+                                        </div uib-accordion-group>
                                     </uib-accordion>
                                 </uib-tab>
                             </uib-tabset>
