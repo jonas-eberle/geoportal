@@ -5,7 +5,7 @@
         .module('webgisApp.map')
         .controller('MapAddOwnLayerCtrl', MapAddOwnLayerCtrl);
 
-    MapAddOwnLayerCtrl.$inject = ['$modalInstance', 'djangoRequests', 'mapviewer', 'title'];
+    MapAddOwnLayerCtrl.$inject = ['$uibModalInstance', 'djangoRequests', 'mapviewer', 'title'];
     function MapAddOwnLayerCtrl($modalInstance, djangoRequests, mapviewer, title) {
         var maol = this;
 
