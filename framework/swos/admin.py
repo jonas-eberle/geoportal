@@ -21,7 +21,7 @@ make_unpublishable.short_description = "Mark selected layers as unfit for public
 class WetlandLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
             'classes': ('suit-tab', 'suit-tab-swos',),
-            'fields': ('wetland', 'product')
+            'fields': ('wetland', 'product', 'validation_layer', 'validation_auxlayer')
         }),)
     list_display=('title','publishable', 'wetland', 'product')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)

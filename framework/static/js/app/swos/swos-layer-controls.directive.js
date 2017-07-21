@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp.swos')
+        .module('webgisApp.map')
         .directive('swosLayerControls', swosLayerControls);
 
     swosLayerControls.$inject = ['mapviewer'];

@@ -30,7 +30,8 @@
     "leaflet.coordinates": "^0.1.5",
     "nvd3": "^1.8.5",
     "nx-popover": "^0.6.12",
-    "openlayers": "^4.2.0"
+    "openlayers": "^4.1.1",
+    "proj4": "^2.4.3"
   },
   "devDependencies": {
     "uglify-js": "^3.0.16"

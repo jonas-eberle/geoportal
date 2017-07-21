@@ -39,8 +39,12 @@ baseVendorJs = [
     'anno.js/dist/anno.js',
     'lib/jquery.fancybox.pack_adjusted.js'  # not on npmjs.com
 ]
+make_bundle('baseVendorJsBundle', baseVendorJs, filters='rjsmin', output='build/base.vendor.bundle.js')
 
 # NOTE: we include some unminified libs, so apply basic minification to the whole bundle
+arbisVendorJs = baseVendorJs[:]
+make_bundle('arbisVendorJsBundle', arbisVendorJs, filters='rjsmin', output='build/arbis.vendor.bundle.js')
+
 swosVendorJs = baseVendorJs[:]
 swosVendorJs.extend([
     'chart.js/dist/Chart.min.js',
@@ -50,9 +54,6 @@ swosVendorJs.extend([
     'angular-nvd3/dist/angular-nvd3.min.js',
 ])
 make_bundle('swosVendorJsBundle', swosVendorJs, filters='rjsmin', output='build/swos.vendor.bundle.js')
-
-arbisVendorJs = baseVendorJs[:]
-make_bundle('arbisVendorJsBundle', arbisVendorJs, filters='rjsmin', output='build/arbis.vendor.bundle.js')
 
 # NOTE: as Geoss viewer is based on SWOS, include SWOS related bundles beforehand
 geossVendorJs = []
@@ -64,6 +65,12 @@ geossVendorJs.extend([
     'lib/geoss/js/geossSearchWidget.min.js'
 ])
 make_bundle('geossVendorJsBundle', geossVendorJs, filters='rjsmin', output='lib/geoss/js/geoss.vendor.bundle.js')
+
+validationVendorJs = baseVendorJs[:]
+validationVendorJs.extend([
+    'proj4/dist/proj4.js'
+])
+make_bundle('validationVendorJsBundle', validationVendorJs, filters='rjsmin', output='build/validation.vendor.bundle.js')
 
 
 ########################################################################################################################
@@ -90,6 +97,12 @@ baseAppJs = []
     ['js/dashboard.js']
 ]]
 
+arbisAppJs = []
+[arbisAppJs.extend(x) for x in [
+    baseAppJs
+]]
+make_bundle('arbisAppJsBundle', arbisAppJs, filters='uglifyjs', output='build/arbis.app.bundle.js')
+
 swosAppJs = []
 [swosAppJs.extend(x) for x in [
     baseAppJs,
@@ -100,12 +113,16 @@ swosAppJs = []
 ]]
 make_bundle('swosAppJsBundle', swosAppJs, filters='uglifyjs', output='build/swos.app.bundle.js')
 
-arbisAppJs = []
-[arbisAppJs.extend(x) for x in [
-    baseAppJs
+validationAppJs = []
+[validationAppJs.extend(x) for x in [
+    baseAppJs,
+    ['js/app/tracking/tracking.module.js'],
+    glob_files('js/app/tracking/*.js'),
+    ['js/app/swos/swos-layer-controls.directive.js'],
+    ['js/app/validation/validation.module.js'],
+    glob_files('js/app/validation/*.js')
 ]]
-make_bundle('arbisAppJsBundle', arbisAppJs, filters='uglifyjs', output='build/arbis.app.bundle.js')
-
+make_bundle('validationAppJsBundle', validationAppJs, filters='uglifyjs', output='build/validation.app.bundle.js')
 
 ########################################################################################################################
 # Vendor CSS
@@ -120,16 +137,18 @@ vendorCss = [
     'anno.js/dist/anno.css',
     'dygraphs/dist/dygraph.min.css'
 ]
+make_bundle('baseVendorCssBundle', vendorCss, filters='cssmin', output='build/base.vendor.bundle.css')
+
+arbisVendorCss = vendorCss[:]
+# arbisVendorCss.extend([])
+make_bundle('arbisVendorCssBundle', arbisVendorCss, filters='cssmin', output='build/arbis.vendor.bundle.css')
+
 
 swosVendorCss = vendorCss[:]
 swosVendorCss.extend([
     'nvd3/build/nv.d3.min.css'
 ])
 make_bundle('swosVendorCssBundle', swosVendorCss, filters='cssmin', output='build/swos.vendor.bundle.css')
-
-arbisVendorCss = vendorCss[:]
-# arbisVendorCss.extend([])
-make_bundle('arbisVendorCssBundle', arbisVendorCss, filters='cssmin', output='build/arbis.vendor.bundle.css')
 
 # NOTE: as Geoss viewer is based on SWOS, include SWOS related bundles beforehand
 geossVendorCss = []
@@ -149,12 +168,18 @@ baseAppCss = [
     'css/jonas.css'
 ]
 
+arbisAppCss = baseAppCss[:]
+# arbisAppCss.extend([])
+make_bundle('arbisAppCssBundle', arbisAppCss, filters='cssmin', output='build/arbis.app.bundle.css')
+
 swosAppCss = baseAppCss[:]
 swosAppCss.extend([
     'css/swos.css'
 ])
 make_bundle('swosAppCssBundle', swosAppCss, filters='cssmin', output='build/swos.app.bundle.css')
 
-arbisAppCss = baseAppCss[:]
-# arbisAppCss.extend([])
-make_bundle('arbisAppCssBundle', arbisAppCss, filters='cssmin', output='build/arbis.app.bundle.css')
+validationAppCss = swosAppCss[:]
+validationAppCss.extend([
+    'css/validation.css'
+])
+make_bundle('validationAppCssBundle', validationAppCss, filters='cssmin', output='build/validation.app.bundle.css')
