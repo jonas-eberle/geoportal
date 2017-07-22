@@ -515,6 +515,20 @@
 
                 }
             },
+            'removeAllLayers': function() {
+                while (this.layersMeta.length > 0) {
+                    var layer = this.layersMeta[0];
+                    this.removeLayer(layer.id, 0);
+                    var checkbox = undefined;
+                    if (layer["django_id"] !== undefined
+                        && layer.django_id !== null
+                        && (checkbox = document.getElementById("layer_vis_"+layer.django_id))
+                    ) {
+                        checkbox.checked = "";
+                    }
+                }
+                $rootScope.$broadcast("mapviewer.alllayersremoved");
+            },
             'raiseLayer': function(id, delta) {
                 var layer = this.layers[id];
                 var layers = this.map.getLayers();

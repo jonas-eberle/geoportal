@@ -9,7 +9,7 @@
     function ValidationCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, TrackingService, $location, lulcLegend) {
         var proceed = true;
         var validation = this;
-        validation.activeTab = -1;
+        validation.tabs = {activeTab: -1};
         validation.loadValidationLayer = loadValidationLayer;
         
         validation.loaded = false;
@@ -136,11 +136,14 @@
         //--------------------------------------------------------------------------------------------------------------
         
         function loadValidationLayer(site_id, layer) {
+            // remove other layers
+            mapviewer.removeAllLayers();
+            
             // open tab
             validation.layer = layer;
-            validation.activeTab = 1;
+            validation.tabs.activeTab = 1;
             
-            // add site boundaries to map using site_id
+            // TODO: add site boundaries to map using site_id
             
             // add validation layer to map
             validation.validation_layer_ol = mapviewer.addLayer(layer.validation_layer);

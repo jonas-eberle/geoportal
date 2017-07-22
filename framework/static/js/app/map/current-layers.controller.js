@@ -186,6 +186,8 @@
         }
 
         function removeAllLayers() {
+            mapviewer.removeAllLayers();
+            /*
             while (mapviewer.layersMeta.length > 0) {
                 var layer = mapviewer.layersMeta[0];
                 mapviewer.removeLayer(layer.id, 0);
@@ -198,6 +200,7 @@
                 }
             }
             $rootScope.$broadcast("mapviewer.alllayersremoved");
+            */
         }
 
         function removeDrawBox() {
