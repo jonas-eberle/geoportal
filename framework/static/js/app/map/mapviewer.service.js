@@ -5,8 +5,8 @@
         .module('webgisApp.map')
         .service('mapviewer', mapviewer);
 
-    mapviewer.$inject = ['djangoRequests', '$rootScope'];
-    function mapviewer(djangoRequests, $rootScope) {
+    mapviewer.$inject = ['djangoRequests', '$rootScope', 'Attribution'];
+    function mapviewer(djangoRequests, $rootScope, Attribution) {
         var service = {
             'baseLayers': [],
             'layers': {},
@@ -154,6 +154,7 @@
                 layers.remove(this.baseLayers[this.currentBaseLayerIndex]);
                 layers.insertAt(0,layer);
                 this.currentBaseLayerIndex = index;
+                Attribution.refreshDisplay(layers.getArray());
             },
             'getLayerById': function(id) {
                 return this.layers[id];
