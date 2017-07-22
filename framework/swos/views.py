@@ -182,6 +182,9 @@ class ValidationLayerList(APIView):
             layerdata = LayerSerializer(layer).data
             layerdata['validation_layer'] = LayerSerializer(layer.validation_layer).data
             layerdata['validation_auxlayer'] = LayerSerializer(layer.validation_auxlayer, many=True).data
+            for l in layerdata['validation_auxlayer']:
+                if l['legend_colors']:
+                    l['legend_colors'] = json.loads(l['legend_colors'])
             wetlands[layer.wetland.id]['validation_layers'].append(layerdata)
         
         data = []

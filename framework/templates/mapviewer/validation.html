@@ -228,7 +228,7 @@
                         
                         <div style="padding:5px;">
                             <strong>{{validation.layer.validation_layer.alternate_title}}</strong>
-                            <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.validation_layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.validation_layer.id] }}"></swos-layer-controls>
+                            <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.validation_layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.validation_layer.id] }}" hide-share="true"></swos-layer-controls>
                             <div style="height:5px;"></div>
                             <!-- Accordion for additional resources -->
                             <uib-accordion close-others="false" ng-if="validation.layer.validation_auxlayer.length > 0">
@@ -238,7 +238,7 @@
                                             <input ng-if="validation.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
                                             <input ng-if="validation.layerIdMap[layer.id]" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
                                             <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                            <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[layer.id]]" layer-hash="{{ validation.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[layer.id]]" layer-hash="{{ validation.layerIdMap[layer.id] }}" hide-share="true"></swos-layer-controls>
                                         </div>
                                     </div>
                                 </div>
