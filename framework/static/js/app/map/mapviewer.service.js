@@ -260,10 +260,10 @@
                     //     break;
                     case 'OSM':
                         var osmSource = null;
-                        if (layer.ogc_link !== '') {
-                            osmSource = new ol.source.OSM({url: layer.ogc_link});
-                        } else {
+                        if (layer.ogc_link === '' || layer.ogc_link === null) {
                             osmSource = new ol.source.OSM();
+                        } else {
+                            osmSource = new ol.source.OSM({url: layer.ogc_link});
                         }
                         olLayer = new ol.layer.Tile({
                             name: layer.title,
