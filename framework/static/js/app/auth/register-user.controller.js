@@ -5,7 +5,7 @@
         .module('webgisApp.auth')
         .controller('RegisterUserCtrl', RegisterUserCtrl);
 
-    RegisterUserCtrl.$inject = ['$modalInstance', 'djangoAuth'];
+    RegisterUserCtrl.$inject = ['$uibModalInstance', 'djangoAuth'];
     function RegisterUserCtrl($modalInstance, djangoAuth) {
         var ru = this;
 
@@ -29,18 +29,18 @@
                     ru.close();
                 }, function (error) {
                     var errors = '';
-                    if ('username' in error) {
-                        errors += '<li><strong>Username:</strong> ' + error.username[0] + '</li>';
+                    if ('username' in error.data) {
+                        errors += '<li><strong>Username:</strong> ' + error.data.username[0] + '</li>';
                     }
                     if ('password1' in error) {
-                        errors += '<li><strong>Password:</strong> ' + error.password1[0] + '</li>';
+                        errors += '<li><strong>Password:</strong> ' + error.data.password1[0] + '</li>';
                     }
-                    if ('email' in error) {
-                        errors += '<li><strong>Email:</strong> ' + error.email[0] + '</li>';
+                    if ('email' in error.data) {
+                        errors += '<li><strong>Email:</strong> ' + error.data.email[0] + '</li>';
                     }
-                    if ('non_field_errors' in error) {
-                        for (var i = 0; i < error.non_field_errors.length; i++) {
-                            errors += '<li>' + error.non_field_errors[i] + '</li>';
+                    if ('non_field_errors' in error.data) {
+                        for (var i = 0; i < error.data.non_field_errors.length; i++) {
+                            errors += '<li>' + error.data.non_field_errors[i] + '</li>';
                         }
                     }
 

@@ -5,7 +5,7 @@
         .module('webgisApp.auth')
         .controller('ResetPasswordCtrl', ResetPasswordCtrl);
 
-    ResetPasswordCtrl.$inject = ['$modalInstance', 'djangoAuth', 'djangoRequests'];
+    ResetPasswordCtrl.$inject = ['$uibModalInstance', 'djangoAuth', 'djangoRequests'];
     function ResetPasswordCtrl($modalInstance, djangoAuth, djangoRequests) {
         var rp = this;
 
@@ -15,7 +15,7 @@
 
         function submit() {
             djangoAuth.resetPassword(rp.email).then(function (data) {
-                bootbox.alert(data.success);
+                bootbox.alert(data.detail);
                 rp.close();
                 djangoRequests.request({
                     url: '/authapi/rest/setmapid/'+mapId,

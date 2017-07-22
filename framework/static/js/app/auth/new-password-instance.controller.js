@@ -5,7 +5,7 @@
         .module('webgisApp.auth')
         .controller('NewPasswordInstanceCtrl', NewPasswordInstanceCtrl);
 
-    NewPasswordInstanceCtrl.$inject = ['$modalInstance', 'uid', 'token', 'djangoAuth', 'AlertService'];
+    NewPasswordInstanceCtrl.$inject = ['$uibModalInstance', 'uid', 'token', 'djangoAuth', 'AlertService'];
     function NewPasswordInstanceCtrl($modalInstance, uid, token, djangoAuth, AlertService) {
         var npi = this;
 
