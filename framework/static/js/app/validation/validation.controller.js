@@ -12,6 +12,9 @@
 		validation.activeTab = -1;
 		validation.loadValidationLayer = loadValidationLayer;
 		
+		validation.loaded = false;
+		validation.data = [];
+		
 		// add segment highlight overlay
 		validation.getFeatureRequestInfoURL = getFeatureRequestInfoURL; 
 		validation.showValidationWindow = showValidationWindow;
@@ -104,6 +107,7 @@
                 'url'   : '/swos/validation.json'
             }).then(function (data) {
 				validation.data = data;
+				validation.loaded = true;
 
                 $('#loading-div').hide();
 				/*

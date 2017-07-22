@@ -170,6 +170,12 @@ class ValidationLayerList(APIView):
         from layers.models import LayerSerializer
         layers = WetlandLayer.objects.filter(validation_layer__isnull=False,publishable=True).order_by('title')
         for layer in layers:
+            #check permission
+            if not request.user.is_authenticated():
+                continue
+            elif request.user not in layer.auth_users.all() and len(set(list(request.user.groups.all())) & set(list(layer.auth_groups.all()))) == 0 and request.user.is_superuser != True:
+                continue
+        
             if layer.wetland.id not in wetlands:
                 wetlands[layer.wetland.id] = WetlandsSerializer(layer.wetland).data
                 wetlands[layer.wetland.id]['validation_layers'] = []

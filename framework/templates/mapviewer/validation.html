@@ -80,8 +80,8 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav pull-right" id="nav-top-right2" ng-controller="LoginCtrl as lc">
-                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>
-                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_validation.html" %}'"></li>
+                    <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>
+                    <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/info_validation.html" %}'"></li>
 					<li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -208,7 +208,8 @@
 
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: validation.activeTab==-1}" id="catalog">
-                        <div ng-if="validation.data.length==0">Loading layers... please wait </div>
+                        <div ng-if="!validation.loaded">Loading layers... please wait </div>
+						<div ng-if="validation.data.length==0">No layers found for your account</div>
 
                         <uib-accordion close-others="true" ng-repeat="site in validation.data">
                             <div uib-accordion-group heading="{{site.name}}">
