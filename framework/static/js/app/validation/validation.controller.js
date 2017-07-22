@@ -69,7 +69,6 @@
             var response = angular.copy(validation.segments);
             response.features = [segment];
             response.totalFeatures = 1;
-            console.log(response);
             validation.showValidationWindow(response, true);
         }
         
@@ -87,8 +86,7 @@
         validation.exportSegments = exportSegments;
         function exportSegments() {
             window.location.href = '/swos/validation/segments/export?layer='+validation.layer.validation_layer.ogc_layer;
-        }
-        
+        }        
         
         validation.addLayerToMap = addLayerToMap;
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
@@ -138,6 +136,11 @@
         function loadValidationLayer(site_id, layer) {
             // remove other layers
             mapviewer.removeAllLayers();
+            validation.layerIdMap = {};
+            
+            // reset variables
+            validation.segmentListType = '';
+            validation.segments = {'features':[]};
             
             // open tab
             validation.layer = layer;
