@@ -64,7 +64,7 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
+                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="{{id}}.html"><img src="/static/img/swos-validation-portal_logo2.jpg" border="0" height="60"></a></div>
             </div>
 
             <!-- TOOLBAR in Navigation für Tablet und Desktop -->
@@ -82,7 +82,7 @@
                 <ul class="nav navbar-nav pull-right" id="nav-top-right2" ng-controller="LoginCtrl as lc">
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/info_validation.html" %}'"></li>
-					<li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon"></li>
+                    <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div>
@@ -209,69 +209,68 @@
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: validation.activeTab==-1}" id="catalog">
                         <div ng-if="!validation.loaded">Loading layers... please wait </div>
-						<div ng-if="validation.data.length==0">No layers found for your account</div>
+                        <div ng-if="validation.data.length==0">No layers found for your account</div>
 
                         <uib-accordion close-others="true" ng-repeat="site in validation.data">
                             <div uib-accordion-group heading="{{site.name}}">
-							     <div class="list-group-item" ng-repeat="layer in site.validation_layers">
-		                            <div class="catalog-item">
-		                                <div class="item_center">
-		                                    <div class="item_desc" ng-click="validation.loadValidationLayer(site.id, layer);">{{layer.alternate_title}}</div>
-		                                </div>
-		                            </div>
-								</div>
-							</div>
+                                 <div class="list-group-item" ng-repeat="layer in site.validation_layers">
+                                    <div class="catalog-item">
+                                        <div class="item_center">
+                                            <div class="item_desc" ng-click="validation.loadValidationLayer(site.id, layer);">{{layer.alternate_title}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </uib-accordion>
                     </div>
 
                     <div role="tabpanel" class="tab-pane geospatial_data" ng-class="{active: validation.activeTab==1}" id="wetland_{{validation.layer.id}}">
                         
-                        <div>
-                        	
-							<strong>{{validation.layer.validation_layer.alternate_title}}</strong>
-							<swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.validation_layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.validation_layer.id] }}"></swos-layer-controls>
-							
-							<!-- Accordion for additional resources -->
-							<uib-accordion close-others="false" ng-if="validation.layer.validation_auxlayer.length > 0">
-							    <div uib-accordion-group heading="Additional resources" is-open="true">
-									<div class="select">
-		                                <div ng-repeat="layer in validation.layer.validation_auxlayer" ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-		                                    <input ng-if="validation.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-		                                    <input ng-if="validation.layerIdMap[layer.id]" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
-		                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-		                                    <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[layer.id]]" layer-hash="{{ validation.layerIdMap[layer.id] }}"></swos-layer-controls>
-		                                </div>
-		                            </div>
-								</div>
-								<div uib-accordion-group heading="Segments" is-open="true">
+                        <div style="padding:5px;">
+                            <strong>{{validation.layer.validation_layer.alternate_title}}</strong>
+                            <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.validation_layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.validation_layer.id] }}"></swos-layer-controls>
+                            <div style="height:5px;"></div>
+                            <!-- Accordion for additional resources -->
+                            <uib-accordion close-others="false" ng-if="validation.layer.validation_auxlayer.length > 0">
+                                <div uib-accordion-group heading="Additional resources" is-open="true">
+                                    <div class="select">
+                                        <div ng-repeat="layer in validation.layer.validation_auxlayer" ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                            <input ng-if="validation.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                            <input ng-if="validation.layerIdMap[layer.id]" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                            <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                            <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[layer.id]]" layer-hash="{{ validation.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div uib-accordion-group heading="Segments" is-open="true">
                                     <button class="btn btn-primary" style="float:right;cursor:pointer;" ng-click="validation.exportSegments()">Export as Shapefile</button>
                                     <div class="btn-group">
-								        <label class="btn btn-primary" ng-model="validation.segmentListType" uib-btn-radio="'all'">All</label>
-								        <label class="btn btn-primary" ng-model="validation.segmentListType" uib-btn-radio="'todo'">Unedited</label>
-								        <label class="btn btn-primary" ng-model="validation.segmentListType" uib-btn-radio="'done'">Done</label>
-								    </div>
-									<div class="segments" ng-if="validation.segments.features.length > 0" style="margin-top: 15px;">
-										<strong>Number of features: </strong>{{validation.segments.totalFeatures}}<br />
-										<strong>Show landcover visualization style: </strong>
-										    <input type="checkbox" ng-click="validation.changeMapStyle($event);" id="segments_style"/>
+                                        <label class="btn btn-primary" ng-model="validation.segmentListType" uib-btn-radio="'all'">All</label>
+                                        <label class="btn btn-primary" ng-model="validation.segmentListType" uib-btn-radio="'todo'">Unedited</label>
+                                        <label class="btn btn-primary" ng-model="validation.segmentListType" uib-btn-radio="'done'">Done</label>
+                                    </div>
+                                    <div class="segments" ng-if="validation.segments.features.length > 0" style="margin-top: 15px;">
+                                        <strong>Number of features: </strong>{{validation.segments.totalFeatures}}<br />
+                                        <strong>Show landcover visualization style: </strong>
+                                            <input type="checkbox" ng-click="validation.changeMapStyle($event);" id="segments_style"/>
                                             <label for="segments_style"></label>
-										<br />
-		                                 <div class="list-group-item ng-scope" ng-repeat="segment in validation.segments.features">
-		                                    <div class="catalog-item">
-		                                        <div class="item_center">
-		                                            <div class="item_desc ng-binding" ng-click="validation.showSegment(segment);">Segment: {{segment.properties.SEGMENT_ID}}; ValID: {{segment.properties.ValID}}; ValCode: {{segment.properties.ValCode}}</div>
-		                                        </div>
-		                                    </div>
-		                                </div>
-										<button style="margin-top: 10px;" ng-if="validation.segmentsCurrentPage > 1" type="button"
+                                        <br />
+                                         <div class="list-group-item ng-scope" ng-repeat="segment in validation.segments.features">
+                                            <div class="catalog-item">
+                                                <div class="item_center">
+                                                    <div class="item_desc ng-binding" ng-click="validation.showSegment(segment);">Segment: {{segment.properties.SEGMENT_ID}}; ValID: {{segment.properties.ValID}}; ValCode: {{segment.properties.ValCode}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button style="margin-top: 10px;" ng-if="validation.segmentsCurrentPage > 1" type="button"
                                                 class="btn btn-prev" ng-click="validation.segmentsPaging('prev')">Previous
                                         </button>
                                         <button style="float:right;margin-top: 10px;" ng-if="validation.segmentsCurrentPage < validation.segmentsLastPage" type="button"
                                                 class="btn btn-next" ng-click="validation.segmentsPaging('next')">Next
                                         </button>			                            
-									</div>
+                                    </div>
                                 </div>
-							</uib-accordion>
+                            </uib-accordion>
                         </div>
                     </div>
                 </div>

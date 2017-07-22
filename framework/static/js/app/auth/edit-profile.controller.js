@@ -49,19 +49,19 @@
             djangoAuth.updateProfile(ep.userdata).then(function () {
                 $modalInstance.close();
                 AlertService.addAlert({'type': 'success', 'msg': 'Profile updated!'});
-				
+                
                 if (changePassword === true) {
                     djangoAuth.changePassword(ep.userdata.password1, ep.userdata.password2).then(function () {
-	                    bootbox.alert('Successfully changed password.')
-	                }, function (error) {
-	                    bootbox.alert('An error occurred');
-	                });
+                        bootbox.alert('Successfully changed password.')
+                    }, function (error) {
+                        bootbox.alert('An error occurred');
+                    });
                 }
                 
             }, function (error) {
                 console.log('update profile error');
                 console.log(error)
-				AlertService.addAlert({'type': 'danger', 'msg': 'An error occurred!'});
+                AlertService.addAlert({'type': 'danger', 'msg': 'An error occurred!'});
             });
         }
     }

@@ -1,13 +1,13 @@
 .item_center {
-	float: none;
+    float: none;
 }
 
 .sidebar label.btn-primary {
-	color: #fff;
+    color: #fff;
 }
 
 .map-controls-wrapper {
-	width: auto !important;
+    width: auto !important;
 }
 
 #login-icon {
@@ -24,15 +24,15 @@
 }
 
 #alerts.ng-scope {
-	top: 55px;
-	z-index: 999;
+    top: 55px;
+    z-index: 999;
 }
 
 .alert {
-	padding: 5px;
+    padding: 5px;
 }
 
 .alert button.close {
-	color: #000000 !important;
-	opacity: 1 !important;
+    color: #000000 !important;
+    opacity: 1 !important;
 }
