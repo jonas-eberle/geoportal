@@ -135,9 +135,9 @@ class WetlandDetail(APIView):
                         else:
                             temp_external_layers[extdb.id].append(layer_data)
                     layers = temp_external_layers[extdb.id]
-                    datasets.append({'name': extdb.name, 'description': extdb.description,'provided_info': extdb.provided_information,'online_link': extdb.online_link, 'language':extdb.dataset_language,'layers': layers, 'layer_exist': "True"})
+                    datasets.append({'name': extdb.name, 'description': extdb.description,'provided_info': extdb.provided_information,'online_link': extdb.online_link, 'language':extdb.dataset_language, 'geoss_datasource_id': extdb.geoss_datasource_id,'layers': layers, 'layer_exist': "True"})
                 else:
-                    datasets.append({'name': extdb.name, 'description': extdb.description,'provided_info': extdb.provided_information,'online_link': extdb.online_link, 'language':extdb.dataset_language, 'layer_exist': "False"})
+                    datasets.append({'name': extdb.name, 'description': extdb.description,'provided_info': extdb.provided_information,'online_link': extdb.online_link, 'language':extdb.dataset_language, 'geoss_datasource_id': extdb.geoss_datasource_id, 'layer_exist': "False"})
 
             if extdb_grouped_list[index]:
                 finalJSON['externaldb'].append({'group': extdb_grouped_name[index], 'datasets': datasets })
