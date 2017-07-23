@@ -33,7 +33,7 @@
                 aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)"
+        <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)" ng-if="!slc.hideShare"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
 
         <!--<button tooltip-placement="bottom"  uib-tooltip="Remove layer" type="button"

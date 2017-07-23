@@ -1,0 +1,38 @@
+.item_center {
+    float: none;
+}
+
+.sidebar label.btn-primary {
+    color: #fff;
+}
+
+.map-controls-wrapper {
+    width: auto !important;
+}
+
+#login-icon {
+    height: 50px;
+    width: auto !important;
+}
+
+.caret {
+    margin-top: -15px;
+}
+
+#formLogin {
+    padding: 15px;
+}
+
+#alerts.ng-scope {
+    top: 55px;
+    z-index: 999;
+}
+
+.alert {
+    padding: 5px;
+}
+
+.alert button.close {
+    color: #000000 !important;
+    opacity: 1 !important;
+}

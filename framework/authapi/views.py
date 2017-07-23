@@ -62,12 +62,12 @@ class VerifyEmail(APIView, ConfirmEmailView):
 
     def get(self, request, key, *args, **kwargs):
         self.kwargs['key'] = key
-        url_add = '#verify_success'
+        url_add = '#!/verify_success'
         try:
             confirmation = self.get_object()
             confirmation.confirm(self.request)
         except:
-            url_add = '#verify_error'
+            url_add = '#!/verify_error'
 
         redirect_url = self.get_redirect_url()
         if 'mapIdForRegister' in request.session:
@@ -89,7 +89,7 @@ class ConfirmPasswordReset(APIView):
 
     def get(self, request, uidb64, token, *args, **kwargs):
         redirect_url = '/'
-        urladd = '#/password-reset-confirm/'+uidb64+'/'+token+'/'
+        urladd = '#!/password-reset-confirm/'+uidb64+'/'+token+'/'
 
         if 'mapIdForRegister' in request.session:
             # get URL from mapviewer

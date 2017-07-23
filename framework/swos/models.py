@@ -639,6 +639,8 @@ class WetlandLayer(Layer):
     wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
     indicator = models.ForeignKey(IndicatorValue, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
+    validation_layer = models.ForeignKey(Layer, related_name="layer_validation", verbose_name="Validation layer", blank=True, null=True)
+    validation_auxlayer =  models.ManyToManyField(Layer, related_name="swos_validation_auxlayer", verbose_name="Validation auxiliary layers", blank=True, null=True)
 
     @property
     def alternate_title(self):

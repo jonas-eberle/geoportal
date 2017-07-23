@@ -12,4 +12,8 @@ urlpatterns = [
     url(r'^wetland/(?P<pk>[0-9]+)/youtube.json$', views.YouTube.as_view(), name='wetland_youtube'),
     url(r'^wetland/(?P<pk>[0-9]+)/satdata.json$', views.SatelliteData.as_view(), name='wetland_satdata'),
     url(r'^wetland/layer/(?P<pk>[0-9]+)/colors.json$', views.LayerColors.as_view(), name='wetland_layer_colors'),
+    url(r'^validation.json$', views.ValidationLayerList.as_view(), name='validation_list'),
+    url(r'^validation/update$', views.ValidationUpdateSegment.as_view(), name='validation_update'),
+    url(r'^validation/segments$', views.ValidationListSegments.as_view(), name='validation_segments'),
+    url(r'^validation/segments/export$', views.ValidationSegmentsExport.as_view(), name='validation_segments_export'),
 ]

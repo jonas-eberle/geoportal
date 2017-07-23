@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('webgisApp.swos')
+        .module('webgisApp.map')
         .directive('swosLayerControls', swosLayerControls);
 
     swosLayerControls.$inject = ['mapviewer'];
@@ -22,6 +22,7 @@
         function linkFunc(scope, iElement, iAttr) {
             // TODO: no need to pass the whole layer to the view, extract only required properties
             scope.slc.layer = mapviewer.getLayerById(iAttr.layerHash).get("layerObj");
+            scope.slc.hideShare = iAttr.hideShare;
         }
     }
 

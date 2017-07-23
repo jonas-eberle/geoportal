@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponse
 
 
 from rest_framework import serializers, status
@@ -23,6 +23,7 @@ class WetlandsList(APIView):
         wetlands = Wetland.objects.all()
         serializer = WetlandsSerializer(wetlands, many=True)
         return Response(serializer.data)
+
 
 class WetlandDetail(APIView):
     def get_object(self, pk):
@@ -49,57 +50,6 @@ class WetlandDetail(APIView):
 
 
         finalJSON = {'id':wetland.id, 'title':wetland.name, 'image': wetland.image_url, 'image_desc': wetland.image_desc, 'products':[], 'indicators':[], 'externaldb': [], 'externaldb_layer': [], 'indicator_values': [], 'indicator_descr': []}
-
-        #indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id)
-
-        # Get description for all registered Indicator
-        indicator_description = IndicatorSerializer(Indicator.objects.all(), many=True).data
-
-
-        ind_descr = dict() # Indicator description: key = indicator_id
-        ind_list = dict()  # Indicator values foreach Indicator : key = indicator_id
-
-        # Fill ind_descr and ind_list
-        for ind in indicator_description:
-            ind_descr[ind["id"]] = ind
-            ind_list[ind["id"]] = IndicatorValueSerializer(IndicatorValue.objects.filter(wetland_id=wetland.id, indicator=ind["id"]).order_by('time'), many=True).data;
-
-        # Add total reference value and calculate percent for given values and calculated values
-        for ind_id in ind_descr:
-            # Add total reference value and percent to given values
-            if ind_list[ind_id]:
-                for index, val in enumerate(ind_list[ind_id]):
-                    if (ind_descr[ind_id]["caluculation_reference_100_percent"] != None):
-                        ind_list[ind_id][index]["total"] = ind_list[ind_descr[ind_id]["caluculation_reference_100_percent"]][index]["value"]
-                        ind_list[ind_id][index]["percent"] = "%.2f" % ((ind_list[ind_id][index]["value"] * 100) / ind_list[ind_id][index]["total"])
-            # Add values for aggregated indicators
-            elif ind_descr[ind_id]["calculation"] == True:
-                new_values = dict()
-                for ind in ind_descr[ind_id]["calculation_input"]:
-                    for index, val in enumerate(ind_list[ind]):
-                        if not index in new_values:
-                            new_values[index] = dict()
-                        if "value" in new_values[index]:
-                            new_values[index]["value"] += val["value"]
-                        else:
-                            new_values[index]["value"] = val["value"]
-                        new_values[index]["time"] = val["time"]
-                        new_values[index]["total"] = ind_list[ind_descr[ind_id]["caluculation_reference_100_percent"]][index]["value"]
-                        new_values[index]["percent"] = "%.2f" % ((new_values[index]["value"] * 100) / new_values[index]["total"])
-                        ind_descr[ind]["sub_cat"] = "True"
-
-                # Add new values in the same format as existing values
-                ind_list[ind_id] = dict()
-                for i in new_values:
-                    if (ind_list[ind_id]):
-                        ind_list[ind_id].append(new_values[i])
-                    else:
-                        ind_list[ind_id] = [new_values[i]]
-
-
-        finalJSON['indicator_values'] = ind_list
-        finalJSON['indicator_descr'] = ind_descr
-
 
         # create product and indicator layer
         for layer in layers:
@@ -209,6 +159,211 @@ class WetlandDetail(APIView):
 
 
         return Response(finalJSON)
+
+
+class ValidationLayerList(APIView): 
+    # HTTP GET method
+    def get(self, request, format=None):
+        wetlands = dict()
+        
+        from .models import WetlandLayer
+        from layers.models import LayerSerializer
+        layers = WetlandLayer.objects.filter(validation_layer__isnull=False,publishable=True).order_by('title')
+        for layer in layers:
+            #check permission
+            if not request.user.is_authenticated():
+                continue
+            elif request.user not in layer.auth_users.all() and len(set(list(request.user.groups.all())) & set(list(layer.auth_groups.all()))) == 0 and request.user.is_superuser != True:
+                continue
+        
+            if layer.wetland.id not in wetlands:
+                wetlands[layer.wetland.id] = WetlandsSerializer(layer.wetland).data
+                wetlands[layer.wetland.id]['validation_layers'] = []
+            layerdata = LayerSerializer(layer).data
+            layerdata['validation_layer'] = LayerSerializer(layer.validation_layer).data
+            layerdata['validation_auxlayer'] = LayerSerializer(layer.validation_auxlayer, many=True).data
+            for l in layerdata['validation_auxlayer']:
+                if l['legend_colors']:
+                    l['legend_colors'] = json.loads(l['legend_colors'])
+            wetlands[layer.wetland.id]['validation_layers'].append(layerdata)
+        
+        data = []
+        for key, value in wetlands.iteritems():
+            data.append(value)
+        
+        return Response(data)
+
+
+class ValidationUpdateSegment(APIView):
+    # HTTP GET method
+    def get(self, request, format=None):
+        feature_id = str(request.query_params.get('feature_id', None))    #SWOS_SEGM_ES_Fuente-de-Piedra_350_2015.41674
+        if feature_id == None:
+            return HttpResponse("FAILURE: No feature id given")
+            
+        layer = str(request.query_params.get('layer', None))  #Spain_Fuente-de-Piedra:SWOS_SEGM_ES_Fuente-de-Piedra_350_2015
+        if layer == None:
+            return HttpResponse("FAILURE: No layer name given")
+        val_code = int(request.query_params.get('val_code', -1))
+        if val_code <= 0:
+            return HttpResponse("FAILURE: Val code needs to be greather than 0")
+        val_id = int(request.query_params.get('val_id', -1))
+        
+        if feature_id != '' and val_code > 0:
+            import requests
+            data = """<wfs:Transaction service="WFS" version="1.0.0"
+  xmlns:topp="http://www.openplans.org/topp"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:wfs="http://www.opengis.net/wfs">
+  <wfs:Update typeName="{}">
+    <wfs:Property>
+      <wfs:Name>ValCode</wfs:Name>
+      <wfs:Value>{}</wfs:Value>
+    </wfs:Property>
+    <ogc:Filter>
+      <ogc:FeatureId fid="{}"/>
+    </ogc:Filter>
+  </wfs:Update>
+</wfs:Transaction>"""
+            data = data.format(layer, val_code, feature_id)
+            
+            response = requests.post('http://earthcare.ads.uni-jena.de:8090/geoserver/wfs', data=data, auth=('validation', 'valtool'))
+            if 'wfs:SUCCESS' in response.text:
+                if val_id > 0:
+                    val_id = val_id+1
+                    data = """<wfs:GetFeature service="WFS" version="1.1.0"
+  xmlns:wfs="http://www.opengis.net/wfs"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+  outputFormat="application/json">
+  <wfs:Query typeName="{}">
+<ogc:Filter>
+<ogc:PropertyIsEqualTo>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:Literal>{}</ogc:Literal>
+</ogc:PropertyIsEqualTo>
+</ogc:Filter>
+  </wfs:Query>
+</wfs:GetFeature>"""
+                    data = data.format(layer, val_id)
+                    response = requests.post('http://earthcare.ads.uni-jena.de:8090/geoserver/wfs', data=data, auth=('validation', 'valtool'))
+                    return HttpResponse(response.text)
+                return HttpResponse('SUCCESS')
+            else:
+                return HttpResponse(response.text, status=500)
+        
+
+class ValidationListSegments(APIView):
+    # provide HTTP GET method
+    def get(self, request):
+        import requests
+        type = request.query_params.get('type', None)
+        layer = request.query_params.get('layer', None)
+        startIndex = int(request.query_params.get('start', 0))
+        maxFeatures = int(request.query_params.get('max', 5))
+        
+        if type == 'todo':
+            query = """<wfs:GetFeature service="WFS" version="1.1.0"
+  xmlns:wfs="http://www.opengis.net/wfs"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+  outputFormat="application/json" maxFeatures="{}" startIndex="{}">
+  <wfs:Query typeName="{}">
+<ogc:SortBy>
+<ogc:SortProperty>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:SortOrder>ASC</ogc:SortOrder>
+</ogc:SortProperty>
+</ogc:SortBy>
+<ogc:Filter>
+  <ogc:And>
+<ogc:PropertyIsLessThan>
+<ogc:PropertyName>ValCode</ogc:PropertyName>
+<ogc:Literal>1</ogc:Literal>
+</ogc:PropertyIsLessThan>
+    <ogc:PropertyIsGreaterThan>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:Literal>0</ogc:Literal>
+</ogc:PropertyIsGreaterThan>
+    </ogc:And>
+</ogc:Filter>
+  </wfs:Query>
+</wfs:GetFeature>"""
+            query = query.format(maxFeatures, startIndex, layer)
+        elif type == 'done':
+            query = """<wfs:GetFeature service="WFS" version="1.1.0"
+  xmlns:wfs="http://www.opengis.net/wfs"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+  outputFormat="application/json" maxFeatures="{}" startIndex="{}">
+  <wfs:Query typeName="Spain_Fuente-de-Piedra:SWOS_SEGM_ES_Fuente-de-Piedra_350_2015">
+<ogc:SortBy>
+<ogc:SortProperty>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:SortOrder>ASC</ogc:SortOrder>
+</ogc:SortProperty>
+</ogc:SortBy>
+<ogc:Filter>
+<ogc:PropertyIsGreaterThan>
+<ogc:PropertyName>ValCode</ogc:PropertyName>
+<ogc:Literal>0</ogc:Literal>
+</ogc:PropertyIsGreaterThan>
+</ogc:Filter>
+  </wfs:Query>
+</wfs:GetFeature>"""
+            query = query.format(maxFeatures, startIndex, layer)
+        else:
+            query = """<wfs:GetFeature service="WFS" version="1.1.0"
+  xmlns:wfs="http://www.opengis.net/wfs"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+  outputFormat="application/json" maxFeatures="{}" startIndex="{}">
+  <wfs:Query typeName="Spain_Fuente-de-Piedra:SWOS_SEGM_ES_Fuente-de-Piedra_350_2015">
+<ogc:SortBy>
+<ogc:SortProperty>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:SortOrder>ASC</ogc:SortOrder>
+</ogc:SortProperty>
+</ogc:SortBy>
+<ogc:Filter>
+<ogc:PropertyIsGreaterThan>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:Literal>0</ogc:Literal>
+</ogc:PropertyIsGreaterThan>
+</ogc:Filter>
+  </wfs:Query>
+</wfs:GetFeature>"""
+            query = query.format(maxFeatures, startIndex, layer)
+        response = requests.post('http://earthcare.ads.uni-jena.de:8090/geoserver/wfs', data=query, auth=('validation', 'valtool'))
+        return HttpResponse(response.text, content_type="text/json")
+
+
+class ValidationSegmentsExport(APIView):
+    # provide HTTP GET method
+    def get(self, request):
+        import requests
+        layer = request.query_params.get('layer', None)
+        if layer == None:
+            return HttpResponse('FAILURE', status_code=500)
+        url = "http://artemis.geogr.uni-jena.de/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={}&outputFormat=SHAPE-ZIP"
+        url = url.format(layer)
+        
+        import requests
+        data = requests.get(url, auth=('validation', 'valtool'))
+        content_type = data.headers['CONTENT-TYPE']
+                
+        response = HttpResponse(str(data.content), content_type=content_type)
+        response['Content-Disposition'] = data.headers['content-disposition']
+        return response
+
 
 class Panoramio(APIView):
     def get_object(self, pk):

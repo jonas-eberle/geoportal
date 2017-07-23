@@ -58,7 +58,7 @@
                 controller: 'EditProfileCtrl',
                 controllerAs: 'ep',
                 templateUrl: subdir+'/static/includes/auth-edit-profile.html'
-            })
+            });
         }
 
         function login() {

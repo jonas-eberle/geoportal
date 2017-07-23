@@ -1,5 +1,7 @@
 import json
 from django.http import Http404
+from django.shortcuts import redirect
+
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -52,7 +54,8 @@ class MapViewerDetail(APIView):
         # If not, output is an error
         if auth_view == False:
             mydata = {'id': mapviewer.id, 'title': mapviewer.title, 'error': error_msg}
-            return Response(mydata, template_name="viewer.html")
+            return redirect('/login/?next='+request.get_full_path())
+            return Response(mydata, template_name="registration/login.html")
 
         # If yes, data from Mapviewer object is being serialized for JSON output
         serializer = MapViewerSerializer(mapviewer)
