@@ -7,19 +7,26 @@
 	<!-- Geoss Search Widget dependencies [CSS] -->
 		<link href="css/jquery-ui.css" rel="stylesheet">
 		<link href="css/jquery-ui-2.css" rel="stylesheet">
+		<link href="css/jquery.datetimepicker.min.css" rel="stylesheet">
+		<link href="css/jquery.rateyo.min.css" rel="stylesheet">
 		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-multiselect.css" rel="stylesheet">
 		<link href="css/ol.css" rel="stylesheet" type="text/css">
 		<link href="css/custom.min.css" rel="stylesheet" type="text/css">
 
-	<link href="css/sitecustom.css" rel="stylesheet" type="text/css">
+	<link href="css/sitecustom.original.css" rel="stylesheet" type="text/css">
 
 	<!-- Geoss Search Widget dependencies [JS] -->
 		<script src="js/jQuery.js"></script>
 		<script src="js/jquery-ui.min.js"></script>
 		<script src="js/jquery.dotdotdot.min.js"></script>
+		<script src="js/jquery.datetimepicker.full.min.js"></script>
+		<script src="js/jquery.rateyo.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+		<script src="js/bootstrap-multiselect.js"></script>
 		<script src="js/ol.js"></script>
 		<script src="js/elasticsearch.jquery.min.js"></script>
+		<!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script> -->
 </head>
 <body>
 	<div class="wrapper">
@@ -33,17 +40,21 @@
 		</header>
 		<section class="main-canvas">
 			<div id="map"></div>
-			<!-- Geoss Search Widget containers -->
+			<!-- Geoss Search Widget search, results and pagination containers -->
 			<!-- 'geoss' class is needed -->
 			<div id="geoss-search-widget" class="geoss clearfix">
 				<div class="search"></div>
-				<div class="results"></div>
 			</div>
+			<div class="layers-button glyphicon glyphicon-list-alt"></div>
+			<div class="layers-container geoss"></div>
 		</section>
 		<footer>Sample GEO site &copy; 2017</footer>
 	</div>
+	<!-- Geoss Search Widget popup container -->
+	<!-- 'geoss' class is needed -->
+	<div class="popups-container geoss"></div>
 
-	<!-- Geoss Search Widget script [JS] -->	
+	<!-- Geoss Search Widget script [JS] -->
 		<script src="js/geossSearchWidget.min.js"></script>
 
 	<script src="js/sitecustom.js"></script>

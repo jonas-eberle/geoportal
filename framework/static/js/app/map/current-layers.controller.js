@@ -348,6 +348,10 @@
         }
 
         function showMetadata(layer) {
+            if (layer.hasOwnProperty('geoss_metainfo')) {
+                openMetadataWindow(layer.geoss_metainfo);
+                return true;
+            }
             if (parseInt(layer.django_id) > 0) {
                 try {
                     _paq.push(['trackEvent', 'Show Metadata', layer.title]);

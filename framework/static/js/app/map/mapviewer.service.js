@@ -426,6 +426,7 @@
                 return olLayer;
             },
             'addLayer': function(layer) {
+                console.log(layer);
                 for (var i=0; i<this.layersMeta.length; i++) {
                     if (layer.title === this.layersMeta[i].name) {
                         bootbox.alert('Layer exists already in the map. Please see the "Current" tab.');
@@ -434,7 +435,14 @@
                 }
 
                 layer = angular.copy(layer);
-                var olLayer = this.layerObjToOl3(layer);
+                var olLayer;
+                if (typeof layer.olLayer === 'undefined') {
+                    olLayer = this.layerObjToOl3(layer);
+                } else {
+                    olLayer = angular.copy(layer.olLayer);
+                    olLayer.set('zIndex', 0);
+                    delete layer.olLayer;
+                }
                 if (olLayer === -1) {
                     alert('Layer could not be added, type '+layer.type+' is not implemented!');
                     return false;

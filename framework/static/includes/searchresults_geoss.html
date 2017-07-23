@@ -1,14 +1,17 @@
 <div modal-draggable class="modal-header"><h1>Search within GEOSS</h1></div>
 <div class="modal-body" style="padding: 0;">
     <div id="geoss-search-widget" class="geoss clearfix">
-        <div class="search">
-        	<div class="gsw_search clearfix">
+        <div class="search" style="height:auto!important;">
+        	<!--<div class="gsw_search clearfix">
                 <input placeholder="Enter search words ..." id="gsw_query_search" type="search" value="{{ gsrm.searchData.text }}" ng-keyup="gsrm.searchKeyUp($event)">
                 <button id="gsw_search_button" title="Search" ng-click="gsrm.submitQuery()"></span>
                 <button id="gsw_clear_button" title="Clear All" type="button" ng-click="gsrm.clearAll()"></button>
-            </div>
+				<input type="checkbox" name="bbox_layers" id="bbox_layers" checked="checked" onclick="$('.inner-layer-box .checkbox-decoration .bbox').trigger('click');">
+                <label for="bbox_layers" style="padding-top:0;color:white;font-weight:normal;">Bounding box layers</label>
+            </div>-->
         </div>
-        <div class="results"></div>
+        <!--<div class="results" style="height:calc(100% - 100px);"></div>
+		<div class="pagination"></div>-->
     </div>
 </div>
 <div class="modal-footer">

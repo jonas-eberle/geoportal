@@ -46,8 +46,6 @@
                     method: 'POST',
                     data: searchData
                 }).then(function(data){
-                    console.log(data);
-                    //self.results.totalCount = data.totalCount
                     $('#loading-div').hide();
                     $modal.open({
                         bindToController: true,
@@ -64,10 +62,6 @@
                 });
             },
             'search_geoss': function(text) {
-                if (parseInt(this.server) === 0) {
-                    bootbox.alert('Server ID is not valid!');
-                    return false;
-                }
                 if (text == '') {
                     bootbox.alert('No search text given!');
                     return false;
@@ -85,16 +79,20 @@
                 } catch(err) {}
 
                 var searchData = {"text":text};
-                $modal.open({
+                var geossModal = $modal.open({
                     bindToController: true,
                     controller: 'GEOSSSearchResultsModalCtrl',
                     controllerAs: 'gsrm',
                     templateUrl: subdir+'/static/includes/searchresults_geoss.html',
+                    windowClass: 'geoss-window',
                     backdrop: 'static',
                     resolve: {
                         title: function() {return 'Search results for: '+text; },
                         searchData: function() {return searchData;}
                     }
+                }).rendered.then(function(){
+                    initSearchBar();
+                    $('#query_search').val(text);
                 });
             }
         };

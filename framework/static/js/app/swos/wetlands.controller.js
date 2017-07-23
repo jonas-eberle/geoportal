@@ -5,8 +5,8 @@
         .module('webgisApp.swos')
         .controller('WetlandsCtrl', WetlandsCtrl);
 
-    WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location', 'Attribution'];
-    function WetlandsCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location, Attribution) {
+    WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location', 'Attribution', '$uibModal'];
+    function WetlandsCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location, Attribution, $modal) {
         var proceed = true;
         var wetlands = this;
 
@@ -26,6 +26,7 @@
         wetlands.selectWetland = selectWetland;
         wetlands.value = WetlandsService.value;
         wetlands.formatValue = formatValue;
+        wetlands.externalDBSearchGeoss = externalDBSearchGeoss;
         // wetlands.wetlands_opened = {};
 
         $scope.$on("mapviewer.alllayersremoved", function () {
@@ -391,6 +392,26 @@
                 '/wetland/' + WetlandsService.value.name + '/products/' + layer.product_name + '/' + layer.alternate_title,
                 'Map: ' + layer.title
             );
+        }
+        
+        function externalDBSearchGeoss(geossID, rel) {
+            var extent = ol.proj.transformExtent(WetlandsService.wetlandList[WetlandsService.value.data.id].geometry.getExtent(), 'EPSG:3857', 'EPSG:4326');
+            console.log(extent);
+            var searchData = {"source":geossID,"extent":extent,"rel":rel};
+            var geossWindow = $modal.open({
+                bindToController: true,
+                controller: 'GEOSSSearchResultsModalCtrl',
+                controllerAs: 'gsrm',
+                templateUrl: subdir+'/static/includes/searchresults_geoss.html',
+                windowClass: 'geoss-window',
+                backdrop: 'static',
+                resolve: {
+                    title: function() {return 'Search results'; },
+                    searchData: function() {return searchData;}
+                }
+            }).rendered.then(function(){
+                initSearchBar();
+            });
         }
     }
 })();

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 305 305">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:black;stroke-width:2.0;stroke-opacity:0.5}
+    .fil0 {fill:#C65400;fill-opacity:0.5}
+   ]]>
+  </style>
+ </defs>
+ <g>
+  <path class="fil0 str0" d="M151 1c84,0 151,67 151,150 0,84 -67,151 -151,151 -83,0 -150,-67 -150,-151 0,-83 67,-150 150,-150z"/>
+  <path class="fil0 str0" d="M151 31c67,0 121,54 121,120 0,67 -54,121 -121,121 -66,0 -120,-54 -120,-121 0,-66 54,-120 120,-120z"/>
+  <path class="fil0 str0" d="M151 61c50,0 91,40 91,90 0,50 -41,91 -91,91 -50,0 -90,-41 -90,-91 0,-50 40,-90 90,-90z"/>
+  <path class="fil0 str0" d="M151 91c34,0 61,27 61,60 0,34 -27,61 -61,61 -33,0 -60,-27 -60,-61 0,-33 27,-60 60,-60z"/>
+  <path class="fil0 str0" d="M151 121c17,0 31,14 31,30 0,17 -14,31 -31,31 -16,0 -30,-14 -30,-31 0,-16 14,-30 30,-30z"/>
+ </g>
+</svg>

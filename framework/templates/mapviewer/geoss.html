@@ -8,6 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
     <title>SWOS WebGIS</title>
+
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
     {% load staticfiles %}
@@ -15,6 +16,7 @@
     {% assets "swosVendorCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
+    
     {% assets "geossVendorCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
@@ -41,7 +43,9 @@
     </script>
 
     <!--<script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARWJfd0ov-WXWAtbyZjvqayhCDiUJFtPw"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARWJfd0ov-WXWAtbyZjvqayhCDiUJFtPw"></script>
+    <!-- <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDMKoSYiPwvZbwYAXB4KEc5_Fgz-WU7yBw"></script>-->
+
 
     <script type="text/javascript">
         var _paq = _paq || [];
@@ -59,7 +63,7 @@
 
     {% verbatim %}
     <div id="alerts" ng-controller="AlertCtrl as ac">
-        <alert ng-repeat="alert in ac.alerts" type="{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</alert>
+        <div uib-alert ng-repeat="alert in ac.alerts" class="alert alert-{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</div> 
     </div>
     {% endverbatim %}
 
@@ -88,7 +92,7 @@
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
                 <ul class="nav navbar-nav pull-right" id="nav-top-right2">
-                    <!--<li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>-->
+                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'" style="width:50px;"></li>
                     <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_swos.html" %}'"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -112,7 +116,7 @@
 
     <div class="container-fluid" id="center">
         <div class="row" ng-controller="MapCurrentLayersCtrl as mcl">
-            <div  ng-controller="MapViewerCtrl as mv">
+            <div ng-controller="MapViewerCtrl as mv">
                 <div class="map-controls-wrapper">
 
                     <div id="wetland_sites" class="btn btn-primary">
@@ -120,14 +124,14 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn($event)" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut($event)" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
@@ -161,6 +165,7 @@
                     <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
 
                     <div id="map_legend"></div>
+                    <div class="layers-container geoss" style="display:none"></div>
 
                     <div id="slider" style="display:none">
                         <div class="input"><input type="text" /></div>
@@ -192,14 +197,14 @@
                             <div class="catalog-item">
                                 <div class="item_left" style="padding-top:12px;">
                                     <button tooltip-append-to-body="true" tooltip-placement="right"
-                                            tooltip="Hide layer"
+                                            uib-tooltip="Hide layer"
                                             type="button" ng-click="mcl.changeVisibility(layer.id, $event)"
                                             ng-if="mcl.getVisibility(layer.id)" class="btn btn-default"
                                             style="padding: 0;border-color: white;"
                                             aria-label="Left Align"><i
                                             class="fa fa-eye fa-lg"></i></button>
                                     <button tooltip-append-to-body="true" tooltip-placement="right"
-                                            tooltip="Show layer"
+                                            uib-tooltip="Show layer"
                                             type="button" ng-click="mcl.changeVisibility(layer.id, $event)"
                                             ng-if="!mcl.getVisibility(layer.id)" class="btn btn-default"
                                             style="padding: 0;border-color: white;"
@@ -208,9 +213,9 @@
                                 </div>
                                 <div class="item_catalog">
                                     <div class="layer-title-wrapper">
-                                        <div tooltip-placement="bottom" tooltip="Show/Hide details" class="glyphicon glyphicon-chevron-down" style="float: left; width: 0px;padding-left: 0px; padding-top: 20px" ng-click="mcl.toggleLayerControls(layer.id, $event)"></div>
+                                        <div tooltip-placement="bottom" uib-tooltip="Show/Hide details" class="glyphicon glyphicon-chevron-down" style="float: left; width: 0;padding-left: 0; padding-top: 20px" ng-click="mcl.toggleLayerControls(layer.id, $event)"></div>
                                         <div class="item_title" style="float: left;width:206px;padding-left: 20px;" ng-click="mcl.zoomToLayer(layer.id)" ng-bind="layer.title"></div>
-                                        <div tooltip-placement="bottom" tooltip="Remove layer" class="glyphicon glyphicon-remove" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)"></div>
+                                        <div tooltip-placement="bottom" uib-tooltip="Remove layer" class="glyphicon glyphicon-remove" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)"></div>
                                         <div style="clear:both;"></div>
                                     </div>
                                     <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
@@ -219,12 +224,12 @@
                                             <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]" ng-change="mcl.updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
                                         </div>
                                         <div class="item_icon">
-                                            <button tooltip-placement="bottom" tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
-                                            <button tooltip-placement="bottom" tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-                                           <!-- <button tooltip-placement="bottom" tooltip="Remove layer" type="button" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
+                                            <button tooltip-placement="bottom" uib-tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" uib-tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" uib-tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
+                                           <!-- <button tooltip-placement="bottom" uib-tooltip="Remove layer" type="button" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
                                         </div>
                                     </div>
                                 </div>
@@ -278,7 +283,7 @@
 
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
-                        <div class="filter" style="padding: 10px;padding-bottom: 0px;">
+                        <div class="filter" style="padding: 10px;padding-bottom: 0;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterCountry()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
                                <option ng-repeat="option in wetlandsFilter.country_list | unique | orderBy " value="{{option}}">{{option}}</option>-->
@@ -344,7 +349,7 @@
                         </div>
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
-                        <div ng-if="wetlandsFilter.wetlands_without_geom==0">Loading wetlands... please wait </div>
+                        <div ng-if="wetlandsFilter.wetlands_without_geom.length==0">Loading wetlands... please wait </div>
 
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
@@ -361,7 +366,7 @@
                                 </div>
                                 <div class="item_right">
                                     <button type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" >
-                                        <!-- tooltip-placement="bottom" tooltip="Show metadata" ng-click="showMetadata(layer)" -->
+                                        <!-- tooltip-placement="bottom" uib-tooltip="Show metadata" ng-click="showMetadata(layer)" -->
                                         <i class="fa fa-file-text-o fa-lg "></i>
                                     </button>
                                 </div>
@@ -388,16 +393,16 @@
                         </div>
 
                         <div ng-controller="TrackingCtrl as tracking">
-                            <tabset justified="true">
+                            <uib-tabset justified="true">
                                 <!-- Overview -->
-                                <tab class="flaticon-bars" heading="" tooltip="Overview" tooltip-append-to-body="true" select="tracking.trackWetlandTab('overview')">
+                                <uib-tab class="flaticon-bars" heading="" uib-tooltip="Overview" tooltip-append-to-body="true" select="tracking.trackWetlandTab('overview')">
                                     <h4>Wetland specifications</h4>
                                     <div class="properties">
                                         <strong>Country: </strong>{{wetlands.value.country}}<br>
                                         <strong>Scale: </strong>{{wetlands.value.geo_scale}}<br>
                                         <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
-                                        <strong>Size: </strong>{{wetlands.value.size}} ha<br>
+                                        <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
                                     </div>
 
                                     <h4 style="margin-top:15px">Datasets</h4>
@@ -415,10 +420,10 @@
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()">
                                             <div class="flaticon-technology-2"></div>{{wetlands.dataCount.externaldb}} External databases</button>
                                     </div>
-                                </tab>
+                                </uib-tab>
 
                                 <!-- Indicators -->
-                                <tab class="flaticon-business" heading="" tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
+                                <uib-tab class="flaticon-business" heading="" uib-tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
                                     <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
 
                                     <!--
@@ -437,10 +442,10 @@
                                         </li>
                                     </ul>
                                     -->
-                                </tab>
+                                </uib-tab>
 
                                 <!-- Products -->
-                                <tab class="flaticon-layers"  heading="" tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
+                                <uib-tab class="flaticon-layers"  heading="" uib-tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                     <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
                                     <div class="remove-button-wrapper hidden-xs">
                                         <div class="div-button" ng-click="wetlands.removeAllLayers()">
@@ -455,12 +460,12 @@
                                     </div>
                                     <ul class="items products">
 
-                                        <accordion close-others="false">
-                                            <accordion-group ng-repeat="product in wetlands.value.data.products"  heading="{{product.name}}" is-open="product.open">
-                                                <accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group ng-repeat="product in wetlands.value.data.products"  heading="{{product.name}}" is-open="product.open">
+                                                <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
                                                     <span class="project">[SWOS]</span> {{product.name}}
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
-                                                </accordion-heading>
+                                                </uib-accordion-heading>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
                                                     <div class="products_datasets">
@@ -479,26 +484,26 @@
                                                     </div>
                                                 </div>
 
-                                            </accordion-group>
-                                        </accordion>
+                                            </div>
+                                        </uib-accordion>
                                     </ul>
-                                </tab>
+                                </uib-tab>
 
                                 <!-- Data -->
-                                <tab class="flaticon-space-satellite-station" heading="" tooltip="Satellite data" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
-                                    <accordion close-others="false">
-                                        <accordion-group is-open="wetlands.satdata_image">
-                                            <accordion-heading>
+                                <uib-tab class="flaticon-space-satellite-station" heading="" uib-tooltip="Satellite data" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
+                                    <uib-accordion close-others="false">
+                                        <div uib-accordion-group is-open="wetlands.satdata_image">
+                                            <uib-accordion-heading>
                                                 Yearly coverage by sensor
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
-                                            </accordion-heading>
+                                            </uib-accordion-heading>
                                             <a href="/media/cache/satdata_{{wetlands.value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{wetlands.value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{wetlands.value.id}}_small.png" width="100%" /></a>
-                                        </accordion-group>
-                                        <accordion-group is-open="wetlands.satdata_table">
-                                            <accordion-heading>
+                                        </div>
+                                        <div uib-accordion-group is-open="wetlands.satdata_table">
+                                            <uib-accordion-heading>
                                                 Total amount by sensor
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_table, 'glyphicon-chevron-right': !wetlands.satdata_table}"></i>
-                                            </accordion-heading>
+                                            </uib-accordion-heading>
                                             <table class="table data">
                                                 <tr>
                                                     <!--<th>&nbsp;</th>-->
@@ -518,8 +523,16 @@
                                                     <td>{{data.enddate}}</td>
                                                 </tr>
                                             </table>
-                                        </accordion-group>
-                                    </accordion>
+                                        </div>
+                                        <div uib-accordion-group is-open="wetlands.satdata_datasearch">
+                                            <uib-accordion-heading>
+                                                Satellite data discovery
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_datasearch, 'glyphicon-chevron-right': !wetlands.satdata_datasearch}"></i>
+                                            </uib-accordion-heading>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss('sentinelscihudtest', 'OVERLAPS')">Search for Sentinel</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss('landsat8dbidawstest', 'OVERLAPS')">Search for Landsat-8</button>
+                                        </div>
+                                    </uib-accordion>
 
                                     <div class="note">
                                         <strong>Please note: </strong>
@@ -527,16 +540,16 @@
                                         <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
                                         <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
                                     </div>
-                                </tab>
+                                </uib-tab>
 
                                 <!-- Photos -->
-                                <tab class="flaticon-technology-1" heading="" tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
+                                <uib-tab class="flaticon-technology-1" heading="" uib-tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
                                     <div ng-controller="WetlandsImageCtrl as wetlandsImage">
-                                        <accordion ng-if="wetlandsImage.images.photos.length > 0">
-                                            <accordion-group is-open="wetlandsImage.imagesIsOpen">
-                                                <accordion-heading>Images
+                                        <uib-accordion ng-if="wetlandsImage.images.photos.length > 0">
+                                            <div uib-accordion-group is-open="wetlandsImage.imagesIsOpen">
+                                                <uib-accordion-heading>Images
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.imagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.imagesIsOpen}"></i>
-                                                </accordion-heading>
+                                                </uib-accordion-heading>
                                                 <div style="/*height: 185px;overflow-y: auto;*/">
                                                     <!--<span ng-if="!wetlandsImage.images">Loading...</span>-->
                                                     <a ng-repeat="image in wetlandsImage.images.photos"
@@ -555,13 +568,13 @@
                                                 <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.images.currentPage < wetlandsImage.images.lastPage" type="button"
                                                         class="btn btn-next" ng-click="wetlandsImage.moreImages('next')">Next
                                                 </button>
-                                            </accordion-group>
-                                        </accordion>
-                                        <accordion ng-if="wetlandsImage.externalImages.photos.length > 0">
-                                            <accordion-group is-open="wetlandsImage.externalImagesIsOpen">
-                                                <accordion-heading>Panoramio images
+                                            </div>
+                                        </uib-accordion>
+                                        <uib-accordion ng-if="wetlandsImage.externalImages.photos.length > 0">
+                                            <div uib-accordion-group is-open="wetlandsImage.externalImagesIsOpen">
+                                                <uib-accordion-heading>Panoramio images
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.externalImagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.externalImagesIsOpen}"></i>
-                                                </accordion-heading>
+                                                </uib-accordion-heading>
                                                 <div style="/*height: 185px;overflow-y: auto;*/">
                                                     <!--<span ng-if="!wetlandsImage.externalImages">Loading...</span>-->
                                                     <a ng-repeat="image in wetlandsImage.externalImages.photos"
@@ -587,13 +600,13 @@
                                                 <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.externalImages.currentPage < wetlandsImage.externalImages.lastPage"
                                                         type="button" class="btn btn-next" ng-click="wetlandsImage.moreExternalImages('next')">Next
                                                 </button>
-                                            </accordion-group>
-                                        </accordion>
+                                            </div>
+                                        </uib-accordion>
                                     </div>
-                                </tab>
+                                </uib-tab>
 
                                 <!-- Videos -->
-                                <tab class="flaticon-technology" heading="" tooltip="Videos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('video')">
+                                <uib-tab class="flaticon-technology" heading="" uib-tooltip="Videos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('video')">
                                     <div ng-controller="WetlandsVideoCtrl as wetlandsVideo">
                                         <div>
                                             <span ng-if="!wetlandsVideo.videos.videos">Loading...</span>
@@ -605,10 +618,10 @@
                                         </div>
                                         <button ng-if="wetlandsVideo.videos.currentPage < wetlandsVideo.videos.lastPage" type="button" class="btn btn-loadmore" ng-click="wetlandsVideo.loadMoreVideos()">Load more videos</button>
                                     </div>
-                                </tab>
+                                </uib-tab>
 
                                 <!-- External databases -->
-                                <tab class="flaticon-technology-2" heading="" tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
+                                <uib-tab class="flaticon-technology-2" heading="" uib-tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
                                     <div ng-if="wetlands.value.data.externaldb.length == 0">No external databases registered!</div>
                                     <div ng-if="wetlands.value.data.externaldb.length != 0"><!--{{ wetlands.value.data.externaldb.length }} external databases registered!-->
                                         <div ><input ng-model="wetlands.externaldb_search.searchText" placeholder="Search for ...">
@@ -619,24 +632,27 @@
                                         </div>
                                     </div>
 
-                                    <accordion>
-                                        <accordion-group ng-repeat="externaldb_group in wetlands.value.data.externaldb" is-open="externaldb_group.open">
-                                            <accordion-heading>
+                                    <uib-accordion>
+                                        <div uib-accordion-group ng-repeat="externaldb_group in wetlands.value.data.externaldb" is-open="externaldb_group.open">
+                                            <uib-accordion-heading>
                                                 {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ).length }})
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
-                                            </accordion-heading>
-                                            <accordion>
-                                                <accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
-                                                    <accordion-heading>
+                                            </uib-accordion-heading>
+                                            <uib-accordion>
+                                                <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
+                                                    <uib-accordion-heading>
                                                         <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
                                                         <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                                    </accordion-heading>
+                                                    </uib-accordion-heading>
                                                     <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
                                                     <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
                                                     <strong>Link:</strong>
                                                     <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                                    <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                                        <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                                    </div>
                                                     <div class="select" ng-if="externaldb.layers.length > 0">
                                                         <strong>Datasets:</strong>
                                                         <div ng-repeat="layer in externaldb.layers"
@@ -647,12 +663,12 @@
                                                             <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                         </div>
                                                     </div>
-                                                </accordion-group>
-                                            </accordion>
-                                        </accordion-group>
-                                    </accordion>
-                                </tab>
-                            </tabset>
+                                                </div>
+                                            </uib-accordion>
+                                        </div>
+                                    </uib-accordion>
+                                </uib-tab>
+                            </uib-tabset>
                         </div>
                     </div>
                 </div>
@@ -688,15 +704,31 @@
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2017</p>
     </div>
+    
+    <!-- Geoss Search Widget popup container -->
+    <!-- 'geoss' class is needed -->
+    <div id="geoss-popup" style="display:none;">
+        <div modal-draggable class="modal-header">
+            <h1>Metadata</h1>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+            <div class="text popups-container geoss"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="mi.close()">
+                Close
+            </button>
+        </div>
+    </div>
 
     {% assets "swosVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
-
+    
     {% assets "geossVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
-
+    
     {% assets "swosAppJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}

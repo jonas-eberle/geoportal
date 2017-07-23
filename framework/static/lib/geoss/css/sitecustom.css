@@ -7,6 +7,48 @@
     width: 100%;
 }
 
+.geoss .black, .geoss .black-popup {
+    position:relative;
+}
+
+.geoss .resource-details-wrapper {
+    position: relative;
+    width: 100%;
+    margin-left: 0;
+    left: auto;
+    top: auto;
+    transform: none;
+}
+
+.geoss-metadata .modal-body, .geoss-layers .modal-body {
+    padding: 0;
+}
+
+.geoss-layers .modal-header {
+	display:none;
+}
+
+.geoss .resource-show {
+	width: auto;
+    margin-left: 0;
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: initial;
+    max-height: 210px;
+}
+
+.geoss .resource-show .top-strip {
+	overflow: inherit;
+}
+
+.geoss .black .top-strip button.close-popup {
+	display: none;
+}
+
+.geoss .row-result-form .show-result .filters ul.multiselect-container, .geoss .row-result-form .show-result .granula-filters ul.multiselect-container, .geoss .row-result-form .show-result .iris-filters ul.multiselect-container {
+    left: 0;
+}
 
 /**** Search part *****/
 
@@ -24,7 +66,7 @@
 #gsw_query_search {
 	float: left;
 	width: calc(100% - 80px);
-	height: 40px;
+	height: 38px;
 }
 
 #gsw_search_button {
@@ -45,7 +87,7 @@
 	float: left;
 	width: 40px;
 	height: 40px;
-    margin: 0;
+	margin: 0;
 }
 
 #gsw_clear_button::before {
@@ -60,19 +102,47 @@
 
 #geoss-search-widget .results {
 	background-color: #acc;
-	height: calc(100% - 60px);
+	height: calc(100% - 90px);
 	overflow-y: scroll;
 }
 
-.gsw_result-wrap {
-	overflow-x: hidden;
-	overflow-y: auto;
-	display: flex;
-    flex-direction: column;
+
+/***** Pagination part *****/
+
+#geoss-search-widget .pagination {
+	background-color: #42a195;
+	height: 30px;
+	margin: 0px;
+	width: 100%;
+	border-radius: 0px;
 }
 
-.gsw_list-result {
+/***** Layers part *****/
+.layers-button {
+	position: absolute;
+	top: 180px;
+	left: 26px;
+	width: 30px;
+	height: 30px;
+	padding: 7px;
+	border-radius: 15px;
+	color: black;
+	background-color: white;
+	cursor: pointer;
+}
+
+.layers-container {
+	position: absolute;
+	top: 180px;
+	left: 62px;
+	width: 350px; /*auto*/
+	max-width: 400px;
+	height: auto;
+	max-height: 350px;
+	border-radius: 5px;
+	z-index: 9;
 	background-color: #fff;
-	padding: 25px 19px 0px 25px;
-	position: relative;
+	display: none;
+	overflow: hidden;
+	overflow-y: auto;
 }

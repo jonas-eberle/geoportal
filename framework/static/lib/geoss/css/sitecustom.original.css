@@ -1,0 +1,99 @@
+.clearfix:after {
+	clear: both;
+}
+
+.wrapper {
+	background-color: #333;
+	padding: 0 1% 0 1%;
+}
+
+header {
+	height: 110px;
+}
+
+header .logo {
+	/*float: left;*/
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	display: block;
+	padding: 5px;
+}
+
+header .logo img {
+	height: 100px;
+	width: 200px;
+}
+
+header .title {
+	float: left;
+	width: 100%;
+	text-align: center;
+	padding: 15px;
+	color: white;
+	font-size: 20px
+	font-weight: 700;
+}
+
+.main-canvas {
+	height: calc(100vh - 150px);
+}
+
+#map {
+	background-color: grey;
+	float: left;
+	height: 100%;
+	width: 55%;
+}
+
+#geoss-search-widget {
+	float: right;
+	height: 100%;
+	width: 45%;
+}
+
+/**** Search part *****/
+
+#geoss-search-widget .search {
+	height: 100%;
+	background-color: #acc;
+}
+
+/***** Layers part *****/
+.layers-button {
+	position: absolute;
+	top: 180px;
+	left: 26px;
+	width: 30px;
+	height: 30px;
+	padding: 7px;
+	border-radius: 15px;
+	color: black;
+	background-color: white;
+	cursor: pointer;
+}
+
+.layers-container {
+	position: absolute;
+	top: 180px;
+	left: 62px;
+	width: 350px; /*auto*/
+	max-width: 400px;
+	height: auto;
+	max-height: 350px;
+	border-radius: 5px;
+	z-index: 9;
+	background-color: #fff;
+	display: none;
+	overflow: hidden;
+	overflow-y: auto;
+}
+
+footer {
+	height: 40px;
+	width: 100%;
+	color: white;
+	text-align: center;
+	font-size: 18px;
+	padding: 5px;
+}

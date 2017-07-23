@@ -61,6 +61,9 @@ geossVendorJs = []
 geossVendorJs.extend([
     'lib/geoss/js/jquery-ui.min.js',
     'lib/geoss/js/jquery.dotdotdot.min.js',
+    'lib/geoss/js/jquery.datetimepicker.full.min.js',
+    'lib/geoss/js/jquery.rateyo.min.js',
+    'lib/geoss/js/bootstrap-multiselect.js',
     'lib/geoss/js/elasticsearch.jquery.min.js',
     'lib/geoss/js/geossSearchWidget.min.js'
 ])
@@ -155,6 +158,9 @@ geossVendorCss = []
 geossVendorCss.extend([
     'lib/geoss/css/jquery-ui.css',
     'lib/geoss/css/jquery-ui-2.css',
+    'lib/geoss/css/jquery.datetimepicker.min.css',
+    'lib/geoss/css/jquery.rateyo.min.css',
+    'lib/geoss/css/bootstrap-multiselect.css',
     'lib/geoss/css/custom.min.css',
     'lib/geoss/css/sitecustom.css'
 ])

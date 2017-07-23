@@ -1,4 +1,4 @@
-This is sample site that uses Geoss Search Widget. The widget is in its very early development phase and now it is just able to generate simple result list without any interface interactions.
+This is sample site that uses Geoss Search Widget. The widget is in its very early development phase and now it is just able to generate simple result list with buttons but without any interaction with map.
 
 
 *** Prerequisites ***
@@ -21,10 +21,18 @@ This is sample site that uses Geoss Search Widget. The widget is in its very ear
 3. Add Geoss Search Widget script before your main js script (see index.html):
 	<script src="js/geossSearchWidget.min.js"></script>
 
-4. Create HTML container, with 'geoss' class, where results will be displayed, e.g.:
-	<div class="search geoss"></div>
-	Next, make reference in your js file to the container e.g.:
+4. Create HTML containers, with 'geoss' class, where results, popups, and pagination will be stored, e.g.:
+	<div class="results geoss"></div>
+	<div class="pagination geoss"></div>
+	<div class="popups geoss"></div>
+	Next, make reference in your js file to the containers e.g.:
 	Geoss.resultsContainer = '#geoss-search-widget .results';
+	Geoss.paginationContainer = '#geoss-search-widget .pagination';
+	Geoss.popupsContainer = 'footer .popups';
+
+5. Create reference to your map, e.g.:
+	Geoss.mapUrl = 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=[yourPrivateKey]';
+	The map preview is located in metainfo popup. Currently the widget uses Openlayers' tile maps (new ol.layer.Tile, let us know if different format is needed).
 
 
 *** Usage ***
@@ -55,6 +63,7 @@ Function Geoss.search(params, successCallback, failureCallback) sends request to
 	    } else if (error == "noresults") {
 	        alert("No results to show.");
 	    }
+	    progressBar.hide();
 	    clearPagination();
 
 	    // other instructions here ...
@@ -64,3 +73,4 @@ Function Geoss.search(params, successCallback, failureCallback) sends request to
 *** Additional info ***
 
 @font-face rule at the beginning of custom.css file might change all the fonts on your site. The rule can be removed if necessary.
+After moving request-broker from esaportal.eu to ospartner.pl, for some reason much more requests end up with failure.
