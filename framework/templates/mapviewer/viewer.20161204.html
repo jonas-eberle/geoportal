@@ -59,7 +59,7 @@
 
     {% verbatim %}
     <div id="alerts" ng-controller="AlertCtrl as ac">
-        <alert ng-repeat="alert in ac.alerts" type="{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</alert>
+        <div uib-alert ng-repeat="alert in ac.alerts" class="alert alert-{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</div> 
     </div>
     {% endverbatim %}
 
@@ -88,7 +88,7 @@
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
                 <ul class="nav navbar-nav pull-right" id="nav-top-right2">
-                    <!--<li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'"></li>-->
+                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'" style="width:50px;"></li>
                     <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_swos.html" %}'"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -344,7 +344,7 @@
                         </div>
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
-                        <div ng-if="wetlandsFilter.wetlands_without_geom==0">Loading wetlands... please wait </div>
+                        <div ng-if="wetlandsFilter.wetlands_without_geom.length==0">Loading wetlands... please wait </div>
 
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"

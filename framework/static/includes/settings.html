@@ -6,6 +6,7 @@
         <strong style="white-space: nowrap;">Set background map: </strong>
         <select class="form-control select-background-map" ng-model="mapSettings.selectedBaseLayer"
                 ng-options="item for item in mapSettings.baseLayers" ng-change="mapSettings.changeBaseLayer()"></select>
+        <!--<button tooltip-placement="bottom" tooltip="Show metadata" type="button" ng-click="showMetadata()" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>-->
         <a href="#" ng-click="mapSettings.showMetadata()">Show metadata</a>
     </div>
 </div>
