@@ -32,7 +32,7 @@ ASSETS_DEBUG = True
 # True: automatically rebuild bundles if source files have changed
 ASSETS_AUTO_BUILD = True
 
-ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de']
+ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de', 'swos.ssv-hosting.de', 'swos2.ssv-hosting.de']
 
 ##################################################
 # Application definition
@@ -100,13 +100,9 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 ##################################################
@@ -114,13 +110,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 #STATIC_ROOT = os.path.join(BASE_DIR, "static")
-#STATIC_ROOT = '/Users/jonas/Workspaces/webgisDjango/static/'
 SUBDIR = ''
 #STATIC_URL = SUBDIR+'/static/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
+    os.path.join(os.path.dirname(BASE_DIR), 'node_modules'),
 )
 
 ASSETS_LOAD_PATH = [
@@ -144,8 +140,6 @@ UGLIFYJS_EXTRA_ARGS = (
     '--compress',
 )
 
-#MEDIA_ROOT = 'D:/Workspaces/webgis/project/media/'
-#MEDIA_ROOT = '/var/www/webgis.essi-services.net/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,  'media/')
 MEDIA_URL = SUBDIR + '/media/'
 
@@ -213,6 +207,7 @@ LOGIN_ON_EMAIL_CONFIRMATION = False
 CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # problems with "mandatory" when logging in...
+LOGIN_REDIRECT_URL = '/'
 
 #EMAIL_HOST = 'smtprelaypool.ispgateway.de'
 #EMAIL_PORT = 465
@@ -229,55 +224,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # for testing mails we can use the console where the testserver was started
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# for testing mails we can use the filebackend, emails are stored as files in the foleder specified
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+if not os.path.exists(os.path.join(BASE_DIR, "media", "email")):
+    os.mkdir(os.path.join(BASE_DIR, "media", "email"))
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "media", "email") # change this to a proper location
+
 ##################################################
 
 # ie csrf cookie
-
 CSRF_COOKIE_DOMAIN='localhost'
-SESSION_COOKIE_DOMAIN='localhost'
+SESSION_COOKIE_DOMAIN=CSRF_COOKIE_DOMAIN
 USE_X_FORWARDED_HOST=True
 #SESSION_COOKIE_SECURE=True
 #CSRF_COOKIE_SECURE=True
 
-#####################################################
-#Settings for the geoserver integration functionality
-# Geoserver Connection
-
-#todo: Save the password somewhere safe.
-GEOSERVER = {'default':{
-        'URL': 'http://localhost:8082/geoserver/rest/',
-        'USER': 'admin',
-        'PASSWORD': 'geoserver'
-    },
-    'earthcare':{
-        'URL': 'http://earthcare.ads.uni-jena.de:8080/geoserver/rest',
-        'USER': 'ANPASSEN',
-        'PASSWORD': 'ANPASSEN'
-    },
-    'artemis':{
-        'URL':'http://artemis.geogr.uni-jena.de/geoserver/rest',
-        'USER': 'ANPASSEN',
-        'PASSWORD': 'ANPASSEN'
-    }
-
-}
-
-#todo: Save the password somewhere safe.
-SFTP = {
-    'FOLDER':'products/',
-    'URL':'swos-data.jena-optronik.de',
-    'USER': 'ANPASSEN',
-    'PASSWORD': 'ANPASSEN'
-}
-
-DEST_FOLDER = '/home/user/swos_data/'
-
-SLD_FOLDER = '/home/user/swos/SLDs/'
-
-METADATA_TEMPLATES = '/home/user/swos/meta_templates/'
-
-METADATA_FOLDER = '/home/user/swos_data/meta/'
-
-PYCSW_URL = 'http://localhost:8000'
-
-METADATA_URL = 'http://artemis.geogr.uni-jena.de/geoserver/'
+##################################################
+# END
+##################################################
