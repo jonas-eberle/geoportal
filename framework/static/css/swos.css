@@ -139,6 +139,12 @@ ul.products li:hover {
 .sidebar label {
 	font-size: 14px;
 	font-weight: normal;
+    text-indent: -11px;
+    margin-left: 20px;
+}
+
+.sidebar .btn-group label {
+    text-indent: inherit;
 }
 
 .sidebar li:hover label {
@@ -655,4 +661,8 @@ button.btn-loadmore:hover {
 .alert button.close {
     color: #000000 !important;
     opacity: 1 !important;
+}
+
+#sidebar .item_catalog {
+    margin-left:0;
 }

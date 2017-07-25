@@ -640,6 +640,7 @@ class WetlandLayer(Layer):
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
     indicator = models.ForeignKey(IndicatorValue, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
     validation_layer = models.ForeignKey(Layer, related_name="layer_validation", verbose_name="Validation layer", blank=True, null=True)
+    background_layer = models.ForeignKey(Layer, related_name="layer_background", verbose_name="Background layer", blank=True, null=True)
     validation_auxlayer =  models.ManyToManyField(Layer, related_name="swos_validation_auxlayer", verbose_name="Validation auxiliary layers", blank=True, null=True)
 
     @property
@@ -876,6 +877,7 @@ class ExternalDatabase(models.Model):
     )
 
     name = models.CharField(max_length=200)
+    shortname = models.CharField(max_length=200)
     online_link = models.TextField(null=True)
     description = models.TextField(null=True)
     provided_information = models.TextField(blank=True)

@@ -166,9 +166,11 @@ class ValidationLayerList(APIView):
     def get(self, request, format=None):
         wetlands = dict()
         
-        from .models import WetlandLayer
+        from .models import WetlandLayer, ExternalLayer
         from layers.models import LayerSerializer
         layers = WetlandLayer.objects.filter(validation_layer__isnull=False,publishable=True).order_by('title')
+        externallayers = ExternalLayer.objects.all()
+        externallayers = {l.id: l for l in externallayers}
         for layer in layers:
             #check permission
             if not request.user.is_authenticated():
@@ -181,10 +183,18 @@ class ValidationLayerList(APIView):
                 wetlands[layer.wetland.id]['validation_layers'] = []
             layerdata = LayerSerializer(layer).data
             layerdata['validation_layer'] = LayerSerializer(layer.validation_layer).data
+            layerdata['background_layer'] = LayerSerializer(layer.background_layer).data
             layerdata['validation_auxlayer'] = LayerSerializer(layer.validation_auxlayer, many=True).data
             for l in layerdata['validation_auxlayer']:
+                if l['id'] in externallayers:
+                    datasource = externallayers[l['id']].datasource.shortname
+                    l['alternate_title'] = '[%s] %s' % (datasource, l['alternate_title'].replace(datasource, ''))
+                    l['title'] = l['alternate_title']
                 if l['legend_colors']:
                     l['legend_colors'] = json.loads(l['legend_colors'])
+                if l['ogc_times'] != None and l['ogc_times'] != '':
+                     l['ogc_times'] = l['ogc_times'].split(',')
+                     l['selectedDate'] = l['ogc_times'][-1] 
             wetlands[layer.wetland.id]['validation_layers'].append(layerdata)
         
         data = []
@@ -205,11 +215,9 @@ class ValidationUpdateSegment(APIView):
         if layer == None:
             return HttpResponse("FAILURE: No layer name given")
         val_code = int(request.query_params.get('val_code', -1))
-        if val_code <= 0:
-            return HttpResponse("FAILURE: Val code needs to be greather than 0")
         val_id = int(request.query_params.get('val_id', -1))
         
-        if feature_id != '' and val_code > 0:
+        if feature_id != '':
             import requests
             data = """<wfs:Transaction service="WFS" version="1.0.0"
   xmlns:topp="http://www.openplans.org/topp"
@@ -248,6 +256,35 @@ class ValidationUpdateSegment(APIView):
   </wfs:Query>
 </wfs:GetFeature>"""
                     data = data.format(layer, val_id)
+                    data = """<wfs:GetFeature service="WFS" version="1.1.0"
+  xmlns:wfs="http://www.opengis.net/wfs"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
+  outputFormat="application/json" maxFeatures="1" startIndex="0">
+  <wfs:Query typeName="{}">
+<ogc:SortBy>
+<ogc:SortProperty>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:SortOrder>ASC</ogc:SortOrder>
+</ogc:SortProperty>
+</ogc:SortBy>
+<ogc:Filter>
+  <ogc:And>
+<ogc:PropertyIsLessThan>
+<ogc:PropertyName>ValCode</ogc:PropertyName>
+<ogc:Literal>1</ogc:Literal>
+</ogc:PropertyIsLessThan>
+    <ogc:PropertyIsGreaterThan>
+<ogc:PropertyName>ValID</ogc:PropertyName>
+<ogc:Literal>0</ogc:Literal>
+</ogc:PropertyIsGreaterThan>
+    </ogc:And>
+</ogc:Filter>
+  </wfs:Query>
+</wfs:GetFeature>"""
+                    data = data.format(layer)
                     response = requests.post('http://earthcare.ads.uni-jena.de:8090/geoserver/wfs', data=data, auth=('validation', 'valtool'))
                     return HttpResponse(response.text)
                 return HttpResponse('SUCCESS')

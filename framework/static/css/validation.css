@@ -10,3 +10,11 @@
     width: auto !important;
 }
 
+#sidebar .item_catalog, #sidebar .item_legend {
+    margin-left: 30px !important;
+    margin-bottom: 10px;
+}
+
+#sidebar .item_icon {
+    margin-top: 8px;
+}

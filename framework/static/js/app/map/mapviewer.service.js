@@ -166,12 +166,16 @@
 
                 switch(layer.ogc_type) {
                     case 'WMS':
+                        var params = {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true};
+                        if (layer.hasOwnProperty('selectedDate')) {
+                            params['TIME'] = layer.selectedDate+'/'+layer.selectedDate;
+                        }
                         olLayer = new ol.layer.Tile({
                             name: layer.title,
                             layerObj: layer,
                             source: new ol.source.TileWMS({
                                 url: layer.ogc_link,
-                                params: {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true}
+                                params: params
                             })
                         });
                         break;
@@ -554,7 +558,7 @@
                 $.each(this.layersTime, function() {
                     var layer = _this.layers[this];
                     var source = layer.getSource();
-                    source.updateParams({'TIME':time});
+                    source.updateParams({'TIME':time+'/'+time});
                 });
             },
             'initialize': function(id, mapElement, baseLayer) {

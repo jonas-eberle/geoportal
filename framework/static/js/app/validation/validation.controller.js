@@ -42,7 +42,11 @@
                 validation.segments = data;
                 validation.segmentsCurrentPage = page;
                 validation.segmentsLastPage = Math.ceil(data.totalFeatures / validation.segmentsMaxFeatures);
-                $('#loading-div').hide();               
+                $('#loading-div').hide();
+                if (data.features.length === 0) {
+                    validation.segmentListType = '';
+                    bootbox.alert('No features available.');
+                }
             }, function () {
                 $('#loading-div').hide();
                 bootbox.alert('<h1>Error while loading segments</h1>');
@@ -149,6 +153,10 @@
             // TODO: add site boundaries to map using site_id
             
             // add validation layer to map
+            validation.background_layer_ol = mapviewer.addLayer(layer.background_layer);
+            var layerObjBG = validation.background_layer_ol.get("layerObj");
+            validation.layerIdMap[layerObjBG.django_id] = layerObjBG.id;
+            
             validation.validation_layer_ol = mapviewer.addLayer(layer.validation_layer);
             validation.validation_layer_ol.getSource().on('tileloadend', function(event) { 
                  $('#loading-div').hide();
@@ -195,6 +203,11 @@
         function showValidationWindow(response, zoomto) {
             var epsg = -1;
             var features = validation.parser.readFeatures(response);
+            if (response.features.length === 0) {
+                $('#loading-div').hide();
+                bootbox.alert('No features found. Please select one in the map!');
+                return true;
+            }
             
             var feature = response.features[0];
             try {
@@ -246,12 +259,12 @@
             }
             
             var select = '<select name="valcode" id="valcode">';
-            select += '<option value="-1">== Please select class ==</option>\n';
+            select += '<option value="-1">== No class ==</option>\n';
             $.each(legend, function(key, value){
                 if (parseInt(key) === parseInt(feature.properties.ValCode)) {
-                    select += '<option value="'+key+'" selected="selected">'+value[0]+'</option>\n';
+                    select += '<option value="'+key+'" selected="selected" style="color:'+value[1]+'">'+value[0]+'</option>\n';
                 } else {
-                    select += '<option value="'+key+'">'+value[0]+'</option>\n';
+                    select += '<option value="'+key+'" style="color:'+value[1]+'">'+value[0]+'</option>\n';
                 }
             })
             select += '</select>';
@@ -280,23 +293,19 @@
                         params['val_code'] = $('#valcode').val();
                         params['val_id'] = feature.properties.ValID;
                         
-                        if (parseInt(params['val_code']) === -1) {
-                            bootbox.alert('Please select a class (ValCode)');
-                            return false;
-                        }
-                        
                         $('#loading-div').show();
                         djangoRequests.request({
                             'method': 'GET',
                             'url'   : '/swos/validation/update',
                             'params': params
                         }).then(function(data){
-                            console.log(data);
+                            validation.highlightOverlay.getSource().clear();
+                            validation.validation_layer_ol.getSource().updateDimensions({'style': '', 'time': new Date().getTime()});
                             if (data.features.length === 0) {
                                 validation.dialog_pos = $('.modal-content', validation.dialog).position();
                                 validation.dialog.modal('hide');
                                 $('#loading-div').hide();
-                                bootbox.alert('No next feature found. Please select in the map!');
+                                bootbox.alert('You have finished all your validation segments! Thank you!');
                             } else {
                                 // show feature and panel and zoom to feature
                                 validation.showValidationWindow(data, true);
@@ -321,18 +330,14 @@
                         params['feature_id'] = feature.id;
                         params['val_code'] = $('#valcode').val();
                         
-                        if (parseInt(params['val_code']) === -1) {
-                            bootbox.alert('Please select a class (ValCode)');
-                            return false;
-                        }
-                        
                         $('#loading-div').show();
                         djangoRequests.request({
                             'method': 'GET',
                             'url'   : '/swos/validation/update',
                             'params': params
                         }).then(function(data){
-                            // close window
+                            validation.highlightOverlay.getSource().clear();
+                            validation.validation_layer_ol.getSource().updateDimensions({'style': '', 'time': new Date().getTime()});
                             $('#loading-div').hide();
                             validation.dialog_pos = $('.modal-content', validation.dialog).position();
                             validation.dialog.modal('hide');
@@ -350,6 +355,7 @@
                     label: "Cancel",
                     className: 'btn-primary',
                     callback: function() {
+                        validation.highlightOverlay.getSource().clear();
                         validation.dialog_pos = $('.modal-content', validation.dialog).position();
                         validation.dialog = null;
                     }

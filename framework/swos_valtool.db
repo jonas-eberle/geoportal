@@ -481,7 +481,7 @@ ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('django_admin_log_id_seq', 5331, true);
+SELECT pg_catalog.setval('django_admin_log_id_seq', 5368, true);
 
 
 --
@@ -564,7 +564,7 @@ ALTER SEQUENCE django_migrations_id_seq OWNED BY django_migrations.id;
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('django_migrations_id_seq', 108, true);
+SELECT pg_catalog.setval('django_migrations_id_seq', 111, true);
 
 
 --
@@ -724,7 +724,7 @@ CREATE TABLE layers_layer (
     date_begin date,
     date_end date,
     publishable boolean NOT NULL,
-    ogc_attribution character varying(200),
+    ogc_attribution character varying(255),
     wmts_multiply boolean NOT NULL,
     wmts_prefix_matrix_ids character varying(200),
     ogc_times text,
@@ -926,7 +926,7 @@ ALTER SEQUENCE layers_layer_id_seq OWNED BY layers_layer.id;
 -- Name: layers_layer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('layers_layer_id_seq', 3007, true);
+SELECT pg_catalog.setval('layers_layer_id_seq', 3013, true);
 
 
 --
@@ -1188,7 +1188,7 @@ ALTER SEQUENCE mapviewer_layerbaseinline_id_seq OWNED BY mapviewer_layerbaseinli
 -- Name: mapviewer_layerbaseinline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('mapviewer_layerbaseinline_id_seq', 24, true);
+SELECT pg_catalog.setval('mapviewer_layerbaseinline_id_seq', 26, true);
 
 
 --
@@ -1550,7 +1550,9 @@ CREATE TABLE swos_externaldatabase (
     provided_information text NOT NULL,
     dataset_language character varying(20) NOT NULL,
     wetland_id integer,
-    continent character varying(30) NOT NULL
+    continent character varying(30) NOT NULL,
+    geoss_datasource_id character varying(100),
+    shortname character varying(200) NOT NULL
 );
 
 
@@ -1663,7 +1665,7 @@ ALTER SEQUENCE swos_externaldatabase_id_seq OWNED BY swos_externaldatabase.id;
 -- Name: swos_externaldatabase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('swos_externaldatabase_id_seq', 22, true);
+SELECT pg_catalog.setval('swos_externaldatabase_id_seq', 23, true);
 
 
 --
@@ -2128,7 +2130,8 @@ CREATE TABLE swos_wetlandlayer (
     indicator_id integer,
     product_id integer,
     wetland_id integer,
-    validation_layer_id integer
+    validation_layer_id integer,
+    background_layer_id integer
 );
 
 
@@ -2172,7 +2175,7 @@ ALTER SEQUENCE swos_wetlandlayer_validation_auxlayer_id_seq OWNED BY swos_wetlan
 -- Name: swos_wetlandlayer_validation_auxlayer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('swos_wetlandlayer_validation_auxlayer_id_seq', 10, true);
+SELECT pg_catalog.setval('swos_wetlandlayer_validation_auxlayer_id_seq', 14, true);
 
 
 --
@@ -2709,8 +2712,8 @@ COPY auth_permission (id, name, content_type_id, codename) FROM stdin;
 
 COPY auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
 45	pbkdf2_sha256$15000$z1xcrPAPmEQQ$zBsCFR3+0elEY1ozLtq3mUQ7X/BPbywZUO1Abh/GWIE=	2017-06-14 15:03:53+02	t	swos			info@swos-service.eu	t	t	2016-06-29 19:51:14+02
-47	pbkdf2_sha256$36000$C1VCe11U9pMh$ZPa1V7YNZu6KVb8mrcjTe4AO5zV3Zm2gjwLbKN3WSa8=	2017-07-22 14:02:40.984139+02	f	validation01			validation01@swos-service.eu	f	t	2017-07-22 11:42:21+02
-43	pbkdf2_sha256$36000$afCuyp76lGnV$f/g5yvt8GhVAaS85LXcuaq+qJaORR0vi0NPWxmAf0sU=	2017-07-22 14:12:00.328656+02	t	sibessc	Jonas	Eberle	jonas.eberle@uni-jena.de	t	t	2016-03-24 20:57:39.627+01
+47	pbkdf2_sha256$36000$C1VCe11U9pMh$ZPa1V7YNZu6KVb8mrcjTe4AO5zV3Zm2gjwLbKN3WSa8=	2017-07-24 17:35:22.873593+02	f	validation01			validation01@swos-service.eu	f	t	2017-07-22 11:42:21+02
+43	pbkdf2_sha256$36000$afCuyp76lGnV$f/g5yvt8GhVAaS85LXcuaq+qJaORR0vi0NPWxmAf0sU=	2017-07-25 13:07:24.621727+02	t	sibessc	Jonas	Eberle	jonas.eberle@uni-jena.de	t	t	2016-03-24 20:57:39.627+01
 \.
 
 
@@ -6967,6 +6970,43 @@ COPY django_admin_log (id, action_time, object_id, object_repr, action_flag, cha
 5329	2017-07-22 13:39:04.09558+02	6	Validation	2	[{"changed": {"fields": ["auth_registration", "auth_perm"]}}]	12	43
 5330	2017-07-22 14:02:24.242663+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[{"changed": {"fields": ["auth_perm"]}}]	26	43
 5331	2017-07-22 14:48:55.057801+02	2963	SWOS_LULC_Ramsar-CLC_ES_Fuente-de-Piedra_2015	2	[{"changed": {"fields": ["validation_layer"]}}]	26	43
+5332	2017-07-22 16:10:38.65873+02	3008	OpenStreetMap	1	[{"added": {}}]	16	43
+5333	2017-07-22 16:10:56.27374+02	6	Validation	2	[{"added": {"object": "OpenStreetMap", "name": "layer base inline"}}, {"changed": {"fields": ["order"], "object": "SWOS Baselayers", "name": "layergroup inline"}}]	12	43
+5334	2017-07-22 16:23:49.995331+02	3008	OpenStreetMap	2	[{"changed": {"fields": ["ogc_attribution"]}}]	16	43
+5335	2017-07-22 16:24:22.96833+02	3008	OpenStreetMap	2	[{"changed": {"fields": ["ogc_attribution"]}}]	16	43
+5336	2017-07-22 16:39:26.091088+02	3007	Stamen Terrain	2	[{"changed": {"fields": ["identifier", "title", "abstract", "ogc_link", "ogc_attribution", "auth_perm"]}}]	16	43
+5337	2017-07-22 16:39:40.515278+02	3009	Stamen Terrain	1	[{"added": {}}]	16	43
+5338	2017-07-22 16:40:11.466588+02	3007	Mapbox Satellite	2	[{"changed": {"fields": ["identifier", "title", "abstract", "ogc_link", "ogc_attribution"]}}]	16	43
+5339	2017-07-22 16:40:26.797275+02	6	Validation	2	[{"added": {"object": "Stamen Terrain", "name": "layer base inline"}}, {"changed": {"fields": ["order"], "object": "SWOS Baselayers", "name": "layergroup inline"}}]	12	43
+5340	2017-07-22 16:43:28.448826+02	3009	Stamen Terrain	2	[{"changed": {"fields": ["ogc_attribution"]}}]	16	43
+5341	2017-07-23 15:34:13.297849+02	4	GEOSS Widget Test	2	[{"changed": {"fields": ["template_file"]}}]	12	43
+5342	2017-07-23 19:00:17.807574+02	20	Global Biodiversity Information Facility (GBIF)	2	[{"changed": {"fields": ["name", "online_link", "description", "provided_information", "geoss_datasource_id"]}}]	29	43
+5343	2017-07-25 08:43:32.954804+02	3010	Sentinel Hub Sentinel-2 WMS	1	[{"added": {}}]	30	43
+5344	2017-07-25 08:44:08.341528+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[]	26	43
+5345	2017-07-25 08:45:45.436243+02	3010	Sentinel Hub Sentinel-2 Natural Colors	2	[{"changed": {"fields": ["identifier", "title", "abstract"]}}]	30	43
+5346	2017-07-25 08:46:07.03909+02	3011	Sentinel Hub Sentinel-2 NDVI	1	[{"added": {}}]	30	43
+5347	2017-07-25 08:46:33.548282+02	3012	Sentinel Hub Sentinel-2 MOISTURE_INDEX	1	[{"added": {}}]	30	43
+5348	2017-07-25 08:47:04.491321+02	3013	Sentinel Hub Sentinel-2 False Color	1	[{"added": {}}]	30	43
+5349	2017-07-25 08:47:42.833888+02	23	Sentinel Hub Services	1	[{"added": {}}]	29	43
+5350	2017-07-25 08:47:54.397156+02	3013	Sentinel Hub Sentinel-2 False Color	2	[{"changed": {"fields": ["datasource"]}}]	30	43
+5351	2017-07-25 08:48:01.833759+02	3012	Sentinel Hub Sentinel-2 MOISTURE_INDEX	2	[{"changed": {"fields": ["datasource"]}}]	30	43
+5352	2017-07-25 08:48:08.645226+02	3010	Sentinel Hub Sentinel-2 Natural Colors	2	[{"changed": {"fields": ["datasource"]}}]	30	43
+5353	2017-07-25 08:48:15.522522+02	3011	Sentinel Hub Sentinel-2 NDVI	2	[{"changed": {"fields": ["datasource"]}}]	30	43
+5354	2017-07-25 08:48:35.461403+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[]	26	43
+5355	2017-07-25 08:50:34.310436+02	3013	Sentinel Hub Sentinel-2 False Color	2	[{"changed": {"fields": ["ogc_time", "ogc_times"]}}]	30	43
+5356	2017-07-25 08:50:47.012729+02	3013	Sentinel Hub Sentinel-2 False Color	2	[{"changed": {"fields": ["ogc_layer"]}}]	30	43
+5357	2017-07-25 08:54:50.571691+02	3013	Sentinel Hub Sentinel-2 False Color	2	[{"changed": {"fields": ["ogc_times"]}}]	30	43
+5358	2017-07-25 09:00:36.808148+02	3012	Sentinel Hub Sentinel-2 MOISTURE_INDEX	2	[{"changed": {"fields": ["ogc_layer", "ogc_time"]}}]	30	43
+5359	2017-07-25 09:00:45.322804+02	3010	Sentinel Hub Sentinel-2 Natural Colors	2	[{"changed": {"fields": ["ogc_layer", "ogc_time"]}}]	30	43
+5360	2017-07-25 09:00:53.528925+02	3011	Sentinel Hub Sentinel-2 NDVI	2	[{"changed": {"fields": ["ogc_layer", "ogc_time"]}}]	30	43
+5361	2017-07-25 17:41:11.825134+02	23	Sentinel Hub Services	2	[{"changed": {"fields": ["shortname"]}}]	29	43
+5362	2017-07-25 17:41:48.462747+02	1	Global Surface Water	2	[{"changed": {"fields": ["shortname", "provided_information"]}}]	29	43
+5363	2017-07-25 17:41:55.613388+02	6	Ramsar Sites Information Service	2	[{"changed": {"fields": ["shortname", "description", "provided_information"]}}]	29	43
+5364	2017-07-25 17:42:00.494617+02	22	RAMSAR Site Information Service	2	[{"changed": {"fields": ["shortname"]}}]	29	43
+5365	2017-07-25 17:42:09.658211+02	20	Global Biodiversity Information Facility (GBIF)	2	[{"changed": {"fields": ["shortname"]}}]	29	43
+5366	2017-07-25 17:42:25.650356+02	21	Copernicus Land Service High Resolution Layers	2	[{"changed": {"fields": ["shortname"]}}]	29	43
+5367	2017-07-25 18:01:09.104352+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[{"changed": {"fields": ["background_layer"]}}]	26	43
+5368	2017-07-25 18:01:50.105208+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[]	26	43
 \.
 
 
@@ -7101,6 +7141,9 @@ COPY django_migrations (id, app, name, applied) FROM stdin;
 106	sites	0002_alter_domain_unique	2017-07-21 10:19:29.91853+02
 107	layers	0002_layergroupinline_mapviewer	2017-07-21 10:20:58.651365+02
 108	swos	0002_auto_20170721_0842	2017-07-21 10:42:54.901762+02
+109	layers	0003_auto_20170722_1442	2017-07-22 16:42:57.429283+02
+110	swos	0003_externaldatabase_geoss_datasource_id	2017-07-23 18:59:40.54684+02
+111	swos	0004_auto_20170725_1540	2017-07-25 17:40:53.690767+02
 \.
 
 
@@ -7355,7 +7398,14 @@ brwteazeem4r53q8f43048q912f9onn6	YzAzZDI4Y2ZlZjhkZGJkZmM2ZGQ2YmE0ODUzZWNjZDQzNmY
 cbvk57m1zkr4futab4usp2ky4i0zajbt	YzAzZDI4Y2ZlZjhkZGJkZmM2ZGQ2YmE0ODUzZWNjZDQzNmY5ZmY4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImExYWZkNjE1MDVkNTIyZDk3YzcyNzczOGQ0YzA3NjgyODc4YWEwYmMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjQzfQ==	2017-06-26 10:55:22.20188+02
 feg8ykcpkm38c3f02v093zkry51i2acq	YjcyNmM4ODBhNTBkNWVkZDA4OWFjYzAyZTJmZTRjMGI0NGExZGYzYTp7Il9hdXRoX3VzZXJfaGFzaCI6ImY4ODY1NGI5ZjY2NjYyMTgyZjJhNWQ5NDIzNzM3OTk5ODUwNDcyZjUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjQ1fQ==	2017-06-28 15:03:53.680306+02
 m6t3w8fhqd4f3opmzttb3lfyy8gy666g	YzAzZDI4Y2ZlZjhkZGJkZmM2ZGQ2YmE0ODUzZWNjZDQzNmY5ZmY4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImExYWZkNjE1MDVkNTIyZDk3YzcyNzczOGQ0YzA3NjgyODc4YWEwYmMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjQzfQ==	2017-06-30 09:43:41.867852+02
-0l59gi3dlsg9ys6e7c3qo5gmmppsl7v0	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-05 14:12:00.337142+02
+r46bwkmqtrr44dufchg6f0xj0k5z4wt6	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-05 16:10:04.069018+02
+on1hou2rjjnef48j89tedfoff2am8sj4	NzBhZGVhODYzYzljZjhhMTRhODhlNTc5ZTNiZjAyMTAyMjZmNzAwNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjVlZjhmMWJlNjYxY2UzNDg3N2VlNTUyYTNlNGE0OGY1OTBlYTc4NDYiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0NyJ9	2017-08-07 11:02:14.592168+02
+ib35fwwp8ivvbdzfn1gbeb17rm69p6r8	NzBhZGVhODYzYzljZjhhMTRhODhlNTc5ZTNiZjAyMTAyMjZmNzAwNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjVlZjhmMWJlNjYxY2UzNDg3N2VlNTUyYTNlNGE0OGY1OTBlYTc4NDYiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0NyJ9	2017-08-07 11:56:30.797284+02
+ei2v3gcziqnlb9wzv9kkoeck7qu88895	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-07 14:39:10.003568+02
+92u6kelzt71du45o8s15f1fosfm9ca7o	NzBhZGVhODYzYzljZjhhMTRhODhlNTc5ZTNiZjAyMTAyMjZmNzAwNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjVlZjhmMWJlNjYxY2UzNDg3N2VlNTUyYTNlNGE0OGY1OTBlYTc4NDYiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0NyJ9	2017-08-07 17:35:22.882088+02
+9tu8le2q2262vc7j8j8g3rh7plz87tyc	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 08:39:02.319812+02
+o3hl83gxdxz7zqjgdjb597k4w7fzw37o	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 10:27:57.130172+02
+yz48u4njyllc3y54oaon310fyzuexpz0	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 13:07:24.63023+02
 \.
 
 
@@ -7402,9 +7452,9 @@ COPY layers_layer (id, title, abstract, "topicCategory", ogc_link, ogc_layer, og
 2923	SWOS FloodReg FR Palavasiens L5 1987	This file contains a flood regulation capacity map for the geographic area and temporal period as identified below. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System)	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	France_Palavasiens:SWOS_FloodReg_FR_Palavasiens_L5_1987	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	10	\N	English	\N	\N	3.54163648325760327	3.97815212905857019	43.8317598781946884	43.4564287065697741	\N	\N	30	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=France_Palavasiens:SWOS_FloodReg_FR_Palavasiens_L5_1987&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_FloodReg_FR_Palavasiens_L5_1987	\N	\N	1986-05-08	1987-10-18	t	SWOS	t	EPSG:900913:	\N	Produced in the framework of SWOS based on Landsat TM satellite data. The result was validated by field data			\N
 53	Wetlands	SWOS Wetlands		/swos/wetlands.geojson	SWOS Wetlands	GeoJSON	f		f					\N	\N		\N	\N	English			-180	180	90	-90			\N	4326	1	English		\N			f	f		Wetlands	\N	\N	\N	\N	f	\N	f	\N	\N			\N	\N
 2555	Water Occurrence Change Intensity (1984-1999 to 2000-2015)	The Occurrence Change Intensity map provides information on where surface water occurrence increased, decreased or remained the same between 1984-1999 and 2000-2015. Both the direction of change and its intensity are documented.\r\n		https://storage.googleapis.com/global-surface-water/maptiles/change/{z}/{x}/{y}.png	Occurrence Change Intensity	XYZ	f	image/png	f					\N	\N		17	\N	English			-180	180	90	-90			\N	4326	17	English		\N	legend/screenshot.4.jpg		f	f		Occurrence Change Intensit		\N	\N	\N	t	2016 EC JRC/Google	f	\N	\N			\N	\N
-3007	Mapbox Satellite	Mapbox Satellite		https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZWJlcmxlIiwiYSI6ImNpZXR1YndyNTAwNGt0Ym0wcW93dmM1bHoifQ.k0_TYhDwtSyGi6hWrJB0ag		XYZ	f		f					\N			\N	\N	English			-180	180	90	-90			\N	4326	\N	English		\N			t	f		Mapbox Satellite		\N	\N	\N	f		f						
 2924	SWOS FloodReg FR Palavasiens L8 2014	This file contains a flood regulation capacity map for the geographic area and temporal period as identified below. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System)	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	France_Palavasiens:SWOS_FloodReg_FR_Palavasiens_L8_2014	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	10	\N	English	\N	\N	3.54163648325760327	3.97815212905857019	43.8317598781946884	43.4564287065697741	\N	\N	30	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=France_Palavasiens:SWOS_FloodReg_FR_Palavasiens_L8_2014&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_FloodReg_FR_Palavasiens_L8_2014	\N	\N	2013-06-03	2014-09-26	t	SWOS	t	EPSG:900913:	\N	Produced in the framework of SWOS based on Landsat OLI satellite data. The result was validated by field data			\N
 2997	SWOS LSTT EG Lake Burullus 2000 2016	This file contains the LST trend spanning from 2000-2016. Negative values mean decreases in LST, which are related to increases in vegetation or water bodies. Possitive LST trend values indicate loss of water, vegetation, or both. The analysis was performed using MOIDS LST data and a seasonal trend model (Forkel et al 2013).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Egypt_Burullus:SWOS_LSTT_EG_Lake_Burullus_2000_2016	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	12	\N	English	\N	\N	30.4484346059411806	31.203688202372426	31.6204727128328962	31.2291383592884131	\N	\N	1000	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Egypt_Burullus:SWOS_LSTT_EG_Lake_Burullus_2000_2016&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LSTT_EG_Lake_Burullus_2000_2016	\N	\N	2000-03-01	2016-12-31	t	SWOS	t	EPSG:900913:	\N	Produced in the framework of SWOS based on MODIS/Terra data and the Greenbrown R package (Forkel et al. 2013)			\N
+3007	Mapbox Satellite	Mapbox Satellite	\N	https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZWJlcmxlIiwiYSI6ImNpZXR1YndyNTAwNGt0Ym0wcW93dmM1bHoifQ.k0_TYhDwtSyGi6hWrJB0ag	\N	XYZ	f	\N	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Mapbox Satellite		\N	\N	\N	f	\N	f	\N					\N
 2998	SWOS LSTT GR Eastern Macedonia 2000 2016	This file contains the LST trend spanning from 2000-2016. Negative values mean decreases in LST, which are related to increases in vegetation or water bodies. Possitive LST trend values indicate loss of water, vegetation, or both. The analysis was performed using MOIDS LST data and a seasonal trend model (Forkel et al 2013).		http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Greece_Eastern-Macedonia:SWOS_LSTT_GR_Eastern_Macedonia_2000_2016	WMTS	f	image/png	f			EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913		12	\N	English			23.9172095875000004	26.380903205100001	41.4132479802999995	40.5752095853000014			1000	4326	\N	English		\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Greece_Eastern-Macedonia:SWOS_LSTT_GR_Eastern_Macedonia_2000_2016&LEGEND_OPTIONS=forceLabels:on	f	f		SWOS_LSTT_GR_Eastern_Macedonia_2000_2016		\N	2000-03-01	2016-12-31	t	SWOS	t	EPSG:900913:		Produced in the framework of SWOS based on MODIS/Terra data and the Greenbrown R package (Forkel et al. 2013)			
 2999	SWOS SWD TF SE Store-Mosse 2015	The Surface Water Dynamics (SWD) products are derived from Synthetic Aperture Radar (SAR) and optical satellite imagery. Only open water bodies (i.e. not overgrown with vegetation) are mapped and are aggregated to three different product categories (identified by different suffices). This file contains a Surface Water Dynamics (SWD) temporal frequency (TF) product, which is an aggregation of single image binary water-non water standard mask (SM) classifications. The TF product displays the submersion frequency relative to the number of valid observations within the observed time frame in percent.	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Sweden_Store-Mosse:SWOS_SWD_TF_SE_Store-Mosse_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	11	\N	English	\N	\N	13.778440036335498	14.1630199092635483	57.4021091272834383	57.183813908873752	\N	\N	20	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Sweden_Store-Mosse:SWOS_SWD_TF_SE_Store-Mosse_2015&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_SWD_TF_SE_Store-Mosse_2015	[{"color": "#9c551f", "size": 52341.56, "percent": 95.72, "label": "0"}, {"color": "#b07137", "size": 45.68, "percent": 0.08, "label": ">0 - 10%"}, {"color": "#c49054", "size": 99.36, "percent": 0.18, "label": ">10 - 20%"}, {"color": "#d9b375", "size": 43.96, "percent": 0.08, "label": ">20 - 30%"}, {"color": "#edd898", "size": 29.0, "percent": 0.05, "label": ">30 - 40%"}, {"color": "#ffffbf", "size": 16.72, "percent": 0.03, "label": ">40 - 50%"}, {"color": "#d4e6b8", "size": 21.6, "percent": 0.03, "label": ">50 - 60%"}, {"color": "#a7c9ad", "size": 21.44, "percent": 0.03, "label": ">60 - 70%"}, {"color": "#7bb0a3", "size": 22.72, "percent": 0.04, "label": ">70 - 80%"}, {"color": "#529a9c", "size": 53.6, "percent": 0.09, "label": ">80 - 90%"}, {"color": "#0084a8", "size": 1981.08, "percent": 3.62, "label": ">90 - 100%"}]	\N	2015-01-01	2015-12-31	t	SWOS; contains Copernicus data	t	EPSG:900913:	\N	Produced in the framework of SWOS based on Sentinel-1 Synthetic Aperture Radar (SAR) satellite data. The product has not yet been validated.			\N
 2932	SWOS SWD TD EG Burullus 2005	This file contains an annual surface water dynamics classification. Possible classes are (1) permanently submersed, (2) temporarily submersed and (3) never submersed. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System)	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Egypt_Burullus:SWOS_SWD_TD_EG_Burullus_2005	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	20	\N	English	\N	\N	30.3370111653171683	31.3346990271586137	31.7367748296531751	31.2262200129455465	\N	\N	\N	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Egypt_Burullus:SWOS_SWD_TD_EG_Burullus_2005&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_SWD_TD_EG_Burullus_2005	[{"color": "#4085EC", "size": 163034.37, "percent": 43.77, "label": "permanently flooded"}, {"color": "#40ECBF", "size": 21080.25, "percent": 5.66, "label": "temporarly flooded"}, {"color": "#F8F89B", "size": 188298.09, "percent": 50.56, "label": "never flooded"}]	\N	2005-01-01	2005-12-31	t	SWOS	t	EPSG:900913:	\N	The result is calibrated and validated with fieldwork data collected in the Burullus area by Eric van Valkengoed (TerraSphere).			\N
@@ -7493,8 +7543,14 @@ COPY layers_layer (id, title, abstract, "topicCategory", ogc_link, ogc_layer, og
 3003	SWOS LSTT IR Hawizeh 2000 2016	This file contains the LST trend spanning from 2000-2016. Negative values mean decreases in LST, which are related to increases in vegetation or water bodies. Possitive LST trend values indicate loss of water, vegetation, or both. The analysis was performed using MOIDS LST data and a seasonal trend model (Forkel et al 2013).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Iraq_Hawizeh:SWOS_LSTT_IR_Hawizeh_2000_2016	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	12	\N	English	\N	\N	47.0919639747161156	48.3249264512569709	32.1413156852579291	30.9714060880701112	\N	\N	1000	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Iraq_Hawizeh:SWOS_LSTT_IR_Hawizeh_2000_2016&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LSTT_IR_Hawizeh_2000_2016	\N	\N	2000-03-01	2016-12-31	t	SWOS	t	EPSG:900913:	\N	Produced in the framework of SWOS based on MODIS/Terra data and the Greenbrown R package (Forkel et al. 2013)			\N
 2986	SWOS PotWet DZ Oued-Sebaou 2015 2016	This file contains a Wetlands Inventory and Delineation model for the geographic area and temporal period as identified below. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System)	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Algeria_Oued-Sebaou:SWOS_PotWet_DZ_Oued-Sebaou_2015_2016	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	10	\N	English	\N	\N	3.69515690370566885	4.55700735519642741	36.9294047457870036	36.4465958205655554	\N	\N	30	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Algeria_Oued-Sebaou:SWOS_PotWet_DZ_Oued-Sebaou_2015_2016&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_PotWet_DZ_Oued-Sebaou_2015_2016	\N	\N	2015-06-30	2016-06-07	t	SWOS	t	EPSG:900913:	\N	Produced in the framework of SWOS based on Landsat OLI and SRTM 1 arc-second DEM data. The result was validated by field data			\N
 2991	SWOS LULC RAMSAR-CLC JO Azraq 2015	This file contains a land cover/land use data set for the geographic area and temporal period as identified below. The land cover/land use classes are conform to the Ramsar-CLC nomenclature. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Jordan_Azraq:SWOS_LULC_RAMSAR-CLC_JO_Azraq_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	15	\N	English	\N	\N	36.2512214738011309	37.1865929013287939	32.3019616200823947	31.189847401504359	\N	\N	30	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Jordan_Azraq:SWOS_LULC_RAMSAR-CLC_JO_Azraq_2015&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LULC_RAMSAR-CLC_JO_Azraq_2015	[{"color": "#960024", "code": "11", "percent": 0.22, "size": 1229.95, "label": "CLC 11: Urban fabric"}, {"color": "#cc0000", "code": "122", "percent": 0.22, "size": 1225.6, "label": "CLC 122: Road and rail networks and associated land"}, {"color": "#e6cce6", "code": "124", "percent": 0.03, "size": 177.48, "label": "CLC 124: Airports"}, {"color": "#ffffd2", "code": "2", "percent": 0.88, "size": 4858.55, "label": "CLC 2: Agricultural areas"}, {"color": "#70a800", "code": "31", "percent": 0.01, "size": 63.44, "label": "CLC 31: Forests"}, {"color": "#d3ffbe", "code": "32", "percent": 0.43, "size": 2395.41, "label": "CLC 32: Shrub and/or herbaceous vegetation association"}, {"color": "#b2b2b2", "code": "33", "percent": 14.19, "size": 78071.85, "label": "CLC 33: Open spaces with little or no vegetation"}, {"color": "#e6e6e6", "code": "331", "percent": 1.16, "size": 6401.03, "label": "CLC 331: Beaches, dunes, and sand plains"}, {"color": "#ccffcc", "code": "333", "percent": 82.75, "size": 455187.65, "label": "CLC 333: Sparsely vegetated areas"}, {"color": "#a6a6ff", "code": "411", "percent": 0.05, "size": 322.55, "label": "CLC 411: Inland marshes"}, {"color": "#586afd", "code": "4111", "percent": 0.0, "size": 34.46, "label": "CLC 4111: Reedbeds and high helophytes"}, {"color": "#80f2e6", "code": "512", "percent": 0.01, "size": 60.38, "label": "CLC 512: Inland water bodies"}]	\N	2015-06-01	2015-06-01	t	SWOS	t	EPSG:900913:	\N	Produced in the framework of SWOS based on Landsat 8 OLI satellite data.			\N
-2959	SWOS LULC MAES ES Fuente-de-Piedra 2015	This file contains a land cover/land use data set for the geographic area and temporal period as identified below. The land cover/land use classes are conform to the MAES nomenclature. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Spain_Fuente-de-Piedra:SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	13	\N	English	\N	\N	-4.86414687837999971	-4.63263837238999976	37.1950385556000001	37.0471053922999971	\N	\N	20	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Spain_Fuente-de-Piedra:SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	[{"color": "#ff4242", "code": "1", "percent": 4.4, "size": 830.29, "label": "1 Urban"}, {"color": "#ffffa8", "code": "21", "percent": 26.51, "size": 4993.85, "label": "2.1 Arable land"}, {"color": "#f2cb7f", "code": "22", "percent": 55.64, "size": 10481.52, "label": "2.2 Permanent crops"}, {"color": "#00a600", "code": "32", "percent": 2.23, "size": 421.75, "label": "3.2 Coniferous forest"}, {"color": "#a6e64d", "code": "52", "percent": 4.29, "size": 808.49, "label": "5.2 Sclerophyllous vegetation"}, {"color": "#8686c2", "code": "712", "percent": 6.76, "size": 1274.68, "label": "7.1.2 Inland saline marshes"}, {"color": "#153357", "code": "922", "percent": 0.13, "size": 25.58, "label": "9.2.2 Man made water bodies"}]	\N	2015-08-01	2016-03-31	t	SWOS; contains Copernicus data	t	EPSG:900913:		Produced in the framework of SWOS based on Sentinel 2 satellite data. The result was validated by local experts.			\N
 2963	SWOS LULC Ramsar-CLC ES Fuente-de-Piedra 2015	This file contains a land cover/land use data set for the geographic area and temporal period as identified below. The land cover/land use classes are conform to the Ramsar-CLC nomenclature. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Spain_Fuente-de-Piedra:SWOS_LULC_Ramsar-CLC_ES_Fuente-de-Piedra_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	13	\N	English	\N	\N	-4.86414687837999971	-4.63263837238999976	37.1950385556000001	37.0471053922999971	\N	\N	20	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Spain_Fuente-de-Piedra:SWOS_LULC_Ramsar-CLC_ES_Fuente-de-Piedra_2015&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LULC_Ramsar-CLC_ES_Fuente-de-Piedra_2015	[{"color": "#e600a9", "code": "1", "percent": 4.4, "size": 830.29, "label": "CLC 1: Artificial surfaces"}, {"color": "#ffff73", "code": "21", "percent": 26.51, "size": 4993.85, "label": "CLC 21: Arable land"}, {"color": "#eb5500", "code": "22", "percent": 55.64, "size": 10481.52, "label": "CLC 22: Permanent crops"}, {"color": "#00a600", "code": "312", "percent": 2.23, "size": 421.75, "label": "CLC 312: Coniferous forest"}, {"color": "#a6e64d", "code": "323", "percent": 4.29, "size": 808.49, "label": "CLC 323: Sclerophyllous vegetation"}, {"color": "#5767f8", "code": "4115", "percent": 6.76, "size": 1274.68, "label": "CLC 4115: Seasonal/intermittent saline/brackish/alkaline marshes/pools"}, {"color": "#277faa", "code": "5130", "percent": 0.13, "size": 25.58, "label": "CLC 5130: Ponds; includes farm ponds, stock ponds, small tanks; (generally below 8 ha)"}]	\N	2015-08-01	2016-03-31	t	SWOS; contains Copernicus data	t	EPSG:900913:		Produced in the framework of SWOS based on Sentinel 2 satellite data. The result was validated by local experts.			\N
+3008	OpenStreetMap	OpenStreetMap	\N	\N	\N	OSM	f	\N	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	OpenStreetMap		\N	\N	\N	f	(https://www.openstreetmap.org/copyright, OpenStreetMap contributors)	f	\N					\N
+3009	Stamen Terrain	Orient yourself with our terrain maps, featuring hill shading and natural vegetation colors. These maps showcase advanced labeling and linework generalization of dual-carriageway roads. Terrain was developed in collaboration with Gem Spear and Nelson Minar.	\N	http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg	\N	XYZ	f	\N	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Stamen Terrain		\N	\N	\N	f	Map tiles by (http://stamen.com, Stamen Design), under (http://creativecommons.org/licenses/by/3.0, CC BY 3.0). Data by (http://openstreetmap.org, OpenStreetMap), under (http://www.openstreetmap.org/copyright, ODbL).	f	\N					\N
+3013	Sentinel Hub Sentinel-2 False Color	Sentinel Hub Sentinel-2 False Color	\N	http://services.sentinel-hub.com/v1/wms/9f0d0615-2f4c-4125-9cc1-fb196d3db9d6	S2.DATE,COLOR_INFRARED	WMS	f	image/png	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Sentinel Hub Sentinel-2 COLOR_INFRARED		\N	\N	\N	t	Sentinel Hub Services	f	\N	2015-08-18				\N
+3012	Sentinel Hub Sentinel-2 MOISTURE_INDEX	Sentinel Hub Sentinel-2 MOISTURE_INDEX	\N	http://services.sentinel-hub.com/v1/wms/9f0d0615-2f4c-4125-9cc1-fb196d3db9d6	S2.DATE,MOISTURE_INDEX	WMS	f	image/png	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Sentinel Hub Sentinel-2 MOISTURE_INDEX		\N	\N	\N	t	Sentinel Hub Services	f	\N	2015-08-18				\N
+3010	Sentinel Hub Sentinel-2 Natural Colors	Sentinel Hub Sentinel-2 Natural Colors	\N	http://services.sentinel-hub.com/v1/wms/9f0d0615-2f4c-4125-9cc1-fb196d3db9d6	S2.DATE,TRUE_COLOR	WMS	f	image/png	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Sentinel Hub Sentinel-2 Natural Colors		\N	\N	\N	t	Sentinel Hub Services	f	\N	2015-08-18				\N
+3011	Sentinel Hub Sentinel-2 NDVI	Sentinel Hub Sentinel-2 NDVI	\N	http://services.sentinel-hub.com/v1/wms/9f0d0615-2f4c-4125-9cc1-fb196d3db9d6	S2.DATE,NDVI	WMS	f	image/png	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Sentinel Hub Sentinel-2 NDVI		\N	\N	\N	t	Sentinel Hub Services	f	\N	2015-08-18				\N
+2959	SWOS LULC MAES ES Fuente-de-Piedra 2015	This file contains a land cover/land use data set for the geographic area and temporal period as identified below. The land cover/land use classes are conform to the MAES nomenclature. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Spain_Fuente-de-Piedra:SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	13	\N	English	\N	\N	-4.86414687837999971	-4.63263837238999976	37.1950385556000001	37.0471053922999971	\N	\N	20	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Spain_Fuente-de-Piedra:SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	[{"color": "#ff4242", "code": "1", "percent": 4.4, "size": 830.29, "label": "1 Urban"}, {"color": "#ffffa8", "code": "21", "percent": 26.51, "size": 4993.85, "label": "2.1 Arable land"}, {"color": "#f2cb7f", "code": "22", "percent": 55.64, "size": 10481.52, "label": "2.2 Permanent crops"}, {"color": "#00a600", "code": "32", "percent": 2.23, "size": 421.75, "label": "3.2 Coniferous forest"}, {"color": "#a6e64d", "code": "52", "percent": 4.29, "size": 808.49, "label": "5.2 Sclerophyllous vegetation"}, {"color": "#8686c2", "code": "712", "percent": 6.76, "size": 1274.68, "label": "7.1.2 Inland saline marshes"}, {"color": "#153357", "code": "922", "percent": 0.13, "size": 25.58, "label": "9.2.2 Man made water bodies"}]	\N	2015-08-01	2016-03-31	t	SWOS; contains Copernicus data	t	EPSG:900913:		Produced in the framework of SWOS based on Sentinel 2 satellite data. The result was validated by local experts.			\N
 \.
 
 
@@ -7550,7 +7606,7 @@ COPY layers_layergroupinline (id, "order", layergroup_id, mapviewer_id) FROM std
 23	2	9	4
 21	3	9	1
 24	3	9	5
-25	3	9	6
+25	5	9	6
 \.
 
 
@@ -7600,6 +7656,8 @@ COPY mapviewer_layerbaseinline (id, "order", title, baselayer_id, mapviewer_id) 
 22	0	Mapbox Satellite	3007	5
 23	0	Google Maps	48	6
 24	1	Mapbox Satellite	3007	6
+25	2	OpenStreetMap	3008	6
+26	3	Stamen Terrain	3009	6
 \.
 
 
@@ -7609,8 +7667,8 @@ COPY mapviewer_layerbaseinline (id, "order", title, baselayer_id, mapviewer_id) 
 
 COPY mapviewer_mapviewer (id, title, template_file, auth_registration, search_url_id, addexternallayer, center_lat, center_lon, center_proj, map_proj, map_resolutions, zoom_min, zoom_max, zoom_init, auth_perm, download_perm, time_slider, time_slider_start, time_slider_end, time_slider_interval, time_slider_dates, html_info, html_footer) FROM stdin;
 3	Arbis	/home/sibessc/workspace/swos/framework8/templates/mapviewer/arbis.html	f	1	t	31.8000000000000007	36.7999999999999972	EPSG:4326	EPSG:3857		0	28	10	f	f	f	1989-01-01 16:18:15+01	2015-02-01 16:18:16+01	year		HTML Infotext	Footer
-4	GEOSS Widget Test	/home/sibessc/workspace/swos/framework8/templates/mapviewer/geoss.html	t	2	t	44	26	EPSG:4326	EPSG:3857	156543.03390625 78271.516953125 39135.7584765625 19567.87923828125 9783.939619140625 4891.9698095703125 2445.9849047851562 1222.9924523925781 611.4962261962891 305.74811309814453 152.87405654907226 76.43702827453613 38.218514137268066 19.109257068634033 9.554628534317017 4.777314267158508 2.388657133579254 1.194328566789627 0.5971642833948135 0.29858214169740677 0.14929107084870338 0.07464553542435169 0.037322767712175846 0.018661383856087923 0.009330691928043961 0.004665345964021981 0.0023326729820109904 0.0011663364910054952 5.831682455027476E-4 2.915841227513738E-4 1.457920613756869E-4	0	19	4	f	t	f	1989-01-01 16:18:15+01	2015-02-01 16:18:16+01	year		<a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo.png" border="0"><br/>www.swos-service.eu</a>\r\n\r\n<strong>Point of contact</strong>\r\nFriedrich-Schiller-University Jena\r\nInstitute for Geography\r\nDepartment for Earth Observation\r\nLoebdergraben 32\r\n07745 Jena, Germany\r\n\r\nJonas Eberle\r\nEmail: <a href="mailto:jonas.eberle@uni-jena.de">jonas.eberle@uni-jena.de</a>\r\nPhone: +49 3641 948889\r\nWebsite: <a href="http://www.eo.uni-jena.de" target="_blank">www.eo.uni-jena.de</a>\r\n\r\n<strong>Funding</strong>\r\n<img src="http://www.swos-service.eu/eu.png" alt="EU Logo" align="left" style="margin-right: 10px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.	Footer
 5	SWOS Test	/home/sibessc/workspace/swos/valtool/framework/templates/mapviewer/viewer.20161204.html	t	2	t	44	26	EPSG:4326	EPSG:3857	156543.03390625 78271.516953125 39135.7584765625 19567.87923828125 9783.939619140625 4891.9698095703125 2445.9849047851562 1222.9924523925781 611.4962261962891 305.74811309814453 152.87405654907226 76.43702827453613 38.218514137268066 19.109257068634033 9.554628534317017 4.777314267158508 2.388657133579254 1.194328566789627 0.5971642833948135 0.29858214169740677 0.14929107084870338 0.07464553542435169 0.037322767712175846 0.018661383856087923 0.009330691928043961 0.004665345964021981 0.0023326729820109904 0.0011663364910054952 5.831682455027476E-4 2.915841227513738E-4 1.457920613756869E-4	0	19	4	f	t	f	1989-01-01 16:18:15+01	2015-02-01 16:18:16+01	year		<a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo.png" border="0" style="width:100%"><br/>www.swos-service.eu</a>\r\n\r\n<strong>Point of contact</strong>\r\nFriedrich-Schiller-University Jena\r\nInstitute for Geography\r\nDepartment for Earth Observation\r\nLoebdergraben 32\r\n07745 Jena, Germany\r\n\r\nJonas Eberle\r\nEmail: <a href="mailto:jonas.eberle@uni-jena.de">jonas.eberle@uni-jena.de</a>\r\nPhone: +49 3641 948889\r\nWebsite: <a href="http://www.eo.uni-jena.de" target="_blank">www.eo.uni-jena.de</a>\r\n\r\n<strong>Funding</strong>\r\n<img src="http://www.swos-service.eu/eu.png" alt="EU Logo" align="left" style="margin-right: 10px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.	Footer
+4	GEOSS Widget Test	/home/sibessc/workspace/swos/valtool/framework/templates/mapviewer/geoss.html	t	2	t	44	26	EPSG:4326	EPSG:3857	156543.03390625 78271.516953125 39135.7584765625 19567.87923828125 9783.939619140625 4891.9698095703125 2445.9849047851562 1222.9924523925781 611.4962261962891 305.74811309814453 152.87405654907226 76.43702827453613 38.218514137268066 19.109257068634033 9.554628534317017 4.777314267158508 2.388657133579254 1.194328566789627 0.5971642833948135 0.29858214169740677 0.14929107084870338 0.07464553542435169 0.037322767712175846 0.018661383856087923 0.009330691928043961 0.004665345964021981 0.0023326729820109904 0.0011663364910054952 5.831682455027476E-4 2.915841227513738E-4 1.457920613756869E-4	0	19	4	f	t	f	1989-01-01 16:18:15+01	2015-02-01 16:18:16+01	year		<a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo.png" border="0"><br/>www.swos-service.eu</a>\r\n\r\n<strong>Point of contact</strong>\r\nFriedrich-Schiller-University Jena\r\nInstitute for Geography\r\nDepartment for Earth Observation\r\nLoebdergraben 32\r\n07745 Jena, Germany\r\n\r\nJonas Eberle\r\nEmail: <a href="mailto:jonas.eberle@uni-jena.de">jonas.eberle@uni-jena.de</a>\r\nPhone: +49 3641 948889\r\nWebsite: <a href="http://www.eo.uni-jena.de" target="_blank">www.eo.uni-jena.de</a>\r\n\r\n<strong>Funding</strong>\r\n<img src="http://www.swos-service.eu/eu.png" alt="EU Logo" align="left" style="margin-right: 10px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.	Footer
 1	SWOS	/home/sibessc/workspace/swos/valtool/framework/templates/mapviewer/viewer.20161204.html	t	2	t	44	26	EPSG:4326	EPSG:3857	156543.03390625 78271.516953125 39135.7584765625 19567.87923828125 9783.939619140625 4891.9698095703125 2445.9849047851562 1222.9924523925781 611.4962261962891 305.74811309814453 152.87405654907226 76.43702827453613 38.218514137268066 19.109257068634033 9.554628534317017 4.777314267158508 2.388657133579254 1.194328566789627 0.5971642833948135 0.29858214169740677 0.14929107084870338 0.07464553542435169 0.037322767712175846 0.018661383856087923 0.009330691928043961 0.004665345964021981 0.0023326729820109904 0.0011663364910054952 5.831682455027476E-4 2.915841227513738E-4 1.457920613756869E-4	0	19	4	f	t	f	1989-01-01 16:18:15+01	2015-02-01 16:18:16+01	year		<a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo.png" border="0" style="width:100%"><br/>www.swos-service.eu</a>\r\n\r\n<strong>Point of contact</strong>\r\nFriedrich-Schiller-University Jena\r\nInstitute for Geography\r\nDepartment for Earth Observation\r\nLoebdergraben 32\r\n07745 Jena, Germany\r\n\r\nJonas Eberle\r\nEmail: <a href="mailto:jonas.eberle@uni-jena.de">jonas.eberle@uni-jena.de</a>\r\nPhone: +49 3641 948889\r\nWebsite: <a href="http://www.eo.uni-jena.de" target="_blank">www.eo.uni-jena.de</a>\r\n\r\n<strong>Funding</strong>\r\n<img src="http://www.swos-service.eu/eu.png" alt="EU Logo" align="left" style="margin-right: 10px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.	Footer
 6	Validation	/home/sibessc/workspace/swos/valtool/framework/templates/mapviewer/validation.html	f	2	t	44	26	EPSG:4326	EPSG:3857	156543.03390625 78271.516953125 39135.7584765625 19567.87923828125 9783.939619140625 4891.9698095703125 2445.9849047851562 1222.9924523925781 611.4962261962891 305.74811309814453 152.87405654907226 76.43702827453613 38.218514137268066 19.109257068634033 9.554628534317017 4.777314267158508 2.388657133579254 1.194328566789627 0.5971642833948135 0.29858214169740677 0.14929107084870338 0.07464553542435169 0.037322767712175846 0.018661383856087923 0.009330691928043961 0.004665345964021981 0.0023326729820109904 0.0011663364910054952 5.831682455027476E-4 2.915841227513738E-4 1.457920613756869E-4	0	19	4	t	t	f	1989-01-01 16:18:15+01	2015-02-01 16:18:16+01	year		<a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo.png" border="0" style="width:100%"><br/>www.swos-service.eu</a>\r\n\r\n<strong>Point of contact</strong>\r\nFriedrich-Schiller-University Jena\r\nInstitute for Geography\r\nDepartment for Earth Observation\r\nLoebdergraben 32\r\n07745 Jena, Germany\r\n\r\nJonas Eberle\r\nEmail: <a href="mailto:jonas.eberle@uni-jena.de">jonas.eberle@uni-jena.de</a>\r\nPhone: +49 3641 948889\r\nWebsite: <a href="http://www.eo.uni-jena.de" target="_blank">www.eo.uni-jena.de</a>\r\n\r\n<strong>Funding</strong>\r\n<img src="http://www.swos-service.eu/eu.png" alt="EU Logo" align="left" style="margin-right: 10px;">This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.	Footer
 \.
@@ -7921,29 +7979,30 @@ COPY swos_country (id, name, continent) FROM stdin;
 -- Data for Name: swos_externaldatabase; Type: TABLE DATA; Schema: public; Owner: swos
 --
 
-COPY swos_externaldatabase (id, name, online_link, description, provided_information, dataset_language, wetland_id, continent) FROM stdin;
-1	Global Surface Water	https://global-surface-water.appspot.com/	The European Commission's Joint Research Centre developed this new water dataset in the framework of the Copernicus Programme. This maps the location and temporal distribution of water surfaces at the global scale over the past 32 years and provides statistics on the extent and change of those water surfaces. The dataset, produced from Landsat imagery (courtesy USGS and NASA), will support applications including water resource management, climate modelling, biodiversity conservation and food security.	It provides  in addition to the maps temporal profile charts for a location. 	en	\N	Global
-2	Parc naturel régional de Camargue	http://www.parc-camargue.fr/	Camargue Regional Natural Park website		fr	4	
-3	 SNPN (National Society for Nature Protection) - Camargue	http://www.reserve-camargue.org	This presentation of the Reserve gives an overview of its organisation, its history, its staff, its management plan as well as access to scientific data and selections from its Geographic Information System.		en	4	
-4	Languedoc-Roussillon Conservatory of Natural Areas (CEN LR) 	http://www.cenlr.org/	CEN LR is a member of the National Federation of Conservatories of Natural Areas, which includes 29 regional and departmental Conservatories. It brings together scientists, naturalists of diverse skills, nature lovers and anyone interested in preserving the natural wealth of the region.	This site presents the main activities of the conservatory.	en	\N	
-5	Eaufrance	http://www.eaufrance.fr/	The waterfrance portal is the single point of access to all information and public data relating to water and aquatic environments.		fr	\N	
-6	Ramsar Sites Information Service	https://rsis.ramsar.org	The Ramsar Sites Information Service (RSIS) provides online information on wetlands that have been designated as internationally important.\r\n	It provides a searchable database of Ramsar Sites, which holds information on the wetland types, ecology, land uses, threats, hydrological values of each Site as well as spatial information downloadable copies of Ramsar Information Sheets (RISs) for each site which have been provided by the Contracting Parties , including maps and supplementary information, Site summaries, and exportable data sets;digital (GIS) boundaries of Sites, where available.\r\n	en	\N	Global
-7	Biodiversity Information System for Europe (BISE) 	http://biodiversity.europa.eu/\r\n	The Biodiversity Information System for Europe (BISE) is a single entry point for data and information on biodiversity supporting the implementation of the EU strategy and the Aichi targets in Europe\r\n	It provides information at the European level in relation to the EU 2020 Biodiversity targets as well as under five entry points: Policy: policy, legislation and supporting activities related to the Common Implementation Framework of the EU strategy, pan- European and global policies; Topics: state of species, habitats, ecosystems, genetic diversity, threats to biodiversity, impacts of biodiversity loss, evaluation of policy responses;  Data: data sources, statistics and maps related to land, water, soil, air, marine, agriculture, forestry, fisheries, tourism, energy, land use, transport; Research: important EU-wide research projects related to biodiversity and ecosystem services, improving the science-policy interface; Countries: links to information available from European countries and to the Biodiversity fact sheets for EU Member States; Networks: links to Europe- wide networks supporting information sharing across national borders\r\n	en	\N	Europe
-8	World Database on Protected Areas	https://protectedplanet.net	Protected Planet is the most up to date and complete source of information on protected areas, updated monthly with submissions from governments, non-governmental organizations, landowners and communities. It is managed by the United Nations Environment Programme's World Conservation Monitoring Centre (UNEP-WCMC) with support from IUCN and its World Commission on Protected Areas (WCPA).	It is a publicly available online platform where users can discover terrestrial and marine protected areas, access related statistics and download data from the World Database on Protected Areas (WDPA).	en	\N	Global
-9	Copernicus Core003 View Services	http://cidportal.jrc.ec.europa.eu/home/data-services/copernicus-core003-view	The Copernicus Core003 dataset is a pan-European optical Very High Resolution coverage, with 2.5 m resolution. The Copernicus Space Component Data Access Portfolio - Data Warehouse 2011-2014 document provides some more details about this dataset. The specific license conditions defined in this document permit the use of the Core003 dataset via view services by any natural or legal person "for non-commercial activities". Based on this licensing terms and conditions JRC is providing public view services for the Core003 coverage.	The source data are based mainly on Spot-5 scenes, with additional Spot-6 scenes over northern Europe, provided by Astrium/Airbus DS. The original Spot-5 data allow only a display in false-color band combination due to the missing blue band. For the usage inside a public view services however a natural-color-like display is strongly preferred. JRC processed the Core003 source data and created a seamless mosaic with a natural-color display, calculating a the blue band based on the available bands. A cloud-free optimization and histogram equalization were applied for best visual impression in a view service.	en	\N	Europe
-10	Water Information System for Europe (WISE)	http://water.europa.eu/\r\n	WISE (Water Information System for Europe) is your gateway to information on European water issues. It comprises a wide range of of data and information collected by EU institutions to serve several stakeholders\r\n		en	\N	Global
-11	eurostat - Land cover / use statistics (LUCAS)	http://ec.europa.eu/eurostat/web/lucas/\r\n	The LUCAS in-situ survey provides information on land cover, land use as well as on environmental parameters associated to the single surveyed points. A point and landscape photo archive is also part of the information disseminated.\r\n		en	\N	Europe
-12	Biodiversity Indicators Dashboard	http://dashboard.natureserve.org/\r\n	The Biodiversity Indicators Dashboard displays trends in biodiversity, ecosystem services, threats, and conservation actions. NatureServe is the primary organization responsible for the development and maintenance.\r\n		en	\N	Global
-13	BirdLife International - Data Zone	http://datazone.birdlife.org/\r\n	BirdLife Data Zone provides information, maps and reports on the status of all 10,000 of the world's bird species. \r\n		en	\N	Global
-14	GEO BON - Group on Earth Observations Biodiversity Observation Network	http://geobon.org/\r\n	GEO BON ( Group on Earth Observations Biodiversity Observation Network) mission is to improve the acquisition, coordination and delivery of biodiversity observations and related services to users including decision makers and the scientific community.\r\n	The Essential Biodiversity Variables (EBV) data portal provides provide access to the biodiversity data generated from these GEO BON network.\r\n	en	\N	Global
-15	Freshwater Information Platform	http://www.freshwaterplatform.eu/\r\n	The Global Freshwater Biodiversity Information Platform — bringing together information and data on freshwater biodiversity in a clearly arranged and easily explorable way.\r\n	The data portal offers searches for: Information on datasets (metadata): search for datasets covering a specific environment, geographical area or organism group, or containing a specific keyword; Information on species: search species within an organism group, a particular genus or faunistic region and view synonyms, distribution information and conservation status; Species occurrence data: visualise and download species observations or specimens point data available through the GBIF and Freshwater Biodiversity Data Portal/BioFresh network.\r\n	en	\N	Europe
-16	Australian Wetlands Database	http://www.environment.gov.au/water/wetlands/\r\n	The Australian Wetlands Database for Australia's wetlands.\r\n	This database provides online access to information on Australia's Ramsar wetlands and sites listed in the Directory of Important Wetlands of Australia, our internationally and nationally important wetlands respectively.\r\n	en	\N	
-18	European Union Open Data Portal	https://data.europa.eu/euodp/en/data/\r\n	The European Union Open Data Portal is the single point of access to a growing range of data from the institutions and other bodies of the European Union (EU). Data are free for you to use and reuse for commercial or non-commercial purposes.\r\n	The portal provides a metadata catalogue giving access to data from the institutions and other bodies of the EU. To facilitate reuse, these metadata are based on common encoding rules and standardized vocabularies.\r\n	en	\N	Europe
-19	Copernicus  (service line land)	http://land.copernicus.eu/\r\n	Copernicus is an European system for monitoring the Earth. Data is collected by different sources, including Earth observation satellites and in-situ sensors. \r\n	The data is processed and provides reliable and up-to-date information about six thematic areas: land, marine, atmosphere, climate change, emergency management and security. The land theme is divided into four main components: Global (series of bio-geophysical products on the status and evolution of land surface at global scale at mid and low spatial resolution.), Pan-European (provides information about the land cover and land use (LC/LU), land cover and land use changes and land cover chrarcteristics), Local (provide specific and more detailed information that is complementary to the information obtained through the Pan-European component) and Reference data (all services need access to in-situ data in order to ensure an efficiant and effective use of Copernicus space-borne data)\r\n	en	\N	Global
-20	Global Biodiversity Information Facility (GBIF) 	http://www.gbif.org/\r\n	The Global Biodiversity Information Facility (GBIF) is an international open data infrastructure, funded by governments.\r\n	It provides a single point of access (through this portal and its web services) to hundreds of millions of records, shared freely by hundreds of institutions worldwide, making it the biggest biodiversity database on the Internet.\r\n	en	\N	Global
-17	US National Wetlands Inventory (NWI) 	https://www.fws.gov/wetlands\r\n	The US FWS National Wetlands Inventory (NWI) is a publically available resource that provides detailed information on the abundance, characteristics, and distribution of US wetlands.\r\n	The Wetlands Mapper delivers an easy-to-use map-like view of America’s wetland resources. It spatially integrates NWI data with additional natural resource information and political boundaries to produce a robust decision support tool.\r\n	en	\N	
-21	Copernicus Land Service High Resolution Layers	http://land.copernicus.eu/pan-european/high-resolution-layers	Pan-European High Resolution Layers (HRL) provide information on specific land cover characteristics, and are complementary to land cover / land use mapping such as in the CORINE land cover (CLC) datasets. The HRLs are produced from 20 m resolution satellite imagery through a combination of automatic processing and interactive rule based classification.		en	\N	Europe
-22	RAMSAR Site Information Service	http://rsis.ramsar.org	The Ramsar Sites Information Service (RSIS) provides online information on wetlands that have been designated as internationally important. All Site information is provided by the Contracting Parties to the Convention and is managed by the Ramsar Secretariat. Responsibility for the accuracy of the data lies with the Administrative Authority of the Party in which the Ramsar Site is located.		en	\N	Global
+COPY swos_externaldatabase (id, name, online_link, description, provided_information, dataset_language, wetland_id, continent, geoss_datasource_id, shortname) FROM stdin;
+2	Parc naturel régional de Camargue	http://www.parc-camargue.fr/	Camargue Regional Natural Park website		fr	4		\N	SHORT
+3	 SNPN (National Society for Nature Protection) - Camargue	http://www.reserve-camargue.org	This presentation of the Reserve gives an overview of its organisation, its history, its staff, its management plan as well as access to scientific data and selections from its Geographic Information System.		en	4		\N	SHORT
+4	Languedoc-Roussillon Conservatory of Natural Areas (CEN LR) 	http://www.cenlr.org/	CEN LR is a member of the National Federation of Conservatories of Natural Areas, which includes 29 regional and departmental Conservatories. It brings together scientists, naturalists of diverse skills, nature lovers and anyone interested in preserving the natural wealth of the region.	This site presents the main activities of the conservatory.	en	\N		\N	SHORT
+5	Eaufrance	http://www.eaufrance.fr/	The waterfrance portal is the single point of access to all information and public data relating to water and aquatic environments.		fr	\N		\N	SHORT
+7	Biodiversity Information System for Europe (BISE) 	http://biodiversity.europa.eu/\r\n	The Biodiversity Information System for Europe (BISE) is a single entry point for data and information on biodiversity supporting the implementation of the EU strategy and the Aichi targets in Europe\r\n	It provides information at the European level in relation to the EU 2020 Biodiversity targets as well as under five entry points: Policy: policy, legislation and supporting activities related to the Common Implementation Framework of the EU strategy, pan- European and global policies; Topics: state of species, habitats, ecosystems, genetic diversity, threats to biodiversity, impacts of biodiversity loss, evaluation of policy responses;  Data: data sources, statistics and maps related to land, water, soil, air, marine, agriculture, forestry, fisheries, tourism, energy, land use, transport; Research: important EU-wide research projects related to biodiversity and ecosystem services, improving the science-policy interface; Countries: links to information available from European countries and to the Biodiversity fact sheets for EU Member States; Networks: links to Europe- wide networks supporting information sharing across national borders\r\n	en	\N	Europe	\N	SHORT
+8	World Database on Protected Areas	https://protectedplanet.net	Protected Planet is the most up to date and complete source of information on protected areas, updated monthly with submissions from governments, non-governmental organizations, landowners and communities. It is managed by the United Nations Environment Programme's World Conservation Monitoring Centre (UNEP-WCMC) with support from IUCN and its World Commission on Protected Areas (WCPA).	It is a publicly available online platform where users can discover terrestrial and marine protected areas, access related statistics and download data from the World Database on Protected Areas (WDPA).	en	\N	Global	\N	SHORT
+9	Copernicus Core003 View Services	http://cidportal.jrc.ec.europa.eu/home/data-services/copernicus-core003-view	The Copernicus Core003 dataset is a pan-European optical Very High Resolution coverage, with 2.5 m resolution. The Copernicus Space Component Data Access Portfolio - Data Warehouse 2011-2014 document provides some more details about this dataset. The specific license conditions defined in this document permit the use of the Core003 dataset via view services by any natural or legal person "for non-commercial activities". Based on this licensing terms and conditions JRC is providing public view services for the Core003 coverage.	The source data are based mainly on Spot-5 scenes, with additional Spot-6 scenes over northern Europe, provided by Astrium/Airbus DS. The original Spot-5 data allow only a display in false-color band combination due to the missing blue band. For the usage inside a public view services however a natural-color-like display is strongly preferred. JRC processed the Core003 source data and created a seamless mosaic with a natural-color display, calculating a the blue band based on the available bands. A cloud-free optimization and histogram equalization were applied for best visual impression in a view service.	en	\N	Europe	\N	SHORT
+10	Water Information System for Europe (WISE)	http://water.europa.eu/\r\n	WISE (Water Information System for Europe) is your gateway to information on European water issues. It comprises a wide range of of data and information collected by EU institutions to serve several stakeholders\r\n		en	\N	Global	\N	SHORT
+11	eurostat - Land cover / use statistics (LUCAS)	http://ec.europa.eu/eurostat/web/lucas/\r\n	The LUCAS in-situ survey provides information on land cover, land use as well as on environmental parameters associated to the single surveyed points. A point and landscape photo archive is also part of the information disseminated.\r\n		en	\N	Europe	\N	SHORT
+12	Biodiversity Indicators Dashboard	http://dashboard.natureserve.org/\r\n	The Biodiversity Indicators Dashboard displays trends in biodiversity, ecosystem services, threats, and conservation actions. NatureServe is the primary organization responsible for the development and maintenance.\r\n		en	\N	Global	\N	SHORT
+13	BirdLife International - Data Zone	http://datazone.birdlife.org/\r\n	BirdLife Data Zone provides information, maps and reports on the status of all 10,000 of the world's bird species. \r\n		en	\N	Global	\N	SHORT
+14	GEO BON - Group on Earth Observations Biodiversity Observation Network	http://geobon.org/\r\n	GEO BON ( Group on Earth Observations Biodiversity Observation Network) mission is to improve the acquisition, coordination and delivery of biodiversity observations and related services to users including decision makers and the scientific community.\r\n	The Essential Biodiversity Variables (EBV) data portal provides provide access to the biodiversity data generated from these GEO BON network.\r\n	en	\N	Global	\N	SHORT
+6	Ramsar Sites Information Service	https://rsis.ramsar.org	The Ramsar Sites Information Service (RSIS) provides online information on wetlands that have been designated as internationally important.	It provides a searchable database of Ramsar Sites, which holds information on the wetland types, ecology, land uses, threats, hydrological values of each Site as well as spatial information downloadable copies of Ramsar Information Sheets (RISs) for each site which have been provided by the Contracting Parties , including maps and supplementary information, Site summaries, and exportable data sets;digital (GIS) boundaries of Sites, where available.	en	\N	Global	\N	RAMSAR
+15	Freshwater Information Platform	http://www.freshwaterplatform.eu/\r\n	The Global Freshwater Biodiversity Information Platform — bringing together information and data on freshwater biodiversity in a clearly arranged and easily explorable way.\r\n	The data portal offers searches for: Information on datasets (metadata): search for datasets covering a specific environment, geographical area or organism group, or containing a specific keyword; Information on species: search species within an organism group, a particular genus or faunistic region and view synonyms, distribution information and conservation status; Species occurrence data: visualise and download species observations or specimens point data available through the GBIF and Freshwater Biodiversity Data Portal/BioFresh network.\r\n	en	\N	Europe	\N	SHORT
+16	Australian Wetlands Database	http://www.environment.gov.au/water/wetlands/\r\n	The Australian Wetlands Database for Australia's wetlands.\r\n	This database provides online access to information on Australia's Ramsar wetlands and sites listed in the Directory of Important Wetlands of Australia, our internationally and nationally important wetlands respectively.\r\n	en	\N		\N	SHORT
+18	European Union Open Data Portal	https://data.europa.eu/euodp/en/data/\r\n	The European Union Open Data Portal is the single point of access to a growing range of data from the institutions and other bodies of the European Union (EU). Data are free for you to use and reuse for commercial or non-commercial purposes.\r\n	The portal provides a metadata catalogue giving access to data from the institutions and other bodies of the EU. To facilitate reuse, these metadata are based on common encoding rules and standardized vocabularies.\r\n	en	\N	Europe	\N	SHORT
+19	Copernicus  (service line land)	http://land.copernicus.eu/\r\n	Copernicus is an European system for monitoring the Earth. Data is collected by different sources, including Earth observation satellites and in-situ sensors. \r\n	The data is processed and provides reliable and up-to-date information about six thematic areas: land, marine, atmosphere, climate change, emergency management and security. The land theme is divided into four main components: Global (series of bio-geophysical products on the status and evolution of land surface at global scale at mid and low spatial resolution.), Pan-European (provides information about the land cover and land use (LC/LU), land cover and land use changes and land cover chrarcteristics), Local (provide specific and more detailed information that is complementary to the information obtained through the Pan-European component) and Reference data (all services need access to in-situ data in order to ensure an efficiant and effective use of Copernicus space-borne data)\r\n	en	\N	Global	\N	SHORT
+17	US National Wetlands Inventory (NWI) 	https://www.fws.gov/wetlands\r\n	The US FWS National Wetlands Inventory (NWI) is a publically available resource that provides detailed information on the abundance, characteristics, and distribution of US wetlands.\r\n	The Wetlands Mapper delivers an easy-to-use map-like view of America’s wetland resources. It spatially integrates NWI data with additional natural resource information and political boundaries to produce a robust decision support tool.\r\n	en	\N		\N	SHORT
+23	Sentinel Hub Services	http://www.sentinel-hub.com/	Sentinel Hub Online Services		en	\N	Global	\N	Sentinel Hub
+1	Global Surface Water	https://global-surface-water.appspot.com/	The European Commission's Joint Research Centre developed this new water dataset in the framework of the Copernicus Programme. This maps the location and temporal distribution of water surfaces at the global scale over the past 32 years and provides statistics on the extent and change of those water surfaces. The dataset, produced from Landsat imagery (courtesy USGS and NASA), will support applications including water resource management, climate modelling, biodiversity conservation and food security.	It provides  in addition to the maps temporal profile charts for a location.	en	\N	Global	\N	JRC GSW
+22	RAMSAR Site Information Service	http://rsis.ramsar.org	The Ramsar Sites Information Service (RSIS) provides online information on wetlands that have been designated as internationally important. All Site information is provided by the Contracting Parties to the Convention and is managed by the Ramsar Secretariat. Responsibility for the accuracy of the data lies with the Administrative Authority of the Party in which the Ramsar Site is located.		en	\N	Global	\N	RAMSAR
+20	Global Biodiversity Information Facility (GBIF)	http://www.gbif.org/	The Global Biodiversity Information Facility (GBIF) is an international open data infrastructure, funded by governments.	It provides a single point of access (through this portal and its web services) to hundreds of millions of records, shared freely by hundreds of institutions worldwide, making it the biggest biodiversity database on the Internet.	en	\N	Global	geodabgbifid	GBIF
+21	Copernicus Land Service High Resolution Layers	http://land.copernicus.eu/pan-european/high-resolution-layers	Pan-European High Resolution Layers (HRL) provide information on specific land cover characteristics, and are complementary to land cover / land use mapping such as in the CORINE land cover (CLC) datasets. The HRLs are produced from 20 m resolution satellite imagery through a combination of automatic processing and interactive rule based classification.		en	\N	Europe	\N	Copernicus HRL
 \.
 
 
@@ -8011,6 +8070,10 @@ COPY swos_externallayer (layer_ptr_id, datasource_id) FROM stdin;
 2853	22
 2557	8
 2556	8
+3013	23
+3012	23
+3010	23
+3011	23
 \.
 
 
@@ -8165,86 +8228,86 @@ COPY swos_wetlandimage (id, name, description, image, wetland_id, copyright, dat
 -- Data for Name: swos_wetlandlayer; Type: TABLE DATA; Schema: public; Owner: swos
 --
 
-COPY swos_wetlandlayer (layer_ptr_id, indicator_id, product_id, wetland_id, validation_layer_id) FROM stdin;
-2922	\N	9	25	\N
-2923	\N	10	25	\N
-2924	\N	10	25	\N
-2925	\N	7	25	\N
-2978	\N	4	4	\N
-2926	\N	7	25	\N
-2927	\N	2	62	\N
-2928	\N	2	62	\N
-2929	\N	2	62	\N
-2930	\N	4	3	\N
-2931	\N	4	3	\N
-2932	\N	4	3	\N
-2933	\N	4	3	\N
-2992	\N	4	3	\N
-3005	\N	11	6	\N
-3006	\N	12	6	\N
-2983	\N	7	9	\N
-2998	\N	1	8	\N
-2993	\N	4	3	\N
-2997	\N	1	3	\N
-2935	\N	7	3	\N
-2936	\N	7	3	\N
-2937	\N	7	3	\N
-2938	\N	7	3	\N
-2939	\N	2	3	\N
-2940	\N	2	3	\N
-2941	\N	2	3	\N
-2942	\N	2	3	\N
-2943	\N	2	3	\N
-2944	\N	5	3	\N
-2945	\N	5	3	\N
-2946	\N	5	3	\N
-2947	\N	2	19	\N
-2948	\N	2	19	\N
-2949	\N	2	19	\N
-2999	\N	4	7	\N
-3000	\N	4	7	\N
-2951	\N	4	6	\N
-2952	\N	4	6	\N
-2953	\N	4	6	\N
-2954	\N	9	6	\N
-2964	\N	5	6	\N
-2965	\N	5	6	\N
-2966	\N	5	6	\N
-2956	\N	7	6	\N
-2957	\N	7	6	\N
-2958	\N	7	6	\N
-2960	\N	7	6	\N
-2961	\N	7	6	\N
-2962	\N	7	6	\N
-2967	\N	2	20	\N
-2968	\N	2	20	\N
-2969	\N	2	20	\N
-2970	\N	9	50	\N
-2971	\N	9	4	\N
-3001	\N	1	4	\N
-2973	\N	7	4	\N
-2974	\N	7	4	\N
-2975	\N	2	4	\N
-2976	\N	2	4	\N
-2977	\N	2	4	\N
-2979	\N	4	4	\N
-2995	\N	2	11	\N
-2996	\N	2	11	\N
-3002	\N	1	9	\N
-2981	\N	7	9	\N
-2982	\N	7	9	\N
-2984	\N	5	9	\N
-2985	\N	5	9	\N
-3003	\N	1	91	\N
-2986	\N	9	34	\N
-3004	\N	1	5	\N
-2988	\N	7	5	\N
-2989	\N	7	5	\N
-2990	\N	7	5	\N
-2991	\N	7	5	\N
-2994	\N	7	6	\N
-2959	\N	7	6	2994
-2963	\N	7	6	2994
+COPY swos_wetlandlayer (layer_ptr_id, indicator_id, product_id, wetland_id, validation_layer_id, background_layer_id) FROM stdin;
+2922	\N	9	25	\N	\N
+2923	\N	10	25	\N	\N
+2924	\N	10	25	\N	\N
+2925	\N	7	25	\N	\N
+2978	\N	4	4	\N	\N
+2926	\N	7	25	\N	\N
+2927	\N	2	62	\N	\N
+2928	\N	2	62	\N	\N
+2929	\N	2	62	\N	\N
+2930	\N	4	3	\N	\N
+2931	\N	4	3	\N	\N
+2932	\N	4	3	\N	\N
+2933	\N	4	3	\N	\N
+2992	\N	4	3	\N	\N
+3005	\N	11	6	\N	\N
+3006	\N	12	6	\N	\N
+2983	\N	7	9	\N	\N
+2998	\N	1	8	\N	\N
+2993	\N	4	3	\N	\N
+2997	\N	1	3	\N	\N
+2935	\N	7	3	\N	\N
+2936	\N	7	3	\N	\N
+2937	\N	7	3	\N	\N
+2938	\N	7	3	\N	\N
+2939	\N	2	3	\N	\N
+2940	\N	2	3	\N	\N
+2941	\N	2	3	\N	\N
+2942	\N	2	3	\N	\N
+2943	\N	2	3	\N	\N
+2944	\N	5	3	\N	\N
+2945	\N	5	3	\N	\N
+2946	\N	5	3	\N	\N
+2947	\N	2	19	\N	\N
+2948	\N	2	19	\N	\N
+2949	\N	2	19	\N	\N
+2999	\N	4	7	\N	\N
+3000	\N	4	7	\N	\N
+2951	\N	4	6	\N	\N
+2952	\N	4	6	\N	\N
+2953	\N	4	6	\N	\N
+2954	\N	9	6	\N	\N
+2964	\N	5	6	\N	\N
+2965	\N	5	6	\N	\N
+2966	\N	5	6	\N	\N
+2956	\N	7	6	\N	\N
+2957	\N	7	6	\N	\N
+2958	\N	7	6	\N	\N
+2960	\N	7	6	\N	\N
+2961	\N	7	6	\N	\N
+2962	\N	7	6	\N	\N
+2967	\N	2	20	\N	\N
+2968	\N	2	20	\N	\N
+2969	\N	2	20	\N	\N
+2970	\N	9	50	\N	\N
+2971	\N	9	4	\N	\N
+3001	\N	1	4	\N	\N
+2973	\N	7	4	\N	\N
+2974	\N	7	4	\N	\N
+2975	\N	2	4	\N	\N
+2976	\N	2	4	\N	\N
+2977	\N	2	4	\N	\N
+2979	\N	4	4	\N	\N
+2995	\N	2	11	\N	\N
+2996	\N	2	11	\N	\N
+3002	\N	1	9	\N	\N
+2981	\N	7	9	\N	\N
+2982	\N	7	9	\N	\N
+2984	\N	5	9	\N	\N
+2985	\N	5	9	\N	\N
+3003	\N	1	91	\N	\N
+2986	\N	9	34	\N	\N
+3004	\N	1	5	\N	\N
+2988	\N	7	5	\N	\N
+2989	\N	7	5	\N	\N
+2990	\N	7	5	\N	\N
+2991	\N	7	5	\N	\N
+2994	\N	7	6	\N	\N
+2963	\N	7	6	2994	\N
+2959	\N	7	6	2994	3006
 \.
 
 
@@ -8259,10 +8322,13 @@ COPY swos_wetlandlayer_validation_auxlayer (id, wetlandlayer_id, layer_id) FROM 
 4	2959	2745
 5	2959	2554
 6	2959	2555
-7	2959	3006
 8	2963	2744
 9	2963	2745
 10	2963	2550
+11	2959	3010
+12	2959	3011
+13	2959	3012
+14	2959	3013
 \.
 
 
@@ -10105,6 +10171,13 @@ CREATE INDEX swos_wetlandlayer_a82bd466 ON swos_wetlandlayer USING btree (indica
 
 
 --
+-- Name: swos_wetlandlayer_background_layer_id_2dfb11c5; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
+--
+
+CREATE INDEX swos_wetlandlayer_background_layer_id_2dfb11c5 ON swos_wetlandlayer USING btree (background_layer_id);
+
+
+--
 -- Name: swos_wetlandlayer_validation_auxlayer_layer_id_947df5fc; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
 --
 
@@ -10583,6 +10656,14 @@ ALTER TABLE ONLY swos_wetlandlayer
 
 ALTER TABLE ONLY swos_wetlandlayer
     ADD CONSTRAINT swos_wetlandlaye_wetland_id_5b3c4d31b54773aa_fk_swos_wetland_id FOREIGN KEY (wetland_id) REFERENCES swos_wetland(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: swos_wetlandlayer_background_layer_id_2dfb11c5_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
+--
+
+ALTER TABLE ONLY swos_wetlandlayer
+    ADD CONSTRAINT swos_wetlandlayer_background_layer_id_2dfb11c5_fk_layers_la FOREIGN KEY (background_layer_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --

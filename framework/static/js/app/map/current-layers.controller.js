@@ -449,7 +449,7 @@
             var source = olLayer.getSource();
             var type = olLayer.get('layerObj').ogc_type;
             if (type === 'WMS') {
-                source.updateParams({'TIME': mcl.selectedLayerDates[id]});
+                source.updateParams({'TIME': mcl.selectedLayerDates[id]+'/'+mcl.selectedLayerDates[id]});
             } else if (type === 'WMTS') {
                 source.updateDimensions({'time': mcl.selectedLayerDates[id]});
             }
