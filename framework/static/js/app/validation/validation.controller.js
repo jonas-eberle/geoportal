@@ -36,8 +36,8 @@
             $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
-                'url'   : '/swos/validation/segments',
-                'params': {'type':validation.segmentListType, 'layer': validation.layer.validation_layer.ogc_layer, 'start': start, 'max': validation.segmentsMaxFeatures}
+                'url'   : '/validation/segments',
+                'params': {'type':validation.segmentListType, 'layer': validation.layer.ogc_layer, 'start': start, 'max': validation.segmentsMaxFeatures}
             }).then(function (data) {
                 validation.segments = data;
                 validation.segmentsCurrentPage = page;
@@ -89,7 +89,7 @@
         
         validation.exportSegments = exportSegments;
         function exportSegments() {
-            window.location.href = '/swos/validation/segments/export?layer='+validation.layer.validation_layer.ogc_layer;
+            window.location.href = '/validation/segments/export?layer='+validation.layer.ogc_layer;
         }        
         
         validation.addLayerToMap = addLayerToMap;
@@ -106,7 +106,7 @@
             $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
-                'url'   : '/swos/validation.json'
+                'url'   : '/validation/layers.json'
             }).then(function (data) {
                 validation.data = data;
                 validation.loaded = true;
@@ -157,7 +157,7 @@
             var layerObjBG = validation.background_layer_ol.get("layerObj");
             validation.layerIdMap[layerObjBG.django_id] = layerObjBG.id;
             
-            validation.validation_layer_ol = mapviewer.addLayer(layer.validation_layer);
+            validation.validation_layer_ol = mapviewer.addLayer(layer);
             validation.validation_layer_ol.getSource().on('tileloadend', function(event) { 
                  $('#loading-div').hide();
             } );
@@ -193,9 +193,9 @@
               });
             });
             
-            var layerExtent = [layer.validation_layer.west, layer.validation_layer.south, layer.validation_layer.east, layer.validation_layer.north];
-            if (layer.validation_layer.epsg > 0) {
-                layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:' + layer.validation_layer.epsg, mapviewer.map.getView().getProjection().getCode());
+            var layerExtent = [layer.west, layer.south, layer.east, layer.north];
+            if (layer.epsg > 0) {
+                layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:' + layer.epsg, mapviewer.map.getView().getProjection().getCode());
             }
             mapviewer.map.getView().fit(layerExtent);
         }
@@ -252,10 +252,8 @@
             output += '<tr><td>ValID:</td><td>'+feature.properties.ValID+'</td></tr>';
             
             var legend;
-            if (validation.layer.title.includes('MAES')) {
-                legend = lulcLegend.MAES;
-            } else {
-                legend = lulcLegend.CLC;
+            if (validation.layer.hasOwnProperty('legend')) {
+                legend = lulcLegend[validation.layer.legend]
             }
             
             var select = '<select name="valcode" id="valcode">';
@@ -288,7 +286,7 @@
                     callback: function() {
                         // save
                         var params ={};
-                        params['layer'] = validation.layer.validation_layer.ogc_layer;
+                        params['layer'] = validation.layer.ogc_layer;
                         params['feature_id'] = feature.id;
                         params['val_code'] = $('#valcode').val();
                         params['val_id'] = feature.properties.ValID;
@@ -296,7 +294,7 @@
                         $('#loading-div').show();
                         djangoRequests.request({
                             'method': 'GET',
-                            'url'   : '/swos/validation/update',
+                            'url'   : '/validation/update',
                             'params': params
                         }).then(function(data){
                             validation.highlightOverlay.getSource().clear();
@@ -326,14 +324,14 @@
                     callback: function() {
                         // save
                         var params ={};
-                        params['layer'] = validation.layer.validation_layer.ogc_layer;
+                        params['layer'] = validation.layer.ogc_layer;
                         params['feature_id'] = feature.id;
                         params['val_code'] = $('#valcode').val();
                         
                         $('#loading-div').show();
                         djangoRequests.request({
                             'method': 'GET',
-                            'url'   : '/swos/validation/update',
+                            'url'   : '/validation/update',
                             'params': params
                         }).then(function(data){
                             validation.highlightOverlay.getSource().clear();

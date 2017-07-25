@@ -211,9 +211,9 @@
                         <div ng-if="!validation.loaded">Loading layers... please wait </div>
                         <div ng-if="validation.data.length==0">No layers found for your account</div>
 
-                        <uib-accordion close-others="true" ng-repeat="site in validation.data">
-                            <div uib-accordion-group heading="{{site.name}}" is-open="true">
-                                 <div class="list-group-item" ng-repeat="layer in site.validation_layers" ng-click="validation.loadValidationLayer(site.id, layer);">
+                        <uib-accordion close-others="true">
+                            <div uib-accordion-group heading="Validation layers" is-open="true">
+                                 <div class="list-group-item" ng-repeat="layer in validation.data" ng-click="validation.loadValidationLayer(site.id, layer);">
                                     <div class="catalog-item">
                                         <div class="item_center">
                                             <div class="item_desc">{{layer.alternate_title}}</div>
@@ -228,20 +228,19 @@
                         
                         <div style="padding:5px;">
                             <!-- Accordion for resources -->
-                            <uib-accordion close-others="false" ng-if="validation.layer.validation_auxlayer.length > 0">
+                            <uib-accordion close-others="false">
                                 <div uib-accordion-group heading="Validation resources" is-open="true">
-                                    <input ng-if="validation.layerIdMap[validation.layer.validation_layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(validation.layer.validation_layer, $event);" id="layer_vis_{{validation.layer.validation_layer.id}}"/>
-                                    <input ng-if="validation.layerIdMap[validation.layer.validation_layer.id]" type="checkbox" ng-click="validation.addLayerToMap(validation.layer.validation_layer, $event);" id="layer_vis_{{validation.layer.validation_layer.id}}" checked="checked"/>
-                                    <label for="layer_vis_{{validation.layer.validation_layer.id}}"> {{validation.layer.validation_layer.alternate_title}}</label>
-                                    <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.validation_layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.validation_layer.id] }}" hide-share="true"></swos-layer-controls>
+                                    <input ng-if="validation.layerIdMap[validation.layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(validation.layer, $event);" id="layer_vis_{{validation.layer.id}}"/>
+                                    <input ng-if="validation.layerIdMap[validation.layer.id]" type="checkbox" ng-click="validation.addLayerToMap(validation.layer, $event);" id="layer_vis_{{validation.layer.id}}" checked="checked"/>
+                                    <label for="layer_vis_{{validation.layer.id}}"> {{validation.layer.alternate_title}}</label>
+                                    <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.id] }}" hide-share="true"></swos-layer-controls>
                                     
-                                    <!--<strong>{{validation.layer.background_layer.alternate_title}}</strong>-->
                                     <input ng-if="validation.layerIdMap[validation.layer.background_layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(validation.layer.background_layer, $event);" id="layer_vis_{{validation.layer.background_layer.id}}"/>
                                     <input ng-if="validation.layerIdMap[validation.layer.background_layer.id]" type="checkbox" ng-click="validation.addLayerToMap(validation.layer.background_layer, $event);" id="layer_vis_{{validation.layer.background_layer.id}}" checked="checked"/>
                                     <label for="layer_vis_{{validation.layer.background_layer.id}}"> {{validation.layer.background_layer.alternate_title}}</label>
                                     <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.background_layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.background_layer.id] }}" hide-share="true"></swos-layer-controls>
                                 </div>
-                                <div uib-accordion-group heading="Additional resources" is-open="true">
+                                <div uib-accordion-group heading="Additional resources" is-open="true" ng-if="validation.layer.validation_auxlayer.length > 0">
                                     <div class="select">
                                         <div ng-repeat="layer in validation.layer.validation_auxlayer | orderBy:'alternate_title'" ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
                                             <input ng-if="validation.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
@@ -278,7 +277,7 @@
                                             <button style="float:right;margin-top: 10px;" ng-if="validation.segmentsCurrentPage < validation.segmentsLastPage" type="button"
                                                     class="btn btn-next" ng-click="validation.segmentsPaging('next')">Next
                                             </button>
-                                        </div>			                            
+                                        </div>                                      
                                     </div>
                                 </div>
                             </uib-accordion>

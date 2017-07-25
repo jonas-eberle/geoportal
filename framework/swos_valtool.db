@@ -248,7 +248,7 @@ ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('auth_permission_id_seq', 99, true);
+SELECT pg_catalog.setval('auth_permission_id_seq', 102, true);
 
 
 --
@@ -481,7 +481,7 @@ ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('django_admin_log_id_seq', 5368, true);
+SELECT pg_catalog.setval('django_admin_log_id_seq', 5376, true);
 
 
 --
@@ -522,7 +522,7 @@ ALTER SEQUENCE django_content_type_id_seq OWNED BY django_content_type.id;
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('django_content_type_id_seq', 33, true);
+SELECT pg_catalog.setval('django_content_type_id_seq', 34, true);
 
 
 --
@@ -564,7 +564,7 @@ ALTER SEQUENCE django_migrations_id_seq OWNED BY django_migrations.id;
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('django_migrations_id_seq', 111, true);
+SELECT pg_catalog.setval('django_migrations_id_seq', 114, true);
 
 
 --
@@ -816,7 +816,7 @@ ALTER SEQUENCE layers_layer_auth_users_id_seq OWNED BY layers_layer_auth_users.i
 -- Name: layers_layer_auth_users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('layers_layer_auth_users_id_seq', 21, true);
+SELECT pg_catalog.setval('layers_layer_auth_users_id_seq', 22, true);
 
 
 --
@@ -898,7 +898,7 @@ ALTER SEQUENCE layers_layer_download_users_id_seq OWNED BY layers_layer_download
 -- Name: layers_layer_download_users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('layers_layer_download_users_id_seq', 1, false);
+SELECT pg_catalog.setval('layers_layer_download_users_id_seq', 1, true);
 
 
 --
@@ -926,7 +926,7 @@ ALTER SEQUENCE layers_layer_id_seq OWNED BY layers_layer.id;
 -- Name: layers_layer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
 --
 
-SELECT pg_catalog.setval('layers_layer_id_seq', 3013, true);
+SELECT pg_catalog.setval('layers_layer_id_seq', 3014, true);
 
 
 --
@@ -2129,54 +2129,11 @@ CREATE TABLE swos_wetlandlayer (
     layer_ptr_id integer NOT NULL,
     indicator_id integer,
     product_id integer,
-    wetland_id integer,
-    validation_layer_id integer,
-    background_layer_id integer
+    wetland_id integer
 );
 
 
 ALTER TABLE public.swos_wetlandlayer OWNER TO swos;
-
---
--- Name: swos_wetlandlayer_validation_auxlayer; Type: TABLE; Schema: public; Owner: swos; Tablespace: 
---
-
-CREATE TABLE swos_wetlandlayer_validation_auxlayer (
-    id integer NOT NULL,
-    wetlandlayer_id integer NOT NULL,
-    layer_id integer NOT NULL
-);
-
-
-ALTER TABLE public.swos_wetlandlayer_validation_auxlayer OWNER TO swos;
-
---
--- Name: swos_wetlandlayer_validation_auxlayer_id_seq; Type: SEQUENCE; Schema: public; Owner: swos
---
-
-CREATE SEQUENCE swos_wetlandlayer_validation_auxlayer_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.swos_wetlandlayer_validation_auxlayer_id_seq OWNER TO swos;
-
---
--- Name: swos_wetlandlayer_validation_auxlayer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: swos
---
-
-ALTER SEQUENCE swos_wetlandlayer_validation_auxlayer_id_seq OWNED BY swos_wetlandlayer_validation_auxlayer.id;
-
-
---
--- Name: swos_wetlandlayer_validation_auxlayer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
---
-
-SELECT pg_catalog.setval('swos_wetlandlayer_validation_auxlayer_id_seq', 14, true);
-
 
 --
 -- Name: swos_wetlandvideo; Type: TABLE; Schema: public; Owner: swos; Tablespace: 
@@ -2225,6 +2182,60 @@ ALTER SEQUENCE swos_wetlandvideo_id_seq OWNED BY swos_wetlandvideo.id;
 --
 
 SELECT pg_catalog.setval('swos_wetlandvideo_id_seq', 17356, true);
+
+
+--
+-- Name: validation_validationlayer; Type: TABLE; Schema: public; Owner: swos; Tablespace: 
+--
+
+CREATE TABLE validation_validationlayer (
+    layer_ptr_id integer NOT NULL,
+    layer_basemap_id integer NOT NULL,
+    legend character varying(200)
+);
+
+
+ALTER TABLE public.validation_validationlayer OWNER TO swos;
+
+--
+-- Name: validation_validationlayer_layer_auxiliary; Type: TABLE; Schema: public; Owner: swos; Tablespace: 
+--
+
+CREATE TABLE validation_validationlayer_layer_auxiliary (
+    id integer NOT NULL,
+    validationlayer_id integer NOT NULL,
+    layer_id integer NOT NULL
+);
+
+
+ALTER TABLE public.validation_validationlayer_layer_auxiliary OWNER TO swos;
+
+--
+-- Name: validation_validationlayer_layer_auxiliary_id_seq; Type: SEQUENCE; Schema: public; Owner: swos
+--
+
+CREATE SEQUENCE validation_validationlayer_layer_auxiliary_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.validation_validationlayer_layer_auxiliary_id_seq OWNER TO swos;
+
+--
+-- Name: validation_validationlayer_layer_auxiliary_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: swos
+--
+
+ALTER SEQUENCE validation_validationlayer_layer_auxiliary_id_seq OWNED BY validation_validationlayer_layer_auxiliary.id;
+
+
+--
+-- Name: validation_validationlayer_layer_auxiliary_id_seq; Type: SEQUENCE SET; Schema: public; Owner: swos
+--
+
+SELECT pg_catalog.setval('validation_validationlayer_layer_auxiliary_id_seq', 9, true);
 
 
 --
@@ -2553,14 +2564,14 @@ ALTER TABLE ONLY swos_wetlandimage ALTER COLUMN id SET DEFAULT nextval('swos_wet
 -- Name: id; Type: DEFAULT; Schema: public; Owner: swos
 --
 
-ALTER TABLE ONLY swos_wetlandlayer_validation_auxlayer ALTER COLUMN id SET DEFAULT nextval('swos_wetlandlayer_validation_auxlayer_id_seq'::regclass);
+ALTER TABLE ONLY swos_wetlandvideo ALTER COLUMN id SET DEFAULT nextval('swos_wetlandvideo_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: swos
 --
 
-ALTER TABLE ONLY swos_wetlandvideo ALTER COLUMN id SET DEFAULT nextval('swos_wetlandvideo_id_seq'::regclass);
+ALTER TABLE ONLY validation_validationlayer_layer_auxiliary ALTER COLUMN id SET DEFAULT nextval('validation_validationlayer_layer_auxiliary_id_seq'::regclass);
 
 
 --
@@ -2703,6 +2714,9 @@ COPY auth_permission (id, name, content_type_id, codename) FROM stdin;
 97	Can add wetland video	33	add_wetlandvideo
 98	Can change wetland video	33	change_wetlandvideo
 99	Can delete wetland video	33	delete_wetlandvideo
+100	Can add validation layer	34	add_validationlayer
+101	Can change validation layer	34	change_validationlayer
+102	Can delete validation layer	34	delete_validationlayer
 \.
 
 
@@ -2712,8 +2726,8 @@ COPY auth_permission (id, name, content_type_id, codename) FROM stdin;
 
 COPY auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
 45	pbkdf2_sha256$15000$z1xcrPAPmEQQ$zBsCFR3+0elEY1ozLtq3mUQ7X/BPbywZUO1Abh/GWIE=	2017-06-14 15:03:53+02	t	swos			info@swos-service.eu	t	t	2016-06-29 19:51:14+02
-47	pbkdf2_sha256$36000$C1VCe11U9pMh$ZPa1V7YNZu6KVb8mrcjTe4AO5zV3Zm2gjwLbKN3WSa8=	2017-07-24 17:35:22.873593+02	f	validation01			validation01@swos-service.eu	f	t	2017-07-22 11:42:21+02
-43	pbkdf2_sha256$36000$afCuyp76lGnV$f/g5yvt8GhVAaS85LXcuaq+qJaORR0vi0NPWxmAf0sU=	2017-07-25 13:07:24.621727+02	t	sibessc	Jonas	Eberle	jonas.eberle@uni-jena.de	t	t	2016-03-24 20:57:39.627+01
+47	pbkdf2_sha256$36000$C1VCe11U9pMh$ZPa1V7YNZu6KVb8mrcjTe4AO5zV3Zm2gjwLbKN3WSa8=	2017-07-25 20:50:02.064826+02	f	validation01			validation01@swos-service.eu	f	t	2017-07-22 11:42:21+02
+43	pbkdf2_sha256$36000$afCuyp76lGnV$f/g5yvt8GhVAaS85LXcuaq+qJaORR0vi0NPWxmAf0sU=	2017-07-25 20:50:48.079099+02	t	sibessc	Jonas	Eberle	jonas.eberle@uni-jena.de	t	t	2016-03-24 20:57:39.627+01
 \.
 
 
@@ -7007,6 +7021,14 @@ COPY django_admin_log (id, action_time, object_id, object_repr, action_flag, cha
 5366	2017-07-25 17:42:25.650356+02	21	Copernicus Land Service High Resolution Layers	2	[{"changed": {"fields": ["shortname"]}}]	29	43
 5367	2017-07-25 18:01:09.104352+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[{"changed": {"fields": ["background_layer"]}}]	26	43
 5368	2017-07-25 18:01:50.105208+02	2959	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	2	[]	26	43
+5369	2017-07-25 20:25:59.153601+02	3014	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation	1	[{"added": {}}]	34	43
+5370	2017-07-25 20:33:50.51725+02	6	Validation	2	[{"changed": {"fields": ["template_file"]}}]	12	43
+5371	2017-07-25 20:49:32.406098+02	3014	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation	2	[{"changed": {"fields": ["title"]}}]	34	43
+5372	2017-07-25 20:51:04.769826+02	3014	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation	2	[{"changed": {"fields": ["title"]}}]	34	43
+5373	2017-07-25 20:53:16.891224+02	3014	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation	2	[{"changed": {"fields": ["title"]}}]	34	43
+5374	2017-07-25 20:53:37.402838+02	3014	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation	2	[]	34	43
+5375	2017-07-25 20:53:47.210255+02	3014	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation	2	[{"changed": {"fields": ["legend"]}}]	34	43
+5376	2017-07-25 20:59:57.826828+02	6	Validation	2	[{"changed": {"fields": ["template_file"]}}]	12	43
 \.
 
 
@@ -7048,6 +7070,7 @@ COPY django_content_type (id, app_label, model) FROM stdin;
 31	swos	wetlandimage
 32	swos	indicatorvalue
 33	swos	wetlandvideo
+34	validation	validationlayer
 \.
 
 
@@ -7144,6 +7167,9 @@ COPY django_migrations (id, app, name, applied) FROM stdin;
 109	layers	0003_auto_20170722_1442	2017-07-22 16:42:57.429283+02
 110	swos	0003_externaldatabase_geoss_datasource_id	2017-07-23 18:59:40.54684+02
 111	swos	0004_auto_20170725_1540	2017-07-25 17:40:53.690767+02
+112	validation	0001_initial	2017-07-25 20:21:24.201021+02
+113	validation	0002_validationlayer_legend	2017-07-25 20:52:51.914786+02
+114	swos	0005_auto_20170725_1857	2017-07-25 20:57:21.814286+02
 \.
 
 
@@ -7398,7 +7424,6 @@ brwteazeem4r53q8f43048q912f9onn6	YzAzZDI4Y2ZlZjhkZGJkZmM2ZGQ2YmE0ODUzZWNjZDQzNmY
 cbvk57m1zkr4futab4usp2ky4i0zajbt	YzAzZDI4Y2ZlZjhkZGJkZmM2ZGQ2YmE0ODUzZWNjZDQzNmY5ZmY4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImExYWZkNjE1MDVkNTIyZDk3YzcyNzczOGQ0YzA3NjgyODc4YWEwYmMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjQzfQ==	2017-06-26 10:55:22.20188+02
 feg8ykcpkm38c3f02v093zkry51i2acq	YjcyNmM4ODBhNTBkNWVkZDA4OWFjYzAyZTJmZTRjMGI0NGExZGYzYTp7Il9hdXRoX3VzZXJfaGFzaCI6ImY4ODY1NGI5ZjY2NjYyMTgyZjJhNWQ5NDIzNzM3OTk5ODUwNDcyZjUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjQ1fQ==	2017-06-28 15:03:53.680306+02
 m6t3w8fhqd4f3opmzttb3lfyy8gy666g	YzAzZDI4Y2ZlZjhkZGJkZmM2ZGQ2YmE0ODUzZWNjZDQzNmY5ZmY4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImExYWZkNjE1MDVkNTIyZDk3YzcyNzczOGQ0YzA3NjgyODc4YWEwYmMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjQzfQ==	2017-06-30 09:43:41.867852+02
-r46bwkmqtrr44dufchg6f0xj0k5z4wt6	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-05 16:10:04.069018+02
 on1hou2rjjnef48j89tedfoff2am8sj4	NzBhZGVhODYzYzljZjhhMTRhODhlNTc5ZTNiZjAyMTAyMjZmNzAwNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjVlZjhmMWJlNjYxY2UzNDg3N2VlNTUyYTNlNGE0OGY1OTBlYTc4NDYiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0NyJ9	2017-08-07 11:02:14.592168+02
 ib35fwwp8ivvbdzfn1gbeb17rm69p6r8	NzBhZGVhODYzYzljZjhhMTRhODhlNTc5ZTNiZjAyMTAyMjZmNzAwNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjVlZjhmMWJlNjYxY2UzNDg3N2VlNTUyYTNlNGE0OGY1OTBlYTc4NDYiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0NyJ9	2017-08-07 11:56:30.797284+02
 ei2v3gcziqnlb9wzv9kkoeck7qu88895	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-07 14:39:10.003568+02
@@ -7406,6 +7431,7 @@ ei2v3gcziqnlb9wzv9kkoeck7qu88895	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2M
 9tu8le2q2262vc7j8j8g3rh7plz87tyc	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 08:39:02.319812+02
 o3hl83gxdxz7zqjgdjb597k4w7fzw37o	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 10:27:57.130172+02
 yz48u4njyllc3y54oaon310fyzuexpz0	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 13:07:24.63023+02
+0uakgjwecnr9944vwohvpvxpqmmwh92b	YmNjMTViZjI2ODdjNmQ5ZjE3MTc4MmVlNWQ2YTY3ZDE5Y2MzNjljNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjQ0NzkyMzQ5MTY4YmMxZGMzMDRmYzA0MzQ4NmU4NzIwYjA0ODQzYWQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0MyJ9	2017-08-08 20:50:48.087543+02
 \.
 
 
@@ -7551,6 +7577,7 @@ COPY layers_layer (id, title, abstract, "topicCategory", ogc_link, ogc_layer, og
 3010	Sentinel Hub Sentinel-2 Natural Colors	Sentinel Hub Sentinel-2 Natural Colors	\N	http://services.sentinel-hub.com/v1/wms/9f0d0615-2f4c-4125-9cc1-fb196d3db9d6	S2.DATE,TRUE_COLOR	WMS	f	image/png	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Sentinel Hub Sentinel-2 Natural Colors		\N	\N	\N	t	Sentinel Hub Services	f	\N	2015-08-18				\N
 3011	Sentinel Hub Sentinel-2 NDVI	Sentinel Hub Sentinel-2 NDVI	\N	http://services.sentinel-hub.com/v1/wms/9f0d0615-2f4c-4125-9cc1-fb196d3db9d6	S2.DATE,NDVI	WMS	f	image/png	f	\N		\N		\N	\N	\N	\N	\N	English	\N	\N	-180	180	90	-90	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	Sentinel Hub Sentinel-2 NDVI		\N	\N	\N	t	Sentinel Hub Services	f	\N	2015-08-18				\N
 2959	SWOS LULC MAES ES Fuente-de-Piedra 2015	This file contains a land cover/land use data set for the geographic area and temporal period as identified below. The land cover/land use classes are conform to the MAES nomenclature. The data set was created in the framework of SWOS (Satellite-based Wetland Observation System).	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Spain_Fuente-de-Piedra:SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	13	\N	English	\N	\N	-4.86414687837999971	-4.63263837238999976	37.1950385556000001	37.0471053922999971	\N	\N	20	4326	\N	English	\N	\N		http://artemis.geogr.uni-jena.de/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Spain_Fuente-de-Piedra:SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015&LEGEND_OPTIONS=forceLabels:on	f	f	\N	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015	[{"color": "#ff4242", "code": "1", "percent": 4.4, "size": 830.29, "label": "1 Urban"}, {"color": "#ffffa8", "code": "21", "percent": 26.51, "size": 4993.85, "label": "2.1 Arable land"}, {"color": "#f2cb7f", "code": "22", "percent": 55.64, "size": 10481.52, "label": "2.2 Permanent crops"}, {"color": "#00a600", "code": "32", "percent": 2.23, "size": 421.75, "label": "3.2 Coniferous forest"}, {"color": "#a6e64d", "code": "52", "percent": 4.29, "size": 808.49, "label": "5.2 Sclerophyllous vegetation"}, {"color": "#8686c2", "code": "712", "percent": 6.76, "size": 1274.68, "label": "7.1.2 Inland saline marshes"}, {"color": "#153357", "code": "922", "percent": 0.13, "size": 25.58, "label": "9.2.2 Man made water bodies"}]	\N	2015-08-01	2016-03-31	t	SWOS; contains Copernicus data	t	EPSG:900913:		Produced in the framework of SWOS based on Sentinel 2 satellite data. The result was validated by local experts.			\N
+3014	Lake Fuente de Piedra Segmentation 2015	Segmentation layer	\N	http://artemis.geogr.uni-jena.de/geoserver/gwc/service/wmts	Spain_Fuente-de-Piedra:SWOS_SEGM_ES_Fuente-de-Piedra_350_2015	WMTS	f	image/png	f	\N		EPSG:900913	559082263.951 279541131.975 139770565.988 69885282.9939 34942641.4969 17471320.7485 8735660.37423 4367830.18712 2183915.09356 1091957.54678 545978.77339 272989.386695 136494.693347 68247.3466737 34123.6733368 17061.8366684 8530.91833421 4265.45916711 2132.72958355 1066.36479178 533.182395888 266.591197944 133.295598972 66.647799486 33.323899743 16.6619498715 8.33097493575 4.16548746788 2.08274373394 1.04137186697 0.520685933485	256	EPSG:900913	\N	13	\N	English	\N	\N	-4.86414687837999971	-4.63263837238999976	37.1950385556000001	37.0471053922999971	\N	\N	\N	4326	\N	English	\N	\N		\N	f	f	\N	SWOS_LULC_MAES_ES_Fuente-de-Piedra_2015_Segmentation		\N	2015-08-01	2015-08-01	f	SWOS; contains Copernicus data	t	EPSG:900913:		Produced in the framework of SWOS based on Sentinel 2 satellite data.			\N
 \.
 
 
@@ -7568,6 +7595,7 @@ COPY layers_layer_auth_groups (id, layer_id, group_id) FROM stdin;
 
 COPY layers_layer_auth_users (id, layer_id, user_id) FROM stdin;
 21	2959	47
+22	3014	47
 \.
 
 
@@ -7584,6 +7612,7 @@ COPY layers_layer_download_groups (id, layer_id, group_id) FROM stdin;
 --
 
 COPY layers_layer_download_users (id, layer_id, user_id) FROM stdin;
+1	3014	43
 \.
 
 
@@ -8228,107 +8257,86 @@ COPY swos_wetlandimage (id, name, description, image, wetland_id, copyright, dat
 -- Data for Name: swos_wetlandlayer; Type: TABLE DATA; Schema: public; Owner: swos
 --
 
-COPY swos_wetlandlayer (layer_ptr_id, indicator_id, product_id, wetland_id, validation_layer_id, background_layer_id) FROM stdin;
-2922	\N	9	25	\N	\N
-2923	\N	10	25	\N	\N
-2924	\N	10	25	\N	\N
-2925	\N	7	25	\N	\N
-2978	\N	4	4	\N	\N
-2926	\N	7	25	\N	\N
-2927	\N	2	62	\N	\N
-2928	\N	2	62	\N	\N
-2929	\N	2	62	\N	\N
-2930	\N	4	3	\N	\N
-2931	\N	4	3	\N	\N
-2932	\N	4	3	\N	\N
-2933	\N	4	3	\N	\N
-2992	\N	4	3	\N	\N
-3005	\N	11	6	\N	\N
-3006	\N	12	6	\N	\N
-2983	\N	7	9	\N	\N
-2998	\N	1	8	\N	\N
-2993	\N	4	3	\N	\N
-2997	\N	1	3	\N	\N
-2935	\N	7	3	\N	\N
-2936	\N	7	3	\N	\N
-2937	\N	7	3	\N	\N
-2938	\N	7	3	\N	\N
-2939	\N	2	3	\N	\N
-2940	\N	2	3	\N	\N
-2941	\N	2	3	\N	\N
-2942	\N	2	3	\N	\N
-2943	\N	2	3	\N	\N
-2944	\N	5	3	\N	\N
-2945	\N	5	3	\N	\N
-2946	\N	5	3	\N	\N
-2947	\N	2	19	\N	\N
-2948	\N	2	19	\N	\N
-2949	\N	2	19	\N	\N
-2999	\N	4	7	\N	\N
-3000	\N	4	7	\N	\N
-2951	\N	4	6	\N	\N
-2952	\N	4	6	\N	\N
-2953	\N	4	6	\N	\N
-2954	\N	9	6	\N	\N
-2964	\N	5	6	\N	\N
-2965	\N	5	6	\N	\N
-2966	\N	5	6	\N	\N
-2956	\N	7	6	\N	\N
-2957	\N	7	6	\N	\N
-2958	\N	7	6	\N	\N
-2960	\N	7	6	\N	\N
-2961	\N	7	6	\N	\N
-2962	\N	7	6	\N	\N
-2967	\N	2	20	\N	\N
-2968	\N	2	20	\N	\N
-2969	\N	2	20	\N	\N
-2970	\N	9	50	\N	\N
-2971	\N	9	4	\N	\N
-3001	\N	1	4	\N	\N
-2973	\N	7	4	\N	\N
-2974	\N	7	4	\N	\N
-2975	\N	2	4	\N	\N
-2976	\N	2	4	\N	\N
-2977	\N	2	4	\N	\N
-2979	\N	4	4	\N	\N
-2995	\N	2	11	\N	\N
-2996	\N	2	11	\N	\N
-3002	\N	1	9	\N	\N
-2981	\N	7	9	\N	\N
-2982	\N	7	9	\N	\N
-2984	\N	5	9	\N	\N
-2985	\N	5	9	\N	\N
-3003	\N	1	91	\N	\N
-2986	\N	9	34	\N	\N
-3004	\N	1	5	\N	\N
-2988	\N	7	5	\N	\N
-2989	\N	7	5	\N	\N
-2990	\N	7	5	\N	\N
-2991	\N	7	5	\N	\N
-2994	\N	7	6	\N	\N
-2963	\N	7	6	2994	\N
-2959	\N	7	6	2994	3006
-\.
-
-
---
--- Data for Name: swos_wetlandlayer_validation_auxlayer; Type: TABLE DATA; Schema: public; Owner: swos
---
-
-COPY swos_wetlandlayer_validation_auxlayer (id, wetlandlayer_id, layer_id) FROM stdin;
-1	2959	2550
-2	2959	2551
-3	2959	2744
-4	2959	2745
-5	2959	2554
-6	2959	2555
-8	2963	2744
-9	2963	2745
-10	2963	2550
-11	2959	3010
-12	2959	3011
-13	2959	3012
-14	2959	3013
+COPY swos_wetlandlayer (layer_ptr_id, indicator_id, product_id, wetland_id) FROM stdin;
+2922	\N	9	25
+2923	\N	10	25
+2924	\N	10	25
+2925	\N	7	25
+2978	\N	4	4
+2926	\N	7	25
+2927	\N	2	62
+2928	\N	2	62
+2929	\N	2	62
+2930	\N	4	3
+2931	\N	4	3
+2932	\N	4	3
+2933	\N	4	3
+2992	\N	4	3
+3005	\N	11	6
+3006	\N	12	6
+2983	\N	7	9
+2998	\N	1	8
+2993	\N	4	3
+2997	\N	1	3
+2935	\N	7	3
+2936	\N	7	3
+2937	\N	7	3
+2938	\N	7	3
+2939	\N	2	3
+2940	\N	2	3
+2941	\N	2	3
+2942	\N	2	3
+2943	\N	2	3
+2944	\N	5	3
+2945	\N	5	3
+2946	\N	5	3
+2947	\N	2	19
+2948	\N	2	19
+2949	\N	2	19
+2999	\N	4	7
+3000	\N	4	7
+2951	\N	4	6
+2952	\N	4	6
+2953	\N	4	6
+2954	\N	9	6
+2964	\N	5	6
+2965	\N	5	6
+2966	\N	5	6
+2956	\N	7	6
+2957	\N	7	6
+2958	\N	7	6
+2960	\N	7	6
+2961	\N	7	6
+2962	\N	7	6
+2967	\N	2	20
+2968	\N	2	20
+2969	\N	2	20
+2970	\N	9	50
+2971	\N	9	4
+3001	\N	1	4
+2973	\N	7	4
+2974	\N	7	4
+2975	\N	2	4
+2976	\N	2	4
+2977	\N	2	4
+2979	\N	4	4
+2995	\N	2	11
+2996	\N	2	11
+3002	\N	1	9
+2981	\N	7	9
+2982	\N	7	9
+2984	\N	5	9
+2985	\N	5	9
+3003	\N	1	91
+2986	\N	9	34
+3004	\N	1	5
+2988	\N	7	5
+2989	\N	7	5
+2990	\N	7	5
+2991	\N	7	5
+2994	\N	7	6
+2963	\N	7	6
+2959	\N	7	6
 \.
 
 
@@ -9071,6 +9079,32 @@ COPY swos_wetlandvideo (id, name, description, copyright, date, source, link, th
 
 
 --
+-- Data for Name: validation_validationlayer; Type: TABLE DATA; Schema: public; Owner: swos
+--
+
+COPY validation_validationlayer (layer_ptr_id, layer_basemap_id, legend) FROM stdin;
+3014	3006	MAES
+\.
+
+
+--
+-- Data for Name: validation_validationlayer_layer_auxiliary; Type: TABLE DATA; Schema: public; Owner: swos
+--
+
+COPY validation_validationlayer_layer_auxiliary (id, validationlayer_id, layer_id) FROM stdin;
+1	3014	3010
+2	3014	3011
+3	3014	3012
+4	3014	3013
+5	3014	2550
+6	3014	2551
+7	3014	2745
+8	3014	2554
+9	3014	2555
+\.
+
+
+--
 -- Name: account_emailaddress_email_key; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
 --
 
@@ -9671,27 +9705,35 @@ ALTER TABLE ONLY swos_wetlandlayer
 
 
 --
--- Name: swos_wetlandlayer_valida_wetlandlayer_id_layer_id_50a95fbf_uniq; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
---
-
-ALTER TABLE ONLY swos_wetlandlayer_validation_auxlayer
-    ADD CONSTRAINT swos_wetlandlayer_valida_wetlandlayer_id_layer_id_50a95fbf_uniq UNIQUE (wetlandlayer_id, layer_id);
-
-
---
--- Name: swos_wetlandlayer_validation_auxlayer_pkey; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
---
-
-ALTER TABLE ONLY swos_wetlandlayer_validation_auxlayer
-    ADD CONSTRAINT swos_wetlandlayer_validation_auxlayer_pkey PRIMARY KEY (id);
-
-
---
 -- Name: swos_wetlandvideo_pkey; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
 --
 
 ALTER TABLE ONLY swos_wetlandvideo
     ADD CONSTRAINT swos_wetlandvideo_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: validation_validationlay_validationlayer_id_layer_3e40fb2d_uniq; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
+--
+
+ALTER TABLE ONLY validation_validationlayer_layer_auxiliary
+    ADD CONSTRAINT validation_validationlay_validationlayer_id_layer_3e40fb2d_uniq UNIQUE (validationlayer_id, layer_id);
+
+
+--
+-- Name: validation_validationlayer_layer_auxiliary_pkey; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
+--
+
+ALTER TABLE ONLY validation_validationlayer_layer_auxiliary
+    ADD CONSTRAINT validation_validationlayer_layer_auxiliary_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: validation_validationlayer_pkey; Type: CONSTRAINT; Schema: public; Owner: swos; Tablespace: 
+--
+
+ALTER TABLE ONLY validation_validationlayer
+    ADD CONSTRAINT validation_validationlayer_pkey PRIMARY KEY (layer_ptr_id);
 
 
 --
@@ -10171,38 +10213,31 @@ CREATE INDEX swos_wetlandlayer_a82bd466 ON swos_wetlandlayer USING btree (indica
 
 
 --
--- Name: swos_wetlandlayer_background_layer_id_2dfb11c5; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
---
-
-CREATE INDEX swos_wetlandlayer_background_layer_id_2dfb11c5 ON swos_wetlandlayer USING btree (background_layer_id);
-
-
---
--- Name: swos_wetlandlayer_validation_auxlayer_layer_id_947df5fc; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
---
-
-CREATE INDEX swos_wetlandlayer_validation_auxlayer_layer_id_947df5fc ON swos_wetlandlayer_validation_auxlayer USING btree (layer_id);
-
-
---
--- Name: swos_wetlandlayer_validation_auxlayer_wetlandlayer_id_d1b006fc; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
---
-
-CREATE INDEX swos_wetlandlayer_validation_auxlayer_wetlandlayer_id_d1b006fc ON swos_wetlandlayer_validation_auxlayer USING btree (wetlandlayer_id);
-
-
---
--- Name: swos_wetlandlayer_validation_layer_id_a1918ef8; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
---
-
-CREATE INDEX swos_wetlandlayer_validation_layer_id_a1918ef8 ON swos_wetlandlayer USING btree (validation_layer_id);
-
-
---
 -- Name: swos_wetlandvideo_0ab699e3; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
 --
 
 CREATE INDEX swos_wetlandvideo_0ab699e3 ON swos_wetlandvideo USING btree (wetland_id);
+
+
+--
+-- Name: validation_validationlayer_layer_auxiliary_layer_id_7ddea9c9; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
+--
+
+CREATE INDEX validation_validationlayer_layer_auxiliary_layer_id_7ddea9c9 ON validation_validationlayer_layer_auxiliary USING btree (layer_id);
+
+
+--
+-- Name: validation_validationlayer_layer_basemap_id_34de9917; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
+--
+
+CREATE INDEX validation_validationlayer_layer_basemap_id_34de9917 ON validation_validationlayer USING btree (layer_basemap_id);
+
+
+--
+-- Name: validation_validationlayer_validationlayer_id_ad558bf9; Type: INDEX; Schema: public; Owner: swos; Tablespace: 
+--
+
+CREATE INDEX validation_validationlayer_validationlayer_id_ad558bf9 ON validation_validationlayer_layer_auxiliary USING btree (validationlayer_id);
 
 
 --
@@ -10659,43 +10694,43 @@ ALTER TABLE ONLY swos_wetlandlayer
 
 
 --
--- Name: swos_wetlandlayer_background_layer_id_2dfb11c5_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
---
-
-ALTER TABLE ONLY swos_wetlandlayer
-    ADD CONSTRAINT swos_wetlandlayer_background_layer_id_2dfb11c5_fk_layers_la FOREIGN KEY (background_layer_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: swos_wetlandlayer_va_layer_id_947df5fc_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
---
-
-ALTER TABLE ONLY swos_wetlandlayer_validation_auxlayer
-    ADD CONSTRAINT swos_wetlandlayer_va_layer_id_947df5fc_fk_layers_la FOREIGN KEY (layer_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: swos_wetlandlayer_va_wetlandlayer_id_d1b006fc_fk_swos_wetl; Type: FK CONSTRAINT; Schema: public; Owner: swos
---
-
-ALTER TABLE ONLY swos_wetlandlayer_validation_auxlayer
-    ADD CONSTRAINT swos_wetlandlayer_va_wetlandlayer_id_d1b006fc_fk_swos_wetl FOREIGN KEY (wetlandlayer_id) REFERENCES swos_wetlandlayer(layer_ptr_id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: swos_wetlandlayer_validation_layer_id_a1918ef8_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
---
-
-ALTER TABLE ONLY swos_wetlandlayer
-    ADD CONSTRAINT swos_wetlandlayer_validation_layer_id_a1918ef8_fk_layers_la FOREIGN KEY (validation_layer_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
 -- Name: swos_wetlandvide_wetland_id_763cd8cca09cd8c4_fk_swos_wetland_id; Type: FK CONSTRAINT; Schema: public; Owner: swos
 --
 
 ALTER TABLE ONLY swos_wetlandvideo
     ADD CONSTRAINT swos_wetlandvide_wetland_id_763cd8cca09cd8c4_fk_swos_wetland_id FOREIGN KEY (wetland_id) REFERENCES swos_wetland(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: validation_validatio_layer_basemap_id_34de9917_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
+--
+
+ALTER TABLE ONLY validation_validationlayer
+    ADD CONSTRAINT validation_validatio_layer_basemap_id_34de9917_fk_layers_la FOREIGN KEY (layer_basemap_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: validation_validatio_layer_id_7ddea9c9_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
+--
+
+ALTER TABLE ONLY validation_validationlayer_layer_auxiliary
+    ADD CONSTRAINT validation_validatio_layer_id_7ddea9c9_fk_layers_la FOREIGN KEY (layer_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: validation_validatio_layer_ptr_id_f297624b_fk_layers_la; Type: FK CONSTRAINT; Schema: public; Owner: swos
+--
+
+ALTER TABLE ONLY validation_validationlayer
+    ADD CONSTRAINT validation_validatio_layer_ptr_id_f297624b_fk_layers_la FOREIGN KEY (layer_ptr_id) REFERENCES layers_layer(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: validation_validatio_validationlayer_id_ad558bf9_fk_validatio; Type: FK CONSTRAINT; Schema: public; Owner: swos
+--
+
+ALTER TABLE ONLY validation_validationlayer_layer_auxiliary
+    ADD CONSTRAINT validation_validatio_validationlayer_id_ad558bf9_fk_validatio FOREIGN KEY (validationlayer_id) REFERENCES validation_validationlayer(layer_ptr_id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --

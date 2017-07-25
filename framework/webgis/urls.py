@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^layers/', include('layers.urls')),
     url(r'^csw/', include('csw.urls')),
     url(r'^swos/', include('swos.urls')),
+    url(r'^validation/', include('validation.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$', auth_views.login, name='login'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

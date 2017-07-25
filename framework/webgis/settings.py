@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'layers',
     'csw',
     'swos',
+    'validation',
     'django_assets'
 )
 
