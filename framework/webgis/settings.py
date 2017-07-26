@@ -88,9 +88,9 @@ DATABASES = {
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'swos3',
-        'USER': 'ANPASSEN',
-        'PASSWORD': 'ANPASSEN',
+        'NAME': 'swos_valtool',
+        'USER': 'USER',
+        'PASSWORD': 'PASSWORD',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -232,13 +232,21 @@ if not os.path.exists(os.path.join(BASE_DIR, "media", "email")):
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "media", "email") # change this to a proper location
 
 ##################################################
-
 # ie csrf cookie
 CSRF_COOKIE_DOMAIN='localhost'
 SESSION_COOKIE_DOMAIN=CSRF_COOKIE_DOMAIN
 USE_X_FORWARDED_HOST=True
 #SESSION_COOKIE_SECURE=True
 #CSRF_COOKIE_SECURE=True
+
+##################################################
+# satellite data discovery
+
+EARTH_EXPLORER_USER = 'USERNAME'
+EARTH_EXPLORER_PASSWORD = 'PASSWORD'
+
+ESA_DATAHUB_USER = 'USERNAME'
+ESA_DATAHUB_PASSWORD = 'PASSWORD'
 
 ##################################################
 # END

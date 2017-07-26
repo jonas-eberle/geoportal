@@ -246,7 +246,7 @@ class SentinelDownloader(object):
             return []
 
         scenes = obj['feed']['entry']
-        if int(obj['feed']['opensearch:totalResults']) == 1:
+        if not isinstance(scenes, list):
             scenes = [scenes]
         scenes_dict = []
         for scene in scenes:
