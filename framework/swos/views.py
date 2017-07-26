@@ -128,6 +128,9 @@ class WetlandDetail(APIView):
                 if layer_extern:
                     for ex_layer in layer_extern:
                         layer_data = LayerSerializer(ex_layer).data
+                        if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
+                             layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
+                             layer_data['selectedDate'] = layer_data['ogc_times'][-1] 
                         if layer_data['legend_colors']:
                             layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
                         if extdb.id not in temp_external_layers:
