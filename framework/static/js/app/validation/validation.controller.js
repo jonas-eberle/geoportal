@@ -259,10 +259,10 @@
             var select = '<select name="valcode" id="valcode">';
             select += '<option value="-1">== No class ==</option>\n';
             $.each(legend, function(key, value){
-                if (parseInt(key) === parseInt(feature.properties.ValCode)) {
-                    select += '<option value="'+key+'" selected="selected" style="color:'+value[1]+'">'+value[0]+'</option>\n';
+                if (parseInt(value[0]) === parseInt(feature.properties.ValCode)) {
+                    select += '<option value="'+value[0]+'" selected="selected" style="color:'+value[2]+'">'+value[1]+'</option>\n';
                 } else {
-                    select += '<option value="'+key+'" style="color:'+value[1]+'">'+value[0]+'</option>\n';
+                    select += '<option value="'+value[0]+'" style="color:'+value[2]+'">'+value[1]+'</option>\n';
                 }
             })
             select += '</select>';
