@@ -92,7 +92,40 @@
                     }
                 }).rendered.then(function(){
                     initSearchBar();
-                    $('#query_search').val(text);
+                    
+                    if (!DAB.View.searchInProgress) {
+                        console.log(searchData);
+                        var params = new Object();
+                        params.aoiRelation = "CONTAINS";
+                        
+                        if ('text' in searchData) {
+                            params.query = searchData['text'];
+                        } else {
+                            params.query = '';
+                        }
+                        if ('source' in searchData) {
+                            params.sources = searchData['source'];
+                        }
+                        if ('extent' in searchData) {
+                            params.aoiOption = 'Coordinates';
+                            params.aoiBoundingBox = searchData.extent.join(',')
+                            params.aoiRelation = "bbox_overlaps";
+                        } else {
+                            params.aoiOption = 'Coordinates';
+                            params.aoiBoundingBox = ",,,";
+                        }
+                        if ('rel' in searchData) {
+                            params.aoiRelation = searchData.rel;
+                        }
+                        
+                        //params.si = 1;
+                        
+                        /* Geoss Search Widget [Search] */
+                       console.log(params);
+                        $('#loading-div').show();
+                        Geoss.search(params);
+                    }
+                    
                 });
             }
         };

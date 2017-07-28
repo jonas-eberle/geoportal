@@ -9,6 +9,7 @@
         var gsrm = this;
         gsrm.searchData = searchData;
         gsrm.close = close;
+        gsrm.search = search;
         gsrm.actionBeforeRequest = actionBeforeRequest; 
         gsrm.successCallback = successCallback;
         gsrm.successCallBackFirst = successCallBackFirst;
@@ -16,11 +17,7 @@
         gsrm.metadataCallback = metadataCallback; 
         gsrm.downloadBoxCallback = downloadBoxCallback;
         gsrm.addLayerCallback = addLayerCallback;
-        gsrm.submitQuery = submitQuery;
-        gsrm.submitInitialQuery = submitInitialQuery;
-        gsrm.searchKeyUp = searchKeyUp;
         gsrm.clearAll = clearAll;
-        gsrm.updatePagination = updatePagination;
         gsrm.firstCall = true;
         
         Geoss.actionBeforeRequest = gsrm.actionBeforeRequest;
@@ -31,8 +28,6 @@
         Geoss.addLayerCallback = gsrm.addLayerCallback;
         
         Geoss.searchContainer = '#geoss-search-widget .search';
-        //Geoss.resultsContainer = '#geoss-search-widget .results';
-        //Geoss.paginationContainer = '#geoss-search-widget .pagination';
         Geoss.popupsContainer = '.popups-container';
         Geoss.layersContainer = '.layers-container';
         
@@ -47,11 +42,43 @@
             initLayerBox();
         }
         
-        gsrm.submitInitialQuery();
-        
         function close() {
             removeBboxLayers(mapviewer.map);
+            $('#clear_filters_button').trigger('click');
             $modalInstance.close();
+        }
+        
+        function search() {
+            var params = new Object();
+            params.aoiRelation = "CONTAINS";
+            
+            if ('text' in searchData) {
+                params.query = gsrm.searchData['text'];
+            } else {
+                params.query = '';
+            }
+            if ('source' in gsrm.searchData) {
+                params.sources = gsrm.searchData['source'];
+            }
+            if ('extent' in gsrm.searchData) {
+                params.aoiOption = 'Coordinates';
+                params.aoiBoundingBox = gsrm.searchData.extent.join(',')
+                params.aoiRelation = "bbox_overlaps";
+            } else {
+                params.aoiOption = 'Coordinates';
+                params.aoiBoundingBox = ",,,";
+            }
+            if ('rel' in gsrm.searchData) {
+                params.aoiRelation = gsrm.searchData.rel;
+                if (params.aoiRelation == 'OVERLAPS') {
+                    params.aoiRelation = 'bbox_overlaps';
+                }
+            }
+            
+            /* Geoss Search Widget [Search] */
+            console.log(params);
+            $('#loading-div').show();
+            Geoss.search(params);
         }
         
         // Called before requesting new data (on search, next/previous page, drill down, ...)
@@ -77,8 +104,7 @@
                 gsrm.successCallBackFirst();
                 gsrm.firstCall = false;
             }
-            gsrm.updatePagination(dataXml);
-            // console.log(dataXml.html());
+            updatePagination(dataXml);
             
             $('.results-icons button.map').click(function(){
                 gsrm.dialog = bootbox.dialog({
@@ -98,11 +124,6 @@
                     }
                 });
             });
-            /*
-            $('.results-icons button.imgBox, .results-icons button.otherBox').click(function(){
-                
-            });
-            */
         }
         
         // Called on error
@@ -203,9 +224,13 @@
             
             //hide wms layer window
             $('#geoss-popup .modal-body .popups-container.geoss').html('');
+            $('#layer_sites').click().click();
             gsrm.dialog.modal('hide');
-            $('#bbox_layers').click();
-            //$('.black2 .top-strip .close-popup').trigger('click');
+            
+            // hide geoss bbox layers on map
+            if ($('#hideBoundingBoxes')[0].checked == true) {
+                $('.layers-container.geoss .hide_layer .bbox').trigger('click');
+            }
         
             var ind = element.closest('.black2.wms').attr('class');
             if ((element.siblings('label').is(':hover'))) {
@@ -219,73 +244,6 @@
             
                
         }
-        
-        function searchKeyUp(e) {
-            if (e.which == 13) {
-                gsrm.submitQuery();
-            }
-        }
-        
-        // Sets basic parameters and sends request
-        function submitInitialQuery() {
-            
-            if (!DAB.View.searchInProgress) {
-                console.log(searchData);
-                var params = new Object();
-                params.rel = "CONTAINS";
-                
-                if ('text' in searchData) {
-                    params.query = searchData['text'];
-                } else {
-                    params.query = '';
-                }
-                if ('source' in searchData) {
-                    params.sources = searchData['source'];
-                }
-                if ('extent' in searchData) {
-                    params.bbox = searchData.extent.join(',')
-                    params.rel = "OVERLAPS";
-                } else {
-                    params.bbox = ",,,";
-                }
-                if ('rel' in searchData) {
-                    params.rel = searchData.rel;
-                }
-                
-                params.si = 1;
-                
-                /* Geoss Search Widget [Search] */
-                $('#loading-div').show();
-                Geoss.search(params, Geoss.successCallback, Geoss.failureCallback);
-            }
-        }
-        
-        function submitQuery() {
-            if (!DAB.View.searchInProgress) {
-                var params = new Object();
-                params.query = $('#gsw_query_search').val();
-                params.rel = "CONTAINS";
-                params.si = 1;
-                
-                if ('source' in searchData) {
-                    params.sources = searchData['source'];
-                }
-                if ('extent' in searchData) {
-                    params.bbox = searchData.extent.join(',')
-                    params.rel = "OVERLAPS";
-                } else {
-                    params.bbox = ",,,";
-                }
-                if ('rel' in searchData) {
-                    params.rel = searchData.rel;
-                }
-                
-                //params.sources = "geodabgbifid"; //GBIF catalog
-                /* Geoss Search Widget [Search] */
-                $('#loading-div').show();
-                Geoss.search(params, Geoss.successCallback, Geoss.failureCallback);
-            }
-        }
 
         // Clears search bar and results
         function clearAll() {
@@ -295,37 +253,5 @@
             $(Geoss.paginationContainer).html('');
             removeBboxLayers(mapviewer.map);
         }
-
-        
-        // Sets new page numbering
-        function updatePagination(resultSet) {
-            initializePaginationContainer();
-            var totalResults = resultSet.find('totalResults').text();
-            var startIndex = resultSet.find('startIndex').text();
-            var endIndex = parseInt(startIndex) + parseInt(resultSet.find('itemsPerPage').text()) - 1;
-            
-            if (endIndex >= totalResults) {
-                endIndex = totalResults;
-                $('.inner-pagination-container span.next').addClass('disabled');
-            } else {
-                $('.inner-pagination-container span.next').removeClass('disabled');
-            }
-        
-            if (startIndex == 1) {
-                $('.inner-pagination-container span.prev').addClass('disabled');
-            } else {
-                $('.inner-pagination-container span.prev').removeClass('disabled');
-            }
-        
-            if (totalResults == 0) {
-                $(Geoss.paginationContainer).hide();
-                startIndex = 0;
-            } else {
-                $(Geoss.paginationContainer).show();
-            }
-        
-            $('.inner-pagination-container .numbers-pagination').text(startIndex + "-" + endIndex + " of " + totalResults);
-        }
-
     }
 })();
