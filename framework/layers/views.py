@@ -10,7 +10,7 @@ import json
 
 from webgis import settings
 
-from .models import Layer, Contact, MetadataSerializer
+from .models import Layer, Contact, MetadataSerializer, KeywordInlineSerializer, KeywordInline
 
 from owslib.etree import etree
 
@@ -50,9 +50,12 @@ class LayerDetail(APIView):
 
     # HTTP GET method
     def get(self, request, pk, format=None):
+
         layer = self.get_object(pk)
         serializer = MetadataSerializer(layer)
-        return Response(serializer.data)
+        serializer_data = serializer.data
+        serializer_data['keywords'] = KeywordInlineSerializer(KeywordInline.objects.filter(layer=layer.id), many=True).data
+        return Response(serializer_data)
 
 
 # REST view to redirect to a download URL for a given layer

@@ -32,20 +32,24 @@
             {{ mi.value_passed.date_begin }} - {{ mi.value_passed.date_end }}
         </div>
     </div>
-    <div class="item" ng-if="mi.value_passed.topicCategory">
+    <div class="item" ng-if="mi.value_passed.topicCategory.length > 0">
         <div class="headline">
             Category
         </div>
         <div class="description">
-            {{ mi.value_passed.topicCategory }}
+            <div ng-repeat="cat in mi.value_passed.topicCategory">
+                <div class="topic_cat">{{ cat.identifier }}</div>
+            </div>
         </div>
     </div>
-    <div class="item" ng-if="mi.value_passed.keywords">
+    <div class="item" ng-if="mi.value_passed.keywords.length > 0">
         <div class="headline">
             Keywords
         </div>
         <div class="description">
-            {{ mi.value_passed.keywords }}
+            <div ng-repeat="keyword in mi.value_passed.keywords">
+                {{ keyword.keyword }}
+            </div>
         </div>
     </div>
     <div class="item">
@@ -53,13 +57,13 @@
             Bounding Box (Lat, Lon Coordinates)
         </div>
         <div class="description">
-            North:  {{ mi.value_passed.north.toFixed(3) }}
+            North: {{ mi.value_passed.north.toFixed(3) }}
             <br>
-            West:   {{ mi.value_passed.west.toFixed(3) }}
+            West: {{ mi.value_passed.west.toFixed(3) }}
             <br>
-            South:  {{ mi.value_passed.south.toFixed(3) }}
+            South: {{ mi.value_passed.south.toFixed(3) }}
             <br>
-            East:   {{ mi.value_passed.east.toFixed(3) }}
+            East: {{ mi.value_passed.east.toFixed(3) }}
         </div>
     </div>
     <div class="item" ng-if="mi.value_passed.meta_lineage">
@@ -68,38 +72,28 @@
         </div>
         <div class="description" style="white-space: pre-line;">{{ mi.value_passed.meta_lineage }}</div>
     </div>
-    <div class="item" ng-if="mi.value_passed.equi_scale > 0">
+    <div class="item" ng-if="mi.value_passed.equi_scale || mi.value_passed.resolution_distance">
         <div class="headline">
             Resolution
         </div>
         <div class="description">
-            {{ mi.value_passed.equi_scale }} meter
+            {{ mi.value_passed.equi_scale }} {{ mi.value_passed.resolution_distance }} {{ mi.value_passed.resolution_unit }}
         </div>
     </div>
-    <!--
-    <div class="item">
-        <div class="headline">
-            Point of Contact
-        </div>
-        <div class="description">
-            {{mi.value_passed.meta_contact.organisation}}<br ng-if="mi.value_passed.meta_contact.organisation">
-            {{mi.value_passed.meta_contact.address}}<br ng-if="mi.value_passed.meta_contact.address">
-            {{mi.value_passed.meta_contact.postcode}} {{mi.value_passed.meta_contact.city}}<br ng-if="mi.value_passed.meta_contact.city">
-            Contact: {{mi.value_passed.meta_contact.first_name}} {{mi.value_passed.meta_contact.last_name}}<br>
-            Email: {{mi.value_passed.meta_contact.email}}
-        </div>
-    </div>
-    -->
+
     <div class="item">
         <div class="headline">
             Point of Contact (Dataset)
         </div>
         <div class="description">
-            <div ng-if="mi.value_passed.dataset_contact_new.organisation">{{ mi.value_passed.dataset_contact_new.organisation }}</div>
-            <div ng-if="mi.value_passed.dataset_contact_new.last_name">
-                Contact: {{ mi.value_passed.dataset_contact_new.first_name }} {{ mi.value_passed.dataset_contact_new.last_name }}</div>
-            <div ng-if="mi.value_passed.dataset_contact_new.email">
-                Email: <a href="mailto:{{ mi.value_passed.dataset_contact_new.email }}">{{ mi.value_passed.dataset_contact_new.email }}</a></div>
+            <div ng-repeat="contact in mi.value_passed.point_of_contacts">
+                <div ng-if="contact.organisation">{{ contact.organisation }}</div>
+                <div ng-if="contact.last_name">
+                    Contact: {{ contact.first_name }} {{ contact.last_name }}</div>
+                <div ng-if="contact.email">
+                    Email: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

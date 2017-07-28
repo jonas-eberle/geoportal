@@ -7,7 +7,7 @@ if django.VERSION < (1, 10): #todo remove
 else:
     from suit.sortables import SortableTabularInline
 
-from .models import Layergroup, LayerInline, Layer, Contact
+from .models import Layergroup, LayerInline, Layer, Contact, ISOcodelist, OnlineResourceInline, ConstraintLimitInline, ConstraintConditionsInline, ConformityInline, KeywordInline
 
 
 # Model form verification for BaseLayer model
@@ -37,22 +37,58 @@ class LayersForm(forms.ModelForm):
             self.add_error('ogc_link', 'OGC Service url has to be specified for this type of layer')
 
 
+# Sortable LayersgroupsInline to MapViewerAdmin
+class OnlineResourceInline(SortableTabularInline):
+    model = OnlineResourceInline
+    extra = 1
+    verbose_name_plural = 'Online Resources'
+    suit_classes = 'suit-tab suit-tab-onlineresources'
+
+class ConstraintLimitInline(SortableTabularInline):
+    model = ConstraintLimitInline
+    extra = 1
+    verbose_name_plural = "Constraint Limits"
+    suit_classes = 'suit-tab suit-tab-conformity_constraints'
+
+class ConstraintConditionsInline(SortableTabularInline):
+    model = ConstraintConditionsInline
+    extra = 1
+    verbose_name_plural = "Constraint Conditions"
+    suit_classes = 'suit-tab suit-tab-conformity_constraints'
+
+class ConformityInline(SortableTabularInline):
+    model = ConformityInline
+    extra = 1
+    verbose_name_plural = "Conformity"
+    suit_classes = 'suit-tab suit-tab-conformity_constraints'
+
+class KeywordInline(SortableTabularInline):
+    model = KeywordInline
+    extra = 1
+    verbose_name_plural = "Keywords"
+    suit_classes = 'suit-tab suit-tab-keyword'
+
 # Provide layers admin with tab-based view
 # Fieldsets has to be extended if layer model is extended
 class LayersAdmin(admin.ModelAdmin):
     form = LayersForm
+    inlines = (OnlineResourceInline,ConstraintConditionsInline, ConstraintLimitInline, ConformityInline, KeywordInline)
     fieldsets = (
         (None, {
             'classes': ('suit-tab', 'suit-tab-general',),
-            'fields': ('identifier', 'title', 'abstract', 'topicCategory', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'publishable')
+            'fields': ('identifier', 'title', 'abstract', 'topicCategory', 'scope','meta_contact', 'meta_contacts', 'meta_language', 'meta_characterset', 'meta_date', 'publishable')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-ogc',),
-            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'wmts_matrixset', 'wmts_resolutions', 'wmts_multiply', 'wmts_tilesize', 'wmts_projection', 'wmts_prefix_matrix_ids', 'sos_default_field')
+            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'sos_default_field')
+        }),
+        (None, {
+            'classes': ('suit-tab', 'suit-tab-wmts',),
+            'fields': ('wmts_matrixset', 'wmts_resolutions', 'wmts_multiply', 'wmts_tilesize', 'wmts_projection', 'wmts_prefix_matrix_ids')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-dataset',),
-            'fields': ('dataset_contact_new', 'date_create', 'language', 'characterset', 'dataset_epsg', 'format', 'equi_scale', 'representation_type', 'meta_lineage')
+            'fields': ('dataset_contact_new', 'point_of_contacts', 'date_creation','date_publication', 'date_revision', 'language', 'characterset', 'dataset_epsg', 'format',  'meta_lineage')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-location',),
@@ -63,6 +99,10 @@ class LayersAdmin(admin.ModelAdmin):
             'fields': ('date_begin', 'date_end')
         }),
         (None, {
+            'classes': ('suit-tab', 'suit-tab-spatialresolution',),
+            'fields': ('representation_type', 'equi_scale','resolution_distance','resolution_unit')
+        }),
+        (None, {
             'classes': ('suit-tab', 'suit-tab-download',),
             'fields': ('downloadable', 'download_url', 'download_layer', 'download_type','download_file', 'map_layout_image')
         }),
@@ -71,9 +111,10 @@ class LayersAdmin(admin.ModelAdmin):
             'fields': ('auth_perm', 'auth_users', 'auth_groups','download_perm', 'download_users', 'download_groups')
         }),
     )
+    list_display = ('title', 'meta_contact', 'publishable')
     save_as = True
-    suit_form_tabs = (('general', 'General'), ('ogc', 'Data'), ('dataset', 'Dataset'), ('location', 'Location'), ('temporalextent','Temporal Extent'),('download', 'Download'), ('permissions', 'Permissions'))
-
+    suit_form_tabs = (('general', 'General'), ('ogc', 'Data'),('wmts', 'WMTS'), ('dataset', 'Dataset'), ('location', 'Location'), ('temporalextent','Temporal Extent'),('spatialresolution', 'Spatial Resolution'),('onlineresources', 'Online Resources'),('keyword', 'Keyword'),('conformity_constraints', 'Conformity / Constraints'), ('download', 'Download'), ('permissions', 'Permissions'))
+    search_fields=('title',)
 
 # For Layergroup we need to specify the layers inline and make them sortable
 class LayersInline(SortableTabularInline):
@@ -92,7 +133,15 @@ class LayergroupAdmin(admin.ModelAdmin):
 class ContactsAdmin(admin.ModelAdmin):
     save_as = True
 
+class ISOcodelistAdmin(admin.ModelAdmin):
+    list_display = ('identifier', 'description', 'code_list')
+
+    def has_add_permission(self, request):
+        return False
+
+
 # Register all models with their changed admins
 admin.site.register(Layergroup, LayergroupAdmin)
 admin.site.register(Layer, LayersAdmin)
 admin.site.register(Contact, ContactsAdmin)
+admin.site.register(ISOcodelist, ISOcodelistAdmin)

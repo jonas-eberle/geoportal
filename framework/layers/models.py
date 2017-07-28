@@ -40,6 +40,19 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = ('first_name', 'last_name', 'position', 'address', 'postcode', 'city', 'country', 'state', 'email', 'organisation', 'telephone', 'fax', 'mobile', 'website')
 
+# ISO 19115 Codelists
+class ISOcodelist(models.Model):
+    identifier = models.CharField(max_length=200)
+    description = models.CharField(max_length=500)
+    code_list = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return u"%s" % (self.identifier)
+
+class ISOcodelistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ISOcodelist
+        fields = ('identifier', )
 
 # Layer model to specify visualization layers with metadata information
 class Layer(models.Model):    
@@ -48,7 +61,8 @@ class Layer(models.Model):
     identifier = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     abstract = models.TextField()
-    topicCategory = models.CharField(max_length=200, blank=True, null=True)
+    topicCategory = models.ManyToManyField(ISOcodelist, limit_choices_to={'code_list': "MD_TopicCategoryCode"},verbose_name="Topic category", default=227)
+    scope = models.ForeignKey(ISOcodelist, limit_choices_to={'code_list': "MD_ScopeCode"}, related_name="scope", default=203)
     publishable = models.BooleanField(default=False)
 
     #Vizualiation services
@@ -60,6 +74,8 @@ class Layer(models.Model):
     ogc_getfeatureinfo = models.CharField("OGC WMS GetFeatureInfo URL", max_length=200, blank=True, null=True)
     ogc_attribution = models.CharField("Attribution", max_length=255, blank=True, null=True, help_text="Attribution / Copyright. To add a link use the following syntax (http://www.adress.de, name)")
     ogc_times = models.TextField("Time dimension", blank=True, null=True, help_text="Separated by space/blank character")
+
+    statistic = models.CharField("Layer has statistic / time series data", max_length=20, choices=[('ts','Time series'),('chart','Chart')], default=None, null=True, blank=True)
 
     #Download services
     downloadable = models.BooleanField(default=False, help_text="Define whether layer can be downloaded")
@@ -76,7 +92,7 @@ class Layer(models.Model):
     wmts_resolutions = models.TextField("WMTS resolutions", blank=True, null=True, help_text="Separated by space/blank character")
     wmts_tilesize = models.IntegerField("WMTS tile size", blank=True, null=True, help_text="e.g., 256 or 512")
     wmts_projection = models.CharField("WMTS projection", max_length=200, blank=True, null=True)
-    wmts_multiply = models.BooleanField(default=False, help_text="Define wether multiplication is needed for WMTS resolutions")
+    wmts_multiply = models.BooleanField("WMTS multiply", default=False, help_text="Define wether multiplication is needed for WMTS resolutions")
     wmts_prefix_matrix_ids = models.CharField("WMTS prefix matrix ids", max_length=200, blank=True, null=True)
 
     # SOS settings
@@ -85,12 +101,16 @@ class Layer(models.Model):
     #Data Quality
 
     #Dataset description
-    dataset_contact_new = models.ForeignKey(Contact, related_name="dataset_contact", verbose_name="Dataset contact", blank=True, null=True)
-    date_create = models.DateField(blank=True, null=True, verbose_name="Dataset creation date")
+    dataset_contact_new = models.ForeignKey(Contact, related_name="dataset_contact", verbose_name="Dataset contact - replaced by Dataset point  of contact(s)", blank=True, null=True)
+    point_of_contacts = models.ManyToManyField(Contact, related_name="meta_point_of_contacts", blank=True, verbose_name="Dataset point of contact(s)")
+    date_creation = models.DateField(blank=True, null=True, verbose_name="Dataset creation date")
+    date_publication = models.DateField(blank=True, null=True, verbose_name="Dataset publication date")
+    date_revision = models.DateField(blank=True, null=True, verbose_name="Dataset revision date")
     language = models.CharField(max_length=200, default="English", blank=True)
     characterset = models.CharField(max_length=200, blank=True, null=True)
     format = models.CharField(max_length=200, blank=True, null=True)
     dataset_epsg = models.IntegerField("EPSG code from the dataset", blank=True, null=True, help_text="Just the projection code/number")
+
 
     #Geographic location
     west = models.FloatField("BBOX west coordinate", help_text="e.g. -180")
@@ -98,22 +118,26 @@ class Layer(models.Model):
     north = models.FloatField("BBOX north coordinate", help_text="e.g. 90")
     south = models.FloatField("BBOX south coordinate", help_text="e.g. -90")
     geo_description = models.CharField("Location description", max_length=200, blank=True, null=True)
-    epsg = models.IntegerField("EPSG code for the coordinates", blank=True, null=True, help_text="Just the projection code/number (e.g. 4326)")
+    epsg = models.IntegerField("EPSG code for the coordinates", blank=True, null=True, help_text="EPSG code (e.g. 4326)")
 
     #Spatial resolution
     representation_type = models.CharField("Type of dataset", max_length=200, blank=True, null=True, help_text="e.g., raster or vector")
-    equi_scale = models.FloatField("Spatial resolution", blank=True, null=True, help_text="Just for metadata")
+    equi_scale = models.FloatField("Spatial resolution", blank=True, null=True)
+    resolution_distance = models.FloatField("Resolution", null=True, blank=True)
+    resolution_unit = models.CharField("Resolution unit", max_length=30, null=True, blank=True)
 
     #Temporal Extent
     date_begin = models.DateField(blank = True,null=True,verbose_name='Begin temporal extent')
     date_end = models.DateField(blank=True, null=True, verbose_name='End temporal extent')
 
     #Metadata
-    meta_contact = models.ForeignKey(Contact, related_name="meta_contact", blank=True, null=True, verbose_name="Metadata contact")
+    meta_contact = models.ForeignKey(Contact, related_name="meta_contact", blank=True, null=True, verbose_name="Metadata contact - replaced by metadata contacts")
+    meta_contacts = models.ManyToManyField(Contact, related_name="meta_contacts", blank=True, verbose_name="Metadata contact(s)")
     meta_language = models.CharField(max_length=200, default="English", blank=True, verbose_name="Metadata language")
     meta_characterset = models.CharField(max_length=200, blank=True, null=True, verbose_name="Metadata character set")
     meta_date = models.DateField(blank=True, null=True, verbose_name="Metadata date")
     meta_lineage = models.TextField("Lineage information", blank=True, default="")
+
 
     #Legend
     legend_graphic = models.FileField("Legend graphic file", upload_to='legend', null=True, blank=True)
@@ -282,7 +306,6 @@ class LayerSerializer(serializers.ModelSerializer):
     #legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
     download = serializers.FileField(source='download_file') or serializers.CharField(source='download_url')
 
-
     class Meta:
         model = Layer
         fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids')
@@ -290,12 +313,14 @@ class LayerSerializer(serializers.ModelSerializer):
 
 # Metadata serializer to output metadata related information from a given layer
 class MetadataSerializer(serializers.ModelSerializer):
-    dataset_contact_new = ContactSerializer(many=False, read_only=True)
-    meta_contact = ContactSerializer(many=False, read_only=True)
+    point_of_contacts = ContactSerializer(many=True, read_only=True)
+    meta_contacts = ContactSerializer(many=True, read_only=True)
+
+    topicCategory = ISOcodelistSerializer(many=True, read_only=True)
 
     class Meta:
         model = Layer
-        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'dataset_contact_new', 'date_create', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
+        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
 
 
 # Layergroup model to group layers, just title is needed, the layers were referenced in the LayerInline model
@@ -321,7 +346,6 @@ class LayerInline(models.Model):
         else:
             return self.layer.title
 
-
 # Sortable LayergroupInline model to reference mapviewers and layergroups
 # Foreign Keys: Layergroup, MapViewer
 class LayergroupInline(models.Model):
@@ -331,4 +355,60 @@ class LayergroupInline(models.Model):
 
     def __unicode__(self):
         return self.layergroup.title
+
+class OnlineResourceInline(models.Model):
+    order = models.PositiveIntegerField(default=0)
+    linkage = models.CharField(max_length=400, blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    protocol = models.CharField(max_length=200, blank=True, null=True)
+    function = models.ForeignKey(ISOcodelist, limit_choices_to={'code_list': 'CI_OnLineFunctionCode'}, blank=True, null=True)
+    layer = models.ForeignKey(Layer, related_name='layer_online_resource')
+
+    def __unicode__(self):
+        return self.linkage
+
+class ConstraintLimitInline(models.Model):
+    order = models.PositiveIntegerField(default=0)
+    constraints_limit = models.CharField("Limitations on oublic access", max_length=400, blank=True, null=True)
+    layer = models.ForeignKey(Layer, related_name='layer_constraints_limit')
+
+    def __unicode__(self):
+        return self.constraints_limit
+
+class ConstraintConditionsInline(models.Model):
+    order = models.PositiveIntegerField(default=0)
+    constraints_cond = models.CharField("Conditions applying to access and use", max_length=400, blank=True, null=True)
+    layer = models.ForeignKey(Layer, related_name='layer_constraints_cond')
+
+    def __unicode__(self):
+        return self.constraints_cond
+
+class ConformityInline(models.Model):
+    order = models.PositiveIntegerField(default=0)
+    title = models.CharField("Conformity", max_length=400, blank=True, null=True)
+    date = models.DateField(blank=True, null=True, verbose_name="Date")
+    date_type = models.ForeignKey(ISOcodelist, limit_choices_to={'code_list': "CI_DateTypeCode"}, blank=True, verbose_name="Date type")
+    layer = models.ForeignKey(Layer, related_name='layer_conformity')
+
+    def __unicode__(self):
+        return self.title
+
+class KeywordInline(models.Model):
+    order = models.PositiveIntegerField(default=0)
+    keyword = models.CharField(max_length=200)
+    thesaurus_name = models.CharField(max_length=300, blank=True, null=True)
+    thesaurus_date = models.DateField(blank=True, null=True, verbose_name="Thesaurus publication date")
+    thesaurus_date_type_code_code_value = models.ForeignKey(ISOcodelist,limit_choices_to={'code_list': "CI_DateTypeCode"},blank=True, null=True)
+    layer = models.ForeignKey(Layer, related_name='layer_keywords')
+
+    def __unicode__(self):
+        return self.keyword
+
+class KeywordInlineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = KeywordInline
+        fields = ('keyword', )
+
+
 

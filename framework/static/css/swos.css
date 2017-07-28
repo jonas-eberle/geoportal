@@ -666,3 +666,7 @@ button.btn-loadmore:hover {
 #sidebar .item_catalog {
     margin-left:0;
 }
+
+.topic_cat:first-letter {
+    text-transform: uppercase;
+}
