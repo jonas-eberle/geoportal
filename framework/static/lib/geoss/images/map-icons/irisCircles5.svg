@@ -4,8 +4,8 @@
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str0 {stroke:yellow;stroke-width:2.0;stroke-opacity:0.5}
-    .fil0 {fill:#8D0F00;fill-opacity:0.5}
+    .str0 {stroke:black;stroke-width:2.0;stroke-opacity:0.65}
+    .fil0 {fill:#D20140;fill-opacity:0.5}
    ]]>
   </style>
  </defs>
