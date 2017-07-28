@@ -15,25 +15,18 @@ class LayergroupsInline(SortableTabularInline):
     model = LayergroupInline
     fields = ('layergroup',)
     extra = 1
-    verbose_name_plural = 'Layergroups'
+    verbose_name_plural = 'Layer groups'
     sortable = 'order'
-
-
-# Sortable BaseLayersInline for MapViewerAdmin
-class BaseLayersInline(SortableTabularInline):
-    model = BaseLayerInline
-    fields = ('baselayer',)
-    extra = 1
-    verbose_name_plural = 'Baselayers'
-    sortable = 'order'
+    suit_classes = 'suit-tab suit-tab-layergroups'
 
 # Sortable BaseLayersInline for MapViewerAdmin
 class LayersBaseInline(SortableTabularInline):
     model = LayerBaseInline
     fields = ('title','baselayer',)
     extra = 1
-    verbose_name_plural = 'Baselayers'
+    verbose_name_plural = 'Base layers'
     sortable = 'order'
+    suit_classes = 'suit-tab suit-tab-baselayer'
 
 
 # Model form verification for MapViewer model
@@ -54,6 +47,29 @@ class MapViewerForm(forms.ModelForm):
 class MapViewerAdmin(admin.ModelAdmin):
     form = MapViewerForm
     inlines = (LayersBaseInline,LayergroupsInline,)
+    fieldsets = (
+        (None, {
+            'classes': ('suit-tab', 'suit-tab-general',),
+            'fields': (
+            'title', 'template_file','search_url', 'auth_registration', 'addexternallayer', 'html_info', 'html_footer')
+        }),
+        (None, {
+            'classes': ('suit-tab', 'suit-tab-map',),
+            'fields': (
+                'center_lat', 'center_lon', 'center_proj', 'map_proj',  'zoom_min', 'zoom_max', 'zoom_init','map_resolutions')
+        }),
+        (None, {
+            'classes': ('suit-tab', 'suit-tab-permissions',),
+            'fields': (
+                'auth_perm', 'auth_users', 'auth_groups', 'download_perm', 'download_users', 'download_groups')
+        }),
+        (None, {
+            'classes': ('suit-tab', 'suit-tab-timeslider',),
+            'fields': (
+                'time_slider', 'time_slider_start', 'time_slider_end', 'time_slider_interval', 'time_slider_dates')
+        }),
+    )
+    suit_form_tabs = (('general', 'General'), ('map', 'Map'), ('timeslider', 'Time slider'), ('baselayer', 'Base layer'), ('layergroups','Layer groups'), ('permissions', 'Permissions'))
     save_as = True
 
 

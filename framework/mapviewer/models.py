@@ -50,16 +50,16 @@ class MapViewer(models.Model):
     template_file = models.FilePathField("Template file", path=settings.TEMPLATES_DIR+'/mapviewer', match=".*\.html")
     auth_registration = models.BooleanField("Allow user registration", default=False)
     search_url = models.ForeignKey(CSW, blank=True, null=True, verbose_name="Server for search field")
-    addexternallayer = models.BooleanField("Allow external layers", default=False, help_text="If activated the button for add external layers to map by users is not hidden!")
+    addexternallayer = models.BooleanField("Allow external layers", default=False, help_text="(Hint: If activated, the button for add external layers to map by users is not hidden.)")
 
     # map
     center_lat = models.FloatField("Center latitude", default=90.0, help_text="Center coordinate (latitude)")
     center_lon = models.FloatField("Center longitude", default=25.0, help_text="Center coordinate (longitude)")
-    center_proj = models.CharField("Center projection", max_length=15, default="EPSG:4326", help_text="EPSG projection name")
-    map_proj = models.CharField("Map projection", max_length=15, default="EPSG:4326", help_text="EPSG projection name")
+    center_proj = models.CharField("Center projection", max_length=15, default="EPSG:4326", help_text="EPSG projection code of center coordinate")
+    map_proj = models.CharField("Map projection", max_length=15, default="EPSG:4326", help_text="EPSG projection code (e.g. EPSG:3857 - WGS84 Web Mercator, used in many popular web mapping applications (GoogleMaps/OpenStreetMap/etc))")
     map_resolutions = models.TextField("Map zoom resolutions", blank=True, null=True, help_text="Map resolutions (seperated by space/blank character)")
     zoom_min = models.IntegerField("Minimum zoom for map", default=0, help_text="Default: 0")
-    zoom_max = models.IntegerField("Maximum zoom for map", default=28, help_text="Default: 28")
+    zoom_max = models.IntegerField("Maximum zoom for map", default=28, help_text="(Hint: Please check the max supported zoom level of your used base layer.)")
     zoom_init = models.IntegerField("Initial zoom for map", default=4, help_text="Default: 4")
 
     # permissions
@@ -78,7 +78,7 @@ class MapViewer(models.Model):
     time_slider_dates = models.TextField("Individual dates", blank=True, null=True, help_text="Dates separated by comma")
     
     #texts
-    html_info = models.TextField("Info text (HTML)", blank=True, null=True, help_text="Please note: Line breaks will be converted to <br> tags")
+    html_info = models.TextField("Info text (HTML)", blank=True, null=True, help_text="Please note: Line breaks will be converted to &lt;br&gt; tags")
     html_footer = models.TextField("Footer text (HTML)", blank=True, null=True)
     
     def __str__(self):
