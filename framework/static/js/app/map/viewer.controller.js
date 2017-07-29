@@ -368,9 +368,24 @@
                             if (!angular.element('#feature_info').length) {
                                 var dialog = bootbox.dialog({
                                     title: 'Feature Info Response',
-                                    message: '<p id="feature_info"></p>' + coordinate + data,
-                                    backdrop: false
-                                });
+                                    message: '<p id="feature_info"></p><div class="feature_result">' + coordinate + data + "</div>",
+                                    backdrop: false,
+                                    buttons: {
+                                        "Clear": {
+                                            label: "Clear results",
+                                            className: "btn-default",
+                                            callback: function () {
+                                                 angular.element('.feature_result').remove();
+                                                 return false;
+                                            }
+                                    },
+                                    cancel: {
+                                        label: "Close",
+                                        className: "btn-primary",
+                                        callback: function () {
+                                        }
+                                    }
+                                }});
                                 dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
                                 var width = $(document).width() / 2 - 300;
                                 if (width < 0) {
@@ -379,7 +394,7 @@
                                 $('.modal-content', dialog).css('left', width);
                             }
                             else {
-                                $(coordinate + data + '<div class="divider_feature_info"></div>').insertAfter('#feature_info');
+                                $("<div class=\"feature_result\">" + coordinate + data + '<div class="divider_feature_info"></div></div><div>').insertAfter('#feature_info');
                             }
                             $('#loading-div').removeClass('nobg').hide();
                         }, function (err) {
