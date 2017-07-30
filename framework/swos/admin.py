@@ -27,9 +27,21 @@ class WetlandLayerAdmin(LayersAdmin):
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
     search_fields=('title','abstract','wetland__name', 'product__name')
     ordering =['title']
-    list_filter=('publishable', 'wetland','product')
+    list_filter=('publishable','wetland','product')
+    suit_list_filter_horizontal = ('wetland','product','publishable')
 
     actions=[make_publishable,make_unpublishable]
+
+    def suit_row_attributes(self, obj, request):
+        class_map = {
+            True: 'table-success',
+            False: 'table-danger',
+        }
+
+        css_class = class_map.get(obj.publishable)
+        if css_class:
+            return {'class': css_class}
+
 
 class ExternalLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
@@ -41,14 +53,16 @@ class ExternalLayerAdmin(LayersAdmin):
     search_fields=('title','abstract','datasource__name', 'product__name')
     ordering =['title']
     list_filter=('publishable', 'datasource')
+    suit_list_filter_horizontal = ('datasource', )
 
     actions=[make_publishable,make_unpublishable]
-
 
 class Wetlands(admin.OSMGeoAdmin):
     list_display = ('name', 'country', 'identifier', 'geo_scale', 'partner', 'ecoregion', 'site_type', 'wetland_type' , 'service_case')
     ordering = ['name']
+    search_fields = ('name', 'country', 'geo_scale', 'partner', 'ecoregion', 'site_type','wetland_type')
     list_filter = ('country', 'geo_scale', 'partner', 'ecoregion', 'site_type','wetland_type')
+    suit_list_filter_horizontal = ('country','ecoregion', 'partner')
 
 class ExternalDatabaseAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'description')
@@ -68,6 +82,7 @@ class WetlandVideoAdmin(admin.OSMGeoAdmin):
     fields = ('name', 'description', 'date', 'copyright', 'source', 'link', 'thumb_link', 'wetland')
     list_filter = ('wetland', 'source')
     search_fields=('name',)
+    suit_list_filter_horizontal = ('wetland')
 
 class ProductAdmin(SortableModelAdmin):
     sortable = 'order'

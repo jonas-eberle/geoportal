@@ -111,10 +111,12 @@ class LayersAdmin(admin.ModelAdmin):
             'fields': ('auth_perm', 'auth_users', 'auth_groups','download_perm', 'download_users', 'download_groups')
         }),
     )
-    list_display = ('title', 'meta_contact', 'publishable')
+    list_display = ('title','ogc_attribution', 'publishable')
     save_as = True
     suit_form_tabs = (('general', 'General'), ('ogc', 'Data'),('wmts', 'WMTS'), ('dataset', 'Dataset'), ('location', 'Location'), ('temporalextent','Temporal Extent'),('spatialresolution', 'Spatial Resolution'),('onlineresources', 'Online Resources'),('keyword', 'Keyword'),('conformity_constraints', 'Conformity / Constraints'), ('download', 'Download'), ('permissions', 'Permissions'))
-    search_fields=('title',)
+    search_fields=('title','abstract')
+    list_filter = ('publishable', )
+    suit_list_filter_horizontal = ('publishable', )
 
 # For Layergroup we need to specify the layers inline and make them sortable
 class LayersInline(SortableTabularInline):

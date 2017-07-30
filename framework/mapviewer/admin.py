@@ -71,6 +71,7 @@ class MapViewerAdmin(admin.ModelAdmin):
     )
     suit_form_tabs = (('general', 'General'), ('map', 'Map'), ('timeslider', 'Time slider'), ('baselayer', 'Base layer'), ('layergroups','Layer groups'), ('permissions', 'Permissions'))
     save_as = True
+    list_display = ('title', 'template_file')
 
 
 
