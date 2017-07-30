@@ -37,7 +37,7 @@ ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de', 'swos.ssv-hosting.de'
 ##################################################
 # Application definition
 INSTALLED_APPS = (
-    'suit',
+    'webgis.apps.SuitConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -186,17 +186,6 @@ else:
             },
         },
     ]
-
-SUIT_CONFIG = {
-    'MENU': (
-        {'app': 'sites', 'label': 'Site', 'models': ('site')},
-        {'app': 'auth', 'label': 'Authorization', 'icon':'icon-user', 'models': ('user', 'group')},
-        {'app': 'mapviewer', 'label': 'Mapviewer', 'models': ('mapviewer', 'baselayer')},
-        {'app': 'layers', 'label': 'Layers', 'models': ('layergroup', 'layer', 'contact')},
-        {'app': 'csw', 'label': 'Search', 'models': ('csw')},
-        {'app': 'swos', 'label': 'SWOS', 'models': ('wetland', 'wetlandimage', 'wetlandvideo', 'product', 'indicator', 'wetlandlayer', 'externaldatabase', 'externallayer')},
-    )
-}
 
 ##################################################
 # django-allauth
