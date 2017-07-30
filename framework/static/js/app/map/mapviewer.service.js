@@ -671,6 +671,68 @@
                 }, function(error) {
 
                 })
+            },
+            'pointFeatureLayer': function (action) {
+                if (action === "add") {
+                    this.pointFeatures = [];
+                    this.pointFeatureVectorSource = new ol.source.Vector({
+                        features: this.pointFeatures      //add an array of features
+                    });
+                    this.pointFeatureVectorLayer = new ol.layer.Vector({
+                        source: this.pointFeatureVectorSource
+                    });
+                    this.map.addLayer(this.pointFeatureVectorLayer);
+                }
+                if (action === "remove") {
+                    this.map.removeLayer(this.pointFeatureVectorLayer);
+                }
+            },
+            'pointFeature': function (action, lonlat, color, text) {
+                if (action == "add") {
+                    // add marker to map
+                    var svgPathToURI = function (color) {
+                        var svgPath = '<svg  width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg" ><circle cx="25" cy="25" r="5" stroke="black" stroke-width="1" fill="';
+                        svgPath += color;
+                        svgPath += '"/></svg>';
+                        return "data:image/svg+xml;base64," + btoa(svgPath);
+                    };
+
+                    this.pointInMap = new ol.Feature({
+                        geometry: new ol.geom.Point(ol.proj.transform([lonlat[0], lonlat[1]], 'EPSG:4326', 'EPSG:3857'))
+                    });
+
+                    this.pointInMap.setStyle(
+                        new ol.style.Style({
+                            image: new ol.style.Icon(( {
+                                src: svgPathToURI(color)
+                            } )),
+                            text: new ol.style.Text({
+                                textAlign: "start",
+                                textBaseline: "middle",
+                                font: 'Normal 12px Arial',
+                                text: text,
+                                scale: 1.3,
+                                fill: new ol.style.Fill({
+                                    color: color
+                                }),
+                                stroke: new ol.style.Stroke({
+                                    color: '#000000',
+                                    width: 3
+                                }),
+                                offsetX: 20,
+                                offsetY: 0,
+                                rotation: 0
+                            })
+                        }));
+
+                    this.pointFeatureVectorSource.addFeature(this.pointInMap);
+                }
+                if (action === "clear") {
+                    this.pointFeatureVectorSource.clear();
+                }
+                if (action === "remove") {
+                    this.pointFeatureVectorSource.removeFeature(pointInMap);
+                }
             }
         };
         return service;

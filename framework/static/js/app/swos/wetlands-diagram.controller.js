@@ -421,15 +421,19 @@
             var type;
             var options = {};
             var data = -1;
-            var point_count = 0;
 
-            var features = [];
-            var vectorSource = new ol.source.Vector({
-                features: features      //add an array of features
-            });
-            var vectorLayer = new ol.layer.Vector({
-                source: vectorSource
-            });
+            var point_count = 0;
+            var color = [];
+            color[1] = "rgb(255, 127, 14)";
+            color[2] = "rgb(33, 165, 35)";
+            color[3] = "rgb(33, 125, 165)";
+            color[4] = "rgb(174, 199, 232)";
+            color[5] = "rgb(124, 33, 165)";
+            color[6] = "rgb(165, 33, 60)";
+            color[7] = "rgb(247, 246, 42)";
+            color[8] = "rgb(48, 142, 49)";
+            color[9] = "rgb(106, 197, 175)";
+            color[10] = "rgb(39, 93, 232)";
 
             var unit = "";
             var yaxix_title = "";
@@ -448,32 +452,14 @@
                 yaxix_title = "TSM in" + unit;
             }
 
-            var color = [];
-            color[1] = "rgb(255, 127, 14)";
-            color[2] = "rgb(33, 165, 35)";
-            color[3] = "rgb(33, 125, 165)";
-            color[4] = "rgb(174, 199, 232)";
-            color[5] = "rgb(124, 33, 165)";
-            color[6] = "rgb(165, 33, 60)";
-            color[7] = "rgb(247, 246, 42)";
-            color[8] = "rgb(48, 142, 49)";
-            color[9] = "rgb(106, 197, 175)";
-            color[10] = "rgb(39, 93, 232)";
-
-            var svgPathToURI = function (color) {
-                var svgPath = '<svg  width="50" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg" ><circle cx="25" cy="25" r="5" stroke="black" stroke-width="1" fill="';
-                svgPath += color;
-                svgPath += '"/></svg>';
-                return "data:image/svg+xml;base64," + btoa(svgPath);
-            };
-
-            mapviewer.map.addLayer(vectorLayer);
-
             var output = '<div  class="ts_diagram">' +
                 '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
                 '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
                 '</div>' +
                 '</div>';
+
+            //Add Feature Layer for points to map*/
+            mapviewer.pointFeatureLayer("add");
 
             if (window_open == false) {
                 window_open = true;
@@ -538,7 +524,8 @@
                             callback: function () {
                                 ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
                                 window_open = false;
-                                vectorSource.clear();
+                                mapviewer.pointFeature('clear');
+                                mapviewer.pointFeatureLayer('remove');
                             }
                         }
                     }
@@ -558,11 +545,6 @@
             wetlandsDiagram.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
                 var lonlat = ol.proj.transform(evt.coordinate, mapviewer.map.getView().getProjection(), 'EPSG:4326');
 
-                // add marker to map
-                var pointInMap = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.transform([lonlat[0], lonlat[1]], 'EPSG:4326', 'EPSG:3857'))
-                });
-
                 point_count++;
 
                 var color_pos = point_count;
@@ -570,31 +552,8 @@
                     color_pos = color_pos % 10;
                 }
 
-                pointInMap.setStyle(
-                    new ol.style.Style({
-                        image: new ol.style.Icon(( {
-                            src: svgPathToURI(color[color_pos])
-                        } )),
-                        text: new ol.style.Text({
-                            textAlign: "start",
-                            textBaseline: "middle",
-                            font: 'Normal 12px Arial',
-                            text: 'Point  ' + point_count,
-                            scale: 1.3,
-                            fill: new ol.style.Fill({
-                                color: color[color_pos]
-                            }),
-                            stroke: new ol.style.Stroke({
-                                color: '#000000',
-                                width: 3
-                            }),
-                            offsetX: 20,
-                            offsetY: 0,
-                            rotation: 0
-                        })
-                    }));
-
-                vectorSource.addFeature(pointInMap);
+                //Add point to map
+                mapviewer.pointFeature("add", lonlat, color[color_pos], 'Point  ' + point_count);
 
 
                 // needs to be solved better #todo check if permanently removed
@@ -725,13 +684,13 @@
                         bootbox.alert('No data returned.');
                         $("#loading-div").hide();
 
-                        vectorSource.removeFeature(pointInMap);
+                        mapviewer.pointFeature("remove",pointInMap);
                         point_count = point_count - 1;
                     })
 
                 }
                 else {
-                    vectorSource.removeFeature(pointInMap);
+                    mapviewer.pointFeature("remove",pointInMap);
                     point_count = point_count - 1;
                     bootbox.alert('Please select a point within the map extent.');
                 }
