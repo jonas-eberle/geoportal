@@ -266,11 +266,22 @@
         }
 
         function requestInfo() {
+
             if (mv.infoStatus === false) {
-                mv.infoStatus = true;
+                 mv.infoStatus = true;
+
+                //Add Feature Layer for points to map
+                mapviewer.pointFeatureLayer("add");
+                var point_count = 0;
+
                 mv.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
                     var viewResolution = mapviewer.map.getView().getResolution();
                     var lonlat = ol.proj.transform(evt.coordinate, mapviewer.map.getView().getProjection(), 'EPSG:4326');
+
+                    point_count++;
+                    //Add point to map
+                    mapviewer.pointFeature("add", lonlat, "rgb(255, 127, 14)", 'Point ' + point_count);
+
                     var lon = lonlat[0].toFixed(2);
                     var lon_arrow = 'East';
                     if (lon < 0) {
@@ -283,7 +294,7 @@
                         lat_arrow = 'South';
                         lat = lat * -1;
                     }
-                    var coordinate = '<p><strong>Position</strong><br />' + lon + '&deg; ' + lon_arrow + '&nbsp;&nbsp;&nbsp;' + lat + '&deg; ' + lat_arrow + '</p>';
+                    var coordinate = '<p><strong>Point ' + point_count + '</strong><br />' + lon + '&deg; ' + lon_arrow + '&nbsp;&nbsp;&nbsp;' + lat + '&deg; ' + lat_arrow + '</p>';
 
                     var urls = [];
                     var names = [];
@@ -376,6 +387,8 @@
                                             className: "btn-default",
                                             callback: function () {
                                                  angular.element('.feature_result').remove();
+                                                 mapviewer.pointFeature('clear');
+                                                 point_count = 0;
                                                  return false;
                                             }
                                     },
@@ -383,6 +396,8 @@
                                         label: "Close",
                                         className: "btn-primary",
                                         callback: function () {
+                                            mapviewer.pointFeature('clear');
+                                            mapviewer.pointFeatureLayer('remove');
                                         }
                                     }
                                 }});
@@ -407,6 +422,8 @@
             } else {
                 mv.infoStatus = false;
                 ol.Observable.unByKey(mv.infoEventKey);
+                //Remove Feature Layer for points to map
+                mapviewer.pointFeatureLayer("remove");
             }
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
         }
