@@ -684,13 +684,13 @@
                         bootbox.alert('No data returned.');
                         $("#loading-div").hide();
 
-                        mapviewer.pointFeature("remove",pointInMap);
+                        mapviewer.pointFeature("remove");
                         point_count = point_count - 1;
                     })
 
                 }
                 else {
-                    mapviewer.pointFeature("remove",pointInMap);
+                    mapviewer.pointFeature("remove");
                     point_count = point_count - 1;
                     bootbox.alert('Please select a point within the map extent.');
                 }

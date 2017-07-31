@@ -704,7 +704,8 @@
                     this.pointInMap.setStyle(
                         new ol.style.Style({
                             image: new ol.style.Icon(( {
-                                src: svgPathToURI(color)
+                                src: svgPathToURI(color),
+                                imgSize: [50, 50]
                             } )),
                             text: new ol.style.Text({
                                 textAlign: "start",
@@ -731,7 +732,7 @@
                     this.pointFeatureVectorSource.clear();
                 }
                 if (action === "remove") {
-                    this.pointFeatureVectorSource.removeFeature(pointInMap);
+                    this.pointFeatureVectorSource.removeFeature(this.pointInMap);
                 }
             }
         };
