@@ -1,6 +1,7 @@
 # django-suit config
 from suit.apps import DjangoSuitConfig
 from suit.menu import ParentItem, ChildItem
+from webgis import settings
 
 class SuitConfig(DjangoSuitConfig):
     layout = 'horizontal' #vertical / horizontal
@@ -34,8 +35,8 @@ class SuitConfig(DjangoSuitConfig):
             ChildItem('Wetland Videos', model='swos.wetlandvideo'),
             ChildItem('External Layers', model='swos.externallayer'),
             ChildItem('External Databases', model='swos.externaldatabase'),
-        ]),
-        ParentItem('Validation', children=[
-            ChildItem('Validation Layers', model='validation.validationlayer'),
-        ]),
+        ])
     )
+    if "validation" in settings.INSTALLED_APPS:
+        menu = menu + ((ParentItem('Validation', children=[ChildItem('Validation Layers', model='validation.validationlayer') ])),);
+
