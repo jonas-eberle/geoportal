@@ -17,11 +17,11 @@
                 type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
-        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram" ng-if="layer.legend_colors && layer.legend_colors[0].size" tooltip-placement="bottom"  uib-tooltip="Show statistic"
-                type="button" ng-click="wetlandsDiagram.onclickCreate(layer);"
+        <button ng-controller="DiagramCtrl as diagram" ng-if="layer.legend_colors && layer.legend_colors[0].size" tooltip-placement="bottom"  uib-tooltip="Show statistic"
+                type="button" ng-click="diagram.onclickCreate(layer);"
                 class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
-        <button ng-controller="WetlandsDiagramCtrl as wetlandsDiagram"  ng-if="layer.ogc_times" tooltip-placement="bottom"  uib-tooltip="Create time series"
-                type="button" ng-click="mcl.toggleStatistic(slc.layer);wetlandsDiagram.requestTimeSeries(layer);"
+        <button ng-controller="DiagramCtrl as diagram"  ng-if="layer.ogc_times" tooltip-placement="bottom"  uib-tooltip="Create time series"
+                type="button" ng-click="mcl.toggleStatistic(slc.layer);diagram.requestTimeSeries(layer);"
                 class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i

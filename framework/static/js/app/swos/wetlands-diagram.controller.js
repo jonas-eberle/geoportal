@@ -3,23 +3,23 @@
 
     angular
         .module('webgisApp.swos')
-        .controller('WetlandsDiagramCtrl', WetlandsDiagramCtrl);
+        .controller('DiagramCtrl', DiagramCtrl);
 
-    WetlandsDiagramCtrl.$inject = ['$scope', '$compile', '$http','mapviewer', 'lulcLegend'];
-    function WetlandsDiagramCtrl($scope, $compile, $http, mapviewer, lulcLegend) {
-        var wetlandsDiagram = this;
+    DiagramCtrl.$inject = ['$scope', '$compile', '$http','mapviewer', 'lulcLegend'];
+    function DiagramCtrl($scope, $compile, $http, mapviewer, lulcLegend) {
+        var diagram = this;
 
 
 
-        wetlandsDiagram.infoEventKey = null;
-        wetlandsDiagram.onclickCreate = onclickCreate;
-        wetlandsDiagram.formatValue = formatValue;
-        wetlandsDiagram.requestTimeSeries = requestTimeSeries;
+        diagram.infoEventKey = null;
+        diagram.onclickCreate = onclickCreate;
+        diagram.formatValue = formatValue;
+        diagram.requestTimeSeries = requestTimeSeries;
 
-        wetlandsDiagram.data = [];
-        wetlandsDiagram.options = [];
+        diagram.data = [];
+        diagram.options = [];
 
-        wetlandsDiagram.data_vals = "";
+        diagram.data_vals = "";
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -344,7 +344,7 @@
                         //"labelFormat":function (d){if(d.size < 5){console.log(d);return d.name}else{return ''}''}
                         "tooltip": {
                             "valueFormatter": function (d) {
-                                return wetlandsDiagram.formatValue(d.toFixed(2)) + ' ha';
+                                return diagram.formatValue(d.toFixed(2)) + ' ha';
                             }
                         }
                     }
@@ -397,9 +397,9 @@
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}</td>' +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
-                    '<td class="legend-percent"><span > {{ wetlandsDiagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
+                    '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
-                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + wetlandsDiagram.formatValue(sum) + '&nbsp;ha</td></tr>'
+                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">' + diagram.formatValue(sum) + '&nbsp;ha</td></tr>'
                     '</table>' +
                     '</div></uib-tab></uib-tabset></div>';
                 $('#diagram_' + layer.id).show();
@@ -522,7 +522,7 @@
                             label: "Close",
                             className: "btn-primary",
                             callback: function () {
-                                ol.Observable.unByKey(wetlandsDiagram.infoEventKey);
+                                ol.Observable.unByKey(diagram.infoEventKey);
                                 window_open = false;
                                 mapviewer.pointFeature('clear');
                                 mapviewer.pointFeatureLayer('remove');
@@ -542,7 +542,7 @@
             }
 
 
-            wetlandsDiagram.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
+            diagram.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
                 var lonlat = ol.proj.transform(evt.coordinate, mapviewer.map.getView().getProjection(), 'EPSG:4326');
 
                 point_count++;
@@ -671,9 +671,9 @@
 
                                 var template = '<div style="display: flex;border:1px solid grey;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions" data-points="true"></nvd3></div>';
                                 $('#diagram_wq_window_' + layer.id).show();
-                                wetlandsDiagram.data[layer.id] = $scope.data;
-                                wetlandsDiagram.options[layer.id] = $scope.options;
-                                wetlandsDiagram.data_vals = $compile(template)($scope);
+                                diagram.data[layer.id] = $scope.data;
+                                diagram.options[layer.id] = $scope.options;
+                                diagram.data_vals = $compile(template)($scope);
                                 if (data.length == 1) {
                                     angular.element('#diagram_wq_window_' + layer.id).append($compile(template)($scope));
                                 }
