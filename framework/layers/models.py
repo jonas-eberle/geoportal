@@ -75,7 +75,7 @@ class Layer(models.Model):
     ogc_attribution = models.CharField("Attribution", max_length=255, blank=True, null=True, help_text="Attribution / Copyright. To add a link use the following syntax (http://www.adress.de, name)")
     ogc_times = models.TextField("Time dimension", blank=True, null=True, help_text="Separated by space/blank character")
 
-    statistic = models.CharField("Layer has statistic / time series data", max_length=20, choices=[('ts','Time series'),('chart','Chart')], default=None, null=True, blank=True)
+    statistic = models.CharField("Layer provide data over time (time series) or area (area statistic)", max_length=20, choices=[('time','Time series'),('area','Area')], default=None, null=True, blank=True)
 
     #Download services
     downloadable = models.BooleanField(default=False, help_text="Define whether layer can be downloaded")
@@ -361,6 +361,7 @@ class OnlineResourceInline(models.Model):
     linkage = models.CharField(max_length=400, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     protocol = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=500, blank=True, null=True)
     function = models.ForeignKey(ISOcodelist, limit_choices_to={'code_list': 'CI_OnLineFunctionCode'}, blank=True, null=True)
     layer = models.ForeignKey(Layer, related_name='layer_online_resource')
 
@@ -369,7 +370,7 @@ class OnlineResourceInline(models.Model):
 
 class ConstraintLimitInline(models.Model):
     order = models.PositiveIntegerField(default=0)
-    constraints_limit = models.CharField("Limitations on oublic access", max_length=400, blank=True, null=True)
+    constraints_limit = models.CharField("Limitations on public access", max_length=400, blank=True, null=True)
     layer = models.ForeignKey(Layer, related_name='layer_constraints_limit')
 
     def __unicode__(self):
