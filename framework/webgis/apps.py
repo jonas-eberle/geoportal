@@ -13,19 +13,19 @@ class SuitConfig(DjangoSuitConfig):
         ParentItem('Map Viewer', children=[
             ChildItem('Map Viewer', model='mapviewer.mapviewer')
         ]),
-        ParentItem('Contact', children=[
-            ChildItem('Contacts', model='layers.contact')
-        ]),
-        ParentItem('Layer', children=[
-            ChildItem('Layer', model='layers.layer'),
-            ChildItem('Layer Groups', model='layers.layergroup')
-        ]),
         ParentItem('Search', children=[
             ChildItem('Search', model='csw.csw')
+        ]),
+        ParentItem('Contact', children=[
+            ChildItem('Contacts', model='layers.contact')
         ]),
         ParentItem('Lists', children=[
             ChildItem('Countries', model='swos.country'),
             ChildItem('ISO Code lists', model='layers.isocodelist'),
+        ]),
+        ParentItem('Layer', children=[
+            ChildItem('Layer', model='layers.layer'),
+            ChildItem('Layer Groups', model='layers.layergroup')
         ]),
         ParentItem('SWOS', children=[
             ChildItem('Wetlands', model='swos.wetland'),
