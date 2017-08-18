@@ -80,7 +80,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-ogc',),
-            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'sos_default_field')
+            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'min_zoom', 'max_zoom', 'sos_default_field')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-wmts',),

@@ -152,6 +152,10 @@ class Layer(models.Model):
     download_users = models.ManyToManyField(User, blank=True, related_name="layer_download_users")
     download_groups = models.ManyToManyField(Group, blank=True, related_name="layer_download_groups")
 
+    #Zoom
+    max_zoom = models.IntegerField("Max Zoom level", null=True, blank=True)
+    min_zoom = models.IntegerField("Min Zoom level", null=True, blank=True)
+
     def __unicode__(self):
         return u"%s" %(self.identifier)
 
@@ -308,7 +312,7 @@ class LayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids')
+        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids', 'min_zoom', 'max_zoom')
 
 
 # Metadata serializer to output metadata related information from a given layer

@@ -485,6 +485,13 @@
                 olLayer.set('layerObj', layer);
                 this.map.addLayer(olLayer);
                 $rootScope.$broadcast("mapviewer.layeradded", olLayer);
+                //adjust current zoom level
+                if (layer.min_zoom != null && layer.min_zoom > this.map.getView().getZoom()){
+                    this.map.getView().setZoom(layer.min_zoom)
+                }
+                if (layer.max_zoom != null && layer.max_zoom < this.map.getView().getZoom()){
+                    this.map.getView().setZoom(layer.max_zoom)
+                }
                 return olLayer;
             },
             'getIndexFromLayer': function(title) {
