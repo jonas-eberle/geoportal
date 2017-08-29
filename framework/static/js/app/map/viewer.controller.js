@@ -271,7 +271,7 @@
                  mv.infoStatus = true;
 
                 //Add Feature Layer for points to map
-                mapviewer.pointFeatureLayer("add");
+                mapviewer.pointFeatureLayer("featureRequest", "add");
                 var point_count = 0;
 
                 mv.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
@@ -280,7 +280,7 @@
 
                     point_count++;
                     //Add point to map
-                    mapviewer.pointFeature("add", lonlat, "rgb(255, 127, 14)", 'Point ' + point_count);
+                    mapviewer.pointFeature('featureRequest', "add", lonlat, "rgb(255, 127, 14)", 'Point ' + point_count, "bottom");
 
                     var lon = lonlat[0].toFixed(2);
                     var lon_arrow = 'East';
@@ -387,7 +387,7 @@
                                             className: "btn-default",
                                             callback: function () {
                                                  angular.element('.feature_result').remove();
-                                                 mapviewer.pointFeature('clear');
+                                                 mapviewer.pointFeature('featureRequest', 'clear');
                                                  point_count = 0;
                                                  return false;
                                             }
@@ -396,8 +396,8 @@
                                         label: "Close",
                                         className: "btn-primary",
                                         callback: function () {
-                                            mapviewer.pointFeature('clear');
-                                            mapviewer.pointFeatureLayer('remove');
+                                            mapviewer.pointFeature('featureRequest','clear');
+                                            mapviewer.pointFeatureLayer('featureRequest','remove');
                                         }
                                     }
                                 }});
@@ -423,7 +423,7 @@
                 mv.infoStatus = false;
                 ol.Observable.unByKey(mv.infoEventKey);
                 //Remove Feature Layer for points to map
-                mapviewer.pointFeatureLayer("remove");
+                mapviewer.pointFeatureLayer('featureRequest',"remove");
             }
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
         }

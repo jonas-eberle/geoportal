@@ -9,12 +9,11 @@
     function DiagramCtrl($scope, $compile, $http, mapviewer, lulcLegend) {
         var diagram = this;
 
-
-
         diagram.infoEventKey = null;
         diagram.onclickCreate = onclickCreate;
         diagram.formatValue = formatValue;
         diagram.requestTimeSeries = requestTimeSeries;
+
 
         diagram.data = [];
         diagram.options = [];
@@ -410,6 +409,8 @@
             }
         }
 
+
+
         function formatValue(value){
             return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(value);
         }
@@ -459,7 +460,7 @@
                 '</div>';
 
             //Add Feature Layer for points to map*/
-            mapviewer.pointFeatureLayer("add");
+            mapviewer.pointFeatureLayer("TSrequest","add");
 
             if (window_open == false) {
                 window_open = true;
@@ -524,8 +525,8 @@
                             callback: function () {
                                 ol.Observable.unByKey(diagram.infoEventKey);
                                 window_open = false;
-                                mapviewer.pointFeature('clear');
-                                mapviewer.pointFeatureLayer('remove');
+                                mapviewer.pointFeature("TSrequest",'clear');
+                                mapviewer.pointFeatureLayer("TSrequest", 'remove');
                             }
                         }
                     }
@@ -553,7 +554,7 @@
                 }
 
                 //Add point to map
-                mapviewer.pointFeature("add", lonlat, color[color_pos], 'Point  ' + point_count);
+                mapviewer.pointFeature("TSrequest", "add", lonlat, color[color_pos], 'Point  ' + point_count);
 
 
                 // needs to be solved better #todo check if permanently removed
@@ -684,13 +685,13 @@
                         bootbox.alert('No data returned.');
                         $("#loading-div").hide();
 
-                        mapviewer.pointFeature("remove");
+                        mapviewer.pointFeature("TSrequest","remove");
                         point_count = point_count - 1;
                     })
 
                 }
                 else {
-                    mapviewer.pointFeature("remove");
+                    mapviewer.pointFeature("TSrequest", "remove");
                     point_count = point_count - 1;
                     bootbox.alert('Please select a point within the map extent.');
                 }

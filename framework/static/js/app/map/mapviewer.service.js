@@ -679,22 +679,25 @@
 
                 })
             },
-            'pointFeatureLayer': function (action) {
+            'pointFeatures': [],
+            'pointFeatureVectorLayer': [],
+            'pointFeatureVectorSource': [],
+            'pointFeatureLayer': function (id, action) {
                 if (action === "add") {
-                    this.pointFeatures = [];
-                    this.pointFeatureVectorSource = new ol.source.Vector({
-                        features: this.pointFeatures      //add an array of features
+                    this.pointFeatures[id] = [];
+                    this.pointFeatureVectorSource[id] = new ol.source.Vector({
+                        features: this.pointFeatures[id]      //add an array of features
                     });
-                    this.pointFeatureVectorLayer = new ol.layer.Vector({
-                        source: this.pointFeatureVectorSource
+                    this.pointFeatureVectorLayer[id] = new ol.layer.Vector({
+                        source: this.pointFeatureVectorSource[id]
                     });
-                    this.map.addLayer(this.pointFeatureVectorLayer);
+                    this.map.addLayer(this.pointFeatureVectorLayer[id]);
                 }
                 if (action === "remove") {
-                    this.map.removeLayer(this.pointFeatureVectorLayer);
+                    this.map.removeLayer(this.pointFeatureVectorLayer[id]);
                 }
             },
-            'pointFeature': function (action, lonlat, color, text) {
+            'pointFeature': function (id, action, lonlat, color, text, text_offset) {
                 if (action == "add") {
                     // add marker to map
                     var svgPathToURI = function (color) {
@@ -707,6 +710,15 @@
                     this.pointInMap = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.transform([lonlat[0], lonlat[1]], 'EPSG:4326', 'EPSG:3857'))
                     });
+
+                    var offsetX = 20;
+                    var offsetY = 0;
+
+                    if (text_offset == "bottom"){
+                       var offsetX = 0;
+                       var offsetY = 20;
+                    }
+
 
                     this.pointInMap.setStyle(
                         new ol.style.Style({
@@ -727,19 +739,19 @@
                                     color: '#000000',
                                     width: 3
                                 }),
-                                offsetX: 20,
-                                offsetY: 0,
+                                offsetX: offsetX,
+                                offsetY: offsetY,
                                 rotation: 0
                             })
                         }));
 
-                    this.pointFeatureVectorSource.addFeature(this.pointInMap);
+                    this.pointFeatureVectorSource[id].addFeature(this.pointInMap);
                 }
                 if (action === "clear") {
-                    this.pointFeatureVectorSource.clear();
+                    this.pointFeatureVectorSource[id].clear();
                 }
                 if (action === "remove") {
-                    this.pointFeatureVectorSource.removeFeature(this.pointInMap);
+                    this.pointFeatureVectorSource[id].removeFeature(this.pointInMap);
                 }
             }
         };
