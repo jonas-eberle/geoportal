@@ -47,7 +47,7 @@ class BaseLayer(models.Model):
 class MapViewer(models.Model):
     # general
     title = models.CharField(max_length=200)
-    template_file = models.FilePathField("Template file", path=settings.TEMPLATES_DIR+'/mapviewer', match=".*\.html")
+    template_file = models.FilePathField("Template file", path=settings.TEMPLATES[0]['DIRS'][0]+'/mapviewer', match=".*\.html")
     auth_registration = models.BooleanField("Allow user registration", default=False)
     search_url = models.ForeignKey(CSW, blank=True, null=True, verbose_name="Server for search field")
     addexternallayer = models.BooleanField("Allow external layers", default=False, help_text="(Hint: If activated, the button for add external layers to map by users is not hidden.)")
