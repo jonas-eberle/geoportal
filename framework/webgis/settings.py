@@ -162,30 +162,22 @@ REST_FRAMEWORK = {
 # django-suit adjustments
 import django
 
-if django.VERSION < (1, 9): #todo remove
-    from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-    TEMPLATE_CONTEXT_PROCESSORS = TCP + (
-        'django.contrib.auth.context_processors.auth',
-        'django.core.context_processors.request',
-        "allauth.account.context_processors.account",
-    )
-else:
-    TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [os.path.join(BASE_DIR,'templates')],
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'debug': DEBUG,
-                'context_processors': [
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.request', # Make sure you have this line
-                    'django.contrib.auth.context_processors.auth',
-                    'django.contrib.messages.context_processors.messages',
-                ],
-            },
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': DEBUG,
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',  # Make sure you have this line
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
         },
-    ]
+    },
+]
 
 ##################################################
 # django-allauth
