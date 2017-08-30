@@ -22,7 +22,6 @@ SECRET_KEY = '9c=-i7dqc1_=31hk8qt8i$2zyi40w!p!!8&d*8d9on1#jsd^7%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 
 # WARNING: disable ASSETS_DEBUG in production!
 # True: deliver JavaScript and CSS files as usual (e.g. for development)
