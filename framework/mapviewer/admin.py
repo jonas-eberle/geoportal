@@ -2,10 +2,8 @@ from django import forms
 from django.contrib import admin
 
 import django
-if django.VERSION < (1, 10): #todo remove
-    from suit.admin import SortableTabularInline
-else:
-    from suit.sortables import SortableTabularInline
+
+from suit.sortables import SortableTabularInline
 
 from .models import MapViewer, BaseLayer, BaseLayerInline, LayerBaseInline
 from layers.models import LayergroupInline
