@@ -144,11 +144,6 @@ UGLIFYJS_EXTRA_ARGS = (
 MEDIA_ROOT = os.path.join(BASE_DIR,  'media/')
 MEDIA_URL = SUBDIR + '/media/'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR,  'templates')
-
-TEMPLATE_DIRS = (
-    TEMPLATES_DIR,
-)
 
 ##################################################
 # django rest framework
