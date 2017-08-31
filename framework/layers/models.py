@@ -303,28 +303,7 @@ def post_save_layer_sos(sender, instance, **kwargs):
         instance.cache()
 
 
-# Layer serializer used when add layer to map to retrieve fields needed for frontend (e.g., legend, downloadable)
-# Also used in MapViewerDetail view
-class LayerSerializer(serializers.ModelSerializer):
 
-    #legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
-    download = serializers.FileField(source='download_file') or serializers.CharField(source='download_url')
-
-    class Meta:
-        model = Layer
-        fields = ('id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type', 'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg', 'downloadable', 'legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image', 'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply', 'wmts_prefix_matrix_ids', 'min_zoom', 'max_zoom')
-
-
-# Metadata serializer to output metadata related information from a given layer
-class MetadataSerializer(serializers.ModelSerializer):
-    point_of_contacts = ContactSerializer(many=True, read_only=True)
-    meta_contacts = ContactSerializer(many=True, read_only=True)
-
-    topicCategory = ISOcodelistSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Layer
-        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
 
 
 # Layergroup model to group layers, just title is needed, the layers were referenced in the LayerInline model
@@ -372,6 +351,12 @@ class OnlineResourceInline(models.Model):
     def __unicode__(self):
         return self.linkage
 
+class OnlineResourceInlineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OnlineResourceInline
+        fields = ('linkage', 'name', 'protocol', 'description', 'function' )
+
 class ConstraintLimitInline(models.Model):
     order = models.PositiveIntegerField(default=0)
     constraints_limit = models.CharField("Limitations on public access", max_length=400, blank=True, null=True)
@@ -380,6 +365,12 @@ class ConstraintLimitInline(models.Model):
     def __unicode__(self):
         return self.constraints_limit
 
+class ConstraintLimitInlineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ConstraintLimitInline
+        fields = ('constraints_limit', )
+
 class ConstraintConditionsInline(models.Model):
     order = models.PositiveIntegerField(default=0)
     constraints_cond = models.CharField("Conditions applying to access and use", max_length=400, blank=True, null=True)
@@ -387,6 +378,12 @@ class ConstraintConditionsInline(models.Model):
 
     def __unicode__(self):
         return self.constraints_cond
+
+class ConstraintConditionsInlineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ConstraintConditionsInline
+        fields = ('constraints_cond', )
 
 class ConformityInline(models.Model):
     order = models.PositiveIntegerField(default=0)
@@ -397,6 +394,12 @@ class ConformityInline(models.Model):
 
     def __unicode__(self):
         return self.title
+
+class ConformityInlineSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ConformityInline
+        fields = ('title', 'date', 'data_type')
 
 class KeywordInline(models.Model):
     order = models.PositiveIntegerField(default=0)
@@ -415,5 +418,35 @@ class KeywordInlineSerializer(serializers.ModelSerializer):
         model = KeywordInline
         fields = ('keyword', )
 
+# Layer serializer used when add layer to map to retrieve fields needed for frontend (e.g., legend, downloadable)
+# Also used in MapViewerDetail view
+class LayerSerializer(serializers.ModelSerializer):
+    # legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
+    download = serializers.FileField(source='download_file') or serializers.CharField(source='download_url')
+
+    class Meta:
+        model = Layer
+        fields = (
+            'id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type',
+            'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg',
+            'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image',
+            'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply','wmts_prefix_matrix_ids',
+            'min_zoom', 'max_zoom')
+
+
+# Metadata serializer to output metadata related information from a given layer
+class MetadataSerializer(serializers.ModelSerializer):
+    point_of_contacts = ContactSerializer(many=True, read_only=True)
+    meta_contacts = ContactSerializer(many=True, read_only=True)
+    topicCategory = ISOcodelistSerializer(many=True, read_only=True)
+    keywords = KeywordInlineSerializer(many=True, read_only=True)
+    constraint_cond = ConstraintConditionsInlineSerializer(many=True, read_only=True)
+    constraint_limit = ConstraintLimitInlineSerializer(many=True, read_only=True)
+    conformity = ConformityInlineSerializer(many=True, read_only=True)
+    online_resources = OnlineResourceInlineSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Layer
+        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'keywords', 'constraint_cond', 'constraint_limit', 'conformity', 'online_resources', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
 
 
