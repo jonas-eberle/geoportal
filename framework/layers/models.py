@@ -399,7 +399,7 @@ class ConformityInlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ConformityInline
-        fields = ('title', 'date', 'data_type')
+        fields = ('title', 'date', 'date_type')
 
 class KeywordInline(models.Model):
     order = models.PositiveIntegerField(default=0)
@@ -416,7 +416,7 @@ class KeywordInlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = KeywordInline
-        fields = ('keyword', )
+        fields = ('keyword', 'thesaurus_name', 'thesaurus_date')
 
 # Layer serializer used when add layer to map to retrieve fields needed for frontend (e.g., legend, downloadable)
 # Also used in MapViewerDetail view
@@ -439,14 +439,14 @@ class MetadataSerializer(serializers.ModelSerializer):
     point_of_contacts = ContactSerializer(many=True, read_only=True)
     meta_contacts = ContactSerializer(many=True, read_only=True)
     topicCategory = ISOcodelistSerializer(many=True, read_only=True)
-    keywords = KeywordInlineSerializer(many=True, read_only=True)
-    constraint_cond = ConstraintConditionsInlineSerializer(many=True, read_only=True)
-    constraint_limit = ConstraintLimitInlineSerializer(many=True, read_only=True)
-    conformity = ConformityInlineSerializer(many=True, read_only=True)
-    online_resources = OnlineResourceInlineSerializer(many=True, read_only=True)
+    layer_keywords = KeywordInlineSerializer(many=True, read_only=True)
+    layer_constraints_cond = ConstraintConditionsInlineSerializer(many=True, read_only=True)
+    layer_constraints_limit = ConstraintLimitInlineSerializer(many=True, read_only=True)
+    layer_conformity = ConformityInlineSerializer(many=True, read_only=True)
+    layer_online_resource = OnlineResourceInlineSerializer(many=True, read_only=True)
 
     class Meta:
         model = Layer
-        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'keywords', 'constraint_cond', 'constraint_limit', 'conformity', 'online_resources', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
+        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'layer_keywords', 'layer_constraints_cond', 'layer_constraints_limit', 'layer_conformity', 'layer_online_resource', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
 
 
