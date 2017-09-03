@@ -118,12 +118,12 @@ class Layer(models.Model):
     north = models.FloatField("BBOX north coordinate", help_text="e.g. 90")
     south = models.FloatField("BBOX south coordinate", help_text="e.g. -90")
     geo_description = models.CharField("Location description", max_length=200, blank=True, null=True)
-    epsg = models.IntegerField("EPSG code for the coordinates", blank=True, null=True, help_text="EPSG code (e.g. 4326)")
+
 
     #Spatial resolution
-    representation_type = models.CharField("Type of dataset", max_length=200, blank=True, null=True, help_text="e.g., raster or vector")
-    equi_scale = models.FloatField("Spatial resolution", blank=True, null=True)
-    resolution_distance = models.FloatField("Resolution", null=True, blank=True)
+    spat_representation_type = models.ForeignKey(ISOcodelist, related_name="representation_type",limit_choices_to={'code_list': 'MD_SpatialRepresentationTypeCode'}, default=215, blank=True, null=True, verbose_name="Spatial Representation Type")
+    equi_scale = models.IntegerField("Spatial resolution", blank=True, null=True)
+    resolution_distance = models.IntegerField("Resolution", null=True, blank=True)
     resolution_unit = models.CharField("Resolution unit", max_length=30, null=True, blank=True)
 
     #Temporal Extent
@@ -352,6 +352,7 @@ class OnlineResourceInline(models.Model):
         return self.linkage
 
 class OnlineResourceInlineSerializer(serializers.ModelSerializer):
+    function = ISOcodelistSerializer(read_only=True)
 
     class Meta:
         model = OnlineResourceInline
@@ -396,6 +397,7 @@ class ConformityInline(models.Model):
         return self.title
 
 class ConformityInlineSerializer(serializers.ModelSerializer):
+    date_type = ISOcodelistSerializer(read_only=True)
 
     class Meta:
         model = ConformityInline
@@ -413,10 +415,11 @@ class KeywordInline(models.Model):
         return self.keyword
 
 class KeywordInlineSerializer(serializers.ModelSerializer):
+    thesaurus_date_type_code_code_value = ISOcodelistSerializer(read_only=True)
 
     class Meta:
         model = KeywordInline
-        fields = ('keyword', 'thesaurus_name', 'thesaurus_date')
+        fields = ('keyword', 'thesaurus_name', 'thesaurus_date', 'thesaurus_date_type_code_code_value')
 
 # Layer serializer used when add layer to map to retrieve fields needed for frontend (e.g., legend, downloadable)
 # Also used in MapViewerDetail view
@@ -439,6 +442,8 @@ class MetadataSerializer(serializers.ModelSerializer):
     point_of_contacts = ContactSerializer(many=True, read_only=True)
     meta_contacts = ContactSerializer(many=True, read_only=True)
     topicCategory = ISOcodelistSerializer(many=True, read_only=True)
+    representation_type = ISOcodelistSerializer(read_only=True)
+    scope = ISOcodelistSerializer(read_only=True)
     layer_keywords = KeywordInlineSerializer(many=True, read_only=True)
     layer_constraints_cond = ConstraintConditionsInlineSerializer(many=True, read_only=True)
     layer_constraints_limit = ConstraintLimitInlineSerializer(many=True, read_only=True)
@@ -447,6 +452,6 @@ class MetadataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Layer
-        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'layer_keywords', 'layer_constraints_cond', 'layer_constraints_limit', 'layer_conformity', 'layer_online_resource', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit', 'epsg', 'meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
+        fields = ('title', 'identifier', 'abstract', 'topicCategory', 'scope', 'layer_keywords', 'layer_constraints_cond', 'layer_constraints_limit', 'layer_conformity', 'layer_online_resource', 'ogc_link', 'ogc_layer', 'ogc_type', 'point_of_contacts','meta_contacts', 'date_creation', 'date_publication', 'date_revision', 'language', 'characterset', 'format', 'west', 'east', 'north', 'south', 'geo_description', 'representation_type', 'equi_scale','resolution_distance', 'resolution_unit','meta_contact', 'meta_language', 'meta_characterset', 'meta_date', 'meta_lineage', 'date_begin', 'date_end')
 
 

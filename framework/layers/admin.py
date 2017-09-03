@@ -34,6 +34,14 @@ class LayersForm(forms.ModelForm):
         if cleaned_data.get('ogc_link') == '' and (ogc_type == 'WMS' or ogc_type == 'WFS' or ogc_type == 'Tiled-WFS' or ogc_type == 'SOS' or ogc_type == 'XYZ'):
             self.add_error('ogc_link', 'OGC Service url has to be specified for this type of layer')
 
+        if cleaned_data.get('north') > 90 or cleaned_data.get('north') < -90:
+            self.add_error('north', 'The coordinates must be given as geographical coordinates (EPSG:4326)')
+        if cleaned_data.get('south') > 90 or cleaned_data.get('south') < -90:
+            self.add_error('south', 'The coordinates must be given as geographical coordinates (EPSG:4326)')
+        if cleaned_data.get('west') > 180 or cleaned_data.get('west') < -180:
+            self.add_error('west', 'The coordinates must be given as geographical coordinates (EPSG:4326)')
+        if cleaned_data.get('east') > 180 or cleaned_data.get('north') < -180:
+            self.add_error('east', 'The coordinates must be given as geographical coordinates (EPSG:4326)')
 
 # Sortable LayersgroupsInline to MapViewerAdmin
 class OnlineResourceInline(SortableTabularInline):
@@ -90,7 +98,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-location',),
-            'fields': ('west', 'east', 'north', 'south', 'epsg', 'geo_description')
+            'fields': ('west', 'east', 'north', 'south', 'geo_description')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-temporalextent',),
@@ -98,7 +106,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-spatialresolution',),
-            'fields': ('representation_type', 'equi_scale','resolution_distance','resolution_unit')
+            'fields': ('spat_representation_type', 'equi_scale','resolution_distance','resolution_unit')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-download',),
