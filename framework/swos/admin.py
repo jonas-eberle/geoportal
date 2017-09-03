@@ -5,10 +5,8 @@ from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, E
 from layers.admin import LayersAdmin
 
 import django
-if django.VERSION < (1, 10): #todo remove
-    from suit.admin import SortableModelAdmin
-else:
-    from suit.sortables import SortableModelAdmin
+
+from suit.sortables import SortableModelAdmin
 
 def make_publishable(modeladmin, request, queryset):
     queryset.update(publishable=True)
@@ -21,7 +19,7 @@ make_unpublishable.short_description = "Mark selected layers as unfit for public
 class WetlandLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
             'classes': ('suit-tab', 'suit-tab-swos',),
-            'fields': ('wetland', 'product')
+            'fields': ('wetland', 'product', 'indicator')
         }),)
     list_display=('title','publishable', 'wetland', 'product')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
@@ -90,10 +88,10 @@ class ProductAdmin(SortableModelAdmin):
 
 class IndicatorAdmin(SortableModelAdmin):
     sortable = 'order'
-    list_display = ('name', 'calculation', 'caluculation_reference_100_percent')
+    list_display = ('name', 'description', 'short_name', 'parent_indicator')
 
 class IndicatorValuesAdmin(admin.ModelAdmin):
-    list_display = ('name', 'value', 'time', 'time_2', 'indicator', 'wetland')
+    list_display = ('value_absolut', 'unit', 'value_percent', 'time', 'time_end', 'time_ref_parts', 'indicator', 'wetland')
 
 # Register your models here.
 admin.site.register(Wetland, Wetlands)

@@ -5,9 +5,11 @@ from rest_framework import serializers
 from django.contrib.gis.db import models
 from django.utils.html import format_html
 from django_thumbs.db.models import ImageWithThumbsField
+from django.db.models.signals import post_save, post_delete, pre_save
 
 from layers.models import Layer
 from webgis import settings
+from swos.csw import create_update_csw, delete_csw
 
 import os
 import json
@@ -16,6 +18,7 @@ import requests
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 
 # Create your models here.
 class Wetland(models.Model):
@@ -548,51 +551,40 @@ class Product(models.Model):
         return u"%s" %(self.name)
 
 class Indicator(models.Model):
-    UNIT = (
-        ('%', 'Percent'),
-        ('sqkm', 'sqkm'),
-    )
-
     name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length = 10)
     description = models.TextField(blank=True,)
-    unit = models.CharField(max_length=200, choices=UNIT, blank=True,)
-    shape_ident = models.CharField(max_length=200, null=True)
-    csv_ident = models.CharField(max_length=200, null=True)
-    calculation = models.BooleanField(default=False)
-    calculation_input = models.ManyToManyField("self", related_name="input_indicator", verbose_name="Input Indicator for Calculation", blank=True,)
-    caluculation_reference_100_percent = models.ForeignKey('self', related_name="hundred_indicator", verbose_name="100% Reference", null=True, blank=True)
+    parent_indicator = models.ForeignKey("self",blank=True, null=True, verbose_name="Parent indicator")
     order = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return u"%s" %(self.name)
 
-    class Meta:
-        ordering = ['order']
-
 class IndicatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicator
-        fields = ( 'id', 'name', 'description', 'unit', 'calculation', 'calculation_input','caluculation_reference_100_percent', 'order' )
-
+        fields = ('name', 'description', 'short_name', 'parent_indicator')
 
 class IndicatorValue(models.Model):
-    name = models.CharField(max_length=200, null=True)
-    value = models.FloatField()
-    time = models.DateField (blank=True, null=True, verbose_name="Time 1")
-    time_2  = models.DateField (blank=True, null=True, verbose_name="Time 2")
+    time = models.DateField (blank=True, null=True, verbose_name="Time Begin")
+    time_end  = models.DateField (blank=True, null=True, verbose_name="Time End (only for time intervals)")
+    time_ref_parts = models.CharField("Date type (referring date parts)", max_length=30, default="Day", choices=(('Day','Day'),('Month','Month'), ('Year', 'Year')))
+    value_absolut = models.FloatField(verbose_name="Absolut value")
+    unit = models.CharField(max_length=10)
+    value_percent = models.FloatField(verbose_name="Relative value (%)")
+    nomenclature = models.CharField(max_length=10, blank=True, null=True)
     indicator = models.ForeignKey(Indicator, related_name="value_indicator", verbose_name="Indicator")
     wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
 
 class IndicatorValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndicatorValue
-        fields = ('name', 'value', 'time', 'time_2', 'indicator')
-
+        fields = ('name', 'value_absolut', 'unit', 'value_percent', 'time', 'time_end',  'time_ref_parts', 'nomenclature', 'indicator', 'wetland')
 
 class WetlandLayer(Layer):
     wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
-    indicator = models.ForeignKey(IndicatorValue, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
+    indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
 
     @property
     def alternate_title(self):
@@ -615,7 +607,25 @@ class WetlandLayer(Layer):
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         return ' '.join([self.product.name,wq_type, date_string])
 
+#Create/update pycsw entries after creation or update if publishable is true
+#Delete: delete and publishable changes to false
+def keep_track_save(sender, instance, created, **kwargs):
+    action = 'save' if created else 'update'
+    if settings.CSW_T == True and instance.publishable == True:
+        create_update_csw(instance, action)
 
+def keep_track_delete(sender, instance, **kwargs):
+    if settings.CSW_T == True:
+        delete_csw(instance)
+
+def keep_track_publishable(sender, instance, **kwargs):
+    old_instance = WetlandLayer.objects.get(pk=instance.pk)
+    if settings.CSW_T == True and old_instance.publishable == True and instance.publishable == False:
+        delete_csw(instance)
+
+pre_save.connect(keep_track_publishable, sender=WetlandLayer)
+post_save.connect(keep_track_save, sender=WetlandLayer)
+post_delete.connect(keep_track_delete, sender=WetlandLayer)
 
 class Category(models.Model):
 
