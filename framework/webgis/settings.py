@@ -224,5 +224,12 @@ ESA_DATAHUB_USER = 'USERNAME'
 ESA_DATAHUB_PASSWORD = 'PASSWORD'
 
 ##################################################
+# Publish (Insert/Delete) metadata with CSW-Transactional
+
+CSW_T = False #true: active , empty/false: deactivated
+CSW_T_PATH = 'ANPASSEN' #path to pycsw/csw.py; pycsw.cfg: transactions=true, allowed_ips=xxx
+
+
+##################################################
 # END
 ##################################################
