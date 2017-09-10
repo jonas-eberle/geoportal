@@ -25,60 +25,6 @@
 
         //--------------------------------------------------------------------------------------------------------------
 
-        function load_and_show_layer(wetland_id, type_name, layer_id, load_layer) {
-
-            var layer_is_new = "true";
-
-            //check if layer was already added to avoid "layer already exist error" (e.g. important for "back")
-            for (var key in mapviewer.layersMeta) {
-                if (mapviewer.layersMeta[key].django_id == layer_id) {
-                    layer_is_new = false;
-                }
-            }
-
-            //only load a new layer, if the the layer is not already added
-            if (layer_id && layer_is_new) {
-
-                // add layer to map only if wanted, if not: only open everything around
-                if (load_layer === "yes") {
-                    $("#layer_vis_" + layer_id).attr('checked', 'checked');
-                    angular.element("#layer_vis_" + layer_id).triggerHandler('click'); // add layer to map
-                }
-
-                var layer_id_ = "#layer_vis_" + layer_id;
-
-                //open menu according to the last layer id
-                if (type_name === "product") {
-
-                    $location.path('/wetland/' + wetland_id + '/product/' + layer_id);
-
-                    if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
-                    }
-
-                    $timeout(function () {  //scroll page down
-                        $(".tab-content").animate({
-                            scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 200
-                        }, 2000);
-                    });
-                }
-                if (type_name === "externaldb") {
-                    $location.path('/wetland/' + wetland_id + '/externaldb/' + layer_id);
-
-                    if ($(layer_id_).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
-                        $(layer_id_).closest('.panel').parents().eq(4).find('a').first().trigger('click'); //open parent accordion
-                    }
-                    if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
-                    }
-                    $timeout(function () {  //scroll page down
-                        $(".tab-content").animate({
-                            scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 500
-                        }, 2000);
-                    });
-                }
-            }
-        }
 
         function move_map_elements_higher(action) {
             if (!action) {
@@ -93,28 +39,6 @@
                 $("#gmap").css('z-index', '');
                 $('.map-controls-wrapper').css('z-index', '');
                 $('.ol-viewport').css('z-index', '');
-            }
-        }
-
-        function only_load_wetland(wetland_id) {
-
-            var current_wetland_id = "";
-
-            if (mapviewer.currentFeature) {
-                current_wetland_id = mapviewer.currentFeature.get('id');
-            }
-            if (wetland_id !== current_wetland_id) {
-                WetlandsService.selectWetlandFromId(wetland_id)
-            } else {
-                $timeout(function () {
-                    if ($("#link_wetland_list").parents().hasClass("active")) {
-                        try {
-                            $("#link_wetland_opened")[0].click(); // open catalog tab
-                        } catch (e) { }
-                    }
-                }, 0, false);
-
-                WetlandsService.selectFeature(current_wetland_id);
             }
         }
 
@@ -156,55 +80,11 @@
                 {size: mapviewer.map.getSize()}
             );
 
-            select_tab(); // Open wetland Catalog
+            WetlandsService.selectTab(); // Open wetland Catalog
 
             $('.main').css('position', 'fixed'); // set back to origin
         }
 
-        function select_tab(type_name) {
-            var target = ""; //default tab
-
-            // open wetland tab
-            if (type_name) {
-                switch (type_name) {
-                    case "overview":
-                        target = 'li.flaticon-bars a';
-                        break;
-                    case "product":
-                        target = 'li.flaticon-layers a';
-                        break;
-                    case "indicator":
-                        target = 'li.flaticon-business a';
-                        break;
-                    case "satdata":
-                        target = 'li.flaticon-space-satellite-station a';
-                        break;
-                    case "images":
-                        target = 'li.flaticon-technology-1 a';
-                        break;
-                    case "video":
-                        target = 'li.flaticon-technology a';
-                        break;
-                    case "externaldb":
-                        target = 'li.flaticon-technology-2 a';
-                        break;
-                }
-
-                try {
-                    $(target).click(); // open tab
-                } catch (e) { }
-            } else {
-                //open wetland catalog
-                $timeout(function () {
-                    var linkWetlandList = $('#link_wetland_list');
-                    if (!linkWetlandList.parents().hasClass("active")) {
-                        try {
-                            linkWetlandList[0].click(); // open catalog tab
-                        } catch (e) { }
-                    }
-                }, 0, false);
-            }
-        }
 
         /* function show_metadata(action){
 
@@ -313,7 +193,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Catalog', '02');
                             //ensure wetland catalog is shown
-                            select_tab();
+                            WetlandsService.selectTab();
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -338,7 +218,7 @@
                         },
                         content      : '<div class="anno-step-of">(Step 2 of '+ step_count +')</div><h4>Wetlands catalog</h4><div><p>All wetland sites of the <strong>SWOS project</strong> are listed here.</p> ' +
                         '<p>The preselected wetlands already have products developed within the project.</p>' +
-                        '<p>To see the full list of wetlands of the SWOS project please unselect the checkbox <span class="anno-highlight">Show only wetlands with products</span> or use the provided filter to search for wetlands.</p>' +
+                        '<p>To see the full list of wetlands of the SWOS project please unselect the checkbox <span class="anno-highlight">List only wetlands with products</span> or use the provided filter to search for wetlands.</p>' +
                         '</div>'
                     }, // Wetland Catalog
                     {
@@ -369,7 +249,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Selection', '03');
                             //ensure wetland catalog is shown
-                            select_tab();
+                            WetlandsService.selectTab();
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -426,10 +306,10 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Wetland', '04');
                             //Load wetland (id 4 - Camargue)
-                            only_load_wetland(4);
+                            WetlandsService.loadWetland(4);
 
                             //ensure overview of wetland is shown
-                            select_tab("overview");
+                            WetlandsService.selectTab("overview");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -495,7 +375,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Products', '05');
                             //ensure products is shown
-                            select_tab("product");
+                            WetlandsService.selectTab("product");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -565,13 +445,13 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Product', '06');
                             //ensure products is shown
-                            select_tab("product");
+                            WetlandsService.selectTab("product");
 
                             // prevent more than one layer warning
                             $cookies.put('hasNotifiedAboutLayers', true);
 
                             //add layer (max one layer)
-                            load_and_show_layer(wetland_id, "product", product_id, "no");
+                            WetlandsService.loadLayer(wetland_id, "product", product_id, "no");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -633,13 +513,13 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Dataset', '07');
                             //ensure products is shown
-                            select_tab("product");
+                            WetlandsService.selectTab("product");
 
                             // prevent more than one layer warning
                             $cookies.put('hasNotifiedAboutLayers', true);
 
                             //add layer (max one layer)
-                            load_and_show_layer(wetland_id, "product", product_id, "yes");
+                            WetlandsService.loadLayer(wetland_id, "product", product_id, "yes");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -758,7 +638,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Satellitedata', '08');
                             //ensure products is shown
-                            select_tab("satdata");
+                            WetlandsService.selectTab("satdata");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -819,7 +699,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('External1', '09');
                             //ensure products is shown
-                            select_tab("externaldb");
+                            WetlandsService.selectTab("externaldb");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -880,9 +760,9 @@
                         onShow : function (anno, $target) {
                             introTour.trackIntroductionTour('External2', '10');
                             //ensure products is shown
-                            //select_tab("externaldb");
+                            //selectTab("externaldb");
                             $cookies.put('hasNotifiedAboutLayers', true);
-                            load_and_show_layer(wetland_id, "externaldb", extdb_id, "yes");
+                            WetlandsService.loadLayer(wetland_id, "externaldb", extdb_id, "yes");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -944,8 +824,8 @@
                             introTour.trackIntroductionTour('ActiveLayers', '11');
                             $cookies.put('hasNotifiedAboutLayers', true);
 
-                            //select_tab("externaldb");
-                            load_and_show_layer(wetland_id, "externaldb", extdb_id, "yes");
+                            //selectTab("externaldb");
+                            WetlandsService.loadLayer(wetland_id, "externaldb", extdb_id, "yes");
 
                             open_close_active_layer("open");
 
