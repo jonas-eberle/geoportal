@@ -1,12 +1,13 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
-from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo
+from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart
 
 from layers.admin import LayersAdmin
 
 import django
 
 from suit.sortables import SortableModelAdmin
+from suit.sortables import SortableTabularInline
 
 def make_publishable(modeladmin, request, queryset):
     queryset.update(publishable=True)
@@ -93,6 +94,24 @@ class IndicatorAdmin(SortableModelAdmin):
 class IndicatorValuesAdmin(admin.ModelAdmin):
     list_display = ('value_absolut', 'unit', 'value_percent', 'time', 'time_end', 'time_ref_parts', 'indicator', 'wetland')
 
+
+
+
+class StoryLineInlines(SortableTabularInline):
+    model = StoryLineInline
+    fields = ('story_line_part', )
+    extra = 1
+    verbose_name_plural = 'Layers'
+    sortable = 'order'
+
+class StoryLineAdmin(admin.ModelAdmin):
+    inlines = (StoryLineInlines,)
+    list_display = ('title',)
+
+class StoryLinePartAdmin(admin.ModelAdmin):
+    list_display = ('headline', 'wetland')
+
+
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
 admin.site.register(Product, ProductAdmin)
@@ -104,3 +123,5 @@ admin.site.register(ExternalLayer, ExternalLayerAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(WetlandImage, WetlandImageAdmin)
 admin.site.register(WetlandVideo, WetlandVideoAdmin)
+admin.site.register(StoryLine, StoryLineAdmin)
+admin.site.register(StoryLinePart, StoryLinePartAdmin)

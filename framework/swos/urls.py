@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^wetland/(?P<pk>[0-9]+)/youtube.json$', views.YouTube.as_view(), name='wetland_youtube'),
     url(r'^wetland/(?P<pk>[0-9]+)/satdata.json$', views.SatelliteData.as_view(), name='wetland_satdata'),
     url(r'^wetland/layer/(?P<pk>[0-9]+)/colors.json$', views.LayerColors.as_view(), name='wetland_layer_colors'),
+    url(r'^(?P<pk>[0-9]+)/storyline.json$', views.StoryLineData.as_view(), name='wetland_story_line'),
 ]

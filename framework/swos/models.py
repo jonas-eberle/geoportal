@@ -68,7 +68,8 @@ class Wetland(models.Model):
         for sat in data:
             count += sat['count']
         return count    
-    
+
+
     def satellitedata(self, forceUpdate=False):
         if os.path.isfile(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json') and forceUpdate == False:
             with open(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json', 'r') as f:
@@ -607,7 +608,7 @@ class WetlandLayer(Layer):
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         return ' '.join([self.product.name,wq_type, date_string])
 
-#Create/update pycsw entries after creation or update if publishable is true
+#Create/update csw records after creation or update if publishable is true
 #Delete: delete and publishable changes to false
 def keep_track_save(sender, instance, created, **kwargs):
     action = 'save' if created else 'update'
@@ -870,6 +871,9 @@ class WetlandImage(models.Model):
     image = ImageWithThumbsField(upload_to='images/',  sizes=((125,125), (52, 52), (1300,1000), (1000, 1300)))
     wetland = models.ForeignKey(Wetland, related_name="image_wetland", verbose_name="Wetland", blank=True, null=True)
 
+    def __unicode__(self):
+        return u"%s" %(self.name)
+
     @property
     def image_tag(self):
         return format_html('<img src="{}" />'.format(self.image.url_125x125))
@@ -885,7 +889,6 @@ class WetlandImage(models.Model):
             i += 1
         f = ('%.2f' % size).rstrip('0').rstrip('.')
         return '%s %s' % (f, suffixes[i])
-
 
 class WetlandVideo(models.Model):
     name = models.CharField(max_length=200)
@@ -927,3 +930,65 @@ class WetlandVideo(models.Model):
     def __unicode__(self):
         return self.name
 
+class StoryLine(models.Model):
+    title = models.CharField(max_length=250)
+    description = models.TextField(null=True, blank=True)
+    authors = models.TextField(null=True, blank=True)
+    wetland = models.ForeignKey(Wetland, null=True)
+
+    def __unicode__(self):
+        return u"%s" % (self.title)
+
+
+class StoryLinePart(models.Model):
+    headline = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    image_name = models.CharField(max_length=200, null=True, blank=True)
+    image_description = models.TextField(null=True, blank=True)
+    image_copyright = models.CharField("Copyright / Owner", max_length=200, blank=True)
+    image_date = models.DateField(blank=True, null=True)
+    image = ImageWithThumbsField(upload_to='images/', sizes=((125, 125), (200, 300), (300, 200), (600, 400), (400, 600)), null=True, blank=True)
+    image_position = models.CharField(max_length=20, choices=(("right", "right"), ("bottom","bottom")), default="right")
+    wetland = models.ForeignKey(Wetland)
+    wetland_layer = models.ManyToManyField(WetlandLayer, blank=True)
+    west = models.FloatField("BBOX west coordinate", blank=True, null=True, help_text="e.g. -5,3")
+    east = models.FloatField("BBOX east coordinate", blank=True, null=True, help_text="e.g. 10,5")
+    north = models.FloatField("BBOX north coordinate", blank=True, null=True, help_text="e.g. 8,2")
+    south = models.FloatField("BBOX south coordinate", blank=True, null=True, help_text="e.g. -3,9")
+
+    def __unicode__(self):
+        return u"%s" % (self.wetland.name + "_" + self.headline)
+
+    @property
+    def image_tag(self):
+        return format_html('<img src="{}" />'.format(self.image.url_125x125))
+
+    @property
+    def image_url_125(self):
+        return (self.image.url_125x125)
+
+    def image_url_300(self):
+            # detect landscape or portrait format
+            if self.image.width > self.image.height:
+                return self.image.url_300x200
+            else:
+                return self.image.url_200x300
+
+    def image_url_600(self):
+            # detect landscape or portrait format
+            if self.image.width > self.image.height:
+                return self.image.url_600x400
+            else:
+                return self.image.url_400x600
+
+
+class StoryLineInline(models.Model):
+    order = models.PositiveIntegerField(default=0)
+    story_line_part = models.ForeignKey(StoryLinePart, related_name='story_line_parts')
+    story_line = models.ForeignKey(StoryLine, related_name='story_line')
+
+    def __unicode__(self):
+        return self.story_line_part.headline
+
+    class Meta:
+        ordering = ['order']
