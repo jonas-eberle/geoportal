@@ -386,7 +386,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div ng-controller="StoryLineCtrl as storyline">
                         <div ng-controller="TrackingCtrl as tracking">
                             <uib-tabset justified="true">
                                 <!-- Overview -->
@@ -398,8 +398,11 @@
                                         <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
                                         <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
+                                        <div ng-if="wetlands.value.data.story_line.length != 0"><h4>Story lines</h4>
+                                            <div ng-repeat="story_line in wetlands.value.data.story_lines">
+                                                <a ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title }}</a></div>
+                                        </div>
                                     </div>
-
                                     <h4 style="margin-top:15px">Datasets</h4>
                                     <div class="buttons" style="text-align: center;margin-top: 20px;">
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()">
@@ -421,24 +424,8 @@
                                 <uib-tab class="flaticon-business" heading="" uib-tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
                                     <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
 
-                                    <!--
-                                    <ul class="items indicators">
-                                        <li>
-                                            <input type="checkbox" id="indicator_statustrend" /><label for="indicator_statustrend">Status and Trend of Wetland</label>
-                                            <div class="graphic">
-                                                <img src="/swos/static/img/azraq_indicator.png" width="100%" />
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <input type="checkbox" id="indicator_inund" /><label for="indicator_inund">Inundation of the Ecosystem</label>
-                                        </li>
-                                        <li>
-                                            <input type="checkbox" id="indicator_wetlandchange" /><label for="indicator_wetlandchange">Change in Wetland</label>
-                                        </li>
-                                    </ul>
-                                    -->
-                                </uib-tab>
 
+                                </uib-tab>
                                 <!-- Products -->
                                 <uib-tab class="flaticon-layers"  heading="" uib-tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                     <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
@@ -463,6 +450,7 @@
                                                 </uib-accordion-heading>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                    <p ng-if="product.story_line.length != 0"><strong>Story line(s):</strong><div ng-repeat="story_line in product.story_line"><a ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                     <div class="products_datasets">
                                                         <strong>Datasets:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">
@@ -626,7 +614,7 @@
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
                                             </uib-accordion-heading>
                                             <uib-accordion>
-                                                <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
+                                                <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist " >
                                                     <uib-accordion-heading>
                                                         <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
@@ -654,6 +642,7 @@
                                 </uib-tab>
                             </uib-tabset>
                         </div>
+                            </div>
                     </div>
                 </div>
             </div>
