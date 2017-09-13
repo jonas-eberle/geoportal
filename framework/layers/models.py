@@ -431,7 +431,7 @@ class LayerSerializer(serializers.ModelSerializer):
         model = Layer
         fields = (
             'id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type',
-            'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'epsg',
+            'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'dataset_epsg',
             'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image',
             'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply','wmts_prefix_matrix_ids',
             'min_zoom', 'max_zoom')
