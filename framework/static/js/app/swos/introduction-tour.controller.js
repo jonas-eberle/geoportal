@@ -519,7 +519,7 @@
                             $cookies.put('hasNotifiedAboutLayers', true);
 
                             //add layer (max one layer)
-                            WetlandsService.loadLayer(wetland_id, "product", product_id, "yes");
+                            WetlandsService.loadLayer(wetland_id, "product", product_id, "yes", true);
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {

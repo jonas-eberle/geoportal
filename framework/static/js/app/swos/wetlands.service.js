@@ -20,6 +20,7 @@
             wetlandList: [],
             wetlands_without_geom: [],
             country_list: [],
+            wetland_id: "",
 
             selectFeature: function (id) {
                 if (this.wetlandList[id]) {
@@ -48,7 +49,8 @@
                     mapviewer.currentFeature = wetlandFeature;
                 }
             },
-            selectWetland: function (wetland) {
+            selectWetland: function (wetland, callback=null) {
+                console.log("selected wetland");
                 var wetland_service = this;
                 /*
                  try {
@@ -77,6 +79,7 @@
 
                     wetland_service.videosCurrentPage = 1;
                     wetland_service.allVideos = false;
+                    wetland_service.wetland_id = wetland.id;
 
                     djangoRequests.request({
                         'method': "GET",
@@ -123,20 +126,23 @@
                     wetland_service.selectFeature(wetland.id);
                     $rootScope.$broadcast("wetland_loaded");
                     wetland_service.data.activeTab = 1;
+                    if (typeof(callback)  === 'function') {
+                        callback();
+                    }
 
                 }, function () {
                     bootbox.alert('<h1>Error while loading wetland details</h1>');
                 });
             },
-            selectWetlandFromId: function (id) {
+            selectWetlandFromId: function (id, callback=null) {
                 var wetland;
                 if (wetland = this.wetlandList[id]) {
-                    return this.selectWetland(wetland);
+                    return this.selectWetland(wetland, callback);
                 }
                 return $q.reject();
             },
 
-            loadLayer: function (wetland_id, type_name, layer_id, load_layer) {
+            loadLayer: function (wetland_id, type_name, layer_id, load_layer, no_scroll=false) {
 
                 var layer_is_new = "true";
 
@@ -155,42 +161,48 @@
                         $("#layer_vis_" + layer_id).attr('checked', 'checked');
                         angular.element("#layer_vis_" + layer_id).triggerHandler('click'); // add layer to map
                     }
+                }
+                var layer_id_ = "#layer_vis_" + layer_id;
 
-                    var layer_id_ = "#layer_vis_" + layer_id;
+                //open menu according to the last layer id
+                if (type_name === "product") {
 
-                    //open menu according to the last layer id
-                    if (type_name === "product") {
+                    $location.path('/wetland/' + wetland_id + '/product/' + layer_id);
 
-                        $location.path('/wetland/' + wetland_id + '/product/' + layer_id);
+                    if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
+                    }
 
-                        if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                            $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
-                        }
-
-                        $timeout(function () {  //scroll page down
+                    $timeout(function () {  //scroll page down
+                        if(no_scroll == true){}
+                        else {
                             $(".tab-content").animate({
                                 scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 200
                             }, 2000);
-                        });
-                    }
-                    if (type_name === "externaldb") {
-                        $location.path('/wetland/' + wetland_id + '/externaldb/' + layer_id);
+                        }
+                    });
+                }
+                if (type_name === "externaldb") {
+                    $location.path('/wetland/' + wetland_id + '/externaldb/' + layer_id);
 
-                        if ($(layer_id_).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
-                            $(layer_id_).closest('.panel').parents().eq(4).find('a').first().trigger('click'); //open parent accordion
-                        }
-                        if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                            $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
-                        }
-                        $timeout(function () {  //scroll page down
+                    if ($(layer_id_).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').parents().eq(4).find('a').first().trigger('click'); //open parent accordion
+                    }
+                    if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
+                    }
+                    $timeout(function () {  //scroll page down
+                        if(no_scroll == true){}
+                        else {
                             $(".tab-content").animate({
                                 scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 500
                             }, 2000);
-                        });
-                    }
+                        }
+                    });
                 }
+
             },
-            loadWetland: function (wetland_id) {
+            loadWetland: function (wetland_id, callback=null) {
 
                 var current_wetland_id = "";
 
@@ -198,7 +210,7 @@
                     current_wetland_id = mapviewer.currentFeature.get('id');
                 }
                 if (wetland_id !== current_wetland_id) {
-                    this.selectWetlandFromId(wetland_id)
+                    this.selectWetlandFromId(wetland_id, callback);
                 } else {
                     $timeout(function () {
                         if ($("#link_wetland_list").parents().hasClass("active")) {

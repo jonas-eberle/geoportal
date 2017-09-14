@@ -5,10 +5,11 @@
         .module('webgisApp.swos')
         .controller('StoryLineCtrl', StoryLineCtrl);
 
-    StoryLineCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', 'djangoRequests', 'TrackingService', '$compile','$timeout'];
-    function StoryLineCtrl($scope, mapviewer, WetlandsService, djangoRequests, TrackingService, $compile, $timeout) {
+    StoryLineCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', 'djangoRequests', 'TrackingService', '$compile','$timeout', '$cookies'];
+    function StoryLineCtrl($scope, mapviewer, WetlandsService, djangoRequests, TrackingService, $compile, $timeout, $cookies) {
         var storyLine = this;
         var cur_story_line_id = "";
+        var cur_story_line_title = "";
         var order_pos_map = new Array;
         var story_line_title = "";
 
@@ -16,6 +17,9 @@
         storyLine.changePart = changePart;
 
         function show_story_line(story_line_id, selected_part = null) {
+
+            // prevent more than one layer warning
+            $cookies.put('hasNotifiedAboutLayers', true);
 
             // Request story line
             if (cur_story_line_id != story_line_id) {
@@ -39,8 +43,12 @@
                     $scope.story_line_pos = order_pos_map[$scope.selected_part];
                     $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
 
-                    checkWetland_addLayer_zoom();
+
+                    cur_story_line_title = data.title;
                     cur_story_line_id = story_line_id;
+                    showModal();
+                    checkWetland_addLayer_zoom();
+
                 });
 
             }
@@ -52,20 +60,16 @@
                 else {
                     $scope.selected_part = selected_part;
                 }
+
                 $scope.story_line_pos = order_pos_map[$scope.selected_part];
                 $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
 
+                showModal();
                 checkWetland_addLayer_zoom();
             }
+        }
 
-            // Search for title: Only works, if one linked wetland is loaded!!! #todo needs solution from start
-            for (var key in WetlandsService.value.data.story_lines){
-                if (WetlandsService.value.data.story_lines[key].story_line == story_line_id){
-                    story_line_title = WetlandsService.value.data.story_lines[key].title;
-                    break;
-                }
-            }
-
+        function showModal(){
             //Check if window is already open
             var story_line_element = angular.element('#story_line').find('div');
             if (story_line_element.length > 0) {
@@ -77,7 +81,7 @@
 
 
             var dialog = bootbox.dialog({
-                title: "Story line: " + story_line_title ,
+                title: "Story line: " + cur_story_line_title,
                 message: output,
                 backdrop: false,
                 closeButton: false,
@@ -178,8 +182,17 @@
         }
 
         function set_zoom_add_layer() {
-            for (var key in $scope.story_line_part.wetland_layer) {
-                WetlandsService.loadLayer($scope.story_line_part.wetland, 'product', $scope.story_line_part.wetland_layer[key], "yes");
+            for (var key in $scope.story_line_part.product_layer) {
+                WetlandsService.selectTab('product');
+                WetlandsService.loadLayer($scope.story_line_part.wetland, 'product', $scope.story_line_part.product_layer[key], "yes");
+            }
+            for (var key in $scope.story_line_part.indicator_layer) {
+                WetlandsService.selectTab('indicator');
+                WetlandsService.loadLayer($scope.story_line_part.wetland, 'indicator', $scope.story_line_part.indicator_layer[key], "yes");
+            }
+            for (var key in $scope.story_line_part.external_layer) {
+                WetlandsService.selectTab('externaldb');
+                WetlandsService.loadLayer($scope.story_line_part.wetland, 'externaldb', $scope.story_line_part.external_layer[key], "yes");
             }
             zoom_to_extent();
         }
