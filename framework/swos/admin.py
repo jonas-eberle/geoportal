@@ -1,5 +1,6 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
+from django import forms
 from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart
 
 from layers.admin import LayersAdmin
@@ -94,8 +95,16 @@ class IndicatorAdmin(SortableModelAdmin):
 class IndicatorValuesAdmin(admin.ModelAdmin):
     list_display = ('value_absolut', 'unit', 'value_percent', 'time', 'time_end', 'time_ref_parts', 'indicator', 'wetland')
 
+class StoryLinePartForm(forms.ModelForm):
+    class Meta:
+        model = StoryLinePart
+        exclude = []
 
-
+    def __init__(self, *args, **kwargs):
+        super(StoryLinePartForm, self).__init__(*args, **kwargs)
+        if hasattr(self.instance, 'wetland'):
+           self.fields['product_layer'].queryset = WetlandLayer.objects.filter(wetland_id=self.instance.wetland.id, product_id__isnull = False)
+           self.fields['indicator_layer'].queryset = WetlandLayer.objects.filter(wetland_id=self.instance.wetland.id, indicator_id__isnull = False)
 
 class StoryLineInlines(SortableTabularInline):
     model = StoryLineInline
@@ -109,6 +118,7 @@ class StoryLineAdmin(admin.ModelAdmin):
     list_display = ('title',)
 
 class StoryLinePartAdmin(admin.ModelAdmin):
+    form = StoryLinePartForm
     list_display = ('headline', 'wetland')
 
 

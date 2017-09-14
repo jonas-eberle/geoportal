@@ -1,6 +1,7 @@
 import json
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
+from django.db.models import Q
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -36,7 +37,7 @@ class WetlandDetail(APIView):
         story_line_parts = []
         prev_story_line_part_story_line_id = -1
 
-        story_line = StoryLineInline.objects.filter(story_line_part__wetland_layer=layer_id).order_by("order")
+        story_line = StoryLineInline.objects.filter(Q(story_line_part__product_layer=layer_id) | Q(story_line_part__indicator_layer=layer_id) | Q(story_line_part__external_layer=layer_id)).order_by("order")
 
         if not story_line:
             return False
@@ -60,11 +61,13 @@ class WetlandDetail(APIView):
         temp_products_layers = dict()
         temp_indicators_layers = dict()
         temp_external_layers = dict()
+        temp_external_story_lines = dict()
         temp_products = dict()
         temp_product_story_lines = dict()
         temp_indicators = dict()
         temp_indicator_values = dict()
         temp_indicators_story_lines = dict()
+
 
 
         finalJSON = {'id': wetland.id, 'title': wetland.name, 'image': wetland.image_url,
@@ -182,9 +185,17 @@ class WetlandDetail(APIView):
             datasets = []
             for extdb in extdb_grouped_list[index]:
                 layer_extern = ExternalLayer.objects.filter(datasource_id=extdb.id, publishable=True)
+
+
                 if layer_extern:
                     for ex_layer in layer_extern:
                         layer_data = LayerSerializer(ex_layer).data
+                        story_line = self.get_story_line(ex_layer.id)
+                        if story_line:
+                            layer_data['story_line'] = story_line
+                        else:
+                            layer_data['story_line'] = ""
+
                         if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
                             layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
                             layer_data['selectedDate'] = layer_data['ogc_times'][-1]
@@ -194,17 +205,34 @@ class WetlandDetail(APIView):
                             temp_external_layers[extdb.id] = [layer_data]
                         else:
                             temp_external_layers[extdb.id].append(layer_data)
+
+                        if story_line and ex_layer.id not in temp_external_story_lines:
+                            temp_external_story_lines[ex_layer.id] = layer_data['story_line']
+                        elif story_line:
+                            temp_external_story_lines[ex_layer.id].append(layer_data['story_line'])
+
                     layers = temp_external_layers[extdb.id]
+
+                    if ex_layer.id in temp_external_story_lines:
+                        story_line_data = temp_external_story_lines[ex_layer.id]
+                    else:
+                        story_line_data = ""
+
                     datasets.append({'name': extdb.name, 'description': extdb.description,
                                      'provided_info': extdb.provided_information, 'online_link': extdb.online_link,
                                      'language': extdb.dataset_language,
                                      'geoss_datasource_id': extdb.geoss_datasource_id, 'layers': layers,
-                                     'layer_exist': "True"})
+                                     'layer_exist': "True", 'story_line': story_line_data})
                 else:
+                    if extdb.id in temp_external_story_lines:
+                        story_line_data = temp_product_story_lines[product.id]
+                    else:
+                        story_line_data = ""
+
                     datasets.append({'name': extdb.name, 'description': extdb.description,
                                      'provided_info': extdb.provided_information, 'online_link': extdb.online_link,
                                      'language': extdb.dataset_language,
-                                     'geoss_datasource_id': extdb.geoss_datasource_id, 'layer_exist': "False"})
+                                     'geoss_datasource_id': extdb.geoss_datasource_id, 'layer_exist': "False" ,'story_line': story_line_data})
 
             if extdb_grouped_list[index]:
                 finalJSON['externaldb'].append({'group': extdb_grouped_name[index], 'datasets': datasets})
@@ -343,6 +371,7 @@ class LayerColors(APIView):
         # for key in data:
         #    rgbData[self.hex_to_rgb(key)] = data[key]
         # return Response(rgbData)
+
 
 class StoryLinePartSerializer(serializers.ModelSerializer):
     image_url_300 = serializers.ReadOnlyField()
