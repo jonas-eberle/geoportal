@@ -935,6 +935,8 @@ class StoryLine(models.Model):
     description = models.TextField(null=True, blank=True)
     authors = models.TextField(null=True, blank=True)
     wetland = models.ForeignKey(Wetland, null=True)
+    story_line_file_name = models.CharField(max_length=50, blank=True, null=True, help_text="File name for download")
+    story_line_file = models.FileField("Story line file", upload_to='downloads', null=True, blank=True, help_text="Upload story line as pdf file")
 
     def __unicode__(self):
         return u"%s" % (self.title)
@@ -963,13 +965,21 @@ class StoryLinePart(models.Model):
 
     @property
     def image_tag(self):
+        if not self.image:
+            return ""
         return format_html('<img src="{}" />'.format(self.image.url_125x125))
 
     @property
     def image_url_125(self):
+        if not self.image:
+            return ""
+
         return (self.image.url_125x125)
 
     def image_url_300(self):
+            if not self.image:
+                return ""
+
             # detect landscape or portrait format
             if self.image.width > self.image.height:
                 return self.image.url_300x200
@@ -977,6 +987,9 @@ class StoryLinePart(models.Model):
                 return self.image.url_200x300
 
     def image_url_600(self):
+            if not self.image:
+                return ""
+
             # detect landscape or portrait format
             if self.image.width > self.image.height:
                 return self.image.url_600x400

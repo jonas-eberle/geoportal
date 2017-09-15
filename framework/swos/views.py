@@ -35,7 +35,7 @@ class WetlandDetail(APIView):
     def get_story_line(self, layer_id):
 
         story_line_parts = []
-        prev_story_line_part_story_line_id = -1
+        story_line_list = []
 
         story_line = StoryLineInline.objects.filter(Q(story_line_part__product_layer=layer_id) | Q(story_line_part__indicator_layer=layer_id) | Q(story_line_part__external_layer=layer_id)).order_by("order")
 
@@ -43,9 +43,9 @@ class WetlandDetail(APIView):
             return False
 
         for story_line_part in story_line:
-            if story_line_part.story_line_id != prev_story_line_part_story_line_id:
+            if story_line_part.story_line_id not in story_line_list:
                 story_line_parts.append({'story_line': story_line_part.story_line_id, 'order': story_line_part.order, 'title': story_line_part.story_line.title, 'authors':story_line_part.story_line.authors, 'description': story_line_part.story_line.description})
-                prev_story_line_part_story_line_id = story_line_part.story_line_id
+                story_line_list.append(story_line_part.story_line_id)
 
         return story_line_parts
 
@@ -393,7 +393,7 @@ class StoryLineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StoryLine
-        fields = ('title', 'description', 'authors', 'story_line')
+        fields = ('title', 'description', 'authors', 'story_line', 'story_line_file_name', 'story_line_file')
 
 
 class StoryLineData(APIView):
