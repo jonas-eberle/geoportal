@@ -31,6 +31,34 @@
                     mapviewer.map.getView().fit(extent, {size: mapviewer.map.getSize()});
 
                     var wetlandFeature = this.olLayer.getSource().getFeatureById(id);
+
+                    mapviewer.map.getView().on('change:resolution', function (evt) {
+
+                        var zoom = mapviewer.map.getView().getZoom();
+                        console.log(zoom);
+                        if (zoom <= 7) {
+                            var color = "#ef1111";
+                            var width = 1;
+                            var fill_color = 'rgba(239, 17, 18, 0.3)';
+
+                        }
+                        else {
+                            var color = "#000000";
+                            var width = 5;
+                            var fill_color = 'rgba(239, 17, 18, 0)';
+                        }
+
+                        var newStyle = new ol.style.Style({
+                                stroke: new ol.style.Stroke({
+                                    color: color,
+                                    width: width,
+                                }),
+                                fill: new ol.style.Fill({color: fill_color})
+                            })
+                            ;
+                        wetlandFeature.setStyle(newStyle);
+                    });
+
                     wetlandFeature.setStyle(new ol.style.Style({
                         stroke: new ol.style.Stroke({
                             color: "#000000",
