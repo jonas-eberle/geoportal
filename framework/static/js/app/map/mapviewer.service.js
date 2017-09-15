@@ -62,6 +62,8 @@
 
                 this.gmap.setZoom(view.getZoom());
                 this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+
+
                 view.on('change:center', function() {
                     var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
                     _this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
@@ -630,6 +632,11 @@
                     if (mapviewer.baseLayers.length > 0) {
                         mapviewer.setBaseLayer(0);
                     }
+                    //Zoom to maxExtent
+                    mapviewer.map.getView().fit(
+                        ol.proj.transformExtent(mapviewer.maxExtent, 'EPSG:4326', mapviewer.displayProjection)
+                    );
+
                     $('#loading-div').hide();
                     $rootScope.$broadcast('mapviewer.catalog_loaded');
                     $rootScope.$broadcast('djangoAuth.registration_enabled', data.auth_registration);
