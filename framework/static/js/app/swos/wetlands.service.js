@@ -49,8 +49,9 @@
                     mapviewer.currentFeature = wetlandFeature;
                 }
             },
-            selectWetland: function (wetland, callback=null) {
-                console.log("selected wetland");
+            selectWetland: function (wetland, callback) {
+                if (typeof(callback)==='undefined') callback = null;
+
                 var wetland_service = this;
                 /*
                  try {
@@ -134,7 +135,8 @@
                     bootbox.alert('<h1>Error while loading wetland details</h1>');
                 });
             },
-            selectWetlandFromId: function (id, callback=null) {
+            selectWetlandFromId: function (id, callback) {
+
                 var wetland;
                 if (wetland = this.wetlandList[id]) {
                     return this.selectWetland(wetland, callback);
@@ -142,7 +144,8 @@
                 return $q.reject();
             },
 
-            loadLayer: function (wetland_id, type_name, layer_id, load_layer, no_scroll=false) {
+            loadLayer: function (wetland_id, type_name, layer_id, load_layer, no_scroll) {
+                if (typeof(no_scroll)==='undefined') no_scroll = false;
 
                 var layer_is_new = "true";
 
@@ -202,8 +205,8 @@
                 }
 
             },
-            loadWetland: function (wetland_id, callback=null) {
-
+            loadWetland: function (wetland_id, callback) {
+                if (typeof(callback)==='undefined') callback = null;
                 var current_wetland_id = "";
 
                 if (mapviewer.currentFeature) {

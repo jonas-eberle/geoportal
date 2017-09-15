@@ -120,14 +120,14 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" uib-tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
@@ -399,8 +399,9 @@
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
                                         <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
                                         <div ng-if="wetlands.value.data.story_line.length != 0"><h4>Story lines</h4>
-                                            <div ng-repeat="story_line in wetlands.value.data.story_lines">
-                                                <a ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title }}</a></div>
+                                            <div ng-repeat="story_line in wetlands.value.data.story_lines" style="margin-left: 20px;">
+                                                <a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title}}</a>
+                                            </div>
                                         </div>
                                     </div>
                                     <h4 style="margin-top:15px">Datasets</h4>
@@ -434,7 +435,7 @@
                                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                                             <div class="div-button-text">Remove all layers</div>
                                         </div>
-                                        <div class="div-button" style="width: 225px;" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
+                                        <div class="div-button" style="width: 240px;" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
                                             <div class="glyphicon glyphicon-remove div-button-icon"></div>
                                             <div class="div-button-text">Remove all layers of this Wetland</div>
                                         </div>
@@ -450,7 +451,7 @@
                                                 </uib-accordion-heading>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
-                                                    <p ng-if="product.story_line.length != 0"><strong>Story line(s):</strong><div ng-repeat="story_line in product.story_line"><a ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
+                                                    <p ng-if="product.story_line.length != 0"><strong>Story line(s):</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                     <div class="products_datasets">
                                                         <strong>Datasets:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">

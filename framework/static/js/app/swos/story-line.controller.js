@@ -10,13 +10,22 @@
         var storyLine = this;
         var cur_story_line_id = "";
         var cur_story_line_title = "";
-        var order_pos_map = new Array;
-        var story_line_title = "";
+        var pos_order_map = new Array;
+
 
         storyLine.show_story_line = show_story_line;
         storyLine.changePart = changePart;
+        storyLine.setVisibilityStoryLine = setVisibilityStoryLine;
 
-        function show_story_line(story_line_id, selected_part = null) {
+        $scope.show_story_lines = false;
+
+
+        function setVisibilityStoryLine(){
+                    $scope.show_story_lines = !$scope.show_story_lines;
+                }
+
+        function show_story_line(story_line_id, selected_part) {
+            if (typeof(selected_part)==='undefined') selected_part = null;
 
             // prevent more than one layer warning
             $cookies.put('hasNotifiedAboutLayers', true);
@@ -28,19 +37,22 @@
                     url: '/swos/'+ story_line_id +'/storyline.json?'
                 }).then(function (data) {
 
+                    data.story_lines = addFirstPart(data);
+
                     var pos = 0;
-                    for (var part in data.story_line) {
-                        order_pos_map[data.story_line[part].order] = pos;
+
+                    for (var part = 0; part < data.story_line.length; part++){
+                        pos_order_map[pos] = data.story_line[part].order;
                         pos++;
                     }
                     if (selected_part == null) {
-                        $scope.selected_part = arraySearch(order_pos_map, 0);
+                        $scope.selected_part = pos_order_map[0];
                     }
                     else {
                         $scope.selected_part = selected_part;
                     }
                     $scope.story_lines = data.story_line;
-                    $scope.story_line_pos = order_pos_map[$scope.selected_part];
+                    $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
                     $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
 
 
@@ -48,6 +60,7 @@
                     cur_story_line_id = story_line_id;
                     showModal();
                     checkWetland_addLayer_zoom();
+                    trackStoryLine();
 
                 });
 
@@ -55,18 +68,78 @@
             // Apply new position, if already open; use first if no position is given
             else {
                 if (selected_part == null) {
-                    $scope.selected_part = $scope.selected_part = arraySearch(order_pos_map, 0);
+                    $scope.selected_part = $scope.selected_part = pos_order_map[0];
                 }
                 else {
                     $scope.selected_part = selected_part;
                 }
 
-                $scope.story_line_pos = order_pos_map[$scope.selected_part];
+                $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
                 $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
 
                 showModal();
                 checkWetland_addLayer_zoom();
+                trackStoryLine();
             }
+        }
+
+        function addFirstPart(data){
+            var story_line_part = {"order": -1, "story_line_part": {"title": data.title, "headline": "Overview", "description": data.description, "authors": data.authors, "product_layer": "", "indicator_layer":"", "external_layer":"", "story_line_file_url": data.story_line_file, "story_line_file_name": data.story_line_file_name}};
+
+            return data.story_line.unshift(story_line_part);
+        }
+
+        function arraySearch(arr, val) {
+            for (var i = 0; i < arr.length; i++){
+                if (arr[i] === val){
+                    return i;
+                }
+            }
+            return false;
+        }
+
+        function changePart() {
+            $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
+            $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
+        }
+
+        function checkWetland_addLayer_zoom() {
+            if ($scope.story_line_part.wetland > 0 && WetlandsService.wetland_id != $scope.story_line_part.wetland) {
+                WetlandsService.loadWetland($scope.story_line_part.wetland, function () {
+                    $timeout(function () {
+                        set_zoom_add_layer();
+                    });
+                });
+            }
+            else{
+                set_zoom_add_layer();
+            }
+        }
+
+        function set_zoom_add_layer() {
+            $timeout(function () {
+                for (var key1 = 0; key1 < $scope.story_line_part.product_layer.length; key1++) {
+                    WetlandsService.selectTab('product');
+                    WetlandsService.loadLayer($scope.story_line_part.wetland, 'product', $scope.story_line_part.product_layer[key1], "yes");
+
+                }
+                $timeout(function () {
+                    for (var key2 = 0; key2 < $scope.story_line_part.indicator_layer.length; key2++) {
+                        WetlandsService.selectTab('indicator');
+                        WetlandsService.loadLayer($scope.story_line_part.wetland, 'indicator', $scope.story_line_part.indicator_layer[key2], "yes");
+
+                    }
+                    $timeout(function () {
+                        for (var key3 = 0; key3 < $scope.story_line_part.external_layer.length; key3++) {
+                            WetlandsService.selectTab('externaldb');
+                            WetlandsService.loadLayer($scope.story_line_part.wetland, 'externaldb', $scope.story_line_part.external_layer[key3], "yes");
+
+                        }
+                    });
+                });
+            });
+
+            zoom_to_extent();
         }
 
         function showModal(){
@@ -96,10 +169,11 @@
                             else {
                                 $scope.story_line_pos = $scope.story_lines.length - 1
                             }
-                            $scope.selected_part = arraySearch(order_pos_map, $scope.story_line_pos);
+                            $scope.selected_part = pos_order_map[$scope.story_line_pos];
                             $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
                             $scope.$apply();
                             checkWetland_addLayer_zoom();
+                            trackStoryLine();
 
                             return false;
                         }
@@ -114,10 +188,11 @@
                             else {
                                 $scope.story_line_pos = 0;
                             }
-                            $scope.selected_part = arraySearch(order_pos_map, $scope.story_line_pos);
+                            $scope.selected_part = pos_order_map[$scope.story_line_pos];
                             $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
                             $scope.$apply();
                             checkWetland_addLayer_zoom();
+                            trackStoryLine();
 
                             return false;
                         }
@@ -142,10 +217,13 @@
 
 
             var template = '<div >' +
-                '<h3>{{story_line_part.headline}}</h3>' +
-                '<img ng-if="story_line_part.image_position == \'right\'" ng-src="{{story_line_part.image_url_300}}" style="float: right; width: 45%;">' +
+                '<h4 ng-if="!story_line_part.title">{{story_line_part.headline}}</h4>' +
+                '<h3 ng-if="story_line_part.title">{{story_line_part.title}}</h3>' +
+                '<figure ng-if="story_line_part.image_position == \'right\' && story_line_part.image_url_300.length > 2" style="float: right; display: table;";><img  ng-src="{{story_line_part.image_url_300}}"  width: 45%;"><figcaption style="display: table-caption; caption-side: bottom ;">{{story_line_part.image_description}} ({{story_line_part.image_copyright}}, {{story_line_part.image_date}})</figcaption></figure>' +
+                '<div ng-if="story_line_part.authors">Author(s): <span style="font-style: italic;">{{story_line_part.authors}}</span></div>' +
                 '<p>{{ story_line_part.description }}</p>' +
-                '<img ng-if="story_line_part.image_position == \'bottom\'" ng-src="{{story_line_part.image_url_600}}" style="width: 100%;">' +
+                '<figure ng-if="story_line_part.image_position == \'bottom\' && story_line_part.image_url_600.length > 2" style="display: table;";><img  ng-src="{{story_line_part.image_url_600}}"  width: 100%;"><figcaption style="display: table-caption; caption-side: bottom ;">{{story_line_part.image_description}} ({{story_line_part.image_copyright}}, {{story_line_part.image_date}})</figcaption></figure>' +
+                '<div ng-if="story_line_part.story_line_file_url">Download as pdf: <a href="{{story_line_part.story_line_file_url}}" download="{{story_line_part.story_line_file_name}}">{{story_line_part.story_line_file_name}}</a> </div>' +
                 '</div>';
 
             var template_select = '<div style="margin-bottom: 40px;">' +
@@ -156,45 +234,8 @@
             angular.element('.modal-header').after($compile(template_select)($scope))
         }
 
-        function arraySearch(arr, val) {
-            for (var i = 0; i < arr.length; i++)
-                if (arr[i] === val)
-                    return i;
-            return false;
-        }
-
-        function changePart() {
-            $scope.story_line_pos = order_pos_map[$scope.selected_part];
-            $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
-        }
-
-        function checkWetland_addLayer_zoom() {
-            if (WetlandsService.wetland_id != $scope.story_line_part.wetland) {
-                WetlandsService.loadWetland($scope.story_line_part.wetland, function () {
-                    $timeout(function () {
-                        set_zoom_add_layer();
-                    });
-                });
-            }
-            else{
-                set_zoom_add_layer();
-            }
-        }
-
-        function set_zoom_add_layer() {
-            for (var key in $scope.story_line_part.product_layer) {
-                WetlandsService.selectTab('product');
-                WetlandsService.loadLayer($scope.story_line_part.wetland, 'product', $scope.story_line_part.product_layer[key], "yes");
-            }
-            for (var key in $scope.story_line_part.indicator_layer) {
-                WetlandsService.selectTab('indicator');
-                WetlandsService.loadLayer($scope.story_line_part.wetland, 'indicator', $scope.story_line_part.indicator_layer[key], "yes");
-            }
-            for (var key in $scope.story_line_part.external_layer) {
-                WetlandsService.selectTab('externaldb');
-                WetlandsService.loadLayer($scope.story_line_part.wetland, 'externaldb', $scope.story_line_part.external_layer[key], "yes");
-            }
-            zoom_to_extent();
+        function trackStoryLine() {
+            TrackingService.trackPageView('/story_line/' + cur_story_line_title + '_' + $scope.story_line_pos + '_' +  $scope.story_line_part.headline.toLowerCase(), 'Story line: ' + cur_story_line_title + ' (' + $scope.story_line_pos + ')');
         }
 
         function zoom_to_extent() {
@@ -207,6 +248,8 @@
             }
             mapviewer.map.getView().fit(extent);
         }
+
+
 
     }
 })();
