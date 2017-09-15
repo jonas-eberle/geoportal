@@ -40,7 +40,7 @@
                             var color = "#ef1111";
                             var width = 1;
                             var fill_color = 'rgba(239, 17, 18, 0.3)';
-
+                            mapviewer.selectInteraction.getFeatures().clear();
                         }
                         else {
                             var color = "#000000";
