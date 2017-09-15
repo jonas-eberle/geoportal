@@ -35,7 +35,7 @@
                     mapviewer.map.getView().on('change:resolution', function (evt) {
 
                         var zoom = mapviewer.map.getView().getZoom();
-                        console.log(zoom);
+
                         if (zoom <= 7) {
                             var color = "#ef1111";
                             var width = 1;
@@ -46,6 +46,8 @@
                             var color = "#000000";
                             var width = 5;
                             var fill_color = 'rgba(239, 17, 18, 0)';
+                            mapviewer.selectInteraction.getFeatures().clear()
+                            mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
                         }
 
                         var newStyle = new ol.style.Style({
