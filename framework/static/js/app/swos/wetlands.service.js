@@ -21,9 +21,12 @@
             wetlands_without_geom: [],
             country_list: [],
             wetland_id: "",
+            wetlandFeature: "",
 
             selectFeature: function (id) {
+
                 if (this.wetlandList[id]) {
+
                     var extent = this.wetlandList[id].geometry.getExtent();
                     //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
                     //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
@@ -31,35 +34,10 @@
                     mapviewer.map.getView().fit(extent, {size: mapviewer.map.getSize()});
 
                     var wetlandFeature = this.olLayer.getSource().getFeatureById(id);
+                    WetlandsService.wetlandFeature = wetlandFeature;
 
-                    mapviewer.map.getView().on('change:resolution', function (evt) {
-
-                        var zoom = mapviewer.map.getView().getZoom();
-
-                        if (zoom <= 7) {
-                            var color = "#ef1111";
-                            var width = 1;
-                            var fill_color = 'rgba(239, 17, 18, 0.3)';
-                            mapviewer.selectInteraction.getFeatures().clear();
-                        }
-                        else {
-                            var color = "#000000";
-                            var width = 5;
-                            var fill_color = 'rgba(239, 17, 18, 0)';
-                            mapviewer.selectInteraction.getFeatures().clear()
-                            mapviewer.selectInteraction.getFeatures().push(wetlandFeature);
-                        }
-
-                        var newStyle = new ol.style.Style({
-                                stroke: new ol.style.Stroke({
-                                    color: color,
-                                    width: width,
-                                }),
-                                fill: new ol.style.Fill({color: fill_color})
-                            })
-                            ;
-                        wetlandFeature.setStyle(newStyle);
-                    });
+                    mapviewer.map.getView().un('change:resolution', this.styleOnZoom);
+                    mapviewer.map.getView().on('change:resolution', this.styleOnZoom);
 
                     wetlandFeature.setStyle(new ol.style.Style({
                         stroke: new ol.style.Stroke({
@@ -172,6 +150,40 @@
                     return this.selectWetland(wetland, callback);
                 }
                 return $q.reject();
+            },
+            styleOnZoom: function (evt) {
+
+                var zoom = mapviewer.map.getView().getZoom();
+                var oldZoom = mapviewer.map.getView().getZoomForResolution(evt.oldValue);
+
+                if (oldZoom > 7 && zoom <= 7) {
+                    mapviewer.selectInteraction.getFeatures().clear();
+                }
+                if (oldZoom <= 7 && zoom > 7) {
+                    mapviewer.selectInteraction.getFeatures().clear();
+                    mapviewer.selectInteraction.getFeatures().push(WetlandsService.wetlandFeature);
+                }
+
+                if (zoom <= 7) {
+                    var color = "#ef1111";
+                    var width = 1;
+                    var fill_color = 'rgba(239, 17, 18, 0.3)';
+                }
+                else {
+                    var color = "#000000";
+                    var width = 5;
+                    var fill_color = 'rgba(239, 17, 18, 0)';
+                }
+
+                var newStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: color,
+                            width: width
+                        }),
+                        fill: new ol.style.Fill({color: fill_color})
+                    })
+                    ;
+                WetlandsService.wetlandFeature.setStyle(newStyle);
             },
 
             loadLayer: function (wetland_id, type_name, layer_id, load_layer, no_scroll) {
