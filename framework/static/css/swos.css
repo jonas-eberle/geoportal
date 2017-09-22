@@ -376,13 +376,13 @@ button.btn-loadmore:hover {
     padding-left: 5px;
     padding-right: 5px;
     cursor: pointer;
-    width: 145px;
+    width: 138px;
 }
 
 .remove-button-wrapper .div-button {
     float: left;
     margin-bottom: 5px;
-    margin-left: 5px;
+    margin-left: 4px;
     margin-top: 5px;
 }
 
@@ -393,7 +393,7 @@ button.btn-loadmore:hover {
 
 .div-button-text {
     float:left;
-    margin-left: 5px;
+    margin-left: 1px;
     margin-top: 1px;
 }
 
