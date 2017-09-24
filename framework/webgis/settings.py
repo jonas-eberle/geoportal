@@ -229,6 +229,11 @@ ESA_DATAHUB_PASSWORD = 'PASSWORD'
 CSW_T = False #true: active , empty/false: deactivated
 CSW_T_PATH = 'ANPASSEN' #path to pycsw/csw.py; pycsw.cfg: transactions=true, allowed_ips=xxx
 
+##################################################
+# Elasticsearch
+
+ELASTICSEARCH = False #true: active , empty/false: deactivated
+ELASTICSEARCH_HOSTS = ['ANPASSEN'] 
 
 ##################################################
 # END
