@@ -955,6 +955,7 @@ class StoryLinePart(models.Model):
     product_layer = models.ManyToManyField(WetlandLayer, blank=True)
     indicator_layer = models.ManyToManyField(WetlandLayer, blank=True, related_name="indicator_layer")
     external_layer = models.ManyToManyField(ExternalLayer, blank=True, related_name="indicator_layer")
+    remove_layer = models.BooleanField(default="False", help_text="Remove added layer on the next step")
     west = models.FloatField("BBOX west coordinate", blank=True, null=True, help_text="e.g. -5,3")
     east = models.FloatField("BBOX east coordinate", blank=True, null=True, help_text="e.g. 10,5")
     north = models.FloatField("BBOX north coordinate", blank=True, null=True, help_text="e.g. 8,2")
