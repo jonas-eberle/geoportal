@@ -11,7 +11,7 @@
         var cur_story_line_id = "";
         var cur_story_line_title = "";
         var pos_order_map = new Array;
-
+        var prev_story_line_part = false;
 
         storyLine.show_story_line = show_story_line;
         storyLine.changePart = changePart;
@@ -60,6 +60,7 @@
                     cur_story_line_id = story_line_id;
                     showModal();
                     checkWetland_addLayer_zoom();
+                    prev_story_line_part = $scope.story_line_part;
                     trackStoryLine();
 
                 });
@@ -79,6 +80,7 @@
 
                 showModal();
                 checkWetland_addLayer_zoom();
+                prev_story_line_part = $scope.story_line_part;
                 trackStoryLine();
             }
         }
@@ -101,9 +103,18 @@
         function changePart() {
             $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
             $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
+
+            checkWetland_addLayer_zoom();
+            prev_story_line_part = $scope.story_line_part;
+            trackStoryLine();
         }
 
         function checkWetland_addLayer_zoom() {
+
+            if (prev_story_line_part.remove_layer == true){
+                removeLayer(prev_story_line_part);
+            }
+
             if ($scope.story_line_part.wetland > 0 && WetlandsService.wetland_id != $scope.story_line_part.wetland) {
                 WetlandsService.loadWetland($scope.story_line_part.wetland, function () {
                     $timeout(function () {
@@ -113,6 +124,18 @@
             }
             else{
                 set_zoom_add_layer();
+            }
+        }
+
+        function removeLayer(story_line_part) {
+            for (var key = 0; key < story_line_part.product_layer.length; key++) {
+                mapviewer.removeLayerByDjangoID(story_line_part.product_layer[key]);
+            }
+            for (var key = 0; key < story_line_part.indicator_layer.length; key++) {
+                mapviewer.removeLayerByDjangoID(story_line_part.indicator_layer[key]);
+            }
+            for (var key = 0; key < story_line_part.external_layer.length; key++) {
+                mapviewer.removeLayerByDjangoID(story_line_part.external_layer[key]);
             }
         }
 
@@ -173,6 +196,7 @@
                             $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
                             $scope.$apply();
                             checkWetland_addLayer_zoom();
+                            prev_story_line_part = $scope.story_line_part;
                             trackStoryLine();
 
                             return false;
@@ -192,6 +216,7 @@
                             $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
                             $scope.$apply();
                             checkWetland_addLayer_zoom();
+                            prev_story_line_part = $scope.story_line_part;
                             trackStoryLine();
 
                             return false;
