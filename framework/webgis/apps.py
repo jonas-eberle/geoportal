@@ -35,6 +35,8 @@ class SuitConfig(DjangoSuitConfig):
             ChildItem('Wetland Videos', model='swos.wetlandvideo'),
             ChildItem('External Layers', model='swos.externallayer'),
             ChildItem('External Databases', model='swos.externaldatabase'),
+            ChildItem('Story Lines', model='swos.storyline'),
+            ChildItem('Story Line Parts', model='swos.storylinepart'),
         ])
     )
     if "validation" in settings.INSTALLED_APPS:
