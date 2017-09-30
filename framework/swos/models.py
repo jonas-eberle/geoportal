@@ -949,7 +949,7 @@ class StoryLinePart(models.Model):
     image_description = models.TextField(null=True, blank=True)
     image_copyright = models.CharField("Copyright / Owner", max_length=200, blank=True)
     image_date = models.DateField(blank=True, null=True)
-    image = ImageWithThumbsField(upload_to='images/', sizes=((125, 125), (200, 300), (300, 200), (600, 400), (400, 600)), null=True, blank=True)
+    image = ImageWithThumbsField(upload_to='images/', sizes=((125, 125), (200, 300), (300, 200), (600, 400), (400, 600)), null=True, blank=True, help_text="To avoid cutting off parts of ou image please resize it in advance. Right position: max. 300px width; Bottom max. 600px.")
     image_position = models.CharField(max_length=20, choices=(("right", "right"), ("bottom","bottom")), default="right")
     wetland = models.ForeignKey(Wetland, help_text="Plaese click - Save and continue editing - to update the layer lists below")
     product_layer = models.ManyToManyField(WetlandLayer, blank=True)
@@ -980,6 +980,10 @@ class StoryLinePart(models.Model):
     def image_url_300(self):
             if not self.image:
                 return ""
+            
+            # use original image if width is or smaller than 300
+            if self.image.width <= 300:
+                return self.image.url
 
             # detect landscape or portrait format
             if self.image.width > self.image.height:
@@ -990,7 +994,11 @@ class StoryLinePart(models.Model):
     def image_url_600(self):
             if not self.image:
                 return ""
-
+            
+            # use original image if width is or smaller than 600
+            if self.image.width <= 600:
+                return self.image.url
+            
             # detect landscape or portrait format
             if self.image.width > self.image.height:
                 return self.image.url_600x400
