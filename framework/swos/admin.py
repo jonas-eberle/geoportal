@@ -10,6 +10,9 @@ import django
 from suit.sortables import SortableModelAdmin
 from suit.sortables import SortableTabularInline
 
+
+
+
 def make_publishable(modeladmin, request, queryset):
     queryset.update(publishable=True)
 make_publishable.short_description = "Mark selected layers as fit for publication"
@@ -115,12 +118,11 @@ class StoryLineInlines(SortableTabularInline):
 
 class StoryLineAdmin(admin.ModelAdmin):
     inlines = (StoryLineInlines,)
-    list_display = ('title',)
+    list_display = ('title', 'wetland', 'active')
 
 class StoryLinePartAdmin(admin.ModelAdmin):
     form = StoryLinePartForm
     list_display = ('headline', 'wetland')
-
 
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
