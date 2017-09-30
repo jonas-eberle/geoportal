@@ -80,6 +80,7 @@
                         angular.element('#zoomOutButton').removeClass('disabled');
                     }
                     _this.gmap.setZoom(view.getZoom());
+
                 });
                 //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
 
@@ -500,6 +501,14 @@
                 for (var i=0; i<this.layersMeta.length; i++) {
                     if (title === this.layersMeta[i].name) {
                         return i;
+                    }
+                }
+            },
+            'removeLayerByDjangoID': function(layer_id) {
+                for (var i=0; i<this.layersMeta.length; i++) {
+                    if (layer_id === this.layersMeta[i].django_id) {
+                        this.removeLayer(this.layersMeta[i].id, i);
+                        return;
                     }
                 }
             },
