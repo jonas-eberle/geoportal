@@ -37,7 +37,7 @@ class WetlandDetail(APIView):
         story_line_parts = []
         story_line_list = []
 
-        story_line = StoryLineInline.objects.filter(Q(story_line_part__product_layer=layer_id) | Q(story_line_part__indicator_layer=layer_id) | Q(story_line_part__external_layer=layer_id)).order_by("order")
+        story_line = StoryLineInline.objects.filter(Q(story_line__active=True), Q(story_line_part__product_layer=layer_id) | Q(story_line_part__indicator_layer=layer_id) | Q(story_line_part__external_layer=layer_id)).order_by("order")
 
         if not story_line:
             return False
@@ -237,8 +237,8 @@ class WetlandDetail(APIView):
             if extdb_grouped_list[index]:
                 finalJSON['externaldb'].append({'group': extdb_grouped_name[index], 'datasets': datasets})
 
-        #adds tory_line(s)
-        story_lines = StoryLine.objects.filter(wetland_id=wetland.id)
+        #adds story_line(s)
+        story_lines = StoryLine.objects.filter(wetland_id=wetland.id, active=True)
 
         story_line_list = []
 
