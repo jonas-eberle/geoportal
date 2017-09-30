@@ -398,7 +398,7 @@
                                         <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
                                         <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
-                                        <div ng-if="wetlands.value.data.story_line.length != 0"><h4>Story lines</h4>
+                                        <div ng-if="wetlands.value.data.story_lines.length != 0"><h4>Story lines</h4>
                                             <div ng-repeat="story_line in wetlands.value.data.story_lines" style="margin-left: 20px;">
                                                 <a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title}}</a>
                                             </div>
