@@ -156,6 +156,15 @@
                 <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
 
                     <div id="wetland_attribution"></div>
+                    <div id="wetland_legend">
+                        <svg width=" 270" height="40" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="155" y="27" width="25" height="10" style="fill:rgba(255, 255, 255, 0.4); stroke:#319FD3;" />
+                        <rect x="5" y="27" width="25" height="10" style="fill:rgba(226, 125, 5, 0.4); stroke:rgba(226, 125, 5, 1);" />
+                        <text x="35" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">filtered wetlands</text>
+                        <text x="185" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">wetlands</text>
+                        <text x="5" y="16" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">Click on a wetland to select and zoom.</text>
+                       </svg>
+                    </div>
                     <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
 
                     <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
@@ -345,7 +354,6 @@
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
                         <div ng-if="wetlandsFilter.wetlands_without_geom.length==0">Loading wetlands... please wait </div>
-
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
                              ng-click="wetlands.selectWetland(layer)" title="{{layer.title}}">

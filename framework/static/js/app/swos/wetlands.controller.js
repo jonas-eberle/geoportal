@@ -43,6 +43,7 @@
                 WetlandsService.wetlandList = [];
                 var vectorSource = new ol.source.Vector();
                 var features = (new ol.format.GeoJSON()).readFeatures(data);
+
                 $.each(features, function () {
                     this.getGeometry().transform('EPSG:4326', mapviewer.displayProjection);
 
@@ -78,14 +79,30 @@
                 });
 
                 vectorSource.addFeatures(features);
+
                 WetlandsService.olLayer = new ol.layer.Vector({
                     name  : 'Wetlands',
                     source: vectorSource,
                     style : function (feature, res) {
+
+                        var fill_color = fill;
+                        var stroke_ = stroke;
+
+                        // change style for listed wetlands
+                        for (var i = 0; i < WetlandsService.wetlands_without_geom.length; i++){
+                            if (WetlandsService.wetlands_without_geom[i].id === feature.get("id")){
+                                if (WetlandsService.wetlands_without_geom[i].show) {
+                                    fill_color = new ol.style.Fill({color: "rgba(226, 125, 5, 0.4)"});
+                                    stroke_ = new ol.style.Stroke({color: "rgba(226, 125, 5, 1)", width: 2})
+                                }
+                            }
+                        }
+
                         var style = new ol.style.Style({
-                            fill  : fill,
-                            stroke: stroke
+                            fill  : fill_color,
+                            stroke: stroke_
                         });
+
                         var textStyleConfig = {
                             text: new ol.style.Text({
                                 text  : res < 1230 ? feature.get('name') : '',

@@ -81,6 +81,13 @@
                     }
                     _this.gmap.setZoom(view.getZoom());
 
+                    if(view.getZoom() < 7){
+                         $('#wetland_legend').show();
+                    }
+                    else{
+                         $('#wetland_legend').hide();
+                    }
+
                 });
                 //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
 

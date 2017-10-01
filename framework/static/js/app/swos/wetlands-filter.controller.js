@@ -5,8 +5,8 @@
         .module('webgisApp.swos')
         .controller('WetlandsFilterCtrl', WetlandsFilterCtrl);
 
-    WetlandsFilterCtrl.$inject = ['WetlandsService'];
-    function WetlandsFilterCtrl(WetlandsService) {
+    WetlandsFilterCtrl.$inject = ['WetlandsService', 'mapviewer'];
+    function WetlandsFilterCtrl(WetlandsService, mapviewer) {
         var wetlandsFilter = this;
 
         wetlandsFilter.filtered_country = '';
@@ -45,6 +45,8 @@
             if (wetlandsFilter.filtered_country === null) {
                 wetlandsFilter.filterReset();
             }
+
+            updateWetlandLayer();
         }
 
         function filterEcoregion() {
@@ -61,6 +63,8 @@
             if (wetlandsFilter.filtered_ecoregion === null) {
                 wetlandsFilter.filterReset();
             }
+
+            updateWetlandLayer();
         }
 
         function filterProduct() {
@@ -77,12 +81,16 @@
             if (wetlandsFilter.filtered_products === null) {
                 wetlandsFilter.filterReset();
             }
+
+            updateWetlandLayer();
         }
 
         function filterReset() {
             $.each(wetlandsFilter.wetlands_without_geom, function () {
                 this['show'] = true;
-            })
+            });
+
+            updateWetlandLayer();
         }
 
         function filterScale() {
@@ -99,6 +107,8 @@
             if (wetlandsFilter.filtered_geo_scale === null) {
                 wetlandsFilter.filterReset();
             }
+
+            updateWetlandLayer();
         }
 
         function filterSiteType() {
@@ -115,6 +125,8 @@
             if (wetlandsFilter.filtered_site_type === null) {
                 wetlandsFilter.filterReset();
             }
+
+            updateWetlandLayer();
         }
 
         function filterTestmapping() {
@@ -133,6 +145,8 @@
                     this['show'] = (this['products'].length > 0);
                 })
             }
+
+            updateWetlandLayer();
         }
 
         function filterWetlandType() {
@@ -149,6 +163,8 @@
             if (wetlandsFilter.filtered_wetland_type === null) {
                 wetlandsFilter.filterReset();
             }
+
+            updateWetlandLayer();
         }
 
         function setSortOrder() {
@@ -157,6 +173,12 @@
             } else {
                 wetlandsFilter.sortOrder = 'name';
             }
+        }
+
+        function updateWetlandLayer(){
+            // Assume wetland layer is allways on the second position
+            var layer = mapviewer.map.getLayers().getArray()[1];
+            layer.getSource().changed();
         }
     }
 })();
