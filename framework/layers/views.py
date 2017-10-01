@@ -124,7 +124,15 @@ class LayerInfo(APIView):
                             output = output.replace('GRAY_INDEX', 'Surface Temperature (deg C)')
                         else:
                             output = output.replace('GRAY_INDEX', 'Value')
-                    htmloutput += output
+                    if 'fid' in output:
+                        output = output.replace('<th>fid</th>', '')
+                        output = output[:output.find('<td>')] + output[output.find('</td>')+5:]
+                    print output
+                    if '<table' in output:
+                        htmloutput += output
+                    else:
+                        htmloutput = htmloutput[:htmloutput.rfind('<p><strong>')] + htmloutput[htmloutput.rfind('<br/>')+5:]
+
 
             except Exception as e:
                 htmloutput += 'An error occurred while requesting data'
