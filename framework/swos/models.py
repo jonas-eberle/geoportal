@@ -5,11 +5,11 @@ from rest_framework import serializers
 from django.contrib.gis.db import models
 from django.utils.html import format_html
 from django_thumbs.db.models import ImageWithThumbsField
-from django.db.models.signals import post_save, post_delete, pre_save
+from swos.search_es import LayerIndex, ExternalDatabaseIndex, WetlandIndex
 
-from layers.models import Layer
+from layers.models import Layer, ISOcodelist, KeywordInline, Contact
 from webgis import settings
-from swos.csw import create_update_csw, delete_csw
+
 
 import os
 import json
@@ -538,8 +538,39 @@ class Wetland(models.Model):
         else:
             return videos[start:]
 
+    def indexing(self):
+
+        from django.core.serializers import serialize
+        geom = json.loads(serialize('geojson', Wetland.objects.filter(id=self.id), geometry_field='geom', fields=('name',)))
+        geometry = geom["features"][0]["geometry"]
+
+        keywords = []
+        for keyword in self.description.split(','):
+            keywords.append(keyword.strip())
+
+        ecoregions = []
+        for ecoregion in self.ecoregion.split(','):
+            ecoregions.append(ecoregion.strip())
+
+        obj = WetlandIndex(
+            meta={'id': self.id},
+            title = self.name,
+            category = 'wetland',
+            keywords = keywords,
+            wetland = self.name,
+            country = self.country,
+            partner = self.partner,
+            ecoregion = ecoregion,
+            geom = geometry
+        )
+
+        print obj
+        obj.save()
+        return obj.to_dict(include_meta=True)
+
     class Meta:
         ordering = ['name']
+
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -608,25 +639,63 @@ class WetlandLayer(Layer):
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         return ' '.join([self.product.name,wq_type, date_string])
 
-#Create/update csw records after creation or update if publishable is true
-#Delete: delete and publishable changes to false
-def keep_track_save(sender, instance, created, **kwargs):
-    action = 'save' if created else 'update'
-    if settings.CSW_T == True and instance.publishable == True:
-        create_update_csw(instance, action)
+    def indexing(self):
 
-def keep_track_delete(sender, instance, **kwargs):
-    if settings.CSW_T == True:
-        delete_csw(instance)
+        indicator_name = []
+        product_name = []
+        if self.indicator:
+            cat = "indicator"
+            indicator_name = self.indicator.name
 
-def keep_track_publishable(sender, instance, **kwargs):
-    old_instance = WetlandLayer.objects.get(pk=instance.pk)
-    if settings.CSW_T == True and old_instance.publishable == True and instance.publishable == False:
-        delete_csw(instance)
+        elif self.product:
+            cat = "product"
+            product_name = self.product.name
 
-pre_save.connect(keep_track_publishable, sender=WetlandLayer)
-post_save.connect(keep_track_save, sender=WetlandLayer)
-post_delete.connect(keep_track_delete, sender=WetlandLayer)
+        topic_cats = []
+        for topic_cat in self.topicCategory.all():
+            res = ISOcodelist.objects.get(pk=topic_cat.id)
+            topic_cats.append(res.identifier)
+
+        keywords = []
+        for keyword in KeywordInline.objects.filter(layer=self.id):
+            keywords.append(keyword.keyword)
+
+        contact_name = []
+        contact_org = []
+        for contact in self.point_of_contacts.all():
+            res = Contact.objects.get(pk=contact.id)
+            contact_name.append(contact.first_name + " " + contact.last_name)
+            contact_org.append(contact.organisation)
+        for meta_contact in self.meta_contacts.all():
+            res = Contact.objects.get(pk=contact.id)
+            contact_name.append(contact.first_name + " " + contact.last_name)
+            contact_org.append(contact.organisation)
+
+        extent = {
+            "type": "Polygon",
+            "coordinates": [[[self.west,self.north],[self.east,self.north],[self.east,self.south],[self.west,self.south],[self.west,self.north]]]
+        }
+
+        obj = LayerIndex(
+            meta={'id': self.id},
+            title=self.title,
+            category=cat,
+            description=self.abstract,
+            topiccat=topic_cats,
+            keywords=keywords,
+            wetland = self.wetland.name,
+            product_name = product_name,
+            indicator_name = indicator_name,
+            contact_name = contact_name,
+            contact_org = contact_org,
+            date_begin=self.date_begin,
+            date_end=self.date_end,
+            lineage = self.meta_lineage,
+            geom = extent
+        )
+        print obj
+        obj.save()
+        return obj.to_dict(include_meta=True)
 
 class Category(models.Model):
 
@@ -856,11 +925,80 @@ class ExternalDatabase(models.Model):
     def __unicode__(self):
         return u"%s" %(self.name)
 
+    def indexing(self):
+
+        countries = []
+        for country in Country.objects.filter(id=self.id):
+            countries.append(country.name)
+
+        wetland = ""
+        if self.wetland:
+            wetland = self.wetland.name
+
+        obj = ExternalDatabaseIndex(
+            meta={'id': self.id},
+            name = self.name,
+            category="external",
+            provided_information = self.provided_information,
+            description = self.description,
+            continent = self.continent,
+            country = countries,
+            wetland = wetland
+        )
+        print obj
+        obj.save()
+        return obj.to_dict(include_meta=True)
+
 class ExternalLayer(Layer):
     datasource = models.ForeignKey(ExternalDatabase, related_name="layer_datasource", verbose_name="External Datasbase", blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" %(self.title)
+
+    def indexing(self):
+
+        topic_cats = []
+        for topic_cat in self.topicCategory.all():
+            res = ISOcodelist.objects.get(pk=topic_cat.id)
+            topic_cats.append(res.identifier)
+
+        keywords = []
+        for keyword in KeywordInline.objects.filter(layer=self.id):
+            keywords.append(keyword.keyword)
+
+        contact_name = []
+        contact_org = []
+        for contact in self.point_of_contacts.all():
+            res = Contact.objects.get(pk=contact.id)
+            contact_name.append(contact.first_name + " " + contact.last_name)
+            contact_org.append(contact.organisation)
+        for meta_contact in self.meta_contacts.all():
+            res = Contact.objects.get(pk=meta_contact.id)
+            contact_name.append(meta_contact.first_name + " " + meta_contact.last_name)
+            contact_org.append(meta_contact.organisation)
+
+        extent = {
+            "type": "Polygon",
+            "coordinates": [[[self.west,self.north],[self.east,self.north],[self.east,self.south],[self.west,self.south],[self.west,self.north]]]
+        }
+
+        obj = LayerIndex(
+            meta={'id': self.id},
+            title=self.title,
+            category="external",
+            description=self.abstract,
+            topiccat=topic_cats,
+            keywords=keywords,
+            contact_name=contact_name,
+            contact_org=contact_org,
+            date_begin = self.date_begin,
+            date_end = self.date_end,
+            lineage=self.meta_lineage,
+            geom = extent
+        )
+        print obj
+        obj.save()
+        return obj.to_dict(include_meta=True)
 
 
 class WetlandImage(models.Model):
@@ -938,7 +1076,7 @@ class StoryLine(models.Model):
     story_line_file_name = models.CharField(max_length=50, blank=True, null=True, help_text="File name for download")
     story_line_file = models.FileField("Story line file", upload_to='downloads', null=True, blank=True, help_text="Upload story line as pdf file")
     active = models.BooleanField(default=False)
-    
+
     def __unicode__(self):
         return u"%s" % (self.title)
 
@@ -986,6 +1124,10 @@ class StoryLinePart(models.Model):
             if self.image.width <= 300:
                 return self.image.url
 
+            # use original image if size is samller than 200kb and width <= 600
+            if self.image.width <= 300:
+                return self.image.url
+
             # detect landscape or portrait format
             if self.image.width > self.image.height:
                 return self.image.url_300x200
@@ -999,12 +1141,13 @@ class StoryLinePart(models.Model):
             # use original image if width is or smaller than 600
             if self.image.width <= 600:
                 return self.image.url
-            
+
             # detect landscape or portrait format
             if self.image.width > self.image.height:
                 return self.image.url_600x400
             else:
                 return self.image.url_400x600
+
 
 
 class StoryLineInline(models.Model):

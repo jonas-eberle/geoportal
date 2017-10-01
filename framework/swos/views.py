@@ -8,7 +8,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline
-
+from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, IndicatorValueSerializer, WetlandLayer, \
+    ExternalDatabase, ExternalLayer, Country
+from layers.models import LayerSerializer
+from swos.search_es import WetlandSearch
 
 # Create your views here.
 class WetlandsSerializer(serializers.ModelSerializer):
@@ -53,8 +56,7 @@ class WetlandDetail(APIView):
     def get(self, request, pk, format=None):
         wetland = self.get_object(pk)
 
-        from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, IndicatorValueSerializer, WetlandLayer, ExternalDatabase, ExternalLayer, Country
-        from layers.models import LayerSerializer
+
 
         layers = WetlandLayer.objects.filter(wetland_id=wetland.id, publishable=True).order_by('title')
         indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('indicator', 'time')
@@ -408,3 +410,52 @@ class StoryLineData(APIView):
         story_line_parts = StoryLineSerializer(story_line)
 
         return Response(story_line_parts.data)
+
+class Elasticsearch(APIView):
+    def get (self, request):
+
+        search = dict()
+        search["east"] = False
+        search["west"] = False
+        search["north"] = False
+        search["south"] = False
+
+        search_text = request.query_params.get("search_text")
+        search["text"] = search_text
+        #search["east"] = 5.0
+        #search["west"] = 4.0
+        #search["north"] = 60.0
+        #search["south"] = 20.0
+        ws = WetlandSearch(search)
+        count = ws.count()  # Total count of result)
+        response = ws[0:count].execute()  # default size is 10 -> set size to total count
+
+       # print response.__dict__
+
+        finalJSON = { 'hits': [], 'facets': []}
+
+        hits = []
+        facets = []
+
+        for facet in response.facets:
+            print facet
+            for (facet, count, selected) in response.facets[facet]:
+                print(facet, ' (SELECTED):' if selected else ':', count)
+
+        for hit in response:
+            if hit.meta.index == "layer_index":
+                hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category, 'layer_id': hit.meta.id})
+            if hit.meta.index == "external_database_index":
+                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id})
+            if hit.meta.index == "wetland_index":
+                hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'wetland_index', 'wetland_id': hit.meta.id})
+
+        for facet in response.facets:
+            for (facet_, count, selected) in response.facets[facet]:
+                facets.append({'name':facet_, 'count': count, 'group': facet  })
+
+
+        finalJSON['hits'] = hits
+        finalJSON['facets'] = facets
+
+        return Response(finalJSON)
