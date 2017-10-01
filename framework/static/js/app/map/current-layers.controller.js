@@ -5,8 +5,8 @@
         .module('webgisApp.map')
         .controller('MapCurrentLayersCtrl', MapCurrentLayersCtrl);
 
-    MapCurrentLayersCtrl.$inject = ['$scope', 'mapviewer', '$uibModal', 'djangoRequests', '$rootScope', '$routeParams', '$window', '$location'];
-    function MapCurrentLayersCtrl($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams, $window, $location) {
+    MapCurrentLayersCtrl.$inject = ['$scope', 'mapviewer', '$uibModal', 'djangoRequests', '$rootScope', '$routeParams', '$window', '$location', '$timeout'];
+    function MapCurrentLayersCtrl($scope, mapviewer, $modal, djangoRequests, $rootScope, $routeParams, $window, $location, $timeout) {
         var mcl = this;
 
         mcl.addDrawBox = addDrawBox;
@@ -43,8 +43,14 @@
 
         //--------------------------------------------------------------------------------------------------------------
 
-        $scope.$on("mapviewer.layeradded", function() {
+        $scope.$on("mapviewer.layeradded", function () {
             mcl.showToggleButton = true;
+            if (mapviewer.data.layersCount == 1) {
+                mcl.toggleWetlandList("click");
+                $timeout(function () {
+                    mcl.toggleWetlandList("click");
+                }, 3000);
+            }
         });
 
         $scope.$on("mapviewer.layerremoved", function() {

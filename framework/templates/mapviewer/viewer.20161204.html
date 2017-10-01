@@ -461,7 +461,7 @@
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
                                                     <p ng-if="product.story_line.length != 0"><strong>Story line(s):</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                     <div class="products_datasets">
-                                                        <strong>Datasets:</strong>
+                                                        <strong>Layers:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">
                                                             <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
                                                                 <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
@@ -635,7 +635,7 @@
                                                     <strong>Link:</strong>
                                                     <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                                     <div class="select" ng-if="externaldb.layers.length > 0">
-                                                        <strong>Datasets:</strong>
+                                                        <strong>Layers:</strong>
                                                         <div ng-repeat="layer in externaldb.layers"
                                                              ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
                                                             <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
