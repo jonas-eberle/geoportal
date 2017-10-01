@@ -71,6 +71,7 @@
                 // });
 
                 var matches = mapviewer.map.forEachFeatureAtPixel(e.pixel, function (feature, layer) { //Feature callback
+
                     if (layer === null || layer.get('layerObj') === undefined) {
                         return false;
                     } else if (layer.get('layerObj').ogc_type !== 'SOS') {
@@ -111,6 +112,7 @@
 
             // add event handler for select-event, i.e. when a feature is selected
             mapviewer.selectInteraction.on("select", function () {
+
                 var feature = mapviewer.selectInteraction.getFeatures().item(0);
                 if (!feature) {
                     mapviewer.selectInteraction.getFeatures().clear();
@@ -135,7 +137,6 @@
                 if (layer === null || layer.get('name') === 'Wetlands' || layer.get('layerObj') === undefined || layer.get('layerObj') === null ) {
                     return false;
                 }
-
                 switch (layer.get('layerObj').ogc_type) {
                     case 'SOS':
                         if (feature.get('features').length > 1) {
@@ -280,7 +281,7 @@
 
                     point_count++;
                     //Add point to map
-                    mapviewer.pointFeature('featureRequest', "add", lonlat, "rgb(255, 127, 14)", 'Point ' + point_count, "bottom");
+                    mapviewer.pointFeature('featureRequest', "add", lonlat, "rgb(255, 127, 14)", '# ' + point_count, "bottom");
 
                     var lon = lonlat[0].toFixed(2);
                     var lon_arrow = 'East';
@@ -294,7 +295,7 @@
                         lat_arrow = 'South';
                         lat = lat * -1;
                     }
-                    var coordinate = '<p><strong>Point ' + point_count + '</strong><br />' + lon + '&deg; ' + lon_arrow + '&nbsp;&nbsp;&nbsp;' + lat + '&deg; ' + lat_arrow + '</p>';
+                    var coordinate = '<p><strong># ' + point_count + '</strong><br />' + lon + '&deg; ' + lon_arrow + '&nbsp;&nbsp;&nbsp;' + lat + '&deg; ' + lat_arrow + '</p>';
 
                     var urls = [];
                     var names = [];
