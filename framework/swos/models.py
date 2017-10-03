@@ -630,12 +630,12 @@ class WetlandLayer(Layer):
                 date_string = str(self.date_begin.year)
             else:
                 date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['FloodReg', 'PotWet']:
+        elif self.product.short_name in ['FloodReg', 'InvDel']:
             if self.date_begin.year == self.date_end.year:
                 date_string = str(self.date_begin.year)
             else:
                 date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['LULCC_L', 'LST']:
+        elif self.product.short_name in ['LULCC_L', 'LSTT']:
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         return ' '.join([self.product.name,wq_type, date_string])
 
