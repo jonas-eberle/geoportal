@@ -13,7 +13,7 @@
         introTour.trackIntroductionTour = trackIntroductionTour;
 
         var extdb_id = "2551"; // Global Surface Water: Water Occurence (1984-2015)
-        var product_id = "3001"; // Camargue:  Land Surface Temperature Trend 2000 to 2016
+        var product_id = "3291"; // Camargue:  Land Surface Temperature Trend 2000 to 2016
         var wetland_id = 4; // Camargue
         var step_count = 14;
 
