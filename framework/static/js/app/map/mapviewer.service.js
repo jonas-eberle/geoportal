@@ -625,19 +625,20 @@
                     if (data.layerauth === true) {
                         bootbox.alert('Please log in to see further layers!');
                     }
+
                     if (baseLayer === true) {
-                        mapviewer.baseLayers = [];
-                        if (data.baselayers.length > 0) {
-                            mapviewer.currentBaseLayerIndex = 0;
-                        }
-                        jQuery.each(data.baselayers, function(){
-                            var olLayer = mapviewer.layerObjToOl3(this);
+                        data.baselayers.forEach(function(layerData){
+                            var olLayer = mapviewer.layerObjToOl3(layerData);
                             if (olLayer !== -1) {
                                 mapviewer.baseLayers.push(olLayer);
                             }
                         });
 
-                        $rootScope.$broadcast('mapviewer.baselayers_loaded', mapviewer.baseLayers);
+                        if (data.baselayers.length > 0) {
+                            mapviewer.currentBaseLayerIndex = 0;
+                        }
+
+                        $rootScope.$broadcast('mapviewer.baselayers_loaded');
                     }
 
                     if (mapviewer.map !== null) {

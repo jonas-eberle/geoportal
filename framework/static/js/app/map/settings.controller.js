@@ -17,12 +17,13 @@
         //--------------------------------------------------------------------------------------------------------------
 
         $scope.$on('mapviewer.baselayers_loaded', function () {
-            $.each(mapviewer.baseLayers, function(){
-                if (this.get('name') !== '') {
-                    mapSettings.baseLayers.push(this.get('name'));
-                }
-                mapSettings.selectedBaseLayer = mapSettings.baseLayers[mapviewer.currentBaseLayerIndex];
+            mapSettings.baseLayers = mapviewer.baseLayers.filter(function(layer) {
+                return layer.get('name') !== '';
+            }).map(function(layer) {
+                return layer.get('name');
             });
+
+            mapSettings.selectedBaseLayer = mapSettings.baseLayers[mapviewer.currentBaseLayerIndex];
         });
 
         // TODO: ????
