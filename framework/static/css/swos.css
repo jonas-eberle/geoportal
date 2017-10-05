@@ -1,11 +1,11 @@
 @media (min-width: 768px) {
-	#sidebar > .tab-content {
-	    bottom: 0px;
-	}
+    #sidebar > .tab-content {
+        bottom: 0;
+    }
 }
 
 .list-group {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .list-group-item:hover {
@@ -19,34 +19,33 @@
 }
 
 .scroller {
-  text-align:center;
-  cursor:pointer;
-  display:none;
-  padding:7px;
-  padding-top:12px;
-  white-space:nowrap;
-  vertical-align:middle;
-  background-color:#fff;
-  position: relative;
+    background-color:#fff;
+    cursor:pointer;
+    display:none;
+    padding: 12px 7px 7px 7px;
+    position: relative;
+    text-align:center;
+    vertical-align:middle;
+    white-space:nowrap;
   z-index: 9;
 }
 
 .scroller-right{
-  float:right;
+    float:right;
 }
 
 .scroller-left {
-  float:left;
+    float:left;
 }
 
 #sidebar-tabs {
-    overflow-y: hidden;
-    /*height: 39px;*/
-    overflow-x: auto;
-    position: absolute;
-    left: 0px;
-    /*min-width: 3000px;*/
     background-color: #336a5c; /* #003251 */
+    /*height: 39px;*/
+    left: 0;
+    /*min-width: 3000px;*/
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: absolute;
 }
 
 #sidebar-tabs li {
@@ -65,20 +64,20 @@
 }
 
 .badge {
-    padding: 3px 5px;
     font-size: 10px;
+    padding: 3px 5px;
     position: absolute;
-    top: 0;
     right: 0;
+    top: 0;
 }
 
 button.button_catalog_meta {
-	display: none !important;
+    display: none !important;
 }
 
 /*
 #sidebar .properties {
-	border-top: 1px solid #555;
+    border-top: 1px solid #555;
     border-bottom: 1px solid #555;
 }
 */
@@ -91,9 +90,9 @@ button.button_catalog_meta {
 }
 
 #sidebar h2 {
-	margin-top: 0;
-	margin-left: 5px;
-	font-size: 26px;
+    margin-top: 0;
+    margin-left: 5px;
+    font-size: 26px;
 }
 
 .geospatial_data ul.items {
@@ -108,39 +107,39 @@ button.button_catalog_meta {
 /*
 ul.products li:hover {
     background-color: #336a5c;
-	color: white;
+    color: white;
 }
 */
 
 /* excluded because of accordion integration
 .external_data {
-	position: absolute;
+    position: absolute;
     bottom: 0;
     height: 290px;
 }
 
 .geospatial_data {
-	position: absolute;
+    position: absolute;
     top: 63px;
     bottom: 292px;
-	overflow: auto;
-	width: 100%;
+    overflow: auto;
+    width: 100%;
 }
 */ 
 
 .external_data h3, .geospatial_data h3 {
-	background: #336a5c;
+    background: #336a5c;
     color: white;
+    font-size: 20px;
     margin: 0;
     padding: 5px;
-	font-size: 20px;
 }
 
 .sidebar label {
-	font-size: 14px;
-	font-weight: normal;
-    text-indent: -11px;
+    font-size: 14px;
+    font-weight: normal;
     margin-left: 20px;
+    text-indent: -11px;
 }
 
 .sidebar .btn-group label {
@@ -148,19 +147,19 @@ ul.products li:hover {
 }
 
 .sidebar li:hover label {
-	/*font-weight: bold;*/
+    /*font-weight: bold;*/
 }
 
 h4 {
-	font-weight:bold;
-	font-size: 16px;
+    font-size: 16px;
+    font-weight:bold;
 }
 
 #current {
-    width: 307px;
+    left: -3px;
     position: absolute;
     top: 97px;
-    left: -3px;
+    width: 307px;
     z-index: 1020;
 }
 
@@ -171,51 +170,50 @@ h4 {
 }
 
 #map_icons {
-    left: auto;
     display: inline-block;
+    left: auto;
     margin-right: 20px;
-    top: auto; 
-    width: auto; 
-    position: relative; 
+    position: relative;
+    top: auto;
+    width: auto;
     z-index: 1001;
-    left: auto; 
 }
 
 #map_search {
-    position: absolute;
     display: inline-block;
-    width: calc(100% - 350px);
     max-width: 200px;
+    position: absolute;
+    width: calc(100% - 350px);
     z-index: 1025;
 }
 
 #title-left {
-	width: 324px;
+    width: 324px;
 }
 
 #wetland_sites {
     color: white;
     display: inline-block;
     margin-right: 10px;
-    z-index: 1022;
     padding-bottom: 2px;
+    z-index: 1022;
 }
 
 #wetland_attribution {
-    position: absolute;
-    right: 0;
-    top: 0;
-    color: white;
-    z-index: 1022;
-    float: right;
     background-color: rgba(0,0,0,0.5);
+    color: white;
+    float: right;
+    position: absolute;
     padding: 3px 10px;
-    width: 100%;
+    right: 0;
     text-align: right;
+    top: 0;
+    width: 100%;
+    z-index: 1022;
 }
 
 #wetland_opened .accordion .panel-body {
-	padding: 0;
+    padding: 0;
 }
 
 .geospatial_data .tab-content {
@@ -268,34 +266,34 @@ h4 {
 }
 
 button.btn-wetland:hover {
-	background-color: #336A5C !important;
-	border-color: #336A5C !important;
+    background-color: #336A5C !important;
+    border-color: #336A5C !important;
 }
 
 .btn-loadmore {
-	color: white;
-	background-color: #063B52;
-	border-color: #063B52;
-	width: 100%;
-	margin-bottom: 10px;
+    color: white;
+    background-color: #063B52;
+    border-color: #063B52;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 button.btn-loadmore:hover {
-	background-color: #336A5C !important;
-	border-color: #336A5C !important;
-	cursor: pointer !important;
+    background-color: #336A5C !important;
+    border-color: #336A5C !important;
+    cursor: pointer !important;
 }
 
 .table.data th {
-	border-top: 0px;
+    border-top: 0;
 }
 
 .fancybox-overlay .fancybox-title a {
-	color: #336A5C;
+    color: #336A5C;
 }
 
 #map_legend {
-	background-color: white;
+    background-color: white;
     width: 500px;
     position: absolute;
     bottom: 16px;
@@ -304,11 +302,11 @@ button.btn-loadmore:hover {
 }
 
 #map_legend h4 {
-	margin-top: 5px;
+    margin-top: 5px;
 }
 
 .panoramio-wapi-tos.wetland_image {
-	width: 396px;
+    width: 396px;
     position: absolute;
     top: 190px;
     font-size: 12px;
@@ -322,46 +320,46 @@ button.btn-loadmore:hover {
 
 /*
 .geospatial_data .wetland-image:hover .panoramio-wapi-tos.wetland_image {
-	top: 190px;
+    top: 190px;
 }
 
 .panoramio-wapi-tos.wetland_image .desc {
-	display:none;
+    display:none;
 }
 
 .geospatial_data .wetland-image:hover .panoramio-wapi-tos.wetland_image .desc {
-	display:block;
+    display:block;
 }
 */
 
 @media (min-width: 768px){
-	.col-md-3 {
-	    width: 405px;
-	}
+    .col-md-3 {
+        width: 405px;
+    }
 }
 
 @media (min-width: 768px) {
-	#sidebar > .tab-content {
-	    right: 2px;
-	    width: 400px;
-	}
+    #sidebar > .tab-content {
+        right: 2px;
+        width: 400px;
+    }
 }
 
 @media (min-width: 768px) {
-	.col-md-9 {
-	    width: calc(100% - 405px);
-		width: -moz-calc(100% - 405px);
-	}
+    .col-md-9 {
+        width: calc(100% - 405px);
+        width: -moz-calc(100% - 405px);
+    }
 }
 
 @media (max-height: 680px) {
-	.geospatial_data .wetland-image {
-		display:none;
-	}
-	.geospatial_data .tab-content {
-		height: calc(100% - 50px);
-    	height: -moz-calc(100% - 50px);
-	}
+    .geospatial_data .wetland-image {
+        display:none;
+    }
+    .geospatial_data .tab-content {
+        height: calc(100% - 50px);
+        height: -moz-calc(100% - 50px);
+    }
 }
 
 .layer-list-top-bar {
@@ -376,13 +374,11 @@ button.btn-loadmore:hover {
     padding-left: 5px;
     padding-right: 5px;
     cursor: pointer;
-    width: 138px;
+    width: 140px;
 }
 
-.remove-button-wrapper .div-button {
-    float: left;
+.remove-button-wrapper {
     margin-bottom: 5px;
-    margin-left: 4px;
     margin-top: 5px;
 }
 
@@ -422,13 +418,13 @@ button.btn-loadmore:hover {
 }
 
 .toggle-button-wrapper > button {
-    background-color: white;
+    /*background-color: white;*/
+    background-image: url(../img/map-active-layers.png);
+    background-position-x: 0;
     border: none;
     box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-    width: 25px;
     height: 100px;
-    background-image: url(../img/map-active-layers.png);
-    background-position-x: 0px;
+    width: 25px;
 }
 
 .toggle-button-wrapper.expanded > button {
@@ -467,18 +463,18 @@ button.btn-loadmore:hover {
 
 @media (min-width: 1050px) {
     .map-controls-wrapper {
-        width: 545px;
-        top: 70px;
         right: 405px;
+        top: 70px;
+        width: 545px;
     }
 }
 
 @media (min-width: 1360px) {
     .map-controls-wrapper {
-        top: 0px;
+        left: calc(50% - 350px);
+        right: auto;
+        top: 0;
         z-index: 1032;
-	left: calc(50% - 350px);
-	right: auto;
     }
 }
 
@@ -489,16 +485,16 @@ button.btn-loadmore:hover {
 }
 
 .ol-scale-line {
-    right: 10px !important;
     left: auto !important;
+    right: 10px !important;
     bottom: 28px !important;
 }
 
 .ol-mouse-position {
-    left: 10px !important;
     bottom: 28px;
-    padding: 0px !important;
     font-size: 0.8em;
+    left: 10px !important;
+    padding: 0 !important;
 }
 
 /* hide openlayers icon and link in front of attribution */
@@ -524,7 +520,7 @@ button.btn-loadmore:hover {
 }
 
 #disclaimer, #cookienote {
-    bottom: 0px;
+    bottom: 0;
     height: auto;
     padding: 3px;
     color: white;
@@ -538,7 +534,7 @@ button.btn-loadmore:hover {
 }
 
 #cookienote {
-	bottom: 30px;
+    bottom: 30px;
 }
 
 #cookienote button {
@@ -586,7 +582,7 @@ button.btn-loadmore:hover {
 }
 
 .legend-percent {
-	font-size: 0.9em;
+    font-size: 0.9em;
     padding-left: 5px;
     text-align: right;
 }
@@ -597,7 +593,7 @@ button.btn-loadmore:hover {
 }
 
 #nav-top-right2 li.dropdown {
-	width: 110px;
+    width: 110px;
 }
 
 .item_left button:hover{
@@ -605,7 +601,7 @@ button.btn-loadmore:hover {
 }
 
 #draft {
-    left: 0px;
+    left: 0;
     height: auto;
     padding: 3px;
     color: white;
@@ -632,7 +628,7 @@ button.btn-loadmore:hover {
 .divider_feature_info {
     background-color: #555555;
     height: 2px;
-    margin: 9px 0px 9px;
+    margin: 9px 0 9px;
     overflow: hidden;
 }
 
