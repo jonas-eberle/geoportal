@@ -112,7 +112,8 @@ class LayerInfo(APIView):
                     xml = etree.fromstring(output)
                     code = xml.getchildren()[0].attrib['exceptionCode']
                     if code == 'TileOutOfRange':
-                        htmloutput += "No data available at this location"
+                        #htmloutput += "No data available at this location"
+                        htmloutput = htmloutput[:htmloutput.rfind('<p><strong>')] + htmloutput[htmloutput.rfind('<br/>') + 5:]
                     else:
                         htmloutput += xml.getchildren()[0].getchildren()[0].text.strip()
                     htmloutput += '</p>'
@@ -127,7 +128,24 @@ class LayerInfo(APIView):
                     if 'fid' in output:
                         output = output.replace('<th>fid</th>', '')
                         output = output[:output.find('<td>')] + output[output.find('</td>')+5:]
-                    print output
+
+                    import re
+                    matches = re.findall(r'<td>(.*?)</td>', output)
+                    for match in matches:
+                        print match
+                        try:
+                            match_float = float(match)
+                        except ValueError:
+                            print "Not a float"
+
+                        if isinstance(match_float, float):
+                            length = 0
+                            if '.' in match:
+                                length = len(match) - match.index('.') - 1
+                            if length > 3:
+                                new =  "{0:.3f}".format(match_float)
+                                output = output.replace("<td>"+match+"</td>","<td>"+new+"</td>")
+
                     if '<table' in output:
                         htmloutput += output
                     else:
