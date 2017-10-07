@@ -1,7 +1,7 @@
 from elasticsearch.helpers import bulk
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
-from elasticsearch_dsl import DocType, Text, Date, Keyword, GeoShape
+from elasticsearch_dsl import DocType, Text, Date, Keyword, GeoShape, Index
 from elasticsearch_dsl import FacetedSearch, TermsFacet
 
 from webgis import settings
@@ -10,7 +10,7 @@ connections.create_connection(hosts=settings.ELASTICSEARCH_HOSTS)
 
 class LayerIndex(DocType):
     title = Text()
-    category = Text()
+    category = Text(fields={'raw': Keyword()})
     topiccat = Keyword()
     description = Text()
     keywords = Text(fielddata=True, fields={'raw': Keyword()})
@@ -29,7 +29,7 @@ class LayerIndex(DocType):
 
 class ExternalDatabaseIndex(DocType):
     name = Text()
-    category = Text()
+    category = Text(fields={'raw': Keyword()})
     provided_information = Text()
     description = Text()
     continent = Text()
@@ -41,7 +41,7 @@ class ExternalDatabaseIndex(DocType):
 
 class WetlandIndex(DocType):
     title = Text()
-    category = Text()
+    category = Text(fields={'raw': Keyword()})
     keywords = Text(fielddata=True, fields={'raw': Keyword()})
     wetland = Text(fielddata=True, fields={'raw': Keyword()})
     country = Keyword()
@@ -115,13 +115,19 @@ def bulk_indexing():
     from .models import WetlandLayer, ExternalDatabase, ExternalLayer, Wetland
     es = Elasticsearch()
 
+    layer_index = Index('layer_index')
+    layer_index.delete(ignore=404)
     LayerIndex.init()
     bulk(client=es, actions=(b.indexing() for b in WetlandLayer.objects.filter(publishable=True).iterator()))
     bulk(client=es, actions=(b.indexing() for b in ExternalLayer.objects.filter(publishable=True).iterator()))
 
+    external_database_index = Index('external_database_index')
+    external_database_index.delete(ignore=404)
     ExternalDatabaseIndex.init()
     bulk(client=es, actions=(b.indexing() for b in ExternalDatabase.objects.filter().iterator()))
 
+    wetland_index = Index('wetland_index')
+    wetland_index.delete(ignore=404)
     WetlandIndex.init()
     # exclude wetlands with an invalid geometry (IDs: 9, 45, 49, 60)
     bulk(client=es, actions=(b.indexing() for b in Wetland.objects.filter().exclude(id__in = [45, 9, 49, 60]).iterator()))

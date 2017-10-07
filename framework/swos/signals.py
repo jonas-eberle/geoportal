@@ -13,8 +13,16 @@ def keep_track_save(sender, instance, created, **kwargs):
         create_update_csw(instance, action)
     if settings.ELASTICSEARCH == True and (sender == WetlandLayer or sender == ExternalLayer) and instance.publishable == True:
         instance.indexing()
-    if settings.ELASTICSEARCH == True and (sender == Wetland or sender == ExternalDatabase):
+    if settings.ELASTICSEARCH == True and sender == ExternalDatabase:
         instance.indexing()
+    if settings.ELASTICSEARCH == True and sender == Wetland:
+        instance.indexing()
+        ext_db = ExternalDatabase.objects.filter(wetland_id = instance.id, publishable = True)
+        wetland_layer = WetlandLayer.objects.filter(wetland_id=instance.id, publishable = True).indexing()
+        for x in ext_db:
+            x.indexing()
+        for y in wetland_layer:
+            y.indexing()
 
 def keep_track_delete(sender, instance, **kwargs):
     if settings.CSW_T == True and sender == WetlandLayer:

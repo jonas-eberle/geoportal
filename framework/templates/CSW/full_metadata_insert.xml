@@ -439,6 +439,35 @@
              </gmd:CI_OnlineResource>
            </gmd:onLine>
            {% endfor %}
+         {% for link in online_resources %}
+           <gmd:onLine>
+             <gmd:CI_OnlineResource>
+               <gmd:linkage>
+                 <gmd:URL>{{link.linkage}}</gmd:URL>
+               </gmd:linkage>
+               {% if link.protocol %}
+               <gmd:protocol>
+                 <gco:CharacterString>{{ link.protocol }}</gco:CharacterString>
+               </gmd:protocol>
+               {% endif %}
+               {% if link.name %}
+               <gmd:name>
+                 <gco:CharacterString>{{link.name}}</gco:CharacterString>
+               </gmd:name>
+               {% endif %}
+               {% if link.description %}
+               <gmd:description>
+                 <gco:CharacterString>{{ link.description}}</gco:CharacterString>
+               </gmd:description>
+               {% endif %}
+               {% if link.function.identifier %}
+               <gmd:function>
+                 <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="{{ link.function.identifier }}">{{ link.function.identifier }}</gmd:CI_OnLineFunctionCode>
+               </gmd:function>
+              {% endif %}
+             </gmd:CI_OnlineResource>
+           </gmd:onLine>
+           {% endfor %}
          </gmd:MD_DigitalTransferOptions>
        </gmd:transferOptions>
      </gmd:MD_Distribution>
