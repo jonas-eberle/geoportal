@@ -102,7 +102,7 @@
 	
 	<uib-tabset justified="true" style="height:100%;width:550px;position:absolute;top:0;left:250px;">
 		<uib-tab heading="Chart" select="wsdc.chart_api.clearElement(); wsdc.chart_api.updateWithTimeout(100);">
-			<nvd3 options="wsdc.chartOptions" data="wsdc.data_filtered_stats" api="wsdc.chart_api"></nvd3>
+			<nvd3 id="satellitedata-chart" options="wsdc.chartOptions" data="wsdc.data_filtered_stats" api="wsdc.chart_api"></nvd3>
 		</uib-tab>
 		
 		<uib-tab heading="Scenes" id="satellitedata-explorer-wrapper">
@@ -136,6 +136,6 @@
        Powered by: <br>
        USGS Earth Explorer, Sinergise Sentinel Hub, Copernicus Open Access Hub
     </div>
-    <!--<button class="btn btn-primary" ng-click="wsdc.export()">Export</button>-->
+    <button class="btn btn-primary" ng-click="wsdc.exportChartAsPNG()">Export chart</button>
     <button class="btn btn-primary" ng-click="wsdc.close()">Close</button>
 </div>

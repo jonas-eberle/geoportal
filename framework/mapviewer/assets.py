@@ -54,6 +54,7 @@ swosVendorJs.extend([
     'd3/d3.min.js',
     'lib/nv.d3_adjusted_swos.js',  # not on npmjs.com
     'angular-nvd3/dist/angular-nvd3.min.js',
+    'save-svg-as-png/saveSvgAsPng.js',
 ])
 make_bundle('swosVendorJsBundle', swosVendorJs, filters='rjsmin', output='build/swos.vendor.bundle.js')
 

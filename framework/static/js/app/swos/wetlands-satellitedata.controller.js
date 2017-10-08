@@ -97,6 +97,7 @@
         wsdc.changeWMSLayerStyle = changeWMSLayerStyle;
         wsdc.filterChanged = filterChanged;
         
+        wsdc.exportChartAsPNG = exportChartAsPNG;
         wsdc.close = close;
         
         wsdc.chartOptions = {
@@ -392,6 +393,10 @@
                     wsdc.groups = ['All']
                     break;
             }
+        }
+        
+        function exportChartAsPNG() {
+            saveSvgAsPng(jQuery('#satellitedata-chart svg')[0], "satellitedata-chart.png", {scale: 2, encoderOptions: 1});
         }
         
         function close() {
