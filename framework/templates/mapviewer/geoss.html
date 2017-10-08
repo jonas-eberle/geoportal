@@ -43,7 +43,7 @@
     </script>
 
     <!--<script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDKXC6g1wQVJzGF8L6R6suO4uhN36x_GbQ"></script>-->
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARWJfd0ov-WXWAtbyZjvqayhCDiUJFtPw"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARWJfd0ov-WXWAtbyZjvqayhCDiUJFtPw"></script>
     <!-- <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyDMKoSYiPwvZbwYAXB4KEc5_Fgz-WU7yBw"></script>-->
 
 
@@ -83,10 +83,10 @@
                             <div style="font-size: 0.8em;">This portal is developed by the SWOS project, which has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
                         </div>-->
                         <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;" class="partners">
-                            <a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/GEO_wetland_color_pos_45.png" border="0"></a>
-                            <img src="/static/img/eu.png" alt="EU Logo" height="45">
-                            <a href="http://www.eo.uni-jena.de" target="_blank"><img src="http://swos-service.eu/wp-content/uploads/2015/06/Logo-FSU-Bildmarke.jpg" border="0" height="45"></a>
-                            <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" style="margin-left: 0;"></a>
+                            <a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/GEO_wetland_color_pos_45.png" border="0" height="40"></a>
+                            <img src="/static/img/eu.png" alt="EU Logo" height="40">
+                            <a href="http://www.eo.uni-jena.de" target="_blank"><img src="http://swos-service.eu/wp-content/uploads/2015/06/Logo-FSU-Bildmarke.jpg" border="0" height="40"></a>
+                            <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="40" style="margin-left: 0;"></a>
                         </div>
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
@@ -124,14 +124,14 @@
                                checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
                     </div>
                     <div id="map_icons">
-                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" uib-tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Activate to request information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
                     </div>
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
@@ -160,13 +160,22 @@
                 <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
                     <div id="draft"><strong>DRAFT PORTAL FOR GEOSS</strong><br>For any other purposes please use <a href="http://portal.swos-service.eu" style="color:white;text-decoration:underline;">this portal</a>.</div>
                     <div id="wetland_attribution"></div>
+                    <div id="wetland_legend">
+                        <svg width=" 270" height="40" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="155" y="27" width="25" height="10" style="fill:rgba(255, 255, 255, 0.4); stroke:#319FD3;" />
+                        <rect x="5" y="27" width="25" height="10" style="fill:rgba(226, 125, 5, 0.4); stroke:rgba(226, 125, 5, 1);" />
+                        <text x="35" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">filtered wetlands</text>
+                        <text x="185" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">wetlands</text>
+                        <text x="5" y="16" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">Click on a wetland to select and zoom.</text>
+                       </svg>
+                    </div>
                     <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
 
                     <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
 
                     <div id="map_legend"></div>
                     <div class="layers-container geoss" style="display:none"></div>
-
+                    
                     <div id="slider" style="display:none">
                         <div class="input"><input type="text" /></div>
                     </div>
@@ -331,10 +340,10 @@
                                 <!-- products is an array for each wetland, thus first of all manual list of products -->
                                 <!--<option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
                                 <option value="FloodReg">Flood Regulation</option>
-                                <option value="LST">Land Surface Temperature Trend</option>
+                                <option value="LSTT">Land Surface Temperature Trend</option>
                                 <option value="LULC">Land Use Land Cover</option>
                                 <option value="LULCC_L">Land Use Land Cover Change</option>
-                                <option value="PotWet">Potential Wetland areas</option>
+                                <option value="InvDel">Potential Wetland areas</option>
                                 <option value="SWD">Surface Water Dynamics</option>
                                 <option value="WQ">Water Quality</option>
                             </select>
@@ -350,7 +359,6 @@
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
                         <div ng-if="wetlandsFilter.wetlands_without_geom.length==0">Loading wetlands... please wait </div>
-
                         <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
                              ng-click="wetlands.selectWetland(layer)" title="{{layer.title}}">
@@ -391,7 +399,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div ng-controller="StoryLineCtrl as storyline">
                         <div ng-controller="TrackingCtrl as tracking">
                             <uib-tabset justified="true">
                                 <!-- Overview -->
@@ -403,8 +411,12 @@
                                         <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
                                         <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
+                                        <div ng-if="wetlands.value.data.story_lines.length != 0"><h4>Story lines</h4>
+                                            <div ng-repeat="story_line in wetlands.value.data.story_lines" style="margin-left: 20px;">
+                                                <a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title}}</a>
+                                            </div>
+                                        </div>
                                     </div>
-
                                     <h4 style="margin-top:15px">Datasets</h4>
                                     <div class="buttons" style="text-align: center;margin-top: 20px;">
                                         <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()">
@@ -426,37 +438,20 @@
                                 <uib-tab class="flaticon-business" heading="" uib-tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
                                     <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
 
-                                    <!--
-                                    <ul class="items indicators">
-                                        <li>
-                                            <input type="checkbox" id="indicator_statustrend" /><label for="indicator_statustrend">Status and Trend of Wetland</label>
-                                            <div class="graphic">
-                                                <img src="/swos/static/img/azraq_indicator.png" width="100%" />
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <input type="checkbox" id="indicator_inund" /><label for="indicator_inund">Inundation of the Ecosystem</label>
-                                        </li>
-                                        <li>
-                                            <input type="checkbox" id="indicator_wetlandchange" /><label for="indicator_wetlandchange">Change in Wetland</label>
-                                        </li>
-                                    </ul>
-                                    -->
-                                </uib-tab>
 
+                                </uib-tab>
                                 <!-- Products -->
                                 <uib-tab class="flaticon-layers"  heading="" uib-tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                     <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
                                     <div class="remove-button-wrapper hidden-xs">
-                                        <div class="div-button" ng-click="wetlands.removeAllLayers()">
-                                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
-                                            <div class="div-button-text">Remove all layers</div>
-                                        </div>
-                                        <div class="div-button" style="width: 225px;" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
-                                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
-                                            <div class="div-button-text">Remove all layers of this Wetland</div>
-                                        </div>
-                                        <div style="clear:both;"></div>
+                                        <button class="btn btn-default btn-sm" ng-click="wetlands.removeAllLayers()">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                            Remove all layers
+                                        </button>
+                                        <button class="btn btn-default btn-sm" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                            Remove all layers of this Wetland
+                                        </button>
                                     </div>
                                     <ul class="items products">
 
@@ -468,8 +463,9 @@
                                                 </uib-accordion-heading>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                    <p ng-if="product.story_line.length != 0"><strong>Story line(s):</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                     <div class="products_datasets">
-                                                        <strong>Datasets:</strong>
+                                                        <strong>Layers:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">
                                                             <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
                                                                 <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
@@ -494,10 +490,11 @@
                                     <uib-accordion close-others="false">
                                         <div uib-accordion-group is-open="wetlands.satdata_image">
                                             <uib-accordion-heading>
-                                                Yearly coverage by sensor
+                                                Satellite data explorer
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
                                             </uib-accordion-heading>
-                                            <a href="/media/cache/satdata_{{wetlands.value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{wetlands.value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{wetlands.value.id}}_small.png" width="100%" /></a>
+                                            <a href="javascript:;" uib-tooltip="Click to open the satellite data explorer application" ng-click="wetlands.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{wetlands.value.id}}_small.png" width="100%" /></a>
+                                            <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2017-10-07</div>
                                         </div>
                                         <div uib-accordion-group is-open="wetlands.satdata_table">
                                             <uib-accordion-heading>
@@ -517,29 +514,40 @@
                                                 </tr>
                                                 <tr ng-repeat="data in wetlands.value.satdata" >
                                                     <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
-                                                    <td>{{data.sensor}}</td>
+                                                    <td>{{data.dataset}}</td>
                                                     <td>{{data.count}}</td>
-                                                    <td>{{data.begindate}}</td>
-                                                    <td>{{data.enddate}}</td>
+                                                    <td>{{data.min}}</td>
+                                                    <td>{{data.max}}</td>
                                                 </tr>
                                             </table>
+                                            <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2017-10-07</div>
                                         </div>
-                                        <div uib-accordion-group is-open="wetlands.satdata_datasearch">
+                                        <div uib-accordion-group is-open="wetlands.satdata_sources">
                                             <uib-accordion-heading>
-                                                Satellite data discovery
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_datasearch, 'glyphicon-chevron-right': !wetlands.satdata_datasearch}"></i>
+                                                Data sources
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_sources, 'glyphicon-chevron-right': !wetlands.satdata_sources}"></i>
                                             </uib-accordion-heading>
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss('sentinelscihudtest', 'OVERLAPS')">Search for Sentinel</button>
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss('landsat8dbidawstest', 'OVERLAPS')">Search for Landsat-8</button>
+                                            <p>
+                                                <strong>Copernicus Open Access Hub</strong><br/>
+                                                Sentinel-1 A&B IW GRD data have been searched through the Copernicus Open Access Hub OpenSearch API. <br />
+                                                <a href="https://scihub.copernicus.eu" target="_blank">https://scihub.copernicus.eu</a>
+                                            </p>
+                                            <hr/>
+                                            <p>
+                                                <strong>USGS Earth Explorer</strong><br/>
+                                                Landsat MSS, Landsat TM (Collection 1), Landsat ETM (Collection 1), Landsat-8 (Collection 1), Sentinel 2A data have been searched through the USGS Earth Explorer API. <br />
+                                                <a href="https://earthexplorer.usgs.gov" target="_blank">https://earthexplorer.usgs.gov</a>  
+                                            </p>
+                                            <hr/>
+                                            <p>
+                                                <strong>Sinergise Sentinel Hub Services</strong><br/>
+                                                Landsat TM and Landsat ETM data from ESA archives have been searched through the Sentinel Hub WFS Services. Furthermore WMS services for Landsat TM, Landsat ETM, Landsat 8 and Sentinel datasets have been integrated within the satellite data explorer for data visualization.<br />
+                                                <a href="http://sentinel-hub.com" target="_blank">http://sentinel-hub.com</a>   
+                                            </p>
                                         </div>
                                     </uib-accordion>
-
-                                    <div class="note">
-                                        <strong>Please note: </strong>
-                                        <p>Official satellite data archives have been queried once on 2017-04-15. Regular updates are planned.</p>
-                                        <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
-                                        <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
-                                    </div>
+                                    <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss('sentinelscihudtest', 'OVERLAPS')">Search for Sentinel</button>
+                                    <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss('landsat8dbidawstest', 'OVERLAPS')">Search for Landsat-8</button>
                                 </uib-tab>
 
                                 <!-- Photos -->
@@ -624,11 +632,14 @@
                                 <uib-tab class="flaticon-technology-2" heading="" uib-tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
                                     <div ng-if="wetlands.value.data.externaldb.length == 0">No external databases registered!</div>
                                     <div ng-if="wetlands.value.data.externaldb.length != 0"><!--{{ wetlands.value.data.externaldb.length }} external databases registered!-->
-                                        <div ><input ng-model="wetlands.externaldb_search.searchText" placeholder="Search for ...">
+                                        <div><input ng-model="wetlands.externaldb_search.searchText" placeholder="Filter databases ...">
                                             <input  type="checkbox" ng-model="wetlands.externaldb_search.layer_exist" id="only_layer">
                                             <label for="only_layer" style="margin-top: 8px;" >
                                                 <div class="flaticon-layers" style="display: inline-block;"></div> Filter by maps
                                             </label>
+                                        </div>
+                                        <div style="margin-bottom:5px;">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(null, 'OVERLAPS')">Search within GEOSS</button>
                                         </div>
                                     </div>
 
@@ -639,7 +650,7 @@
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
                                             </uib-accordion-heading>
                                             <uib-accordion>
-                                                <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ">
+                                                <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist " >
                                                     <uib-accordion-heading>
                                                         <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
@@ -654,7 +665,7 @@
                                                         <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                                     </div>
                                                     <div class="select" ng-if="externaldb.layers.length > 0">
-                                                        <strong>Datasets:</strong>
+                                                        <strong>Layers:</strong>
                                                         <div ng-repeat="layer in externaldb.layers"
                                                              ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
                                                             <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
@@ -670,6 +681,7 @@
                                 </uib-tab>
                             </uib-tabset>
                         </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -728,7 +740,7 @@
     {% assets "geossVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
-    
+
     {% assets "swosAppJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}

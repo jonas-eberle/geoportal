@@ -431,7 +431,10 @@
         function externalDBSearchGeoss(geossID, rel) {
             $('#loading-div').show();
             var extent = ol.proj.transformExtent(WetlandsService.wetlandList[WetlandsService.value.data.id].geometry.getExtent(), 'EPSG:3857', 'EPSG:4326');
-            var searchData = {"source":geossID,"extent":extent,"rel":rel};
+            var searchData = {"extent":extent,"rel":rel};
+            if (geossID != null) {
+                searchData["source"] = geossID;
+            }
             window.searchData = searchData;
             var geossWindow = $modal.open({
                 bindToController: true,

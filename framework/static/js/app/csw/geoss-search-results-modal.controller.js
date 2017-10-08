@@ -26,6 +26,7 @@
         Geoss.metadataCallback = gsrm.metadataCallback;
         Geoss.downloadBoxCallback = gsrm.downloadBoxCallback;
         Geoss.addLayerCallback = gsrm.addLayerCallback;
+        Geoss.initSearchBarCallback = gsrm.search;
         
         Geoss.searchContainer = '#geoss-search-widget .search';
         Geoss.popupsContainer = '.popups-container';
@@ -49,10 +50,10 @@
         }
         
         function search() {
-            var params = new Object();
+			var params = new Object();
             params.aoiRelation = "CONTAINS";
             
-            if ('text' in searchData) {
+            if ('text' in gsrm.searchData) {
                 params.query = gsrm.searchData['text'];
             } else {
                 params.query = '';
@@ -70,9 +71,9 @@
             }
             if ('rel' in gsrm.searchData) {
                 params.aoiRelation = gsrm.searchData.rel;
-                if (params.aoiRelation == 'OVERLAPS') {
-                    params.aoiRelation = 'bbox_overlaps';
-                }
+				if (params.aoiRelation == 'OVERLAPS') {
+					params.aoiRelation = "bbox_overlaps";
+				}
             }
             
             /* Geoss Search Widget [Search] */
