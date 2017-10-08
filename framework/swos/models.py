@@ -624,20 +624,36 @@ class WetlandLayer(Layer):
         date_string = ''
         if self.product.short_name in ['WQ']:
             wq_type = ' '.join(self.identifier.split('_')[2:5])
-        elif self.product.short_name in ['LULC', 'SWD']:
+        elif self.product.short_name in ['LULC']:
             wq_type = self.identifier.split('_')[2]
             if self.date_begin.year == self.date_end.year:
                 date_string = str(self.date_begin.year)
             else:
                 date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['FloodReg', 'InvDel']:
+        elif self.product.short_name in ['SWD']:
+            wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
             if self.date_begin.year == self.date_end.year:
                 date_string = str(self.date_begin.year)
             else:
                 date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['LULCC_L', 'LSTT']:
+        elif self.product.short_name in ['LULCC_S']:
+            wq_type = self.identifier.split('_')[3] + ' ' + self.identifier.split('_')[4]
+            if self.date_begin.year == self.date_end.year:
+                date_string = str(self.date_begin.year)
+            else:
+                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+        elif self.product.short_name in ['FloodReg', 'InvDel']:
+            wq_type = self.identifier.split('_')[2]
+            if self.date_begin.year == self.date_end.year:
+                date_string = str(self.date_begin.year)
+            else:
+                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+        elif self.product.short_name in ['LULCC_L']:
+            wq_type = self.identifier.split('_')[3]
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-        return ' '.join([self.product.name,wq_type, date_string])
+        elif self.product.short_name in ['LSTT']:
+            date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
+        return ' '.join([self.product.short_name,wq_type, date_string])
 
     def indexing(self):
 
