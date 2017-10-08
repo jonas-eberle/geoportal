@@ -1,0 +1,50 @@
+<style type="text/css">
+    table.satdata-metadata td.title {
+        font-weight: bold;
+    }
+</style>
+<h4>{{ id }}</h4>
+<table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
+    <tbody>
+    <tr>
+        <td class="title">Spacecraft identifier</td>
+        <td class="value">{{ platformname }}</td>
+    </tr>
+    <tr>
+        <td class="title">Swath identifier</td>
+        <td class="value">{{ swathidentifier }}</td>
+    </tr>
+    <tr>
+        <td class="title">Product type</td>
+        <td class="value">{{ producttype }}</td>
+    </tr>
+    <tr>
+        <td class="title">Orbit direction</td>
+        <td class="value">{{ orbitdirection }}</td>
+    </tr>
+    <tr>
+        <td class="title">Relative orbit number</td>
+        <td class="value">{{ relativeorbitnumber }}</td>
+    </tr>
+    <tr>
+        <td class="title">Time start</td>
+        <td class="value">{{ time_start }}</td>
+    </tr>
+    <tr>
+        <td class="title">Time end</td>
+        <td class="value">{{ time_end }}</td>
+    </tr>
+    <tr>
+        <td class="title">Updated</td>
+        <td class="value">{{ updated }}</td>
+    </tr>
+    <tr>
+        <td class="title">Polarisation mode</td>
+        <td class="value">{{ polarisationmode }}</td>
+    </tr>
+    <tr>
+        <td class="title">Browse URL</td>
+        <td class="value"><a href="{{ browse_url }}" target="_blank">Link</a></td>
+    </tr>
+    </tbody>
+</table>

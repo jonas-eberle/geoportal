@@ -26,6 +26,7 @@
         wetlands.selectWetland = selectWetland;
         wetlands.value = WetlandsService.value;
         wetlands.formatValue = formatValue;
+        wetlands.showSatdataExplorer = showSatdataExplorer;
         wetlands.externalDBSearchGeoss = externalDBSearchGeoss;
         // wetlands.wetlands_opened = {};
 
@@ -410,10 +411,28 @@
                 'Map: ' + layer.title
             );
         }
+
+        function showSatdataExplorer() {
+            var geossWindow = $modal.open({
+                bindToController: true,
+                controller: 'WetlandsSatDataCtrl',
+                controllerAs: 'wsdc',
+                templateUrl: subdir+'/static/includes/satdata_explorer.html',
+                windowClass: 'satdata-window',
+                backdrop: 'static',
+                resolve: {
+                    title: function() {return 'Search results'; }
+                }
+            }).rendered.then(function(){
+                $('.selectpicker').selectpicker('render');
+            });
+        }
         
         function externalDBSearchGeoss(geossID, rel) {
+            $('#loading-div').show();
             var extent = ol.proj.transformExtent(WetlandsService.wetlandList[WetlandsService.value.data.id].geometry.getExtent(), 'EPSG:3857', 'EPSG:4326');
             var searchData = {"source":geossID,"extent":extent,"rel":rel};
+            window.searchData = searchData;
             var geossWindow = $modal.open({
                 bindToController: true,
                 controller: 'GEOSSSearchResultsModalCtrl',

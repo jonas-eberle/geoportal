@@ -7,8 +7,10 @@
             'webgisApp.map',
             'webgisApp.tracking',
             /* 3rd party modules */
-            'nvd3'
+            'nvd3',
+            'infinite-scroll'
         ]);
 
     angular.module('webgisApp').requires.push('webgisApp.swos');
+    angular.module('infinite-scroll').value('THROTTLE_MILLISECONDS', 1000);
 })();

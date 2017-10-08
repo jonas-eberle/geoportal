@@ -1,12 +1,14 @@
 import json
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
+from django.template.response import TemplateResponse
 from django.db.models import Q
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from webgis import settings
 from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline
 from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, IndicatorValueSerializer, WetlandLayer, \
     ExternalDatabase, ExternalLayer, Country
@@ -346,6 +348,30 @@ class SatelliteData(APIView):
         wetland = self.get_object(pk)
         data = wetland.satellitedata()
         return Response(data)
+
+
+class SatelliteMetadata(APIView):
+    def get_object(self, pk):
+        try:
+            return Wetland.objects.get(pk=pk)
+        except Wetland.DoesNotExist:
+            raise Http404
+
+    # provide HTTP GET method
+    def get(self, request, pk, format=None):
+        wetland = self.get_object(pk)
+        
+        scene_id = request.query_params.get('scene')
+        dataset = request.query_params.get('dataset')
+        
+        with open(settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.json', 'r') as f:
+            import json
+            data = json.load(f)
+            for scene in data['features']:
+                if scene_id == scene['properties']['id']:
+                    return TemplateResponse(request, 'metadata/' + dataset + '.html', scene['properties'])
+            
+        raise Http404
 
 
 class LayerColors(APIView):

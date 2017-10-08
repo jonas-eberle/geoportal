@@ -31,9 +31,11 @@ baseVendorJs = [
     'angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js',
     'angular-filter/dist/angular-filter.min.js',
     'angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+    'ng-infinite-scroll/build/ng-infinite-scroll.min.js',
     'nx-popover/dist/nsPopover.js',
     'bootbox/bootbox.min.js',
     'bootstrap-slider/dist/bootstrap-slider.min.js',
+    'bootstrap-select/dist/js/bootstrap-select.min.js',
     'angular-bootstrap-slider/slider.js',
     'lib/jquery-drags.js',      # not on npmjs.com
     'anno.js/dist/anno.js',
@@ -133,6 +135,7 @@ vendorCss = [
     'bootstrap/dist/css/bootstrap.min.css',
     'css/bootstrap.diff.css',   # changes from modified less files
     'bootstrap-slider/dist/css/bootstrap-slider.min.css',
+    'bootstrap-select/dist/css/bootstrap-select.min.css',
     'font-awesome/css/font-awesome.min.css',
     'nx-popover/dist/nsPopover.css',
     'fancybox/dist/css/jquery.fancybox.css',

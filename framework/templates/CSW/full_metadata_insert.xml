@@ -410,7 +410,7 @@
      <gmd:MD_Distribution>
        <gmd:transferOptions>
          <gmd:MD_DigitalTransferOptions>
-           {% for link in layer.layer_online_resource %}
+         {% for link in online_resources %}
            <gmd:onLine>
              <gmd:CI_OnlineResource>
                <gmd:linkage>
@@ -439,7 +439,7 @@
              </gmd:CI_OnlineResource>
            </gmd:onLine>
            {% endfor %}
-         {% for link in online_resources %}
+           {% for link in layer.layer_online_resource %}
            <gmd:onLine>
              <gmd:CI_OnlineResource>
                <gmd:linkage>

@@ -1,0 +1,74 @@
+<style type="text/css">
+    table.satdata-metadata td.title {
+        font-weight: bold;
+    }
+</style>
+<h4>{{ id }}</h4>
+<table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
+    <tbody>
+    <tr>
+        <td class="title">Landsat Product ID</td>
+        <td class="value">{{ landsat_product_id }}</td>
+    </tr>
+    <tr>
+        <td class="title">Level1 data type</td>
+        <td class="value">{{ data_type_l1 }}</td>
+    </tr>
+    <tr>
+        <td class="title">Collection category</td>
+        <td class="value">{{ collection_category }}</td>
+    </tr>
+    <tr>
+        <td class="title">Sensor Id</td>
+        <td class="value">{{ sensor_id }}</td>
+    </tr>
+    <tr>
+        <td class="title">Time start</td>
+        <td class="value">{{ time_start }}</td>
+    </tr>
+    <tr>
+        <td class="title">Time end</td>
+        <td class="value">{{ time_end }}</td>
+    </tr>
+    <tr>
+        <td class="title">Updated</td>
+        <td class="value">{{ updated }}</td>
+    </tr>
+    <tr>
+        <td class="title">WRS Path</td>
+        <td class="value">{{ wrs_path }}</td>
+    </tr>
+    <tr>
+        <td class="title">WRS Row</td>
+        <td class="value">{{ wrs_row }}</td>
+    </tr>
+    <tr>
+        <td class="title">Tile</td>
+        <td class="value">{{ tile }}</td>
+    </tr>
+    <tr>
+        <td class="title">Scene cloudcover</td>
+        <td class="value">{{ cloud_cover }}%</td>
+    </tr>
+    <tr>
+        <td class="title">Sun Elevation</td>
+        <td class="value">{{ sun_elevation }}&deg;</td>
+    </tr>
+    <tr>
+        <td class="title">Sun Azimuth Angle Mean</td>
+        <td class="value">{{ sun_azimuth_angle_mean }}&deg;</td>
+    </tr>
+    <tr>
+        <td class="title">Day or Night</td>
+        <td class="value">{{ day_or_night }}</td>
+    </tr>
+    <tr>
+        <td class="title">Browse URL</td>
+        <td class="value"><a href="{{ browse_url }}" target="_blank">Link</a></td>
+    </tr>
+    <tr>
+        <td class="title">Metadata URL</td>
+        <td class="value"><a href="{{ metadata_url }}" target="_blank">Link</a></td>
+    </tr>
+    </tbody>
+</table>

@@ -5,6 +5,9 @@
         <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[slc.layer.id]"
                                                        ng-change="mcl.updateLayer(slc.layer.id)"
                                                        ng-options="o as o for o in layer.ogc_times"></select></div>
+        <div ng-if="layer.layers">Specify layer: <select ng-model="mcl.selectedLayerNames[slc.layer.id]"
+                                                       ng-change="mcl.updateLayerName(slc.layer.id)"
+                                                       ng-options="o as o for o in layer.layers"></select></div>
     </div>
     <div class="item_icon">
         <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Hide layer"

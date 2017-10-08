@@ -71,8 +71,8 @@ class Wetland(models.Model):
 
 
     def satellitedata(self, forceUpdate=False):
-        if os.path.isfile(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json') and forceUpdate == False:
-            with open(settings.MEDIA_ROOT+'cache/satdata_'+str(self.id)+'.json', 'r') as f:
+        if os.path.isfile(settings.MEDIA_ROOT+'cache/satdata/satdata_all_'+str(self.id)+'.table.json') and forceUpdate == False:
+            with open(settings.MEDIA_ROOT+'cache/satdata/satdata_all_'+str(self.id)+'.table.json', 'r') as f:
                 import json
                 data = json.load(f)
                 return data

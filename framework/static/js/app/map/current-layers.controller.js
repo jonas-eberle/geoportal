@@ -26,6 +26,7 @@
         mcl.removeLayer = removeLayer;
         mcl.requestWCS = requestWCS;
         mcl.selectedLayerDates = mapviewer.selectedLayerDates;
+        mcl.selectedLayerNames = {};
         mcl.shareLink = shareLink;
         mcl.showMap = showMap;
         mcl.showMetadata = showMetadata;
@@ -36,6 +37,7 @@
         mcl.toggleStations = toggleStations;
         mcl.toggleWetlandList = toggleWetlandList;
         mcl.updateLayer = updateLayer;
+        mcl.updateLayerName = updateLayerName;
         //mcl.wetlandListGlyph = "glyphicon-chevron-right";
         mcl.wetlandListState = "";
         mcl.zoomToLayer = zoomToLayer;
@@ -43,8 +45,11 @@
 
         //--------------------------------------------------------------------------------------------------------------
 
-        $scope.$on("mapviewer.layeradded", function () {
+        $scope.$on("mapviewer.layeradded", function (event, olLayer) {
             mcl.showToggleButton = true;
+            if (olLayer.get('layerObj').hasOwnProperty('layers')) {
+                mcl.selectedLayerNames[olLayer.get('layerObj').id] = olLayer.get('layerObj').layers[0];
+            }
             if (mapviewer.data.layersCount == 1) {
                 mcl.toggleWetlandList("click");
                 $timeout(function () {
@@ -458,6 +463,15 @@
                 source.updateParams({'TIME': mcl.selectedLayerDates[id]+'/'+mcl.selectedLayerDates[id]});
             } else if (type === 'WMTS') {
                 source.updateDimensions({'time': mcl.selectedLayerDates[id]});
+            }
+        }
+
+        function updateLayerName(id) {
+            var olLayer = mapviewer.getLayerById(id);
+            var source = olLayer.getSource();
+            var type = olLayer.get('layerObj').ogc_type;
+            if (type === 'WMS') {
+                source.updateParams({'LAYERS': mcl.selectedLayerNames[id]});
             }
         }
 

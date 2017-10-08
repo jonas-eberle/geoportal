@@ -485,10 +485,11 @@
                                     <uib-accordion close-others="false">
                                         <div uib-accordion-group is-open="wetlands.satdata_image">
                                             <uib-accordion-heading>
-                                                Yearly coverage by sensor
+                                                Satellite data explorer
                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
                                             </uib-accordion-heading>
-                                            <a href="/media/cache/satdata_{{wetlands.value.id}}.png" ng-click="tracking.trackShowSatdataImage('/media/cache/satdata_{{wetlands.value.id}}.png')" class="fancybox"><img ng-src="/media/cache/satdata_{{wetlands.value.id}}_small.png" width="100%" /></a>
+                                            <a href="javascript:;" uib-tooltip="Click to open the satellite data explorer application" ng-click="wetlands.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{wetlands.value.id}}_small.png" width="100%" /></a>
+                                            <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2017-10-07</div>
                                         </div>
                                         <div uib-accordion-group is-open="wetlands.satdata_table">
                                             <uib-accordion-heading>
@@ -508,21 +509,38 @@
                                                 </tr>
                                                 <tr ng-repeat="data in wetlands.value.satdata" >
                                                     <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
-                                                    <td>{{data.sensor}}</td>
+                                                    <td>{{data.dataset}}</td>
                                                     <td>{{data.count}}</td>
-                                                    <td>{{data.begindate}}</td>
-                                                    <td>{{data.enddate}}</td>
+                                                    <td>{{data.min}}</td>
+                                                    <td>{{data.max}}</td>
                                                 </tr>
                                             </table>
+                                            <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2017-10-07</div>
+                                        </div>
+                                        <div uib-accordion-group is-open="wetlands.satdata_sources">
+                                            <uib-accordion-heading>
+                                                Data sources
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_sources, 'glyphicon-chevron-right': !wetlands.satdata_sources}"></i>
+                                            </uib-accordion-heading>
+                                            <p>
+                                                <strong>Copernicus Open Access Hub</strong><br/>
+                                                Sentinel-1 A&B IW GRD data have been searched through the Copernicus Open Access Hub OpenSearch API. <br />
+                                                <a href="https://scihub.copernicus.eu" target="_blank">https://scihub.copernicus.eu</a>
+                                            </p>
+                                            <hr/>
+                                            <p>
+                                                <strong>USGS Earth Explorer</strong><br/>
+                                                Landsat MSS, Landsat TM (Collection 1), Landsat ETM (Collection 1), Landsat-8 (Collection 1), Sentinel 2A data have been searched through the USGS Earth Explorer API. <br />
+                                                <a href="https://earthexplorer.usgs.gov" target="_blank">https://earthexplorer.usgs.gov</a>  
+                                            </p>
+                                            <hr/>
+                                            <p>
+                                                <strong>Sinergise Sentinel Hub Services</strong><br/>
+                                                Landsat TM and Landsat ETM data from ESA archives have been searched through the Sentinel Hub WFS Services. Furthermore WMS services for Landsat TM, Landsat ETM, Landsat 8 and Sentinel datasets have been integrated within the satellite data explorer for data visualization.<br />
+                                                <a href="http://sentinel-hub.com" target="_blank">http://sentinel-hub.com</a>   
+                                            </p>
                                         </div>
                                     </uib-accordion>
-
-                                    <div class="note">
-                                        <strong>Please note: </strong>
-                                        <p>Official satellite data archives have been queried once on 2017-07-26. Regular updates are planned.</p>
-                                        <p>So far there has been no filter conducted to cloud coverage and area of overlap between the scene bounding box and the wetland area!</p>
-                                        <p>Further satellite data discovery and processing tools are planned within the SWOS project.</p>
-                                    </div>
                                 </uib-tab>
 
                                 <!-- Photos -->
