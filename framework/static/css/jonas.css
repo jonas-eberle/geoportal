@@ -173,6 +173,10 @@
     width: 210px;
 }
 
+table.satdata-metadata {
+    display: table !important;
+} 
+
 .uib-datepicker-popup.dropdown-menu {
     z-index: 2100;
 }

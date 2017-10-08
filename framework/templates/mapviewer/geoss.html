@@ -231,8 +231,9 @@
                                         <div class="item_desc">
                                             <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)" style="width:95%;"></slider>
                                             <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]" ng-change="mcl.updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
+                                            <div ng-if="layer.layers">Specify layer: <select ng-model="mcl.selectedLayerNames[layer.id]" ng-change="mcl.updateLayerName(layer.id)" ng-options="o as o for o in layer.layers"></select></div>
                                         </div>
-                                        <div class="item_icon">
+                                        <div class="item_icon" ng-if="layer.source != 'sentinelhub'">
                                             <button tooltip-placement="bottom" uib-tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
                                             <button tooltip-placement="bottom" uib-tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
                                             <button tooltip-placement="bottom" uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
