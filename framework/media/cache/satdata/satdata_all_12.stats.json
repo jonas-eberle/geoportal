@@ -1,0 +1,1 @@
+{"time_start_begin": "1972-08-02", "datasets_no": {"S1_GRD_IW": 379, "LANDSAT_MSS": 34, "LANDSAT_TM": 509, "SENTINEL_2A": 120, "LANDSAT_8": 101, "LANDSAT_ETM": 316}, "tiles": ["197034", "198034", "183034", "184034", "047210", "T34SFG"], "datasets": ["LANDSAT_MSS", "LANDSAT_TM", "LANDSAT_ETM", "LANDSAT_8", "SENTINEL_2A", "S1_GRD_IW"], "time_start_end": "2017-10-07T16:30:50.826Z"}
