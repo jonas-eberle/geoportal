@@ -162,7 +162,7 @@
 
                         content: '<div class="anno-step-of">(Step 1 of '+ step_count +')</div><h4>Welcome </h4><p>Welcome to the introduction tour of the <strong>SWOS and GEO-Wetlands Community Portal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
                         '<p>Please notice that certain functions are deactivated during the tour. If you would like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information on each card.</p> ' +
-                        '<p>You can always stop the tour with a click on the semi-transparent black area. To <strong>start</strong> the <strong>tour again </strong>go <strong>Info & Help</strong> on the top. Here you will also find information on how to contact us.</p>' +
+                        '<p>You can always stop the tour with a click on the semi-transparent black area or on <span class="anno-highlight">Exit</span>. To <strong>start</strong> the <strong>tour again </strong>go to <strong>Info & Help</strong> on the top. Here you will also find information on how to contact us.</p>' +
                         '</div>'
                     }, // Welcome
                     {
@@ -341,7 +341,7 @@
                         '<ol style="list-style:disc outside;">' +
                         '<li><strong>Indicators: </strong>Wetland indicators derived on the basis of satellite data and SWOS products.</li>' +
                         '<li><strong>Products: </strong>Maps produced with the SWOS software toolbox.</li>' +
-                        '<li><strong>Satellite data: </strong>Overview on free available satellite data.</li>' +
+                        '<li><strong>Satellite data: </strong>Overview on free available satellite data and satellite data explorer.</li>' +
                         '<li><strong>Photos: </strong>Uploaded and linked (source: Panoramio) photos.</li>' +
                         '<li><strong>Videos: </strong>Uploaded and linked (source: Youtube) videos.</li>' +
                         '<li><strong>External databases: </strong>Compilation of other external data sources (e.g. databases, maps, websites).</li></ol>' +
@@ -409,7 +409,7 @@
                         '<li>Flood Regulation</li>' +
                         '<li>Potential Wetland areas</li>' +
                         '<li>Land Use Land Cover</li>' +
-                        '<li>Land Use Land Cover Change</li>' +
+                        '<li>Land Use Land Cover Change (Short- and Long-term)</li>' +
                         '<li>Surface Soil Moisture</li>' +
                         '</ol>' +
 
@@ -481,9 +481,9 @@
 
                         },
                         content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Detailed product information</h4><div><p></p>' +
-                        '<p>All available datasets of a product are listed here below a short description of the product. Each dataset can be added to the map using the checkbox in front of the dataset name.</p>' +
+                        '<p>All available datasets of a product are listed here below a short description of the product. Each layer can be added to the map using the checkbox in front of the layer name.</p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend 2000 to 2016</span> dataset to the map.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend (LSTT) 2000 to 2016</span> layer to the map.</p></div>'
                     }, // Show product layer
                     {
                         target       : '.sidebar',
