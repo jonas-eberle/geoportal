@@ -79,7 +79,7 @@ class WetlandSearch(FacetedSearch):
 
         # spatial search (ignore_unmapped=True --> ignore indexes without geom)
         if (self._query["south"] and self._query["north"] and self._query["east"] and self._query["west"]):
-            return q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO").filter(
+            search_query = q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO").filter(
                 'geo_shape', ignore_unmapped="True", geom=
                 {
                     "shape": {
@@ -91,8 +91,35 @@ class WetlandSearch(FacetedSearch):
                 }
             )
         else:
-            return q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO")
+            search_query = q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO")
 
+        if (self._query["category"]):
+            search_query = search_query.filter('term', category=self._query["category"])
+        if (self._query["keywords"]):
+            d = {'keywords.raw': self._query["keywords"]}
+            search_query = search_query.filter('term', **d)
+        if (self._query["topiccat"]):
+            search_query = search_query.filter('term', topiccat=self._query["topiccat"])
+        if (self._query["wetland"]):
+            d = {'wetland.raw': self._query["wetland"]}
+            search_query = search_query.filter('term', **d)
+        if (self._query["product_name"]):
+            d = {'product_name.raw': self._query["product_name"]}
+            search_query = search_query.filter('term', **d)
+        if(self._query["indicator_name"]):
+            d = {'indicator_name.raw': self._query["indicator_name"]}
+            search_query = search_query.filter('term', **d)
+        if(self._query["contact_person"]):
+            d = {'product_name.raw': self._query["contact_person"]}
+            search_query = search_query.filter('term', **d)
+        if (self._query["contact_org"]):
+            d = {'contact_org.raw': self._query["contact_org"]}
+            search_query = search_query.filter('term', **d)
+        if (self._query["contact_person"]):
+            d = {'ecoregion.raw': self._query["ecoregion"]}
+            search_query = search_query.filter('term', **d)
+
+        return search_query
 
 #def search(search_text):
     #normale search

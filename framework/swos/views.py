@@ -437,6 +437,13 @@ class StoryLineData(APIView):
 
         return Response(story_line_parts.data)
 
+class Layer(APIView):
+    def get(self, request):
+        if request.query_params.get("type") == "product" or request.query_params.get("type") == "indicator":
+            return Response(LayerSerializer(WetlandLayer.objects.get(pk = request.query_params.get("layer_id"))).data)
+        if request.query_params.get("type") == "external":
+            return Response(LayerSerializer(ExternalLayer.objects.get(pk=request.query_params.get("layer_id"))).data)
+
 class Elasticsearch(APIView):
     def get (self, request):
 
@@ -445,9 +452,26 @@ class Elasticsearch(APIView):
         search["west"] = False
         search["north"] = False
         search["south"] = False
+        search["category"] = False
+        search["keywords"] = False
+        search["wetland"] = False
+        search["product_name"] = False
+        search["indicator_name"] = False
+        search["contact_person"] = False
+        search["contact_org"] = False
+        search["ecoregion"] = False
 
-        search_text = request.query_params.get("search_text")
-        search["text"] = search_text
+        search["text"] = request.query_params.get("search_text")
+        search["category"] = request.query_params.get("category")
+        search["keywords"] = request.query_params.get("keywords")
+        search["topiccat"] = request.query_params.get("topiccat")
+        search["wetland"] = request.query_params.get("wetland")
+        search["product_name"] = request.query_params.get("product_name")
+        search["indicator_name"] = request.query_params.get("indicator_name")
+        search["contact_person"] = request.query_params.get("contact_person")
+        search["contact_org"] = request.query_params.get("contact_org")
+        search["ecoregion"] = request.query_params.get("ecoregion")
+
         #search["east"] = 5.0
         #search["west"] = 4.0
         #search["north"] = 60.0
@@ -461,7 +485,7 @@ class Elasticsearch(APIView):
         finalJSON = { 'hits': [], 'facets': []}
 
         hits = []
-        facets = []
+        facets = dict()
 
         for facet in response.facets:
             print facet
@@ -469,16 +493,36 @@ class Elasticsearch(APIView):
                 print(facet, ' (SELECTED):' if selected else ':', count)
 
         for hit in response:
+
+            topics = []
+            if hasattr(hit, 'topiccat'):
+                if hit.topiccat:
+                    for topic in hit.topiccat:
+                        topics.append({'val': topic})
+
+            keywords = []
+            if hasattr(hit, 'keywords'):
+                print hit.keywords
+                print hit.meta.id
+                if hit.keywords:
+                    for keyword in hit.keywords:
+                        keywords.append({'val': keyword})
+
             if hit.meta.index == "layer_index":
-                hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category, 'layer_id': hit.meta.id})
+                hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category,  'django_id': hit.meta.id , 'topiccat': topics , 'keywords': keywords, 'description': hit.description})
             if hit.meta.index == "external_database_index":
-                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id})
+                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'External databases', 'ext_db_id': hit.meta.id, 'description': hit.description })
             if hit.meta.index == "wetland_index":
-                hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'wetland_index', 'wetland_id': hit.meta.id})
+
+                hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'Wetland', 'wetland_id': hit.meta.id, 'keywords': keywords})
 
         for facet in response.facets:
             for (facet_, count, selected) in response.facets[facet]:
-                facets.append({'name':facet_, 'count': count, 'group': facet  })
+                if facet not in facets:
+                    facets[facet] = []
+                    facets[facet] = [{'name': facet_, 'count': count}]
+                else:
+                    facets[facet].append({'name':facet_, 'count': count})
 
 
         finalJSON['hits'] = hits

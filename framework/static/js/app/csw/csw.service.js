@@ -5,8 +5,8 @@
         .module('webgisApp.csw')
         .service('csw', csw);
 
-    csw.$inject = ['djangoRequests', '$uibModal'];
-    function csw(djangoRequests, $modal) {
+    csw.$inject = ['djangoRequests', '$uibModal', '$timeout'];
+    function csw(djangoRequests, $modal, $timeout) {
         var service = {
             'server': null,
             'setMapViewer': function(id) {
@@ -42,24 +42,45 @@
                 var searchData = {"text":text};
                 $('#loading-div').show();
                 djangoRequests.request({
-                    url: '/csw/search/'+this.server,
-                    method: 'POST',
-                    data: searchData
+                   // url: '/csw/search/'+this.server,
+                    url: '/swos/searchresult.json?search_text=' + text ,
+                   // method: 'POST',
+                    method: 'GET'
+                   // data: searchData
                 }).then(function(data){
                     $('#loading-div').hide();
-                    $modal.open({
+                    var modalInstance = $modal.open({
                         bindToController: true,
                         controller: 'SearchResultsModalCtrl',
                         controllerAs: 'srm',
                         templateUrl: subdir+'/static/includes/searchresults.html',
                         backdrop: 'static',
+                        windowClass: 'search-window',
                         resolve: {
                             title: function() {return 'Search results for: '+text; },
                             results: function() {return data; },
                             searchData: function() {return searchData;}
                         }
                     });
+
+                   modalInstance.rendered.then(function(){
+                    $('.modal-backdrop').remove();
+                    //var left = angular.element('.search-window .modal-dialog').offset().left;
+                    //var top = angular.element('.search-window .modal-dialog').offset().top;
+
+                   //    dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
+                    var left = angular.element('.search-window .modal-dialog').offset().left;
+
+
+                    var width = "800px";
+                    $('.search-window').removeClass('modal').addClass('mymodal');
+                    $('.modal-content').css('width', width);
+                    $('.modal-content').css('left', left);
                 });
+    });
+
+
+
             },
 			'searchData': null,
             'search_geoss': function(text) {
