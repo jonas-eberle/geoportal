@@ -34,6 +34,7 @@ class ExternalDatabaseIndex(DocType):
     description = Text()
     continent = Text()
     country = Keyword()
+    link = Text()
     wetland = Text(fielddata=True, fields={'raw': Keyword()})
 
     class Meta:

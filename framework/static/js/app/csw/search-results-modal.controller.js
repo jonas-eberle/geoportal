@@ -16,6 +16,7 @@
         srm.openWetland = openWetland;
         srm.setFilter = setFilter;
         srm.removeFilter = removeFilter;
+        srm.showMore = showMore;
         //srm.filterKeyword = filterKeyword;
         //srm.search = search;
         srm.title = title;
@@ -31,6 +32,7 @@
         srm.filtereEoregion = "";
         srm.filteredGroups = [];
         srm.displayName = [];
+        srm.displayNameCategory = [];
 
         srm.displayName["topiccat"] = "Topic category";
         srm.displayName["category"] = "Type";
@@ -42,7 +44,17 @@
         srm.displayName["ecoregion"] = "Ecoregion";
         srm.displayName["keywords"] = "Keywords";
 
+        srm.displayNameCategory["product"] = "product layer";
+        srm.displayNameCategory["external"] = "external layer";
+        srm.displayNameCategory["external_db"] = "external databases";
+        srm.displayNameCategory["indicator"] = "indicator layer";
+        srm.displayNameCategory["wetland"] = "wetland";
         //--------------------------------------------------------------------------------------------------------------
+
+        function showMore(class_name){
+            $('.' + class_name + '_more').hide();
+            $('.' + class_name).show();
+        }
 
         function addLayerToMap(layer_id, type) {
 

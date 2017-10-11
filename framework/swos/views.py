@@ -486,6 +486,7 @@ class Elasticsearch(APIView):
 
         hits = []
         facets = dict()
+        list_order = dict()
 
         for facet in response.facets:
             print facet
@@ -511,21 +512,35 @@ class Elasticsearch(APIView):
             if hit.meta.index == "layer_index":
                 hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category,  'django_id': hit.meta.id , 'topiccat': topics , 'keywords': keywords, 'description': hit.description})
             if hit.meta.index == "external_database_index":
-                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'External databases', 'ext_db_id': hit.meta.id, 'description': hit.description })
+                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id, 'description': hit.description + ' <br> <strong>Provided data</strong>: ' + hit.provided_information + '<br><strong>Link</strong>: <a href="' + hit.link + '" target="_blank">' + hit.link + '</a>'})
             if hit.meta.index == "wetland_index":
-
                 hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'Wetland', 'wetland_id': hit.meta.id, 'keywords': keywords})
+
+        list_order['category'] = 1
+        list_order["topiccat"] = 2
+        list_order["product_name"] = 3
+        list_order["indicator_name"] = 4
+        list_order["external"] = 5
+        list_order["wetland"] = 6
+        list_order["ecoregion"] = 7
+        list_order["contact_person"] = 8
+        list_order["contact_org"] = 9
+        list_order["keywords"] = 10
+
+        facets_ordered = []
 
         for facet in response.facets:
             for (facet_, count, selected) in response.facets[facet]:
                 if facet not in facets:
                     facets[facet] = []
                     facets[facet] = [{'name': facet_, 'count': count}]
+                    facets_ordered.append({'name': facet, 'order': list_order[facet]})
                 else:
                     facets[facet].append({'name':facet_, 'count': count})
 
 
         finalJSON['hits'] = hits
         finalJSON['facets'] = facets
+        finalJSON['facets_ordered'] = facets_ordered
 
         return Response(finalJSON)

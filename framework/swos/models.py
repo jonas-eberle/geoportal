@@ -544,7 +544,7 @@ class Wetland(models.Model):
         geom = json.loads(serialize('geojson', Wetland.objects.filter(id=self.id), geometry_field='geom', fields=('name',)))
         geometry = geom["features"][0]["geometry"]
 
-        keywords = []
+        keywords = ['Wetland', ]
         for keyword in self.description.split(','):
             keywords.append(keyword.strip())
 
@@ -957,6 +957,7 @@ class ExternalDatabase(models.Model):
             category="external",
             provided_information = self.provided_information,
             description = self.description,
+            link = self.online_link,
             continent = self.continent,
             country = countries,
             wetland = wetland

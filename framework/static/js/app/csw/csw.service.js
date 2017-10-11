@@ -42,41 +42,32 @@
                 var searchData = {"text":text};
                 $('#loading-div').show();
                 djangoRequests.request({
-                   // url: '/csw/search/'+this.server,
-                    url: '/swos/searchresult.json?search_text=' + text ,
-                   // method: 'POST',
+                    url: '/swos/searchresult.json?search_text=' + text,
                     method: 'GET'
-                   // data: searchData
-                }).then(function(data){
+                }).then(function (data) {
                     $('#loading-div').hide();
-                    var modalInstance = $modal.open({
+                    $modal.open({
                         bindToController: true,
                         controller: 'SearchResultsModalCtrl',
                         controllerAs: 'srm',
-                        templateUrl: subdir+'/static/includes/searchresults.html',
+                        templateUrl: subdir + '/static/includes/searchresults.html',
                         backdrop: 'static',
                         windowClass: 'search-window',
                         resolve: {
-                            title: function() {return 'Search results for: '+text; },
-                            results: function() {return data; },
-                            searchData: function() {return searchData;}
+                            title: function () {return 'Search results for: ' + text;},
+                            results: function () {return data;},
+                            searchData: function () {return searchData;
+                            }
                         }
+                    }).rendered.then(function () {
+                        $('.modal-backdrop').remove();
+                        $('.modal-backdrop').remove();
+                        var left = angular.element('.search-window .modal-dialog').offset().left;
+                        var top = angular.element('.search-window .modal-dialog').offset().top;
+                        var width = 800;
+                        angular.element('.search-window').removeClass('modal').addClass('mymodal');
+                        $('.modal-content', angular.element('.search-window')).css('left', left).css('top', -30).css('width', width);
                     });
-
-                   modalInstance.rendered.then(function(){
-                    $('.modal-backdrop').remove();
-                    //var left = angular.element('.search-window .modal-dialog').offset().left;
-                    //var top = angular.element('.search-window .modal-dialog').offset().top;
-
-                   //    dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
-                    var left = angular.element('.search-window .modal-dialog').offset().left;
-
-
-                    var width = "800px";
-                    $('.search-window').removeClass('modal').addClass('mymodal');
-                    $('.modal-content').css('width', width);
-                    $('.modal-content').css('left', left);
-                });
     });
 
 

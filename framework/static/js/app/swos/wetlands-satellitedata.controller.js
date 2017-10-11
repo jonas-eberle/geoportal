@@ -157,12 +157,6 @@
             }).then(function(data) {
                 wsdc.data = data;
                 wsdc.filterChanged();
-                $('.modal-backdrop').remove();
-                var left = angular.element('.satdata-window .modal-dialog').offset().left;
-                var top = angular.element('.satdata-window .modal-dialog').offset().top;
-                var width = 800;
-                angular.element('.satdata-window').removeClass('modal').addClass('mymodal');
-                $('.modal-content', angular.element('.satdata-window')).css('left', left).css('top', -30).css('width', width);
                 $('#loading-div').hide();
             });
         }

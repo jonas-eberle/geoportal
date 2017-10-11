@@ -413,18 +413,21 @@
         }
 
         function showSatdataExplorer() {
-            var geossWindow = $modal.open({
+            $modal.open({
                 bindToController: true,
                 controller: 'WetlandsSatDataCtrl',
                 controllerAs: 'wsdc',
                 templateUrl: subdir+'/static/includes/satdata_explorer.html',
                 windowClass: 'satdata-window',
-                backdrop: 'static',
-                resolve: {
-                    title: function() {return 'Search results'; }
-                }
+                backdrop: 'static'
             }).rendered.then(function(){
                 $('.selectpicker').selectpicker('render');
+                $('.modal-backdrop').remove();
+                var left = angular.element('.satdata-window .modal-dialog').offset().left;
+                var top = angular.element('.satdata-window .modal-dialog').offset().top;
+                var width = 800;
+                angular.element('.satdata-window').removeClass('modal').addClass('mymodal');
+                $('.modal-content', angular.element('.satdata-window')).css('left', left).css('top', -30).css('width', width);
             });
         }
         
