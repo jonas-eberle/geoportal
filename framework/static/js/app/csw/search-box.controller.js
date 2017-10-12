@@ -9,15 +9,21 @@
     function SearchBoxCtrl(csw){
         var sb = this;
 
-        sb.search = search;
+        sb.search_csw = search_csw;
+        sb.search_es = search_es;
         sb.search_geoss = search_geoss;
         sb.text = '';
 
         //--------------------------------------------------------------------------------------------------------------
 
-        function search() {
+        function search_csw() {
             csw.setMapViewer(mapId);
             csw.search(sb.text);
+        }
+
+         function search_es() {
+            csw.setMapViewer(mapId);
+            csw.search_es(sb.text);
         }
 
         function search_geoss() {
