@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, post_delete, pre_save
 from webgis import settings
 
-from swos.search import LayerIndex, ExternalDatabaseIndex, WetlandIndex
+from swos.search_es import LayerIndex, ExternalDatabaseIndex, WetlandIndex
 from swos.csw import create_update_csw, delete_csw
 from swos.models import WetlandLayer, ExternalLayer, Wetland, ExternalDatabase
 

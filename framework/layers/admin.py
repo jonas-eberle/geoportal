@@ -62,7 +62,18 @@ class ConstraintConditionsInline(SortableTabularInline):
     verbose_name_plural = "Constraint Conditions"
     suit_classes = 'suit-tab suit-tab-conformity_constraints'
 
+
+class ConformityInlineForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = super(ConformityInlineForm, self).clean()
+
+        if cleaned_data.get('date_type') == None:
+            self.add_error('date_type', 'Please specify a date type')
+        if cleaned_data.get('date') == None:
+            self.add_error('date', 'Please specify a date')
+
 class ConformityInline(SortableTabularInline):
+    form = ConformityInlineForm
     model = ConformityInline
     extra = 1
     verbose_name_plural = "Conformity"
