@@ -345,6 +345,7 @@
                         '<li><strong>Photos: </strong>Uploaded and linked (source: Panoramio) photos.</li>' +
                         '<li><strong>Videos: </strong>Uploaded and linked (source: Youtube) videos.</li>' +
                         '<li><strong>External databases: </strong>Compilation of other external data sources (e.g. databases, maps, websites).</li></ol>' +
+                        '<p></p><p>In addition there are <strong>story lines</strong> available at few wetlands (e.g. Laguna de Fuente de Piedra)</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will have a closer look at <span class="anno-highlight">Products</span> <span class="flaticon-layers"><a style="text-decoration: none;"></a></span>.</p></div>'
                     }, // Wetland overview
                     {
