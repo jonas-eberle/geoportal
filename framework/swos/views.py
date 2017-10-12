@@ -512,7 +512,7 @@ class Elasticsearch(APIView):
             if hit.meta.index == "layer_index":
                 hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category,  'django_id': hit.meta.id , 'topiccat': topics , 'keywords': keywords, 'description': hit.description})
             if hit.meta.index == "external_database_index":
-                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id, 'description': hit.description + ' <br> <strong>Provided data</strong>: ' + hit.provided_information + '<br><strong>Link</strong>: <a href="' + hit.link + '" target="_blank">' + hit.link + '</a>'})
+                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id, 'description': '%s <br> <strong>Provided data</strong>: %s <br><strong>Link</strong>: <a href="%s" target="_blank">%s</a>' % (hit.description, hit.provided_information, hit.link, hit.link)}) 
             if hit.meta.index == "wetland_index":
                 hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'Wetland', 'wetland_id': hit.meta.id, 'keywords': keywords})
 
