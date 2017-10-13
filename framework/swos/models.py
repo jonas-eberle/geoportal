@@ -948,8 +948,10 @@ class ExternalDatabase(models.Model):
             countries.append(country.name)
 
         wetland = ""
+        wetland_id = ""
         if self.wetland:
             wetland = self.wetland.name
+            wetland_id = self.wetland.id
 
         obj = ExternalDatabaseIndex(
             meta={'id': self.id},
@@ -960,7 +962,8 @@ class ExternalDatabase(models.Model):
             link = self.online_link,
             continent = self.continent,
             country = countries,
-            wetland = wetland
+            wetland = wetland,
+            wetland_id = wetland_id
         )
         print obj
         obj.save()

@@ -14,6 +14,7 @@
         srm.results = results;
         srm.searchData = searchData;
         srm.openWetland = openWetland;
+        srm.openWetlandExternal = openWetlandExternal;
         srm.setFilter = setFilter;
         srm.removeFilter = removeFilter;
         srm.showMore = showMore;
@@ -59,14 +60,51 @@
         function addLayerToMap(layer_id, type) {
 
             if (srm.layer_list[layer_id]) {
-                mapviewer.addLayer(srm.layer_list[layer_id]);
+                if (srm.layer_list[layer_id].wetland_id != null) {
+                    if(WetlandsService.wetland_id != srm.layer_list[layer_id].wetland_id) {
+                        WetlandsService.loadWetland(srm.layer_list[layer_id].wetland_id, function () {
+                            $timeout(function () {
+                                WetlandsService.selectTab(type);
+                                WetlandsService.loadLayer(srm.layer_list[layer_id].wetland_id, type, layer_id, "yes");
+                            });
+                        });
+                    }
+                    else {
+                        $timeout(function () {
+                            WetlandsService.selectTab(type);
+                            WetlandsService.loadLayer(srm.layer_list[layer_id].wetland_id, type, layer_id, "yes");
+                        });
+                    }
+                }
+                else {
+                    mapviewer.addLayer(srm.layer_list[layer_id].data);
+                }
             }
             else {
                 djangoRequests.request({
                     url: '/swos/layer.json?layer_id=' + layer_id + '&type=' + type,
                     method: 'GET'
                 }).then(function (data) {
-                    mapviewer.addLayer(data);
+                    if (data.wetland_id != null) {
+                         if(WetlandsService.wetland_id != data.wetland_id) {
+                             WetlandsService.loadWetland(data.wetland_id, function () {
+                                 $timeout(function () {
+                                     WetlandsService.selectTab(type);
+                                     WetlandsService.loadLayer(data.wetland_id, type, layer_id, "yes");
+                                 });
+                             });
+                         }
+                         else{
+                              $timeout(function () {
+                                  WetlandsService.selectTab(type);
+                                  WetlandsService.loadLayer(data.wetland_id, type, layer_id, "yes");
+                              });
+                         }
+                    }
+                    else {
+                        mapviewer.addLayer(data.data);
+                    }
+
                     srm.layer_list[layer_id] = data;
                 });
             }
@@ -77,6 +115,24 @@
             $timeout(function () {
                 WetlandsService.selectTab("overview")
             })
+        }
+
+        function openWetlandExternal(wetland_id, ext_db_id) {
+            if (WetlandsService.wetland_id != wetland_id) {
+                WetlandsService.loadWetland(wetland_id, function () {
+                    $timeout(function () {
+                        WetlandsService.selectTab("externaldb");
+                        WetlandsService.selectExternal(ext_db_id);
+                    })
+                })
+            }
+            else {
+                $timeout(function () {
+                    WetlandsService.selectTab("externaldb");
+                    WetlandsService.selectExternal(ext_db_id);
+
+                });
+            }
         }
 
         function setFilter(group, name){

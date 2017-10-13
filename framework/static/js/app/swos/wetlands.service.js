@@ -185,7 +185,6 @@
                     ;
                 WetlandsService.wetlandFeature.setStyle(newStyle);
             },
-
             loadLayer: function (wetland_id, type_name, layer_id, load_layer, no_scroll) {
                 if (typeof(no_scroll)==='undefined') no_scroll = false;
 
@@ -314,7 +313,19 @@
                         }
                     }, 0, false);
                 }
-            }
+            },
+            selectExternal: function (ext_db_id) {
+
+                var ext_id = "#externaldb_" + ext_db_id;
+
+                if ($(ext_id).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
+                    $(ext_id).closest('.panel').parents().eq(4).find('a').first().trigger('click'); //open parent accordion
+                }
+                if ($(ext_id).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
+                    $(ext_id).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
+                }
+
+            },
 
         };
         return service;

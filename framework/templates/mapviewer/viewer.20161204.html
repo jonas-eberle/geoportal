@@ -644,9 +644,9 @@
                                             <uib-accordion>
                                                 <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist " >
                                                     <uib-accordion-heading>
-                                                        <div ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                        <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                                        <div ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                        <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
                                                             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
                                                     </uib-accordion-heading>
                                                     <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>

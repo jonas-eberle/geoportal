@@ -233,7 +233,7 @@ class WetlandDetail(APIView):
                     else:
                         story_line_data = ""
 
-                    datasets.append({'name': extdb.name, 'description': extdb.description,
+                    datasets.append({'ext_db_id': extdb.id, 'name': extdb.name, 'description': extdb.description,
                                      'provided_info': extdb.provided_information, 'online_link': extdb.online_link,
                                      'language': extdb.dataset_language,
                                      'geoss_datasource_id': extdb.geoss_datasource_id, 'layer_exist': "False" ,'story_line': story_line_data})
@@ -440,9 +440,18 @@ class StoryLineData(APIView):
 class Layer(APIView):
     def get(self, request):
         if request.query_params.get("type") == "product" or request.query_params.get("type") == "indicator":
-            return Response(LayerSerializer(WetlandLayer.objects.get(pk = request.query_params.get("layer_id"))).data)
+            result = WetlandLayer.objects.get(pk=request.query_params.get("layer_id"))
+            return Response({'wetland_id': result.wetland.id, 'data': LayerSerializer(result).data})
         if request.query_params.get("type") == "external":
-            return Response(LayerSerializer(ExternalLayer.objects.get(pk=request.query_params.get("layer_id"))).data)
+            result = ExternalLayer.objects.get(pk=request.query_params.get("layer_id"))
+            print result.datasource.id
+            result2 = ExternalDatabase.objects.get(pk=result.datasource.id)
+        wetland_id = None
+        if  hasattr(result2.wetland, 'id'):
+            wetland_id = result2.wetland.id
+
+        return Response({'wetland_id': wetland_id, 'data': LayerSerializer(result).data})
+
 
 class Elasticsearch(APIView):
     def get (self, request):
@@ -495,26 +504,26 @@ class Elasticsearch(APIView):
 
         for hit in response:
 
-            topics = []
-            if hasattr(hit, 'topiccat'):
-                if hit.topiccat:
-                    for topic in hit.topiccat:
-                        topics.append({'val': topic})
+            # topics = []
+            # if hasattr(hit, 'topiccat'):
+            #     if hit.topiccat:
+            #         for topic in hit.topiccat:
+            #             topics.append({'val': topic})
 
-            keywords = []
-            if hasattr(hit, 'keywords'):
-                print hit.keywords
-                print hit.meta.id
-                if hit.keywords:
-                    for keyword in hit.keywords:
-                        keywords.append({'val': keyword})
+            # keywords = []
+            # if hasattr(hit, 'keywords'):
+            #     print hit.keywords
+            #     print hit.meta.id
+            #     if hit.keywords:
+            #         for keyword in hit.keywords:
+            #             keywords.append({'val': keyword})
 
             if hit.meta.index == "layer_index":
-                hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category,  'django_id': hit.meta.id , 'topiccat': topics , 'keywords': keywords, 'description': hit.description})
+                hits.append({'score': hit.meta.score , 'title':hit.title, 'category':hit.category,  'django_id': hit.meta.id , 'description': hit.description})
             if hit.meta.index == "external_database_index":
-                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id, 'description': '%s <br> <strong>Provided data</strong>: %s <br><strong>Link</strong>: <a href="%s" target="_blank">%s</a>' % (hit.description, hit.provided_information, hit.link, hit.link)}) 
+                hits.append({'score': hit.meta.score , 'title':hit.name, 'category': 'external_db', 'ext_db_id': hit.meta.id, 'wetland_id': hit.wetland_id, 'description': '%s <br> <strong>Provided data</strong>: %s <br><strong>Link</strong>: <a href="%s" target="_blank">%s</a>' % (hit.description, hit.provided_information, hit.link, hit.link)})
             if hit.meta.index == "wetland_index":
-                hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'Wetland', 'wetland_id': hit.meta.id, 'keywords': keywords})
+                hits.append({'score': hit.meta.score, 'title': hit.title, 'category': 'wetland', 'wetland_id': hit.meta.id})
 
         list_order['category'] = 1
         list_order["topiccat"] = 2
