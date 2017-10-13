@@ -53,7 +53,7 @@ class ExternalLayerAdmin(LayersAdmin):
         }),)
     list_display=('title','publishable', 'datasource')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
-    search_fields=('title','abstract','datasource__name', 'product__name')
+    search_fields=('title','abstract','datasource__name')
     ordering =['title']
     list_filter=('publishable', 'datasource')
     suit_list_filter_horizontal = ('datasource', )
