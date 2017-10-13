@@ -47,10 +47,10 @@
         <!--<div ng-repeat="item in srm.results.hits |filter: item.category = srm.filterCategory |filter: item.topiccat.val = srm.filterTopiccat  |filter: srm.filterTopiccat" class="list-group-item clearfix">-->
         <div ng-repeat="item in srm.results.hits" class="list-group-item clearfix" style="cursor: default;">
             <div class="catalog-item">
-                <div class="item_center">
-                    <div class="item_title" style="font-size: 12px; font-weight: normal">{{ srm.displayNameCategory[item.category] }} </div>
+                <div class="item_center" style="width: 100%;">
+                    <div class="item_title" style="font-size: 12px; font-weight: normal">{{ srm.displayNameCategory[item.category] }}</div>
                     <div class="item_title"> {{ item.title }}</div>
-                    <div class="item_desc" ng-text-truncate='item.description' ng-tt-chars-threshold="120"></div>
+                    <div class="item_desc" ng-text-truncate='item.description' ng-tt-chars-threshold="130"></div>
                 </div>
                 <div class="item_right">
                     <button ng-if="item.category =='product' || item.category =='indicator' || item.category =='external'"
@@ -68,7 +68,9 @@
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-arrow-right fa-lg "></i></button>
                 </div>
+                <div style="float: right; font-size: 10px">Score: {{ item.score }} </div>
             </div>
+
         </div>
     </div>
 </div>

@@ -45,11 +45,11 @@
         srm.displayName["ecoregion"] = "Ecoregion";
         srm.displayName["keywords"] = "Keywords";
 
-        srm.displayNameCategory["product"] = "product layer";
-        srm.displayNameCategory["external"] = "external layer";
-        srm.displayNameCategory["external_db"] = "external databases";
-        srm.displayNameCategory["indicator"] = "indicator layer";
-        srm.displayNameCategory["wetland"] = "wetland";
+        srm.displayNameCategory["product"] = "Product layer";
+        srm.displayNameCategory["external"] = "External layer";
+        srm.displayNameCategory["external_db"] = "External database";
+        srm.displayNameCategory["indicator"] = "Indicator layer";
+        srm.displayNameCategory["wetland"] = "Wetland";
         //--------------------------------------------------------------------------------------------------------------
 
         function showMore(class_name){

@@ -378,6 +378,7 @@
                         controller: 'ModalInstanceCtrl',
                         controllerAs: 'mi',
                         templateUrl: subdir+'/static/includes/metadata.html',
+                        windowClass: 'metadata-window',
                         resolve: {
                             data: function () {
                                 return data;
@@ -386,6 +387,8 @@
                                 return data.title;
                             }
                         }
+                    }).rendered.then(function () {
+                        $('.metadata-window').css('cssText', 'z-index: 10000 !important; display: block;')
                     });
                     $('#loading-div').hide();
                 }, function () {
