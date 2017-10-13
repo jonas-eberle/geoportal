@@ -497,10 +497,10 @@ class Elasticsearch(APIView):
         facets = dict()
         list_order = dict()
 
-        for facet in response.facets:
-            print facet
-            for (facet, count, selected) in response.facets[facet]:
-                print(facet, ' (SELECTED):' if selected else ':', count)
+        # for facet in response.facets:
+        #     print facet
+        #     for (facet, count, selected) in response.facets[facet]:
+        #         print(facet, ' (SELECTED):' if selected else ':', count)
 
         for hit in response:
 
