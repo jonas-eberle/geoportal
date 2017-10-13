@@ -80,6 +80,14 @@
             {{ mi.value_passed.equi_scale }} {{ mi.value_passed.resolution_distance }} {{ mi.value_passed.resolution_unit }}
         </div>
     </div>
+    <div class="item" ng-if="mi.value_passed.layer_online_resource.length > 0">
+        <div class="headline">
+            Online Resources
+        </div>
+        <div ng-repeat="resource in mi.value_passed.layer_online_resource">
+                <a href="{{ resource.linkage }}" target="_blank">{{ resource.name }}</a> ({{ resource.function.identifier }})
+        </div>
+    </div>
 
     <div class="item">
         <div class="headline">
