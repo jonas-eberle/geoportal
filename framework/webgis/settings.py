@@ -223,6 +223,9 @@ EARTH_EXPLORER_PASSWORD = 'PASSWORD'
 ESA_DATAHUB_USER = 'USERNAME'
 ESA_DATAHUB_PASSWORD = 'PASSWORD'
 
+ESA_SSO_USER = 'USERNAME'
+ESA_SSO_PASSWORD = 'PASSWORD'
+
 ##################################################
 # Publish (Insert/Delete) metadata with CSW-Transactional
 

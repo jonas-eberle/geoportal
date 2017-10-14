@@ -33,8 +33,8 @@
           };
         });
 
-    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance'];
-    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance) {
+    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile'];
+    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile) {
         var wsdc = this;
 
         wsdc.data = {'features':[]};
@@ -54,7 +54,7 @@
         wsdc.datasetOptions = [];
         wsdc.tileOptions = [];
         wsdc.filterByDataset = [];
-        wsdc.filterByTile = '';
+        wsdc.filterByTile = [];
         wsdc.filterByCloud = 100;
         wsdc.filterBySunElevation = [-90,90];
         wsdc.filterBySunZenith = [-90,90];
@@ -96,6 +96,7 @@
         wsdc.wms_layer_style = {};
         wsdc.changeWMSLayerStyle = changeWMSLayerStyle;
         wsdc.filterChanged = filterChanged;
+        wsdc.exportChart = true;
         
         wsdc.exportChartAsPNG = exportChartAsPNG;
         wsdc.close = close;
@@ -179,7 +180,7 @@
                 var element = this;
                 if (
                     (wsdc.filterByDataset.length === 0 || jQuery.inArray(element.dataset, wsdc.filterByDataset) > -1) && 
-                    (wsdc.filterByTile === '' || element.tile === wsdc.filterByTile) &&
+                    (wsdc.filterByTile.length === 0 || jQuery.inArray(element.tile, wsdc.filterByTile) > -1) &&
                     (new Date(element.time_start) >= wsdc.time_start_begin) &&
                     (new Date(element.time_start) <= wsdc.time_start_end) &&
                     (wsdc.filterByMonths.length === 0 || jQuery.inArray(new Date(element.time_start).getMonth(), wsdc.filterByMonths) > -1) &&
@@ -188,7 +189,13 @@
                     (element.hasOwnProperty('sun_zenith_angle_mean') === false || element.sun_zenith_angle_mean == "nan" || (element.sun_zenith_angle_mean >= wsdc.filterBySunZenith[0] && element.sun_zenith_angle_mean <= wsdc.filterBySunZenith[1])) &&
                     (element.hasOwnProperty('sun_azimuth_angle_mean') === false || element.sun_azimuth_angle_mean == "nan" || (element.sun_azimuth_angle_mean >= wsdc.filterBySunAzimuth[0] && element.sun_azimuth_angle_mean <= wsdc.filterBySunAzimuth[1]))
                 ) {
-                      wsdc.data_filtered.features.push(element);
+                      if (element['thumb_url'] != 'nan') {
+					  	    element['thumb_url'] = 'http://artemis.geogr.uni-jena.de/ec/swos/thumbs/' + element['browse_url'].split('/').pop();
+					  } else {
+					  	    element['thumb_url'] = '';
+					  }
+					  
+					  wsdc.data_filtered.features.push(element);
                       if (element.dataset in datasets) {
                         
                       } else {
@@ -328,16 +335,16 @@
                 url: '/swos/wetland/' + WetlandsService.value.id + '/satdata/metadata?scene=' + scene.id + '&dataset=' + scene.dataset
             }).then(function(data) {
                 $('#loading-div').hide();
-                console.log(data);
                 bootbox.dialog({
                     title   : 'Scene metadata',
-                    message : data,
+                    message : '<div id="metadata_' + scene.id + '"></div>',
                     backdrop: true,
                     onEscape: true,
                     buttons : {
                         close  : {label: 'Close'}
                     }
                 });
+                angular.element('#metadata_' + scene.id).append($compile(data)(wsdc));
             });
         }
         
