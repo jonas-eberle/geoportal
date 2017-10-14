@@ -147,19 +147,19 @@ def bulk_indexing():
     layer_index = Index('layer_index')
     layer_index.delete(ignore=404)
     LayerIndex.init()
-    bulk(client=es, actions=(b.indexing() for b in WetlandLayer.objects.filter(publishable=True).iterator()))
-    bulk(client=es, actions=(b.indexing() for b in ExternalLayer.objects.filter(publishable=True).iterator()))
+    [b.indexing() for b in WetlandLayer.objects.filter(publishable=True).iterator()]
+    [b.indexing() for b in ExternalLayer.objects.filter(publishable=True).iterator()]
 
     external_database_index = Index('external_database_index')
     external_database_index.delete(ignore=404)
     ExternalDatabaseIndex.init()
-    bulk(client=es, actions=(b.indexing() for b in ExternalDatabase.objects.filter().iterator()))
+    [b.indexing() for b in ExternalDatabase.objects.all().iterator()]
 
     wetland_index = Index('wetland_index')
     wetland_index.delete(ignore=404)
     WetlandIndex.init()
     # exclude wetlands with an invalid geometry (IDs: 9, 45, 49, 60)
-    bulk(client=es, actions=(b.indexing() for b in Wetland.objects.filter().exclude(id__in = [45, 9, 49, 60]).iterator()))
+    [b.indexing() for b in Wetland.objects.all().exclude(id__in = [45, 9, 49, 60]).iterator()]
 
 
 # Delete index:  curl -XDELETE 'localhost:9200/layer_index?pretty'
