@@ -60,7 +60,7 @@ class WetlandSearch(FacetedSearch):
     doc_types = [ WetlandIndex, ExternalDatabaseIndex, LayerIndex  ]
 
     # fields that should be searched
-    fields = [ 'title', 'description', 'topiccat', 'keywords', 'wetland', 'product_name', 'indicator_name', 'provided_information', 'name', 'contact_person', 'contact_org', 'lineage', 'country', 'partner', 'ecoregion']
+    fields = [ 'title^2', 'description', 'topiccat', 'keywords', 'wetland', 'product_name', 'indicator_name', 'provided_information', 'name', 'contact_person', 'contact_org', 'lineage', 'country', 'partner', 'ecoregion']
 
     # use bucket aggregations to define facets
     facets = {

@@ -93,8 +93,8 @@
                     $('#loading-div').hide();
                     $modal.open({
                         bindToController: true,
-                        controller: 'SearchResultsModalCtrl',
-                        controllerAs: 'srm',
+                        controller: 'ESSearchResultsModalCtrl',
+                        controllerAs: 'es_srm',
                         templateUrl: subdir + '/static/includes/searchresults_es.html',
                         backdrop: 'static',
                         windowClass: 'search-window',

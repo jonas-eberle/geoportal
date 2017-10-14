@@ -540,12 +540,13 @@ class Elasticsearch(APIView):
 
         for facet in response.facets:
             for (facet_, count, selected) in response.facets[facet]:
-                if facet not in facets:
-                    facets[facet] = []
-                    facets[facet] = [{'name': facet_, 'count': count}]
-                    facets_ordered.append({'name': facet, 'order': list_order[facet]})
-                else:
-                    facets[facet].append({'name':facet_, 'count': count})
+                if len(facet_) > 0:
+                    if facet not in facets:
+                        facets[facet] = []
+                        facets[facet] = [{'name': facet_, 'count': count}]
+                        facets_ordered.append({'name': facet, 'order': list_order[facet]})
+                    else:
+                        facets[facet].append({'name': facet_, 'count': count})
 
 
         finalJSON['hits'] = hits

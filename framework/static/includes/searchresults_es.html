@@ -1,54 +1,54 @@
-<div modal-draggable class="modal-header"><h1>{{ srm.title }}</h1></div>
+<div modal-draggable class="modal-header"><h1>{{ es_srm.title }}</h1></div>
 <div class="modal-body searchresults">
     <div>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterCategory"
-                ng-click="srm.removeFilter('category')">{{ srm.filterCategory }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterCategory"
+                ng-click="es_srm.removeFilter('category')">{{ es_srm.filterCategory }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterTopiccat"
-                ng-click="srm.removeFilter('topiccat')">{{ srm.filterTopiccat }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterTopiccat"
+                ng-click="es_srm.removeFilter('topiccat')">{{ es_srm.filterTopiccat }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterKeywords"
-                ng-click="srm.removeFilter('keywords')">{{ srm.filterKeywords }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterKeywords"
+                ng-click="es_srm.removeFilter('keywords')">{{ es_srm.filterKeywords }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterIndicatorName"
-                ng-click="srm.removeFilter('indicator_name')">{{ srm.filterIndicatorName }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterIndicatorName"
+                ng-click="es_srm.removeFilter('indicator_name')">{{ es_srm.filterIndicatorName }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterContactOrg"
-                ng-click="srm.removeFilter('contact_org')">{{ srm.filterContactOrg }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterContactOrg"
+                ng-click="es_srm.removeFilter('contact_org')">{{ es_srm.filterContactOrg }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterContactPerson"
-                ng-click="srm.removeFilter('contact_person')">{{ srm.filterContactPerson }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterContactPerson"
+                ng-click="es_srm.removeFilter('contact_person')">{{ es_srm.filterContactPerson }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterWetland"
-                ng-click="srm.removeFilter('wetland')">{{ srm.filterWetland }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterWetland"
+                ng-click="es_srm.removeFilter('wetland')">{{ es_srm.filterWetland }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filterProductName"
-                ng-click="srm.removeFilter('product_name')">{{ srm.filterProductName }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterProductName"
+                ng-click="es_srm.removeFilter('product_name')">{{ es_srm.filterProductName }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
-        <button class="btn btn-default btn-sm filter-items" ng-if="srm.filtereEoregion"
-                ng-click="srm.removeFilter('ecoregion')">{{ srm.filtereEoregion }}<span
+        <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filtereEoregion"
+                ng-click="es_srm.removeFilter('ecoregion')">{{ es_srm.filtereEoregion }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
     </div>
 
     <div style="width:25%; float: left;">
-        <div ng-repeat="facet in srm.results.facets_ordered | orderBy: 'order'" class="">
-            <ul ng-if="srm.filteredGroups[facet.name] != 1"
-                style=" min-width: 40px; overflow: hidden; display: inline-block;padding: 0; margin: 0;"><span style=" font-weight: bold;">{{ srm.displayName[facet.name] }}</span>
-                <div ng-repeat="item in srm.results.facets[facet.name] track by $index">
-                    <li ng-if="$index <6 && item.name.length > 0" style="padding-left: 5px;cursor: pointer;" ng-click="srm.setFilter(facet.name, item.name)">{{ item.name }} ({{ item.count }})</li>
-                    <div ng-if="$index == 6"ng-click="srm.showMore(facet.name)" style="padding-left: 5px;font-weight: bold;cursor: pointer;" class="{{ facet.name }}_more">show more</div>
-                    <li ng-if="$index >5 && item.name.length > 0" class="{{ facet.name }}" style="display:none; padding-left: 5px;cursor: pointer;" ng-click="srm.setFilter(facet.name, item.name)">{{ item.name }} ({{ item.count }})</li>
+        <div ng-repeat="facet in es_srm.results.facets_ordered | orderBy: 'order'" class="">
+            <ul ng-if="es_srm.filteredGroups[facet.name] != 1"
+                style=" min-width: 40px; overflow: hidden; display: inline-block;padding: 0; margin: 0;"><span style=" font-weight: bold;">{{ es_srm.displayName[facet.name] }}</span>
+                <div ng-repeat="item in es_srm.results.facets[facet.name] track by $index">
+                    <li ng-if="$index <6 && item.name.length > 0" style="padding-left: 5px;cursor: pointer;" ng-click="es_srm.setFilter(facet.name, item.name)">{{ item.name }} ({{ item.count }})</li>
+                    <div ng-if="$index == 6"ng-click="es_srm.showMore(facet.name)" style="padding-left: 5px;font-weight: bold;cursor: pointer;" class="{{ facet.name }}_more">show more</div>
+                    <li ng-if="$index >5 && item.name.length > 0" class="{{ facet.name }}" style="display:none; padding-left: 5px;cursor: pointer;" ng-click="es_srm.setFilter(facet.name, item.name)">{{ item.name }} ({{ item.count }})</li>
                 </div>
             </ul>
         </div>
     </div>
 
     <div class="list-group" style="float: right; width: 75%;">
-        <!--<div ng-repeat="item in srm.results.hits |filter: item.category = srm.filterCategory |filter: item.topiccat.val = srm.filterTopiccat  |filter: srm.filterTopiccat" class="list-group-item clearfix">-->
-        <div ng-repeat="item in srm.results.hits" class="list-group-item clearfix" style="cursor: default;">
+        <!--<div ng-repeat="item in es_srm.results.hits |filter: item.category = es_srm.filterCategory |filter: item.topiccat.val = es_srm.filterTopiccat  |filter: es_srm.filterTopiccat" class="list-group-item clearfix">-->
+        <div ng-repeat="item in es_srm.results.hits" class="list-group-item clearfix" style="cursor: default;">
             <div class="catalog-item">
                 <div class="item_center" style="width: 100%;">
-                    <div class="item_title" style="font-size: 12px; font-weight: normal">{{ srm.displayNameCategory[item.category] }}</div>
+                    <div class="item_title" style="font-size: 12px; font-weight: normal">{{ es_srm.displayNameCategory[item.category] }}</div>
                     <div class="item_title"> {{ item.title }}</div>
                     <div class="item_desc" ng-text-truncate='item.description' ng-tt-chars-threshold="130"></div>
                 </div>
@@ -58,13 +58,13 @@
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-file-text-o fa-lg "></i></button>
                     <button ng-if="item.category =='product' || item.category =='indicator' || item.category =='external'"
-                            ng-click="srm.addLayerToMap(item.django_id, item.category)" type="button"
+                            ng-click="es_srm.addLayerToMap(item.django_id, item.category)" type="button"
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-plus fa-lg "></i></button>
-                    <button ng-if="item.category =='wetland'" ng-click="srm.openWetland(item.wetland_id)" type="button"
+                    <button ng-if="item.category =='wetland'" ng-click="es_srm.openWetland(item.wetland_id)" type="button"
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-arrow-right fa-lg "></i></button>
-                    <button ng-if="item.category =='external_db'" ng-click="srm.openWetlandExternal(item.wetland_id, item.ext_db_id)" type="button"
+                    <button ng-if="item.category =='external_db'" ng-click="es_srm.openWetlandExternal(item.wetland_id, item.ext_db_id)" type="button"
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-arrow-right fa-lg "></i></button>
                 </div>
@@ -75,5 +75,5 @@
     </div>
 </div>
 <div class="modal-footer searchresults">
-    <button class="btn btn-primary" ng-click="srm.close()">Close</button>
+    <button class="btn btn-primary" ng-click="es_srm.close()">Close</button>
 </div>

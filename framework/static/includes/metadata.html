@@ -85,7 +85,8 @@
             Online Resources
         </div>
         <div ng-repeat="resource in mi.value_passed.layer_online_resource">
-                <a href="{{ resource.linkage }}" target="_blank">{{ resource.name }}</a> ({{ resource.function.identifier }})
+            <a ng-if="resource.name" href="{{ resource.linkage }}" target="_blank">{{ resource.name }}</a> <span ng-if="resource.function.identifier">({{ resource.function.identifier }})</span>
+            <a ng-if="!resource.name" href="{{ resource.linkage }}" target="_blank">{{ resource.linkage }}</a> <span ng-if="resource.function.identifier">({{ resource.function.identifier }})</span>
         </div>
     </div>
 
