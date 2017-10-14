@@ -64,7 +64,7 @@
                     <button ng-if="item.category =='wetland'" ng-click="es_srm.openWetland(item.wetland_id)" type="button"
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-arrow-right fa-lg "></i></button>
-                    <button ng-if="item.category =='external_db'" ng-click="es_srm.openWetlandExternal(item.wetland_id, item.ext_db_id)" type="button"
+                    <button ng-if="item.category =='external_db' && item.wetland_id" ng-click="es_srm.openWetlandExternal(item.wetland_id, item.ext_db_id)" type="button"
                             class="btn btn-default btn-xs"
                             aria-label="Left Align"><i class="fa fa-arrow-right fa-lg "></i></button>
                 </div>
