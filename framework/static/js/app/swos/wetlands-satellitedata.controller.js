@@ -64,6 +64,7 @@
         wsdc.filter_sun_elevation_show = true;
         wsdc.filter_sun_zenith_show = true;
         wsdc.changeDatasetFilter = changeDatasetFilter;
+		wsdc.exportResults = exportResults;
         
         wsdc.time_start_begin = new Date();
         wsdc.time_start_end = new Date();
@@ -399,6 +400,33 @@
         function exportChartAsPNG() {
             saveSvgAsPng(jQuery('#satellitedata-chart svg')[0], "satellitedata-chart.png", {scale: 2, encoderOptions: 1});
         }
+		
+		function exportResults() {
+			var url = '/swos/wetland/' + WetlandsService.value.id + '/satdata/results?';
+			if (wsdc.filterByDataset.length > 0) {
+				url += '&datasets=' + wsdc.filterByDataset.join(',')
+			}
+            if (wsdc.filterByTile.length > 0) {
+                url += '&tile=' + wsdc.filterByTile.join(',')
+            }
+			url += '&cloud_cover_min=' + wsdc.filterByCloud;
+			url += '&sun_elevation=' + wsdc.filterBySunElevation.join(',');
+            url += '&sun_zenith_angle_mean=' + wsdc.filterBySunZenith.join(',');
+            url += '&sun_azimuth_angle_mean=' + wsdc.filterBySunAzimuth.join(',');
+			url += '&time_start_begin=' + wsdc.time_start_begin.toISOString();
+            url += '&time_start_end=' + wsdc.time_start_end.toISOString();
+			
+			if (wsdc.filterByMonths.length > 0) {
+				var months = []
+				for (var i=0; i<wsdc.filterByMonths.length; i++) {
+					months.push(parseInt(wsdc.filterByMonths[i])+1);
+				}
+				url += '&months=' + months.join(',')
+			}
+			
+			console.log(url);
+			window.open(url, '_blank');
+		}
         
         function close() {
             $modalInstance.close();

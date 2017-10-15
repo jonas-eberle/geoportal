@@ -111,5 +111,6 @@
        <a href="https://earthexplorer.usgs.gov" target="_blank">USGS Earth Explorer</a>, <a href="http://www.sentinel-hub.com/" target="_blank">Sinergise Sentinel Hub</a>, <a href="https://scihub.copernicus.eu/" target="_blank">Copernicus Open Access Hub</a>
     </div>
     <button class="btn btn-primary" ng-if="wsdc.exportChart" ng-click="wsdc.exportChartAsPNG()">Export chart</button>
+    <button class="btn btn-primary" ng-if="!wsdc.exportChart" ng-click="wsdc.exportResults()">Export results</button>
     <button class="btn btn-primary" ng-click="wsdc.close()">Close</button>
 </div>
