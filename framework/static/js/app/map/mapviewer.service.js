@@ -149,7 +149,12 @@
                 this.selectInteraction.on('select', function (e) {
 
                     var feature = e.target.getFeatures().item(0);
-                    if(feature) {
+
+                    if (!feature) {
+                        this.getFeatures().clear();
+                        this.getFeatures().push(e.deselected[0]);
+                    }
+                    if (feature) {
                         $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
                     }
                 });

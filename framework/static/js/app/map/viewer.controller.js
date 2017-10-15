@@ -110,21 +110,7 @@
                 }
             });
 
-            // add event handler for select-event, i.e. when a feature is selected
-            mapviewer.selectInteraction.on("select", function () {
 
-                var feature = mapviewer.selectInteraction.getFeatures().item(0);
-                if (!feature) {
-                    mapviewer.selectInteraction.getFeatures().clear();
-                    mapviewer.selectInteraction.getFeatures().push(mapviewer.currentFeature);
-                    return;
-                }
-
-                if (feature && mv.currentSelectWetland !== feature.get('id')
-                    && mv.visibility_state_wetland_layer === true) {
-                 //   $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
-                }
-            });
 
             mapviewer.map.on("click", function (e) {
                 //mapviewer.selectPointerMove.getFeatures().clear();
