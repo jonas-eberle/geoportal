@@ -162,7 +162,7 @@
         });
 
         $scope.$on('mapviewer.wetland_selected', function ($broadCast, id) {
-            if(WetlandsService.wetland_id != idd){
+            if(WetlandsService.wetland_id != id){
                 WetlandsService.selectWetlandFromId(id);
             }
 
