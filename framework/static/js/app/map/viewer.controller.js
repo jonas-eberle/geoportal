@@ -122,7 +122,7 @@
 
                 if (feature && mv.currentSelectWetland !== feature.get('id')
                     && mv.visibility_state_wetland_layer === true) {
-                    $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
+                 //   $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
                 }
             });
 

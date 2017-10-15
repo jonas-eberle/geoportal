@@ -146,6 +146,13 @@
                     }
                 });
                 this.map.addInteraction(this.selectInteraction);
+                this.selectInteraction.on('select', function (e) {
+
+                    var feature = e.target.getFeatures().item(0);
+                    if(feature) {
+                        $rootScope.$broadcast('mapviewer.wetland_selected', feature.get('id'));
+                    }
+                });
                 $rootScope.$broadcast('mapviewer.map_created', {});
                 return this.map;
             },
