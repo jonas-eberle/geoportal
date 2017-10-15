@@ -15,5 +15,8 @@ urlpatterns = [
     url(r'^wetland/layer/(?P<pk>[0-9]+)/colors.json$', views.LayerColors.as_view(), name='wetland_layer_colors'),
     url(r'^(?P<pk>[0-9]+)/storyline.json$', views.StoryLineData.as_view(), name='wetland_story_line'),
     url(r'^searchresult.json$', views.Elasticsearch.as_view(), name="search"),
-    url(r'^layer.json$', views.Layer.as_view(), name="layer")
+    url(r'^layer.json$', views.Layer.as_view(), name="layer"),
+    url(r'^download$', views.DownloadData.as_view(), name="download_test"),
+    url(r'^wetland/(?P<pk>[0-9]+)/satdata/download$', views.DownloadDataSentinel.as_view(), name="download_test2"),
+    url(r'^wetland/(?P<pk>[0-9]+)/satdata/results', views.SatelliteMetadataExport.as_view(), name="download_satdata_results")
 ]

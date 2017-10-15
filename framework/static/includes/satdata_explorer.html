@@ -19,7 +19,7 @@
                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wsdc.filter_tile, 'glyphicon-chevron-right': !wsdc.filter_tile}"></i>
                 </uib-accordion-heading>
                 Filter results by tile:<br />
-                <select class="selectpicker" data-width="auto" data-none-selected-text="All" ng-model="wsdc.filterByTile" ng-options="o as o for o in wsdc.tileOptions"></select>
+                <select class="selectpicker" multiple="multiple" data-none-selected-text="All" ng-model="wsdc.filterByTile" ng-options="o as o for o in wsdc.tileOptions"></select>
             </div>
             
             <div uib-accordion-group is-open="wsdc.filter_optical" ng-if="wsdc.filter_optical_show">
@@ -73,45 +73,19 @@
 		<button class="btn btn-default" ng-click="wsdc.filterChanged()">Update results</button>
         
     </div>
-    <style type="text/css">
-        #satellitedata-explorer .panel-body {
-            padding-left: 0;
-        }
-        #satellitedata-explorer .satdata-info {
-            font-size: 0.8em;
-        }
-        #satellitedata-explorer .satdata-scene {
-            float:left;
-            margin-left:15px;
-            padding: 5px;
-			height: 205px;
-        }
-        #satellitedata-explorer .satdata-scene:hover {
-            border: 1px solid black;
-            padding: 4px;
-        }
-        #satellitedata-explorer .satdata-scene.selected {
-            border: 1px solid black;
-            padding: 4px;
-        }
-        #satellitedata-explorer .satdata-scene img {
-            width: 145px;
-            height: 145px;
-        }
-    </style>
 	
 	<uib-tabset justified="true" style="height:100%;width:550px;position:absolute;top:0;left:250px;">
-		<uib-tab heading="Chart" select="wsdc.chart_api.clearElement(); wsdc.chart_api.updateWithTimeout(100);">
+		<uib-tab heading="Chart" select="wsdc.chart_api.clearElement(); wsdc.chart_api.updateWithTimeout(100);wsdc.exportChart=true;">
 			<nvd3 id="satellitedata-chart" options="wsdc.chartOptions" data="wsdc.data_filtered_stats" api="wsdc.chart_api"></nvd3>
 		</uib-tab>
 		
-		<uib-tab heading="Scenes" id="satellitedata-explorer-wrapper">
+		<uib-tab heading="Scene Quicklooks & Data download" id="satellitedata-explorer-wrapper" select="wsdc.exportChart=false;">
 			<div id="satellitedata-explorer" style="overflow:auto;height:450px;" infinite-scroll="wsdc.addMoreItems()" infinite-scroll-container="'#satellitedata-explorer'" infinite-scroll-use-document-bottom="false" infinite-scroll-distance="0">
 		        <!--<uib-accordion close-others="false">
 		            <div uib-accordion-group ng-repeat="group in wsdc.groups"  heading="Results: {{wsdc.groupBy}} {{group}}">-->
 					<!-- filter ng-repeat:  | filterData:wsdc.filterByDataset:wsdc.filterByTile:wsdc.time_start_begin:wsdc.time_start_end:wsdc.filterByCloud:wsdc.filterBySunZenith:wsdc.filterBySunAzimuth:wsdc.groupBy:group -->
 		                <div class="satdata-scene" ng-animate="'animate'" ng-class="{selected: scene.selected}" ng-repeat="scene in wsdc.data_filtered.features | orderBy: 'time_start' | limitTo: wsdc.limitTo">
-		                    <img ng-src="{{scene.thumb_url}}" width="145" height="145" ng-click="wsdc.openMetadata(scene)" style="cursor:pointer;" uib-tooltip="Click here to open metadata" ng-mouseover="wsdc.onmouseover(scene)" ng-mouseleave="wsdc.onmouseleave()" />
+		                    <img ng-src="{{scene.thumb_url}}" width="145" height="145" ng-click="wsdc.openMetadata(scene)" style="cursor:pointer;" uib-tooltip="Click here to open metadata and data download links" ng-mouseover="wsdc.onmouseover(scene)" ng-mouseleave="wsdc.onmouseleave()" />
 		                    <div class="satdata-info">
 		                        {{scene.dataset}}: {{scene.time_start | limitTo:10}}<br/>
 		                        Tile: {{scene.tile}}&nbsp;&nbsp;Cloud: {{scene.cloud_cover | limitTo:5}}%
@@ -136,6 +110,7 @@
        Powered by: <br>
        <a href="https://earthexplorer.usgs.gov" target="_blank">USGS Earth Explorer</a>, <a href="http://www.sentinel-hub.com/" target="_blank">Sinergise Sentinel Hub</a>, <a href="https://scihub.copernicus.eu/" target="_blank">Copernicus Open Access Hub</a>
     </div>
-    <button class="btn btn-primary" ng-click="wsdc.exportChartAsPNG()">Export chart</button>
+    <button class="btn btn-primary" ng-if="wsdc.exportChart" ng-click="wsdc.exportChartAsPNG()">Export chart</button>
+    <button class="btn btn-primary" ng-if="!wsdc.exportChart" ng-click="wsdc.exportResults()">Export results</button>
     <button class="btn btn-primary" ng-click="wsdc.close()">Close</button>
 </div>

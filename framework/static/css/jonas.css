@@ -160,6 +160,31 @@
     z-index: 2051;
 } 
 
+#satellitedata-explorer .panel-body {
+    padding-left: 0;
+}
+#satellitedata-explorer .satdata-info {
+    font-size: 0.8em;
+}
+#satellitedata-explorer .satdata-scene {
+    float:left;
+    margin-left:15px;
+    padding: 5px;
+    height: 205px;
+}
+#satellitedata-explorer .satdata-scene:hover {
+    border: 1px solid black;
+    padding: 4px;
+}
+#satellitedata-explorer .satdata-scene.selected {
+    border: 1px solid black;
+    padding: 4px;
+}
+#satellitedata-explorer .satdata-scene img {
+    width: 145px;
+    height: 145px;
+}
+
 .satellitedata-explorer-filter {
     height:100%;
     width:230px;
@@ -176,6 +201,11 @@
 table.satdata-metadata {
     display: table !important;
 } 
+
+table.satdata-metadata ul {
+    padding-left: 20px;
+    word-break: break-word;
+}
 
 .uib-datepicker-popup.dropdown-menu {
     z-index: 2100;

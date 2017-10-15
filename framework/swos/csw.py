@@ -26,7 +26,8 @@ def create_csw_xml(instance):
 
     md_doc = tpl.render(ctx)
     f = open(settings.MEDIA_ROOT + 'csw/' + str(instance.id) + '_insert.xml', 'w')
-    f.write(md_doc)
+    f.write(md_doc.encode('UTF-8'))
+    f.close()
 
     tpl = get_template('CSW/delete.xml')
     ctx =({
@@ -35,7 +36,8 @@ def create_csw_xml(instance):
 
     md_doc = tpl.render(ctx)
     f = open(settings.MEDIA_ROOT + 'csw/' + str(instance.id) + '_delete.xml', 'w')
-    f.write(md_doc)
+    f.write(md_doc.encode('UTF-8'))
+    f.close()
 
 
 def create_record(id):

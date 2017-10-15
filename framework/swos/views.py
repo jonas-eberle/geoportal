@@ -1,8 +1,20 @@
 import json
+import pycurl
+import urllib2
+import httplib
+import StringIO
+import os
+import requests
+import sqlite3 as sdb
+import uuid
+import glob
+
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
 from django.template.response import TemplateResponse
+from django.http import StreamingHttpResponse
 from django.db.models import Q
+from django.db import connection
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -57,9 +69,7 @@ class WetlandDetail(APIView):
     # provide HTTP GET method
     def get(self, request, pk, format=None):
         wetland = self.get_object(pk)
-
-
-
+        
         layers = WetlandLayer.objects.filter(wetland_id=wetland.id, publishable=True).order_by('title')
         indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('indicator', 'time')
         temp_products_layers = dict()
@@ -71,9 +81,7 @@ class WetlandDetail(APIView):
         temp_indicators = dict()
         temp_indicator_values = dict()
         temp_indicators_story_lines = dict()
-
-
-
+        
         finalJSON = {'id': wetland.id, 'title': wetland.name, 'image': wetland.image_url,
                      'image_desc': wetland.image_desc, 'products': [], 'indicators': [], 'externaldb': [],
                      'externaldb_layer': [], 'indicator_values': [], 'indicator_descr': []}
@@ -350,6 +358,83 @@ class SatelliteData(APIView):
         return Response(data)
 
 
+class SatelliteMetadataExport(APIView):
+    def get_object(self, pk):
+        try:
+            return Wetland.objects.get(pk=pk)
+        except Wetland.DoesNotExist:
+            raise Http404
+
+    # provide HTTP GET method
+    def get(self, request, pk, format=None):
+        wetland = self.get_object(pk)
+        
+        # construct sql query
+        sql_additions = []
+        sql_additions.append('ST_Intersects(wkb_geometry, (SELECT geom from swos_wetland WHERE id=%s))' % wetland.id)
+        
+        datasets = request.query_params.get('datasets', None)
+        if datasets != None:
+            datasets = datasets.split(',')
+            sql_additions.append('dataset IN (%s)' % ','.join(["'" + dataset + "'" for dataset in datasets]))
+        
+        tiles = request.query_params.get('tiles', None)
+        if tiles != None:
+            tiles = tiles.split(',')
+            sql_additions.append('tile IN (%s)' % ','.join(["'" + tile + "'" for tile in tiles]))
+        
+        cloud_cover_min = request.query_params.get('cloud_cover_min', 100)
+        sql_additions.append('cloud_cover <= %s' % float(cloud_cover_min))
+        
+        sun_elevation = request.query_params.get('sun_elevation')
+        sun_elevation = sun_elevation.split(',')
+        sql_additions.append('(sun_elevation IS NULL OR (sun_elevation >= %s AND sun_elevation <= %s))' % (float(sun_elevation[0]), float(sun_elevation[1])))
+        
+        sun_zenith_angle_mean = request.query_params.get('sun_zenith_angle_mean')
+        sun_zenith_angle_mean = sun_zenith_angle_mean.split(',')
+        sql_additions.append('(sun_zenith_angle_mean IS NULL OR (sun_zenith_angle_mean >= %s AND sun_zenith_angle_mean <= %s))' % (float(sun_zenith_angle_mean[0]), float(sun_zenith_angle_mean[1])))
+        
+        sun_azimuth_angle_mean = request.query_params.get('sun_azimuth_angle_mean')
+        sun_azimuth_angle_mean = sun_azimuth_angle_mean.split(',')
+        sql_additions.append('(sun_azimuth_angle_mean IS NULL OR (sun_azimuth_angle_mean >= %s AND sun_azimuth_angle_mean <= %s))' % (float(sun_azimuth_angle_mean[0]), float(sun_azimuth_angle_mean[1])))
+        
+        time_start_begin = request.query_params.get('time_start_begin')
+        time_start_end = request.query_params.get('time_start_end')
+        sql_additions.append('(time_start >= \'%s\'::DATE AND time_start <= \'%s\'::DATE)' % (time_start_begin, time_start_end))
+        
+        months = request.query_params.get('months', None)
+        if months != None:
+            months = months.split(',')
+            sql_additions.append('extract(MONTH from time_start) IN (%s)' % ','.join(tiles))
+        
+        # construct sql query
+        sql_query = 'SELECT * FROM satdata '
+        if len(sql_additions) > 0:
+            sql_query += 'WHERE '
+            sql_query += ' AND '.join(sql_additions)
+        sql_query += 'ORDER BY time_start ASC;'
+        
+        filename = os.path.join(settings.MEDIA_ROOT, 'tmp', str(uuid.uuid4()))
+        db_conn = settings.DATABASES['default']
+        os.system('ogr2ogr -f "CSV" -sql "%s" %s.csv PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        os.system('ogr2ogr -f "ESRI Shapefile" -sql "%s" %s.shp PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        os.system('ogr2ogr -f "GeoJSON" -sql "%s" %s.json PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        
+        import zipfile
+        s = StringIO.StringIO()
+        z = zipfile.ZipFile(s, 'w')
+        for f in glob.glob(filename + '.*'):
+            z.write(f, os.path.basename(f))
+        z.close()
+        
+        for f in glob.glob(filename + '.*'):
+            os.remove(f)
+        
+        resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+        resp['Content-Disposition'] = 'attachment; filename=SWOS_Export_Results_Satellitedata.zip'
+        return resp
+
+
 class SatelliteMetadata(APIView):
     def get_object(self, pk):
         try:
@@ -364,12 +449,96 @@ class SatelliteMetadata(APIView):
         scene_id = request.query_params.get('scene')
         dataset = request.query_params.get('dataset')
         
-        with open(settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.json', 'r') as f:
-            import json
-            data = json.load(f)
-            for scene in data['features']:
-                if scene_id == scene['properties']['id']:
-                    return TemplateResponse(request, 'metadata/' + dataset + '.html', scene['properties'])
+        # sql query
+        sql = "SELECT * FROM satdata WHERE scene_id='%s'" % scene_id
+        
+        # sqlite database
+        conn = sdb.connect(settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite')
+        conn.row_factory = sdb.Row
+        my_cursor = conn.cursor()
+        my_cursor.execute(sql)
+        scene = dict(my_cursor.fetchone())
+        
+        # alternative with postgis database
+        #cursor = connection.cursor() 
+        #cursor.execute(sql)
+        #columns = (x.name for x in cursor.description)
+        #scene = cursor.fetchone()
+        #scene = dict(zip(columns, scene))
+             
+        if scene:
+            scene['id'] = scene['scene_id']
+            
+            if scene_id.startswith('S1'):
+                if "Products('')" in scene['download_url']:
+                    scene['download_urls'] = []
+                else:
+                    scene['download_urls'] = [dict(url=scene['download_url'], filename=scene['id']+'.zip')]
+            elif scene_id.startswith('S2') or scene_id.startswith('L1C'):
+                # download url from ESA-Datenhub anfragen
+                scene_id = scene['vendor_product_id']
+                
+                scene['download_urls'] = []
+                tile = scene['tile']
+                date = scene['time_start'].split('T')[0].split('-')
+                amazon_url = 'http://sentinel-s2-l1c.s3-website.eu-central-1.amazonaws.com/#tiles/%s/%s/%s/%s/%s/%s/0/' % (tile[1:3], tile[3:4], tile[4:6], date[0], int(date[1]), int(date[2]))
+                scene['download_urls'].append(dict(url=amazon_url, filename='Files overview'))
+                
+                if 'metadata_url' in scene:
+                    metaparts = scene['metadata_url'].split('/')
+                    scene['usgs_id'] = metaparts[-2]
+                
+                req = requests.get('https://scihub.copernicus.eu/dhus/search?q=%s&format=json' % scene_id, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
+                if req.status_code == 200:
+                    data = req.json()
+                    if 'entry' in data['feed']:
+                        id = data['feed']['entry']['id']
+                        download_url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('%s')/$value" % id
+                        scene['download_urls'].append(dict(url=download_url, filename=scene_id+'.zip'))
+            elif 'ESA' in scene_id and scene['source'] == 'ESA-Archive via Sentinel-Hub':
+                scene['download_urls'] = [dict(url=scene['metadata_url'].replace('.MTR.XML', '.ZIP'), filename=scene['title']+'.ZIP')]
+                scene['spacecraft_identifier'] = 'LANDSAT_' + scene_id[2]
+                scene['wrs_path'] = scene_id[3:6]
+                scene['wrs_row'] = scene_id[6:9] 
+                dataset = dataset + '_ESA'
+            elif scene_id.startswith('LC8'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene['landsat_product_id'])
+                files = ['ANG.txt', 'B1.TIF', 'B2.TIF', 'B3.TIF', 'B4.TIF', 'B5.TIF', 'B6.TIF', 'B7.TIF', 'B8.TIF', 'B9.TIF', 'B10.TIF', 'B11.TIF', 'BQA.TIF', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LE7'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LE07/01/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene['landsat_product_id'])
+                files = ['ANG.txt', 'B1.TIF', 'B2.TIF', 'B3.TIF', 'B4.TIF', 'B5.TIF', 'B6_VCID_1.TIF', 'B6_VCID_2.TIF', 'B7.TIF', 'B8.TIF', 'BQA.TIF', 'GCP.txt', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LT5'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LT05/01/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene['landsat_product_id'])
+                files = ['ANG.txt', 'B1.TIF', 'B2.TIF', 'B3.TIF', 'B4.TIF', 'B5.TIF', 'B6.TIF', 'B7.TIF', 'BQA.TIF', 'GCP.txt', 'MTL.txt', 'VER.jpg', 'VER.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LT4'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LT04/01/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene['landsat_product_id'])
+                files = ['ANG.txt', 'B1.TIF', 'B2.TIF', 'B3.TIF', 'B4.TIF', 'B5.TIF', 'B6.TIF', 'B7.TIF', 'BQA.TIF', 'GCP.txt', 'MTL.txt', 'VER.jpg', 'VER.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LM1'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LM01/PRE/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene_id)
+                files = ['B4.TIF', 'B5.TIF', 'B6.TIF', 'B7.TIF', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LM2'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LM02/PRE/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene_id)
+                files = ['B4.TIF', 'B5.TIF', 'B6.TIF', 'B7.TIF', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LM3'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LM03/PRE/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene_id)
+                files = ['B4.TIF', 'B5.TIF', 'B6.TIF', 'B7.TIF', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LM4'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LM04/PRE/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene_id)
+                files = ['B1.TIF', 'B2.TIF', 'B3.TIF', 'B4.TIF', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+            elif scene_id.startswith('LM5'):
+                base_url = 'https://storage.googleapis.com/gcp-public-data-landsat/LM05/PRE/{path}/{row}/{id}/{id}_'.format(row=scene['wrs_row'], path=scene['wrs_path'], id=scene_id)
+                files = ['B1.TIF', 'B2.TIF', 'B3.TIF', 'B4.TIF', 'MTL.txt']
+                scene['download_urls'] = [dict(url=base_url+ext, filename=scene_id+'_'+ext) for ext in files]
+                    
+            return TemplateResponse(request, 'metadata/' + dataset + '.html', scene)
             
         raise Http404
 
@@ -554,3 +723,160 @@ class Elasticsearch(APIView):
         finalJSON['facets_ordered'] = facets_ordered
 
         return Response(finalJSON)
+
+class CurlHTTPStream(object):
+    def __init__(self, url, login=False):
+        self.url = url
+        self.received_buffer = StringIO.StringIO()
+
+        self.curl = pycurl.Curl()
+        self.curl.setopt(pycurl.URL, url)
+        self.curl.setopt(pycurl.HTTPHEADER, ['Cache-Control: no-cache'])
+        self.curl.setopt(pycurl.COOKIEFILE, "/tmp/cookiefile")
+        self.curl.setopt(pycurl.COOKIEJAR, "/tmp/cookiefile")
+        self.curl.setopt(pycurl.FAILONERROR, 1L)
+        self.curl.setopt(pycurl.FOLLOWLOCATION, 1L)
+        self.curl.setopt(pycurl.NOPROGRESS, 1L)
+        self.curl.setopt(pycurl.SSL_VERIFYHOST, 0L)
+        self.curl.setopt(pycurl.SSL_VERIFYPEER, 0L)
+        self.curl.setopt(pycurl.WRITEFUNCTION, self.received_buffer.write)
+        if login:
+            self.curl.setopt(pycurl.POSTFIELDS, "cn=" + settings.ESA_SSO_USER + "&password=" + settings.ESA_SSO_PASSWORD + "&loginFields=cn@password&loginMethod=umsso&sessionTime=untilbrowserclose&idleTime=oneday")
+
+        self.curlmulti = pycurl.CurlMulti()
+        self.curlmulti.add_handle(self.curl)
+
+        self.status_code = 0
+
+    SELECT_TIMEOUT = 10
+
+    def _any_data_received(self):
+        return self.received_buffer.tell() != 0
+
+    def _get_received_data(self):
+        result = self.received_buffer.getvalue()
+        self.received_buffer.truncate(0)
+        self.received_buffer.seek(0)
+        return result
+
+    def _check_status_code(self):
+        if self.status_code == 0:
+            self.status_code = self.curl.getinfo(pycurl.HTTP_CODE)
+        if self.status_code != 0 and self.status_code != httplib.OK:
+            raise urllib2.HTTPError(self.url, self.status_code, None, None, None)
+
+    def _perform_on_curl(self):
+        while True:
+            ret, num_handles = self.curlmulti.perform()
+            if ret != pycurl.E_CALL_MULTI_PERFORM:
+                break
+        return num_handles
+
+    def _iter_chunks(self):
+        while True:
+            remaining = self._perform_on_curl()
+            if self._any_data_received():
+                self._check_status_code()
+                yield self._get_received_data()
+            if remaining == 0:
+                break
+            self.curlmulti.select(self.SELECT_TIMEOUT)
+
+        self._check_status_code()
+        self._check_curl_errors()
+
+    def _check_curl_errors(self):
+        for f in self.curlmulti.info_read()[2]:
+            raise pycurl.error(*f[1:])
+
+    def iter_lines(self):
+        chunks = self._iter_chunks()
+        return self._split_lines_from_chunks(chunks)
+
+    @staticmethod
+    def _split_lines_from_chunks(chunks):
+        #same behaviour as requests' Response.iter_lines(...)
+
+        pending = None
+        for chunk in chunks:
+
+            if pending is not None:
+                chunk = pending + chunk
+            lines = chunk.splitlines(True)
+
+            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:
+                pending = lines.pop()
+            else:
+                pending = None
+
+            for line in lines:
+                yield line
+
+        if pending is not None:
+            yield pending
+
+
+class DownloadData(APIView):
+    def get(self, request):
+        
+        def write(req):
+            for i in req.iter_lines():
+                yield i
+        
+        if os.path.exists('/tmp/cookiefile'):
+            os.remove('/tmp/cookiefile')
+            
+        req = CurlHTTPStream('https://landsat-ds.eo.esa.int/download/LANDSAT/WRS/0020/0246//LS05_RKSE_TM__GEO_1P_20060726T173517_20060726T173545_119154_0020_0246_409B.ZIP')
+        for i in req.iter_lines():
+            pass
+        
+        req = CurlHTTPStream('https://eo-sso-idp.eo.esa.int:443/idp/umsso20/login?null', login=True)
+        response = StreamingHttpResponse(write(req))
+        response['Content-Disposition'] = 'attachment; filename=LS05_RKSE_TM__GEO_1P_20060726T173517_20060726T173545_119154_0020_0246_409B.ZIP'
+        return response
+
+
+class DownloadDataSentinel(APIView):
+    def get_download_url(self, pk, scene_id):
+        with open(settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(pk) + '.json', 'r') as f:
+            data = json.load(f)
+            for scene in data['features']:
+                if scene_id == scene['properties']['id']:
+                    return scene['properties']['download_url']
+
+    def get_vendor_id(self, pk, scene_id):
+        with open(settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(pk) + '.json', 'r') as f:
+            data = json.load(f)
+            for scene in data['features']:
+                if scene_id == scene['properties']['id']:
+                    return scene['properties']['vendor_product_id']
+                    
+    def get(self, request, pk):
+        
+        def write(req):
+            for i in req.iter_content(chunk_size=1024*8):
+                yield i
+        
+        scene_id = request.query_params.get('scene')        
+        
+        if scene_id.startswith('S1'):
+            download_url = self.get_download_url(pk, scene_id)
+            
+        if scene_id.startswith('S2'):
+            scene_id = self.get_vendor_id(pk, scene_id)
+            req = requests.get('https://scihub.copernicus.eu/dhus/search?q=%s&format=json' % scene_id, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
+            if req.status_code == 200:
+                data = req.json()
+                if 'entry' in data['feed']:
+                    id = data['feed']['entry']['id']
+                    download_url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('%s')/$value" % id
+                else:
+                    raise Exception('Could not find data')
+            else:
+                raise Exception('broken')
+        
+        filename = scene_id + '.zip'
+        req = requests.get(download_url, stream=True, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
+        response = StreamingHttpResponse(write(req))
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        return response

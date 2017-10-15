@@ -3,68 +3,114 @@
         font-weight: bold;
     }
 </style>
-<h4>{{ id }}</h4>
-<table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
-    <tbody>
-    <tr>
-        <td class="title">Spacecraft</td>
-        <td class="value">{{ spacecraft_identifier }}</td>
-    </tr>
-    <tr>
-        <td class="title">Level1 data type</td>
-        <td class="value">{{ data_type_l1 }}</td>
-    </tr>
-    <tr>
-        <td class="title">Time start</td>
-        <td class="value">{{ time_start }}</td>
-    </tr>
-    <tr>
-        <td class="title">Time end</td>
-        <td class="value">{{ time_end }}</td>
-    </tr>
-    <tr>
-        <td class="title">Updated</td>
-        <td class="value">{{ updated }}</td>
-    </tr>
-    <tr>
-        <td class="title">WRS Type</td>
-        <td class="value">{{ wrs_type }}</td>
-    </tr>
-    <tr>
-        <td class="title">WRS Path</td>
-        <td class="value">{{ wrs_path }}</td>
-    </tr>
-    <tr>
-        <td class="title">WRS Row</td>
-        <td class="value">{{ wrs_row }}</td>
-    </tr>
-    <tr>
-        <td class="title">Tile</td>
-        <td class="value">{{ tile }}</td>
-    </tr>
-    <tr>
-        <td class="title">Scene cloudcover</td>
-        <td class="value">{{ cloud_cover }}%</td>
-    </tr>
-    <tr>
-        <td class="title">Sun Elevation</td>
-        <td class="value">{{ sun_elevation }}&deg;</td>
-    </tr>
-    <tr>
-        <td class="title">Sun Azimuth Angle Mean</td>
-        <td class="value">{{ sun_azimuth_angle_mean }}&deg;</td>
-    </tr>
-    <tr>
-        <td class="title">Day or Night</td>
-        <td class="value">{{ day_or_night }}</td>
-    </tr>
-    <tr>
-        <td class="title">Browse URL</td>
-        <td class="value"><a href="{{ browse_url }}" target="_blank">Link</a></td>
-    </tr>
-    <tr>
-        <td class="title">Metadata URL</td>
-        <td class="value"><a href="{{ metadata_url }}" target="_blank">Link</a></td>
-    </tr>
-    </tbody>
-</table>
+<h4 style="word-break: break-word;">{{ id }}</h4>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" data-target="#metadata">Metadata</a></li>
+  <li><a data-toggle="tab" data-target="#download">Download</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="metadata" class="tab-pane fade in active">
+        <table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
+            <tbody>
+            <tr>
+                <td class="title">Spacecraft</td>
+                <td class="value">{{ spacecraft_identifier }}</td>
+            </tr>
+            <tr>
+                <td class="title">Level1 data type</td>
+                <td class="value">{{ data_type_l1 }}</td>
+            </tr>
+            <tr>
+                <td class="title">Time start</td>
+                <td class="value">{{ time_start }}</td>
+            </tr>
+            <tr>
+                <td class="title">Time end</td>
+                <td class="value">{{ time_end }}</td>
+            </tr>
+            <tr>
+                <td class="title">Updated</td>
+                <td class="value">{{ updated }}</td>
+            </tr>
+            <tr>
+                <td class="title">WRS Type</td>
+                <td class="value">{{ wrs_type }}</td>
+            </tr>
+            <tr>
+                <td class="title">WRS Path</td>
+                <td class="value">{{ wrs_path }}</td>
+            </tr>
+            <tr>
+                <td class="title">WRS Row</td>
+                <td class="value">{{ wrs_row }}</td>
+            </tr>
+            <tr>
+                <td class="title">Tile</td>
+                <td class="value">{{ tile }}</td>
+            </tr>
+            <tr>
+                <td class="title">Scene cloudcover</td>
+                <td class="value">{{ cloud_cover }}%</td>
+            </tr>
+            <tr>
+                <td class="title">Sun Elevation</td>
+                <td class="value">{{ sun_elevation }}&deg;</td>
+            </tr>
+            <tr>
+                <td class="title">Sun Azimuth Angle Mean</td>
+                <td class="value">{{ sun_azimuth_angle_mean }}&deg;</td>
+            </tr>
+            <tr>
+                <td class="title">Day or Night</td>
+                <td class="value">{{ day_or_night }}</td>
+            </tr>
+            <tr>
+                <td class="title">Browse URL</td>
+                <td class="value"><a href="{{ browse_url }}" target="_blank">Link</a></td>
+            </tr>
+            <tr>
+                <td class="title">Metadata URL</td>
+                <td class="value"><a href="{{ metadata_url }}" target="_blank">Link</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="download" class="tab-pane fade">
+        <table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
+        <tr>
+            <td class="title">USGS Earth Explorer <span style="font-weight:normal">(Login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <strong>Support links</strong>
+                <ul>
+                    <li><a href="https://ers.cr.usgs.gov/register/" target="_blank">User registration</a></li>
+                    <li><a href="{{ download_url }}" target="_blank">List of products to download</a></li>
+                    <li><a href="https://landsat.usgs.gov/what-are-best-spectral-bands-use-my-study" target="_blank">What are the best spectral bands to use for my study?</a></li>
+                </ul>
+                <strong>Data download links</strong>
+                <ul>
+                    <li><a href="https://earthexplorer.usgs.gov/download/3120/{{id}}/STANDARD/INVSVC" target="_blank">Level-1 GeoTIFF Data Product</a></li>
+                    <li><a href="https://earthexplorer.usgs.gov/download/3120/{{id}}/FR_BUND/INVSVC" target="_blank">LandsatLook Images with Geographic Reference</a></li>
+                    <li><a href="https://earthexplorer.usgs.gov/download/3120/{{id}}/FR_REFL/INVSVC" target="_blank">LandsatLook Natural Color Image (JPG)</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="title">Google Storage Cloud <span style="font-weight:normal">(No login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <strong>Data download links</strong>
+                <ul>
+                    {% for item in download_urls %}
+                    <li><a href="{{ item.url }}" target="_blank">{{ item.filename }}</a></li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        </table>
+    </div>
+</div>
