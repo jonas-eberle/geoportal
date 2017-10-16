@@ -146,6 +146,7 @@
                     templateUrl: subdir+'/static/includes/searchresults_geoss.html',
                     windowClass: 'geoss-window',
                     backdrop: 'static',
+                    keyboard: false,
                     resolve: {
                         title: function() {return 'Search results for: '+text; },
                         searchData: function() {return searchData;}
