@@ -8,6 +8,7 @@ import requests
 import sqlite3 as sdb
 import uuid
 import glob
+from datetime import datetime
 
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
@@ -474,9 +475,15 @@ class SatelliteMetadata(APIView):
                     scene['download_urls'] = []
                 else:
                     scene['download_urls'] = [dict(url=scene['download_url'], filename=scene['id']+'.zip')]
+                date = scene['time_start'].split('T')[0]
+                b_date = datetime.strptime(date, '%Y-%m-%d')
+                today = datetime.today()
+                if ((today.year - b_date.year) * 12 + today.month - b_date.month) <= 6:
+                    scene['code_de_filename'] = scene_id+'.SAFE.zip'
             elif scene_id.startswith('S2') or scene_id.startswith('L1C'):
                 # download url from ESA-Datenhub anfragen
                 scene_id = scene['vendor_product_id']
+                scene['code_de_filename'] = scene_id+'.SAFE.zip'
                 
                 scene['download_urls'] = []
                 tile = scene['tile']
