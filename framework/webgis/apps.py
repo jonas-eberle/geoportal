@@ -3,8 +3,9 @@ from suit.apps import DjangoSuitConfig
 from suit.menu import ParentItem, ChildItem
 from webgis import settings
 
+
 class SuitConfig(DjangoSuitConfig):
-    layout = 'horizontal' #vertical / horizontal
+    layout = 'horizontal'  # vertical / horizontal
     menu = (
         ParentItem('Authorization', children=[
             ChildItem(model='auth.user'),
@@ -40,5 +41,5 @@ class SuitConfig(DjangoSuitConfig):
         ])
     )
     if "validation" in settings.INSTALLED_APPS:
-        menu = menu + ((ParentItem('Validation', children=[ChildItem('Validation Layers', model='validation.validationlayer') ])),);
-
+        menu = menu + (
+            (ParentItem('Validation', children=[ChildItem('Validation Layers', model='validation.validationlayer')])),)

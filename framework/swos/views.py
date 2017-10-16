@@ -374,12 +374,12 @@ class SatelliteMetadataExport(APIView):
         sql_additions.append('ST_Intersects(wkb_geometry, (SELECT geom from swos_wetland WHERE id=%s))' % wetland.id)
         
         datasets = request.query_params.get('datasets', None)
-        if datasets != None:
+        if datasets is not None:
             datasets = datasets.split(',')
             sql_additions.append('dataset IN (%s)' % ','.join(["'" + dataset + "'" for dataset in datasets]))
         
         tiles = request.query_params.get('tiles', None)
-        if tiles != None:
+        if tiles is not None:
             tiles = tiles.split(',')
             sql_additions.append('tile IN (%s)' % ','.join(["'" + tile + "'" for tile in tiles]))
         
@@ -403,7 +403,7 @@ class SatelliteMetadataExport(APIView):
         sql_additions.append('(time_start >= \'%s\'::DATE AND time_start <= \'%s\'::DATE)' % (time_start_begin, time_start_end))
         
         months = request.query_params.get('months', None)
-        if months != None:
+        if months is not None:
             months = months.split(',')
             sql_additions.append('extract(MONTH from time_start) IN (%s)' % ','.join(tiles))
         
@@ -578,12 +578,14 @@ class StoryLinePartSerializer(serializers.ModelSerializer):
         model = StoryLinePart
         fields = ('__all__')
 
+
 class StoryLineInlineSerializer(serializers.ModelSerializer):
     story_line_part = StoryLinePartSerializer(read_only=True)
 
     class Meta:
         model = StoryLineInline
         fields = ('order', 'story_line_part')
+
 
 class StoryLineSerializer(serializers.ModelSerializer):
     story_line = StoryLineInlineSerializer(many=True, read_only=True)
@@ -605,6 +607,7 @@ class StoryLineData(APIView):
         story_line_parts = StoryLineSerializer(story_line)
 
         return Response(story_line_parts.data)
+
 
 class Layer(APIView):
     def get(self, request):
@@ -723,6 +726,7 @@ class Elasticsearch(APIView):
         finalJSON['facets_ordered'] = facets_ordered
 
         return Response(finalJSON)
+
 
 class CurlHTTPStream(object):
     def __init__(self, url, login=False):

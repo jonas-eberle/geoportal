@@ -4,13 +4,9 @@ import binding
 
 
 class GeoserverSWOSTestCase(unittest.TestCase):
-
     def setUp(self):
-
-        self.cat = Catalog('http://localhost:8080/geoserver/rest',username='admin', password='geoserver')
+        self.cat = Catalog('http://localhost:8080/geoserver/rest', username='admin', password='geoserver')
         self.ws = self.cat.create_workspace('UnitTest', 'test.test')
-
-
 
     def tearDown(self):
         self.cat.delete(self.ws, recurse=True)
@@ -23,11 +19,7 @@ class GeoserverSWOSTestCase(unittest.TestCase):
     def test_raster_upload(self):
         pass
 
+
 class MetadataSWOSTestCase(unittest.TestCase):
-
-
-
-
-if __name__=='__main__':
-    unittest.main()
-
+    if __name__ == '__main__':
+        unittest.main()
