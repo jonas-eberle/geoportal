@@ -16,6 +16,10 @@
     {% assets "swosVendorCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
+    
+    {% assets "geossVendorCssBundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
 
     {# requires fonts and css to be in the same directory, so no inclusion in bundle #}
     <link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet" />
@@ -47,13 +51,19 @@
         var _paq = _paq || [];
         // add individual tracking code
     </script>
+    
+    <style type="text/css">
+        #geoss-search-widget .rating-icon, #geoss-search-widget .rating {
+            display:none;
+        }
+    </style>
 </head>
 <body>
 
     <div id="loading-div">
         <div class="loading">
             <i class="fa fa-circle-o-notch fa-spin"></i>
-            <button class="btn btn-default btn-primary btn-sm" onclick="$('#loading-div').hide()" style="margin-left: -35px;margin-top: -65px;">Hide loading overlay</button>
+            <button class="btn btn-default btn-primary btn-sm" onclick="$('#loading-div').hide()" style="margin-left: -18px;margin-top: -65px;">... loading...</button>
         </div>
     </div>
 
@@ -69,16 +79,11 @@
                 <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
             </div>
 
-            <!-- TOOLBAR in Navigation für Tablet und Desktop -->
+            <!-- TOOLBAR in Navigation fuer Tablet und Desktop -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl as lc" style="padding-right:0;">
                     <li>
-                        <!--<div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;">
-                            <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_60.png" border="0" height="45" align="left" style="margin-right: 4px;"/></a>
-                            <img src="/static/img/eu.png" alt="EU Logo" align="right" height="45"/>
-                            <div style="font-size: 0.8em;">This portal is developed by the SWOS project, which has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 642088.</div>
-                        </div>-->
-                        <div style="margin-top: 3px;font-size: 0.8em;padding-left: 5px;" class="partners">
+                        <div style="margin-top: 5px;font-size: 0.8em;padding-left: 5px;" class="partners">
                             <a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/GEO_wetland_color_pos_40.png" border="0" height="40"></a>
                             <img src="/static/img/eu_40.png" alt="EU Logo" height="40">
                             <a href="http://www.eo.uni-jena.de" target="_blank"><img src="/static/img/UniJena_BildWortMarke_blue.jpg" border="0" height="40"></a>
@@ -132,8 +137,8 @@
 
                     <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
                         <form ng-submit="sb.search_es();">
-                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for..."
-                                   id="search_desktop">
+                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for ..."
+                                   id="search_desktop" autocomplete="off">
                             <br style="clear:both"/>
                             <div id="search-extend">
                                 <!--
@@ -170,6 +175,7 @@
                     <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
 
                     <div id="map_legend"></div>
+                    <div class="layers-container geoss" style="display:none"></div>
 
                     <div id="slider" style="display:none">
                         <div class="input"><input type="text" /></div>
@@ -653,6 +659,9 @@
                                                     <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
                                                     <strong>Link:</strong>
                                                     <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                                    <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                                        <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                                    </div>
                                                     <div class="select" ng-if="externaldb.layers.length > 0">
                                                         <strong>Layers:</strong>
                                                         <div ng-repeat="layer in externaldb.layers"
@@ -705,8 +714,28 @@
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2017</p>
     </div>
+    
+    <!-- Geoss Search Widget popup container -->
+    <!-- 'geoss' class is needed -->
+    <div id="geoss-popup" style="display:none;">
+        <div modal-draggable class="modal-header">
+            <h1>Metadata</h1>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+            <div class="text popups-container geoss"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="mi.close()">
+                Close
+            </button>
+        </div>
+    </div>
 
     {% assets "swosVendorJsBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
+    
+    {% assets "geossVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
 

@@ -18,6 +18,7 @@
         es_srm.setFilter = setFilter;
         es_srm.removeFilter = removeFilter;
         es_srm.showMore = showMore;
+        es_srm.search_geoss = search_geoss;
         //es_srm.filterKeyword = filterKeyword;
         //es_srm.search = search;
         es_srm.title = title;
@@ -247,6 +248,11 @@
             }
             return false;
         }**/
+       
+       function search_geoss() {
+           es_srm.close();
+           csw.search_geoss(es_srm.searchData.text);
+       }
 
     }
 })();
