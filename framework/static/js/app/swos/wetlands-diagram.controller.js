@@ -563,7 +563,8 @@
                 $http.defaults.headers.common["Content-type"] = "application/x-www-form-urlencoded; charset=UTF-8";
 
                 // check if selected point is within extent -> will not work around 0 #todo replace with geometry function
-                if (Math.abs(lonlat[1]) < Math.abs(layer.north) && Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)) {
+                //if (Math.abs(lonlat[1]) < Math.abs(layer.north) && Math.abs(lonlat[1]) > Math.abs(layer.south) && Math.abs(lonlat[0]) > Math.abs(layer.west) && Math.abs(lonlat[0]) < Math.abs(layer.east)) {
+                if ((lonlat[1]) < (layer.north) && (lonlat[1]) > (layer.south) && (lonlat[0]) > (layer.west) && (lonlat[0]) < (layer.east)) {
 
                     $("#loading-div").show()
 

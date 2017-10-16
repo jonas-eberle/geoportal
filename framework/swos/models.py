@@ -622,6 +622,7 @@ class WetlandLayer(Layer):
     def alternate_title(self):
         wq_type = ''
         date_string = ''
+        product = self.product.short_name
         if self.product.short_name in ['WQ']:
             wq_type = ' '.join(self.identifier.split('_')[2:5])
         elif self.product.short_name in ['LULC']:
@@ -653,7 +654,11 @@ class WetlandLayer(Layer):
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         elif self.product.short_name in ['LSTT']:
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-        return ' '.join([self.product.short_name,wq_type, date_string])
+        elif self.product.short_name in ['SATDATA']:
+            wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1').replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('XX', 'VV VH').replace('-', ' ')
+            date_string = str(self.date_begin.year)
+            product = ''
+        return ' '.join([product,wq_type, date_string])
 
     def indexing(self):
 

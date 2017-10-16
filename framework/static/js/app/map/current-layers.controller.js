@@ -486,7 +486,11 @@
             var south = layerObj.south;
             var east = layerObj.east;
             var north = layerObj.north;
-
+            
+            if (typeof(west) == 'undefined' || typeof(south) == 'undefined' || typeof(east) == 'undefined' || typeof(north) == 'undefined') {
+                return false;
+            }
+            
             var map_epsg = mapviewer.map.getView().getProjection().getCode();
 
             //reduce extent to fit to mercator projection (Google)

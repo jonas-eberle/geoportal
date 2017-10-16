@@ -562,6 +562,9 @@
                         $("#gmap").find("img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
                         $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
                     }
+                    
+                    var layers = this.map.getLayers().getArray();
+                    Attribution.refreshDisplay(layers);
 
                 }
             },

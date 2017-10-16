@@ -91,6 +91,7 @@ class WetlandDetail(APIView):
         for layer in layers:
             layer_data = LayerSerializer(layer).data
             layer_data['wetland_id'] = wetland.id
+            layer_data['statistic'] = layer.statistic
             story_line = self.get_story_line(layer.id)
             if story_line:
                 layer_data['story_line'] = story_line
@@ -478,7 +479,7 @@ class SatelliteMetadata(APIView):
                 date = scene['time_start'].split('T')[0]
                 b_date = datetime.strptime(date, '%Y-%m-%d')
                 today = datetime.today()
-                if ((today.year - b_date.year) * 12 + today.month - b_date.month) <= 6:
+                if ((today.year - b_date.year) * 12 + today.month - b_date.month) <= 4:
                     scene['code_de_filename'] = scene_id+'.SAFE.zip'
             elif scene_id.startswith('S2') or scene_id.startswith('L1C'):
                 # download url from ESA-Datenhub anfragen

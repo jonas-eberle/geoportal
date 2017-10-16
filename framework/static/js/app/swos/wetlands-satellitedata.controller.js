@@ -33,8 +33,8 @@
           };
         });
 
-    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile'];
-    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile) {
+    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile', 'Attribution'];
+    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile, Attribution) {
         var wsdc = this;
 
         wsdc.data = {'features':[]};
@@ -142,7 +142,6 @@
                 method: 'GET',
                 url: '/media/cache/satdata/satdata_all_' + WetlandsService.value.id + '.stats.json'
             }).then(function(data) {
-                console.log(data);
                 wsdc.datasetOptions = data.datasets;
                 wsdc.tileOptions = data.tiles;
                 wsdc.time_start_begin = new Date(data.time_start_begin);
@@ -165,7 +164,6 @@
 		
 		function addMoreItems() {
 			wsdc.limitTo += wsdc.addMoreLimit;
-			console.log(wsdc.limitTo);
 		}
         
         wsdc.data_filtered = {'features':[]};
@@ -278,44 +276,23 @@
                 ogc_layer: scene['senhub_wms_layers'].split(',')[0],
                 title: scene['dataset'] + ': ' + scene['senhub_wms_time'].split('/')[0],
                 layers: scene['senhub_wms_layers'].split(','),
-                attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+                ogc_attribution: '<a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
                 selectedDate: scene['senhub_wms_time'].split('/')[0],
                 source: 'sentinelhub'
             };
             
             mapviewer.addLayer(layer);
-            angular.element('#show_active_layer').click();
-            
-            /*           
-            wsdc.wms_layer_openlayers[index] = new ol.layer.Tile({
-                source: new ol.source.TileWMS({
-                    attribution: ,
-                    url: scene['senhub_wms_url'].replace('/wfs/', '/wms/'),
-                    params: {
-                        version: '1.3.0',
-                        layers: scene['senhub_wms_layers'].split(',')[0],
-                        styles: '',
-                        format: 'image/png',
-                        transparent: 'true',
-                        height: 512,
-                        width: 512,
-                        
-                    }
-                })
-            });
-            mapviewer.map.addLayer(wsdc.wms_layer_openlayers[index]);
-            */
-            
+            var layers = mapviewer.map.getLayers().getArray();
+            Attribution.refreshDisplay(layers);
+            angular.element('#show_active_layer').click();            
         }
         
         function changeWMSLayerStyle(scene) {
             var index = scene['id'];
-            console.log(wsdc.wms_layer_style[index]);
             wsdc.wms_layer_openlayers[index].getSource().updateParams({'layers': wsdc.wms_layer_style[index]});
         }
         
         function selectScene(scene) {
-            console.log(scene);
             if (scene.hasOwnProperty('selected')) {
                 if (scene['selected'] === true) {
                     scene['selected'] = false;
@@ -329,7 +306,6 @@
         }
         
         function openMetadata(scene) {
-            console.log(scene);
             $('#loading-div').show();
             djangoRequests.request({
                 method: 'GET',
@@ -350,7 +326,6 @@
         }
         
         function onmouseover(scene) {
-            //console.log(feature);
             var format = new ol.format.WKT();
             var feature = format.readFeature(scene['geometry'], {
                 dataProjection: 'EPSG:4326',
@@ -383,7 +358,6 @@
         }
         
         function changeGroupBy() {
-            console.log(wsdc.groupBy);
             switch(wsdc.groupBy) {
                 case 'dataset':
                     wsdc.groups = wsdc.datasetOptions
@@ -423,8 +397,6 @@
 				}
 				url += '&months=' + months.join(',')
 			}
-			
-			console.log(url);
 			window.open(url, '_blank');
 		}
         

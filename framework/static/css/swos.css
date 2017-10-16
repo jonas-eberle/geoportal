@@ -675,3 +675,7 @@ button.btn-loadmore:hover {
     right: 0;
     width: 270px;
 }
+
+#wetland_attribution_list a {
+    color: white;
+}
