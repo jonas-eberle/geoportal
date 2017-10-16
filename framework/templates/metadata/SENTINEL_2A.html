@@ -87,6 +87,18 @@
             </td>
         </tr>
         {% endif %}
+        {% if code_de_filename %}
+        <tr>
+            <td class="title">CODE-DE <span style="font-weight:normal">(No login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li><a href="https://code-de.org/download/{{ code_de_filename }}" target="_blank">{{ code_de_filename }}</a></li>
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
         <tr>
             <td class="title">Amazon Web Services <span style="font-weight:normal">(No login required!)</span></td>
         </tr>

@@ -64,13 +64,29 @@
         </tr>
         <tr>
             <td>
+            {% if download_urls.0 %} 	
                 <ul>
                     {% for item in download_urls %}
                     <li><a href="{{ item.url }}" target="_blank">{{ item.filename }}</a></li>
                     {% endfor %}
                 </ul>
+			{% else %}
+			Dataset seems not to be available anymore.
+			{% endif %}
             </td>
         </tr>
+        {% if code_de_filename %}
+        <tr>
+            <td class="title">CODE-DE <span style="font-weight:normal">(No login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li><a href="https://code-de.org/download/{{ code_de_filename }}" target="_blank">{{ code_de_filename }}</a></li>
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
         </table>
     </div>
 </div>

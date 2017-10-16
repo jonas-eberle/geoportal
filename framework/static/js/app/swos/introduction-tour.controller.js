@@ -668,8 +668,8 @@
                             $('.sidebar').css( 'zIndex', '');
                         },
                         content      : '<div class="anno-step-of">(Step 8 of '+ step_count +')</div><h4>Satellite data</h4><div>' +
-                        '<p>An overview about free available satellite data (Landsat and Sentinel) covering the wetland area is given here. Please click on the <span class="anno-highlight">Yearly coverage by sensor</span> image to enlarge it. You will also find the total amount of data by sensor as a table below. </p>' +
-                        '<p>In the <strong>future</strong> it will be also possible to download<strong> pre-processed satellite data</strong> clipped to the wetland area.</p>' +
+                        '<p>An overview about free available satellite data (Landsat and Sentinel) covering the wetland area is given here. Please click on the image in section <span class="anno-highlight">Satellite data explorer</span> to open this tool. You will also find the total amount of data by sensor as a table below as well as the data sources used for scene discovery. </p>' +
+                        '<p>Within the satellite data explorer application you can interactively filter by scene properties, look at quicklooks, and access each individual scene by download links provided.</p>' +
                         '<p></p><p>In the <strong>next step</strong> we will move to the <span class="anno-highlight">External databases</span> tab <span class="flaticon-technology-2"><a style="text-decoration: none;"></a></span>.</p></div>'
                     }, // Satellite data ,
                     {
@@ -1016,7 +1016,7 @@
                             $cookies.remove('hasNotifiedAboutLayers');
                         },
                         content: '<div class="anno-step-of">(Step 14 of '+ step_count +')</div><h4>Search</h4><div><p></p>' +
-                        '<p>Using this text field you can search for our datasets. Requests will be send to the SWOS Catalog Services for Web (CSW). In the <strong>future</strong> it will contain all datasets from the SWOS project as well as datasets from <a href="http://www.geoportal.org" target="_blank">GEOSS</a>. The service will be also available for external applications.</p>' +
+                        '<p>Using this text field you can search within our SWOS database. Requests will be send to the SWOS search catalogue service where you will find our indicator and products, wetlands, external layers and external databases. You can also search through external databases using the search from <a href="http://www.geoportal.org" target="_blank">GEOSS</a>.</p>' +
                         '<p></p><p></p>' +
                         '<p><strong>Congratulations</strong>, you reached the end of the tour. <strong>Now it\'s your turn!</strong> We will remove all added layer and guide you back to the start page.</p>'
                     } // Search
