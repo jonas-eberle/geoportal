@@ -230,8 +230,8 @@
                             <!-- Accordion for resources -->
                             <uib-accordion close-others="false">
                                 <div uib-accordion-group heading="Validation resources" is-open="true">
-                                    <input ng-if="validation.layerIdMap[validation.layer.id] === undefined" type="checkbox" ng-click="validation.addLayerToMap(validation.layer, $event);" id="layer_vis_{{validation.layer.id}}"/>
-                                    <input ng-if="validation.layerIdMap[validation.layer.id]" type="checkbox" ng-click="validation.addLayerToMap(validation.layer, $event);" id="layer_vis_{{validation.layer.id}}" checked="checked"/>
+                                    <input ng-if="validation.layerIdMap[validation.layer.id] === undefined" type="checkbox" ng-click="validation.addVallLayerToMap(validation.layer, $event);" id="layer_vis_{{validation.layer.id}}"/>
+                                    <input ng-if="validation.layerIdMap[validation.layer.id]" type="checkbox" ng-click="validation.addVallLayerToMap(validation.layer, $event);" id="layer_vis_{{validation.layer.id}}" checked="checked"/>
                                     <label for="layer_vis_{{validation.layer.id}}"> {{validation.layer.alternate_title}}</label>
                                     <swos-layer-controls ng-if="validation.layers[validation.layerIdMap[validation.layer.id]]" layer-hash="{{ validation.layerIdMap[validation.layer.id] }}" hide-share="true"></swos-layer-controls>
                                     

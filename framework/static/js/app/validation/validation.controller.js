@@ -78,10 +78,15 @@
         
         validation.changeMapStyle = changeMapStyle;
         function changeMapStyle(event) {
+            if (validation.validation_layer_ol == null) {
+                event.target.checked = false;
+                bootbox.alert('<h3>Please activate the validation layer first!</h3>');
+                return false;
+            }
             var source = validation.validation_layer_ol.getSource();
             $('#loading-div').show();
             if (event.target.checked) {
-                source.updateDimensions({'style': 'segmentation_done', 'time': new Date().getTime()});
+                source.updateDimensions({'style': 'segmentation_MAES', 'time': new Date().getTime()});
             } else {
                 source.updateDimensions({'style': ''});
             }
@@ -93,6 +98,7 @@
         }        
         
         validation.addLayerToMap = addLayerToMap;
+        validation.addVallLayerToMap = addVallLayerToMap; 
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
         validation.layerIdMap = {};
         validation.layers = mapviewer.layers;
@@ -194,9 +200,7 @@
             });
             
             var layerExtent = [layer.west, layer.south, layer.east, layer.north];
-            if (layer.epsg > 0) {
-                layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:' + layer.epsg, mapviewer.map.getView().getProjection().getCode());
-            }
+            layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
             mapviewer.map.getView().fit(layerExtent);
         }
         
@@ -243,7 +247,6 @@
                     }
                 }
             } catch(e) {
-                console.log('ERROR for CRS request');
                 console.log(e);
             }
             
@@ -444,10 +447,40 @@
                     I: tileI,
                     J: tileJ
                 };
-                console.log(params);
                 url = layer.get('layerObj').ogc_link + '?' + jQuery.param(params);
             }
             return '/layers/data?url='+encodeURIComponent(url);
+        }
+        
+        function addVallLayerToMap(layer, $event) {
+            var checkbox = $event.target;
+            if (checkbox.checked) {
+                validation.validation_layer_ol = mapviewer.addLayer(layer);
+                validation.validation_layer_ol.getSource().on('tileloadend', function(event) { 
+                     $('#loading-div').hide();
+                } );
+                
+                var layerObj = validation.validation_layer_ol.get("layerObj");
+                validation.layerIdMap[layerObj.django_id] = layerObj.id;
+            } else {
+                validation.validation_layer_ol = null;
+                var layers = mapviewer.map.getLayers().getArray();
+                // NOTE: iterating over an array here whilst deleting elements from this array!
+                $.each(layers, function () {
+                    if (layer.title === this.get('name')) {
+                        var layerId = this.get('layerObj').id;
+                        //console.log('LayerId: '+layerId);
+                        var index = mapviewer.getIndexFromLayer(layer.title);
+                        //console.log('index: '+index);
+                        mapviewer.removeLayer(layerId, index);
+                        //this.setVisible(false);
+
+                        // stop iterating over all the layers
+                        return false;
+                    }
+                });
+            }
+            attributionList();
         }
 
         function addLayerToMap(layer, $event) {

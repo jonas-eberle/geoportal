@@ -181,7 +181,7 @@ class ValidationListSegments(APIView):
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
   outputFormat="application/json" maxFeatures="{}" startIndex="{}">
-  <wfs:Query typeName="Spain_Fuente-de-Piedra:SWOS_SEGM_ES_Fuente-de-Piedra_350_2015">
+  <wfs:Query typeName="{}">
 <ogc:SortBy>
 <ogc:SortProperty>
 <ogc:PropertyName>ValID</ogc:PropertyName>
@@ -205,7 +205,7 @@ class ValidationListSegments(APIView):
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"
   outputFormat="application/json" maxFeatures="{}" startIndex="{}">
-  <wfs:Query typeName="Spain_Fuente-de-Piedra:SWOS_SEGM_ES_Fuente-de-Piedra_350_2015">
+  <wfs:Query typeName="{}">
 <ogc:SortBy>
 <ogc:SortProperty>
 <ogc:PropertyName>ValID</ogc:PropertyName>
