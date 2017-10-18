@@ -133,14 +133,17 @@
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
                         <button type="button" uib-tooltip="Activate to request information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button class="btn btn-default btn-circle hidden-xs search-button" type="button" uib-tooltip="Search"
+                                tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showSearch()"><i
+                                class="fa-search fa fa-lg"></i></button>
                     </div>
 
-                    <div class="input-group hidden-xs" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                    <div class="input-group hidden" id="map_search" ng-controller="SearchBoxCtrl as sb">
                         <form ng-submit="sb.search_es();">
-                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for ..."
+                            <div id="search-extend" style="height: 80px;">
+                                <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for ..."
                                    id="search_desktop" autocomplete="off">
-                            <br style="clear:both"/>
-                            <div id="search-extend">
+                                <br style="clear:both"/>
                                 <!--
                                 <div style="float: left; padding-top: 10px;">
                                   <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox

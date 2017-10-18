@@ -679,3 +679,9 @@ button.btn-loadmore:hover {
 #wetland_attribution_list a {
     color: white;
 }
+
+@media (max-width: 1360px) and (min-width: 768px) {
+    #wetland_legend {
+        top: 70px;
+    }
+}

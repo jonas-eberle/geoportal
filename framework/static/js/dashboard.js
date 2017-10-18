@@ -21,23 +21,23 @@ $('.dropdown-menu select, .dropdown-menu textearea').click(function(e) {
 });
 
 /* Additional JavaScript for search box */
-function opensearchextend() {
-  $( "#search-extend" ).animate({
-    height: 42
-  }, 500, function() {}); 
-}
-
-function closesearchextend() {
-  $( "#search-extend" ).delay(500).animate({
-    height: 0
-  }, 500, function() {}); 
-}
-
-$('#map_search').click(function(e) {
-    opensearchextend();
-});
-
-$('#map_search').mouseleave(function(e) {
-    closesearchextend();
-});
+// function opensearchextend() {
+//   $( "#search-extend" ).animate({
+//     height: 42
+//   }, 500, function() {});
+// }
+//
+// function closesearchextend() {
+//   $( "#search-extend" ).delay(500).animate({
+//     height: 0
+//   }, 500, function() {});
+// }
+//
+// $('#map_search').click(function(e) {
+//     opensearchextend();
+// });
+//
+// $('#map_search').mouseleave(function(e) {
+//     closesearchextend();
+// });
 /* End additional JavaScript for search box */

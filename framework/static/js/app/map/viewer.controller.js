@@ -5,8 +5,8 @@
         .module('webgisApp.map')
         .controller('MapViewerCtrl', MapViewerCtrl);
 
-    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$uibModal', '$rootScope', '$window', '$timeout', '$cookies', 'Attribution'];
-    function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $rootScope, $window, $timeout, $cookies, Attribution){
+    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$uibModal', '$window', '$timeout', '$cookies', 'Attribution'];
+    function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $window, $timeout, $cookies, Attribution){
         var mv = this;
 
         mv.data = mapviewer.data;
@@ -18,6 +18,7 @@
         // mv.legendLayers = [];
         mv.requestInfo = requestInfo;
         mv.selectedFeature = null;
+        mv.showSearch = showSearch;
         mv.visibility_state_wetland_layer = true;
         mv.zoomIn = zoomIn;
         mv.zoomMaxExtent = zoomMaxExtent;
@@ -413,6 +414,11 @@
                 mapviewer.pointFeatureLayer('featureRequest',"remove");
             }
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
+        }
+
+        function showSearch() {
+            var mapSearch = angular.element('#map_search');
+            mapSearch.toggleClass('hidden');
         }
 
         function zoomIn() {
