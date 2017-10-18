@@ -484,7 +484,7 @@
                         content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Detailed product information</h4><div><p></p>' +
                         '<p>All available datasets of a product are listed here below a short description of the product. Each layer can be added to the map using the checkbox in front of the layer name.</p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend (LSTT) 2000 to 2016</span> layer to the map.</p></div>'
+                        '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend (LSTT) 2000 to 2017</span> layer to the map.</p></div>'
                     }, // Show product layer
                     {
                         target       : '.sidebar',
