@@ -40,9 +40,9 @@
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
         <button ng-if="layer.story_line.length == 1" tooltip-placement="bottom"  uib-tooltip="Story line" type="button" ng-click="storyline.show_story_line(layer.story_line[0].story_line, layer.story_line[0].order)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-info fa-lg"></i></button>
-        <button ng-if="layer.story_line.length > 1" tooltip-placement="bottom"  uib-tooltip="Story line" type="button" ng-click="storyline.setVisibilityStoryLine()"
+        <button ng-if="layer.story_line.length > 1" tooltip-placement="bottom"  uib-tooltip="Storyline" type="button" ng-click="storyline.setVisibilityStoryLine()"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-info fa-lg"></i></button>
-        <div ng-if="show_story_lines">Story lines:</div>
+        <div ng-if="show_story_lines">Storylines:</div>
         <div ng-if="show_story_lines" ng-repeat="story_line in layer.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div>
         <!--<button tooltip-placement="bottom"  uib-tooltip="Remove layer" type="button"
                 ng-click="mcl.removeLayer(slc.layer.id, $index, slc.layer.django_id)" class="btn btn-default"

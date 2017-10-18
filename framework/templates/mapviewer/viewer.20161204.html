@@ -414,7 +414,7 @@
                                         <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
                                         <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
                                         <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
-                                        <div ng-if="wetlands.value.data.story_lines.length != 0"><h4>Story lines</h4>
+                                        <div ng-if="wetlands.value.data.story_lines.length != 0"><h4>Storylines</h4>
                                             <div ng-repeat="story_line in wetlands.value.data.story_lines" style="margin-left: 20px;">
                                                 <a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title}}</a>
                                             </div>
@@ -466,7 +466,7 @@
                                                 </uib-accordion-heading>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
-                                                    <p ng-if="product.story_line.length != 0"><strong>Story line(s):</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
+                                                    <p ng-if="product.story_line.length != 0"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                     <div class="products_datasets">
                                                         <strong>Layers:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">

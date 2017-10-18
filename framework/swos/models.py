@@ -1099,7 +1099,7 @@ class StoryLine(models.Model):
     authors = models.TextField(null=True, blank=True)
     wetland = models.ForeignKey(Wetland, null=True)
     story_line_file_name = models.CharField(max_length=50, blank=True, null=True, help_text="File name for download")
-    story_line_file = models.FileField("Story line file", upload_to='downloads', null=True, blank=True, help_text="Upload story line as pdf file")
+    story_line_file = models.FileField("Storyline file", upload_to='downloads', null=True, blank=True, help_text="Upload storyline as pdf file")
     active = models.BooleanField(default=False)
 
     def __unicode__(self):
