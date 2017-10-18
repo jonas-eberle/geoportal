@@ -30,7 +30,7 @@
                 'addexternallayer': false,
                 'canRequestFeatureInfo': false
             },
-            'maxExtent': [-10, 14, 60, 64],
+            'maxExtent': [0, 0, -11, 70],
 
             /* functions */
             'createMap': function(id) {
