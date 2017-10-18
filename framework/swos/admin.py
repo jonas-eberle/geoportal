@@ -10,15 +10,26 @@ import django
 from suit.sortables import SortableModelAdmin
 from suit.sortables import SortableTabularInline
 
+from webgis import settings
 
+from swos.search_es import LayerIndex, ExternalDatabaseIndex, WetlandIndex
+from swos.csw import create_update_csw, delete_csw
 
 
 def make_publishable(modeladmin, request, queryset):
     queryset.update(publishable=True)
+    for item in queryset:
+        item.save()
 make_publishable.short_description = "Mark selected layers as fit for publication"
 
 def make_unpublishable(modeladmin, request, queryset):
     queryset.update(publishable=False)
+    for item in queryset:
+        if settings.CSW_T == True:
+            delete_csw(item)
+        if settings.ELASTICSEARCH == True:
+            LayerIndex.get(id=item.id).delete()
+
 make_unpublishable.short_description = "Mark selected layers as unfit for publication"
 
 class WetlandLayerAdmin(LayersAdmin):
