@@ -81,7 +81,7 @@ class WetlandSearch(FacetedSearch):
 
         # spatial search (ignore_unmapped=True --> ignore indexes without geom)
         if (self._query["south"] and self._query["north"] and self._query["east"] and self._query["west"]):
-            search_query = q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO").filter(
+            search_query = q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO", operator="AND").filter(
                 'geo_shape', ignore_unmapped="True", geom=
                 {
                     "shape": {
@@ -93,7 +93,7 @@ class WetlandSearch(FacetedSearch):
                 }
             )
         else:
-            search_query = q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO")
+            search_query = q.query("multi_match", fields=self.fields, query=self._query["text"], fuzziness="AUTO", operator="AND")
 
         if (self._query["category"]):
             search_query = search_query.filter('term', category=self._query["category"])
