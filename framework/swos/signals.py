@@ -17,8 +17,8 @@ def keep_track_save(sender, instance, created, **kwargs):
         instance.indexing()
     if settings.ELASTICSEARCH == True and sender == Wetland:
         instance.indexing()
-        ext_db = ExternalDatabase.objects.filter(wetland_id = instance.id, publishable = True)
-        wetland_layer = WetlandLayer.objects.filter(wetland_id=instance.id, publishable = True).indexing()
+        ext_db = ExternalDatabase.objects.filter(wetland_id = instance.id)
+        wetland_layer = WetlandLayer.objects.filter(wetland_id=instance.id, publishable = True)
         for x in ext_db:
             x.indexing()
         for y in wetland_layer:
