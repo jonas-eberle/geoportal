@@ -282,8 +282,6 @@
             };
             
             mapviewer.addLayer(layer);
-            var layers = mapviewer.map.getLayers().getArray();
-            Attribution.refreshDisplay(layers);
             angular.element('#show_active_layer').click();            
         }
         

@@ -132,18 +132,20 @@
                         <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" uib-tooltip="Activate to request information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
-                        <button class="btn btn-default btn-circle hidden-xs search-button" type="button" uib-tooltip="Search"
+                        <button type="button" uib-tooltip="Activate to request information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" ng-disabled="!mv.data.canRequestFeatureInfo" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Show layer attribution" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showAttribution()"
+                                class="btn btn-default btn-circle attributions-button" ng-disabled="mv.layer_attribution == false || mv.layer_attribution == undefined"><i class="fa-copyright fa fa-lg"></i></button>
+                        <!--<button class="btn btn-default btn-circle hidden-xs hidden-sm" type="button" uib-tooltip="Search"
                                 tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showSearch()"><i
-                                class="fa-search fa fa-lg"></i></button>
+                                class="fa-search fa fa-lg"></i></button>-->
                     </div>
 
-                    <div class="input-group hidden" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                    <div class="input-group hidden-xs hidden-sm" id="map_search" ng-controller="SearchBoxCtrl as sb">
                         <form ng-submit="sb.search_es();">
-                            <div id="search-extend" style="height: 80px;">
-                                <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for ..."
-                                   id="search_desktop" autocomplete="off">
-                                <br style="clear:both"/>
+                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for ..."
+                                   id="search_desktop" autocomplete="off" ng-focus="mv.expandSearchBox()">
+                            <br style="clear:both"/>
+                            <div id="search-extend">
                                 <!--
                                 <div style="float: left; padding-top: 10px;">
                                   <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
@@ -163,7 +165,15 @@
                 <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
                 <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
 
-                    <div id="wetland_attribution"></div>
+                    <div id="wetland_attribution">
+                        <span ng-repeat="attribution in mv.layer_attribution">
+                            | &copy;
+                            <span ng-repeat="textpart in attribution">
+                                <a ng-if="textpart.url" href="{{ textpart.url }}" target="_blank" style="text-decoration-line: underline; color: #d6d6d6;">{{ textpart.text }}</a>
+                                <span ng-if="!textpart.url">{{ textpart.text }}</span>
+                            </span>
+                        </span>
+                    </div>
                     <div id="wetland_legend">
                         <svg width=" 270" height="40" xmlns="http://www.w3.org/2000/svg">
                         <rect x="155" y="27" width="25" height="10" style="fill:rgba(255, 255, 255, 0.4); stroke:#319FD3;" />

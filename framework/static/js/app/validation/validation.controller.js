@@ -105,7 +105,6 @@
         
         $scope.$on("mapviewer.alllayersremoved", function () {
             validation.layerIdMap = {};
-            attributionList();
         });
 
         $scope.$on('mapviewer.catalog_loaded', function () {
@@ -137,7 +136,6 @@
         $scope.$on("mapviewer.layerremoved", function ($broadcast, id) {
             if (id !== undefined && id !== null) {
                 validation.layerIdMap[id] = undefined;
-                attributionList();
             }
         });
 
@@ -480,7 +478,6 @@
                     }
                 });
             }
-            attributionList();
         }
 
         function addLayerToMap(layer, $event) {
@@ -577,12 +574,6 @@
                     }
                 });
             }
-            attributionList();
-        }
-
-        function attributionList() {
-            var layers = mapviewer.map.getLayers().getArray();
-            Attribution.refreshDisplay(layers);
         }
     }
 })();

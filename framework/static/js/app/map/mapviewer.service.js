@@ -176,7 +176,7 @@
                 layers.remove(this.baseLayers[this.currentBaseLayerIndex]);
                 layers.insertAt(0,layer);
                 this.currentBaseLayerIndex = index;
-                Attribution.refreshDisplay(layers.getArray());
+                Attribution.update(this.layers);
             },
             'getLayerById': function(id) {
                 return this.layers[id];
@@ -514,6 +514,7 @@
                 if (layer.max_zoom != null && layer.max_zoom < this.map.getView().getZoom()){
                     this.map.getView().setZoom(layer.max_zoom)
                 }
+                Attribution.update(this.layers);
                 return olLayer;
             },
             'getIndexFromLayer': function(title) {
@@ -539,6 +540,8 @@
                     this.layersMeta.splice(index, 1);
                     //this.selectInteraction.getFeatures().clear();
                     this.map.removeLayer(olLayer);
+                    // completely delete the layer object from layer list
+                    delete this.layers[id];
                     this.data.layersCount = this.data.layersCount-1;
                     $rootScope.$broadcast("mapviewer.layerremoved", olLayer.get("layerObj")["django_id"] || null);
 
@@ -562,10 +565,8 @@
                         $("#gmap").find("img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
                         $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
                     }
-                    
-                    var layers = this.map.getLayers().getArray();
-                    Attribution.refreshDisplay(layers);
 
+                    Attribution.update(this.layers);
                 }
             },
             'removeAllLayers': function() {

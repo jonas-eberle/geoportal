@@ -163,7 +163,7 @@ h4 {
     z-index: 1020;
 }
 
-@media (min-width: 1070px) {
+@media (min-width: 1360px) {
     #current {
         top: 65px;
     }
@@ -172,7 +172,7 @@ h4 {
 #map_icons {
     display: inline-block;
     left: auto;
-    margin-right: 20px;
+    margin-right: 5px;
     position: relative;
     top: auto;
     width: auto;
@@ -183,8 +183,19 @@ h4 {
     display: inline-block;
     max-width: 200px;
     position: absolute;
-    width: calc(100% - 350px);
+    /*width: calc(100% - 350px);*/
     z-index: 1025;
+}
+
+@media (min-width: 1360px) and (max-width: 1500px){
+    #map_search {
+        max-width: 130px;
+    }
+}
+
+#search_desktop {
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 #title-left {
@@ -200,16 +211,27 @@ h4 {
 }
 
 #wetland_attribution {
-    background-color: rgba(0,0,0,0.5);
-    color: white;
-    float: right;
-    position: absolute;
-    padding: 3px 10px;
-    right: 0;
-    text-align: right;
-    top: 0;
-    width: 100%;
-    z-index: 1022;
+    display: none;
+}
+
+@media (min-width: 1360px) {
+    #wetland_attribution {
+        background-color: rgba(0,0,0,0.5);
+        color: white;
+        display: block;
+        float: right;
+        left: 324px;
+        position: absolute;
+        padding: 3px 10px;
+        right: 0;
+        text-align: right;
+        top: 0;
+        z-index: 1022;
+    }
+
+    button.attributions-button {
+        display: none;
+    }
 }
 
 #wetland_opened .accordion .panel-body {
@@ -407,7 +429,7 @@ button.btn-loadmore:hover {
     z-index: 1020;
 }
 
-@media (min-width: 1070px) {
+@media (min-width: 1360px) {
     .toggle-button-wrapper {
         top: 74px;
     }
@@ -450,24 +472,24 @@ button.btn-loadmore:hover {
     height: 53px !important;
     position: absolute;
     top: 60px;
-    width: auto;
+    /*width: auto;*/
     z-index: 1029;
     padding-top: 10px;
 }
 
-@media (min-width: 768px) {
-    .map-controls-wrapper {
-        width: calc(100% - 400px);
-    }
-}
+/*@media (min-width: 768px) {*/
+    /*.map-controls-wrapper {*/
+        /*width: calc(100% - 400px);*/
+    /*}*/
+/*}*/
 
-@media (min-width: 1050px) {
-    .map-controls-wrapper {
-        right: 405px;
-        top: 70px;
-        width: 545px;
-    }
-}
+/*@media (min-width: 1050px) {*/
+    /*.map-controls-wrapper {*/
+        /*right: 405px;*/
+        /*top: 70px;*/
+        /*width: 545px;*/
+    /*}*/
+/*}*/
 
 @media (min-width: 1360px) {
     .map-controls-wrapper {

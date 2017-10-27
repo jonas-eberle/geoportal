@@ -291,28 +291,10 @@ body {
 
 #map_search {
     position: absolute;
-    right: 75px;
-    top: 60px;
+    /*right: 20px;*/
+    top: 10px;
     width: 300px;
     z-index: 1001;
-}
-
-@media (max-width: 1024px) {
-    #map_search {
-        right: 150px;
-    }
-}
-
-@media (max-width: 960px) {
-    #map_search {
-        right: 95px;
-    }
-}
-
-@media (max-width: 800px) {
-    button.search-button {
-        display: none;
-    }
 }
 
 .btn-circle {
@@ -613,11 +595,12 @@ input[type=checkbox]:checked + label:before {
 
 #search-extend {
     background: #eee;
-    border-radius: 4px;
+    border-radius: 0 0 4px 4px;
     height: 0;
     margin-top: -2px;
     overflow: hidden;
-    padding: 5px 10px 0;
+    padding: 0 10px;
+    width: 200px;
 }
 
 .date_end .dropdown-menu, .date_start .dropdown-menu {

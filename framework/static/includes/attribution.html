@@ -1,0 +1,17 @@
+<div modal-draggable class="modal-header">
+    <h1>{{ mi.title }}</h1>
+</div>
+<div class="modal-body metadataModal">
+    <p ng-repeat="attribution in mi.value_passed.attributionList">
+        &copy;
+        <span ng-repeat="textpart in attribution">
+            <a ng-if="textpart.url" href="{{ textpart.url }}" target="_blank" style="text-decoration-line: underline;">{{ textpart.text }}</a>
+            <span ng-if="!textpart.url">{{ textpart.text }}</span>
+        </span>
+    </p>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="mi.close()">
+        Close
+    </button>
+</div>

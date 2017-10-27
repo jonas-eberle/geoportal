@@ -32,7 +32,6 @@
 
         $scope.$on("mapviewer.alllayersremoved", function () {
             wetlands.layerIdMap = {};
-            attributionList();
         });
 
         $scope.$on('mapviewer.catalog_loaded', function () {
@@ -157,7 +156,6 @@
         $scope.$on("mapviewer.layerremoved", function ($broadcast, id) {
             if (id !== undefined && id !== null) {
                 wetlands.layerIdMap[id] = undefined;
-                attributionList();
             }
         });
 
@@ -268,12 +266,6 @@
                     }
                 });
             }
-            attributionList();
-        }
-
-        function attributionList() {
-            var layers = mapviewer.map.getLayers().getArray();
-            Attribution.refreshDisplay(layers);
         }
 
         // function changeWetlandFeatureStyle() {

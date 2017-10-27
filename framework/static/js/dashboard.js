@@ -20,7 +20,7 @@ $('.dropdown-menu select, .dropdown-menu textearea').click(function(e) {
     e.stopPropagation();
 });
 
-/* Additional JavaScript for search box */
+// /* Additional JavaScript for search box */
 // function opensearchextend() {
 //   $( "#search-extend" ).animate({
 //     height: 42
@@ -33,11 +33,11 @@ $('.dropdown-menu select, .dropdown-menu textearea').click(function(e) {
 //   }, 500, function() {});
 // }
 //
-// $('#map_search').click(function(e) {
+// $('#search_desktop').on('focus', function(e) {
 //     opensearchextend();
 // });
 //
-// $('#map_search').mouseleave(function(e) {
+// $('#search_desktop').on('blur', function(e) {
 //     closesearchextend();
 // });
 /* End additional JavaScript for search box */

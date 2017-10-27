@@ -12,13 +12,16 @@
         mv.data = mapviewer.data;
         mv.changeSitesVisibility = changeSitesVisibility;
         mv.closeCookieNote = closeCookieNote;
+        mv.collapseSearchBox = collapseSearchBox;
+        mv.expandSearchBox = expandSearchBox;
+        mv.hasAttribution = false;
         mv.hideCookieNote = false;
         mv.infoEventKey = null;
         mv.infoStatus = false;
         // mv.legendLayers = [];
         mv.requestInfo = requestInfo;
         mv.selectedFeature = null;
-        mv.showSearch = showSearch;
+        mv.showAttribution = showAttribution;
         mv.visibility_state_wetland_layer = true;
         mv.zoomIn = zoomIn;
         mv.zoomMaxExtent = zoomMaxExtent;
@@ -28,6 +31,7 @@
 
         $scope.$on('attribution_list_new', function (){
             mv.layer_attribution = Attribution.getList();
+            mv.hasAttribution = (mv.layer_attribution.length > 0)
         });
 
         $scope.$on('current_wetland_id', function ($broadCast, id) {
@@ -253,6 +257,33 @@
             mv.hideCookieNote =  true;
         }
 
+        function collapseSearchBox(event) {
+            var searchInput = $('#search_desktop');
+            $( "#search-extend" ).delay(500).animate({
+                height: 0
+            }, 0, function() {
+                if (event.data.shouldCollapseInput) {
+                    searchInput.css('width', '');
+                }
+            });
+
+            searchInput.off('blur');
+        }
+
+        function expandSearchBox() {
+            var shouldCollapseInput = false;
+            var searchInput = $('#search_desktop');
+            if (searchInput.css('width') === '130px') {
+                searchInput.css('width', '200px');
+                shouldCollapseInput = true;
+            }
+
+            $( "#search-extend" ).animate({
+                height: 42
+            }, 0, function() {});
+            searchInput.on('blur', {shouldCollapseInput: shouldCollapseInput}, mv.collapseSearchBox);
+        }
+
         function requestInfo() {
 
             if (mv.infoStatus === false) {
@@ -416,9 +447,20 @@
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
         }
 
-        function showSearch() {
-            var mapSearch = angular.element('#map_search');
-            mapSearch.toggleClass('hidden');
+        function showAttribution() {
+            var attributionList = Attribution.getList();
+            console.log(attributionList);
+
+            $modal.open({
+                bindToController: true,
+                controller: 'ModalInstanceCtrl',
+                controllerAs: 'mi',
+                templateUrl: subdir+'/static/includes/attribution.html',
+                resolve: {
+                    data: function() { return {attributionList: attributionList}; },
+                    title: function() {return 'Layer Attribution';}
+                }
+            });
         }
 
         function zoomIn() {
