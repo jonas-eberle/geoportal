@@ -116,13 +116,26 @@
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
                         <button type="button" uib-tooltip="Activate to request pixel information (click on map)" tooltip-placement="bottom" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus, 'disabled': !mv.data.canRequestFeatureInfo}" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Show layer attribution" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showAttribution()"
+                                class="btn btn-default btn-circle attributions-button" ng-disabled="mv.layer_attribution == false || mv.layer_attribution == undefined"><i class="fa-copyright fa fa-lg"></i></button>
+                        <!--<button class="btn btn-default btn-circle hidden-xs hidden-sm" type="button" uib-tooltip="Search"
+                                tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showSearch()"><i
+                                class="fa-search fa fa-lg"></i></button>-->
                     </div>
                 <!-- /input-group -->
                 </div>
                 <div id="gmap" class="col-sm-9 col-md-9 col-xs-12 main"></div>
                 <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
 
-                    <div id="wetland_attribution"></div>
+                    <div id="wetland_attribution">
+                        <span ng-repeat="attribution in mv.layer_attribution">
+                            | &copy;
+                            <span ng-repeat="textpart in attribution">
+                                <a ng-if="textpart.url" href="{{ textpart.url }}" target="_blank" style="text-decoration-line: underline; color: #d6d6d6;">{{ textpart.text }}</a>
+                                <span ng-if="!textpart.url">{{ textpart.text }}</span>
+                            </span>
+                        </span>
+                    </div>
                     <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
 
                     <div id="map_legend"></div>
