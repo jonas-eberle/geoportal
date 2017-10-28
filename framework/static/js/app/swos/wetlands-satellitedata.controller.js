@@ -33,8 +33,8 @@
           };
         });
 
-    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile', 'Attribution'];
-    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile, Attribution) {
+    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile', 'Attribution', '$timeout'];
+    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile, Attribution, $timeout) {
         var wsdc = this;
 
         wsdc.data = {'features':[]};
@@ -269,7 +269,7 @@
                 bootbox.alert('No WMS layer available');
                 return false;
             }
-            
+
             var layer = {
                 ogc_type: 'WMS',
                 ogc_link: scene['senhub_wms_url'].replace('/wfs/', '/wms/'),
@@ -282,7 +282,18 @@
             };
 
             mapviewer.addLayer(layer);
-            angular.element('#show_active_layer').click();            
+
+            //allways open and close
+            if (mapviewer.data.layersCount == 1) {
+            }
+            else {
+                $timeout(function () {
+                    angular.element('#show_active_layer').click();
+                    $timeout(function () {
+                        angular.element('#show_active_layer').click();
+                    }, 3000);
+                });
+            }
         }
         
         function changeWMSLayerStyle(scene) {
