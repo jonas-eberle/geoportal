@@ -8,9 +8,17 @@
    <gmd:parentIdentifier>
        <gco:CharacterString>{{ parent_identifier }}</gco:CharacterString>
    </gmd:parentIdentifier>
-   <gmd:language>
-     <gco:CharacterString>{{layer.language}}</gco:CharacterString>
-   </gmd:language>
+    {% if layer.meta_language %}
+        <gmd:language>
+            <gco:CharacterString>{{ layer.meta_language }}</gco:CharacterString>
+        </gmd:language>
+    {% else %}
+        <language>
+            <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng" codeSpace="ISO639-2">eng</LanguageCode>
+        </language>
+    {% endif %}
+
+
    <gmd:characterSet>
      <gmd:MD_CharacterSetCode codeSpace="ISOTC211/19115" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="{{ layer.characterset }}">{{ layer.characterset }}</gmd:MD_CharacterSetCode>
    </gmd:characterSet>
@@ -94,7 +102,6 @@
    <gmd:metadataStandardVersion>
      <gco:CharacterString>ISO 19115:2003</gco:CharacterString>
    </gmd:metadataStandardVersion>
-   <gmd:spatialRepresentationInfo />
 
     {% if layer.dataset_epsg  %}
     <gmd:referenceSystemInfo>
@@ -156,6 +163,16 @@
              </gmd:CI_Date>
            </gmd:date>
            {% endif %}
+             <gmd:identifier>
+                 <gmd:RS_Identifier>
+                     <gmd:code>
+                         <gco:CharacterString>{{ layer.identifier }}</gco:CharacterString>
+                     </gmd:code>
+                     <gmd:codeSpace>
+                         <gco:CharacterString>{{ parent_identifier }}</gco:CharacterString>
+                     </gmd:codeSpace>
+                 </gmd:RS_Identifier>
+             </gmd:identifier>
          </gmd:CI_Citation>
        </gmd:citation>
        <gmd:abstract>
@@ -360,8 +377,19 @@
          <gmd:MD_SpatialRepresentationTypeCode codeSpace="ISOTC211/19115" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_SpatialRepresentationTypeCode" codeListValue="{{layer.representation_type.identifier}}">{{layer.representation_type.identifier}}</gmd:MD_SpatialRepresentationTypeCode>
        </gmd:spatialRepresentationType>
      {%  endif %}
-       <gmd:language><gmd:LanguageCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#LanguageCode" codeListValue="eng">eng</gmd:LanguageCode></gmd:language>
-       {% for topicCategory in layer.topicCategory %}
+     {% if layer.language %}
+        <gmd:language>
+            <gco:CharacterString>{{ layer.language }}</gco:CharacterString>
+        </gmd:language>
+     {% else %}
+        <language>
+            <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng" codeSpace="ISO639-2">eng</LanguageCode>
+        </language>
+     {% endif %}
+       <gmd:characterSet>
+         <gmd:MD_CharacterSetCode codeSpace="ISOTC211/19115" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+       </gmd:characterSet>
+        {% for topicCategory in layer.topicCategory %}
        <gmd:topicCategory>
          <gmd:MD_TopicCategoryCode>{{topicCategory.identifier}}</gmd:MD_TopicCategoryCode>
        </gmd:topicCategory>
