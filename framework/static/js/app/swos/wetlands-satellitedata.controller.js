@@ -276,11 +276,11 @@
                 ogc_layer: scene['senhub_wms_layers'].split(',')[0],
                 title: scene['dataset'] + ': ' + scene['senhub_wms_time'].split('/')[0],
                 layers: scene['senhub_wms_layers'].split(','),
-                ogc_attribution: '<a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+                ogc_attribution: '(http://www.sentinel-hub.com, Sentinel Hub)',
                 selectedDate: scene['senhub_wms_time'].split('/')[0],
                 source: 'sentinelhub'
             };
-            
+
             mapviewer.addLayer(layer);
             angular.element('#show_active_layer').click();            
         }
