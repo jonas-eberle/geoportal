@@ -1,6 +1,10 @@
 <div modal-draggable class="modal-header"><h1>{{ es_srm.title }}</h1></div>
+
 <div class="modal-body searchresults">
     <div>
+        <button  class="btn btn-default btn-sm filter-items" ng-if="es_srm.wetland_id"
+                ng-click="es_srm.removeFilter('spatial_wetland')" uib-tooltip="Filtered by spatial extent" tooltip-append-to-body="true" ><i class="fa fa-map-marker" aria-hidden="true" style="padding-right: 5px;"></i>{{ es_srm.wetland_name }}<span
+                class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>
         <button class="btn btn-default btn-sm filter-items" ng-if="es_srm.filterCategory"
                 ng-click="es_srm.removeFilter('category')">{{ es_srm.filterCategory }}<span
                 class="glyphicon glyphicon-remove" style="padding-left: 5px;"></span></button>

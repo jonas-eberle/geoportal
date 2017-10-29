@@ -5,8 +5,8 @@
         .module('webgisApp.csw')
         .service('csw', csw);
 
-    csw.$inject = ['djangoRequests', '$uibModal', '$timeout'];
-    function csw(djangoRequests, $modal, $timeout) {
+    csw.$inject = ['djangoRequests', '$uibModal'];
+    function csw(djangoRequests, $modal) {
         var service = {
             'server': null,
             'setMapViewer': function(id) {
@@ -63,7 +63,7 @@
                      });
                  });
              },
-            'search_es': function(text) {
+            'search_es': function(text, wetland) {
                 if (parseInt(this.server) === 0) {
                     bootbox.alert('Server ID is not valid!');
                     return false;
@@ -87,7 +87,7 @@
                 var searchData = {"text":text};
                 $('#loading-div').show();
                 djangoRequests.request({
-                    url: '/swos/searchresult.json?search_text=' + text,
+                    url: '/swos/searchresult.json?search_text=' + text + '&wetland_id=' + wetland.id,
                     method: 'GET'
                 }).then(function (data) {
                     $('#loading-div').hide();
@@ -101,8 +101,8 @@
                         resolve: {
                             title: function () {return 'Search results for: ' + text;},
                             results: function () {return data;},
-                            searchData: function () {return searchData;
-                            }
+                            searchData: function () {return searchData;},
+                            wetland: function () {return wetland}
                         }
                     }).rendered.then(function () {
                         $('.modal-backdrop').remove();

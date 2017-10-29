@@ -5,8 +5,8 @@
         .module('webgisApp.csw')
         .controller('ESSearchResultsModalCtrl', ESSearchResultsModalCtrl);
 
-    ESSearchResultsModalCtrl.$inject = ['csw', 'mapviewer', '$uibModal', 'djangoRequests',  'results', 'title', 'searchData', 'WetlandsService', '$timeout', '$uibModalInstance'];
-    function ESSearchResultsModalCtrl(csw, mapviewer, $modal, djangoRequests,  results, title, searchData, WetlandsService, $timeout, $modalInstance) {
+    ESSearchResultsModalCtrl.$inject = ['csw', 'mapviewer', '$uibModal', 'djangoRequests',  'results', 'title', 'searchData', 'wetland', 'WetlandsService', '$timeout', '$uibModalInstance'];
+    function ESSearchResultsModalCtrl(csw, mapviewer, $modal, djangoRequests,  results, title, searchData, wetland, WetlandsService, $timeout, $modalInstance) {
         var es_srm = this;
 
         es_srm.addLayerToMap = addLayerToMap;
@@ -22,6 +22,9 @@
         //es_srm.filterKeyword = filterKeyword;
         //es_srm.search = search;
         es_srm.title = title;
+        es_srm.wetland = wetland;
+        es_srm.wetland_name = wetland.name;
+        es_srm.wetland_id = wetland.id;
         es_srm.layer_list = [];
         es_srm.filterCategory = "";
         es_srm.filterTopiccat = "";
@@ -219,6 +222,9 @@
             if (group == "ecoregion") {
                 es_srm.filtereEoregion = "";
             }
+            if (group == "spatial_wetland"){
+                es_srm.wetland_id = "";
+            }
 
             es_srm.filteredGroups[group] = 0;
 
@@ -229,7 +235,7 @@
 
         function requestResult() {
             djangoRequests.request({
-                url: '/swos/searchresult.json?search_text=' + es_srm.searchData.text + '&category=' + es_srm.filterCategory + '&keywords=' + es_srm.filterKeywords + '&topiccat=' + es_srm.filterTopiccat + '&wetland=' + es_srm.filterWetland + '&product_name=' + es_srm.filterProductName + '&ecoregion=' + es_srm.filtereEoregion + '&contact_person=' + es_srm.filterContactPerson + '&contact_org=' + es_srm.filterContactOrg + '&indicator_name=' + es_srm.filterIndicatorName
+                url: '/swos/searchresult.json?search_text=' + es_srm.searchData.text + '&category=' + es_srm.filterCategory + '&keywords=' + es_srm.filterKeywords + '&topiccat=' + es_srm.filterTopiccat + '&wetland=' + es_srm.filterWetland + '&product_name=' + es_srm.filterProductName + '&ecoregion=' + es_srm.filtereEoregion + '&contact_person=' + es_srm.filterContactPerson + '&contact_org=' + es_srm.filterContactOrg + '&indicator_name=' + es_srm.filterIndicatorName + '&wetland_id=' + es_srm.wetland_id
                 ,
                 method: 'GET'
             }).then(function (data) {

@@ -133,7 +133,7 @@
 
 
                     wetland_service.selectFeature(wetland.id);
-                    $rootScope.$broadcast("wetland_loaded");
+                    $rootScope.$broadcast("wetland_loaded",wetland);
                     wetland_service.data.activeTab = 1;
                     if (typeof(callback)  === 'function') {
                         callback();
@@ -313,19 +313,7 @@
                         }
                     }, 0, false);
                 }
-            },
-            selectExternal: function (ext_db_id) {
-
-                var ext_id = "#externaldb_" + ext_db_id;
-
-                if ($(ext_id).closest('.panel').parents().eq(4).find('i')[0].className.includes("glyphicon-chevron-right")) {
-                    $(ext_id).closest('.panel').parents().eq(4).find('a').first().trigger('click'); //open parent accordion
-                }
-                if ($(ext_id).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
-                    $(ext_id).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
-                }
-
-            },
+            }
 
         };
         return service;

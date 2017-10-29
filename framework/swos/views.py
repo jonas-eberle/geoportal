@@ -16,6 +16,7 @@ from django.template.response import TemplateResponse
 from django.http import StreamingHttpResponse
 from django.db.models import Q
 from django.db import connection
+from django.contrib.gis.db.models import Extent
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -649,6 +650,7 @@ class Elasticsearch(APIView):
         search["contact_person"] = False
         search["contact_org"] = False
         search["ecoregion"] = False
+        search["wetland_id"] = False
 
         search["text"] = request.query_params.get("search_text")
         search["category"] = request.query_params.get("category")
@@ -661,10 +663,14 @@ class Elasticsearch(APIView):
         search["contact_org"] = request.query_params.get("contact_org")
         search["ecoregion"] = request.query_params.get("ecoregion")
 
-        #search["east"] = 5.0
-        #search["west"] = 4.0
-        #search["north"] = 60.0
-        #search["south"] = 20.0
+        search["wetland_id"] = request.query_params.get("wetland_id")
+        if (search["wetland_id"] and search["wetland_id"] != "undefined"):
+            wetland = Wetland.objects.filter(pk = search["wetland_id"]).aggregate(Extent('geom'))
+            search["east"] = wetland['geom__extent'][2]
+            search["west"] = wetland['geom__extent'][0]
+            search["north"] = wetland['geom__extent'][3]
+            search["south"] =wetland['geom__extent'][1]
+
         ws = WetlandSearch(search)
         count = ws.count()  # Total count of result)
         response = ws[0:count].execute()  # default size is 10 -> set size to total count
