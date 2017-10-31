@@ -5,33 +5,37 @@
         .module('webgisApp.validation')
         .controller('ValidationCtrl', ValidationCtrl);
 
-    ValidationCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'TrackingService', '$location', 'Attribution', 'lulcLegend'];
-    function ValidationCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, TrackingService, $location, Attribution, lulcLegend) {
+    ValidationCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'TrackingService', '$location', 'Attribution', 'lulcLegend', '$compile'];
+    function ValidationCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, TrackingService, $location, Attribution, lulcLegend, $compile) {
         var proceed = true;
         var validation = this;
         validation.tabs = {activeTab: -1};
         validation.loadValidationLayer = loadValidationLayer;
-        
+
         validation.loaded = false;
         validation.data = [];
-        
+
         // add segment highlight overlay
-        validation.getFeatureRequestInfoURL = getFeatureRequestInfoURL; 
+        validation.getFeatureRequestInfoURL = getFeatureRequestInfoURL;
         validation.showValidationWindow = showValidationWindow;
         validation.dialog_pos = null;
         validation.segmentListType = '';
         validation.segments = {'features':[]};
         validation.showSegment = showSegment;
         validation.segmentsMaxFeatures = 5;
-        
+        validation.setClass = setClass;
+
+
+        validation.legend_list = [];
+
         $scope.$watch('validation.segmentListType', function() {
             if (validation.segmentListType == '') {
                 return;
             }
             validation.loadSegments(0, 1);
         });
-        
-        validation.loadSegments = loadSegments; 
+
+        validation.loadSegments = loadSegments;
         function loadSegments(start, page) {
             $('#loading-div').show();
             djangoRequests.request({
@@ -52,7 +56,7 @@
                 bootbox.alert('<h1>Error while loading segments</h1>');
             })
         }
-        
+
         validation.segmentsPaging = segmentsPaging;
         function segmentsPaging(type) {
             var page = validation.segmentsCurrentPage;
@@ -66,16 +70,16 @@
             }
             var start = (page-1) * validation.segmentsMaxFeatures;
             validation.loadSegments(start, page);
-            
+
         }
-        
+
         function showSegment(segment) {
             var response = angular.copy(validation.segments);
             response.features = [segment];
             response.totalFeatures = 1;
             validation.showValidationWindow(response, true);
         }
-        
+
         validation.changeMapStyle = changeMapStyle;
         function changeMapStyle(event) {
             if (validation.validation_layer_ol == null) {
@@ -91,18 +95,18 @@
                 source.updateDimensions({'style': ''});
             }
         }
-        
+
         validation.exportSegments = exportSegments;
         function exportSegments() {
             window.location.href = '/validation/segments/export?layer='+validation.layer.ogc_layer;
-        }        
-        
+        }
+
         validation.addLayerToMap = addLayerToMap;
-        validation.addVallLayerToMap = addVallLayerToMap; 
+        validation.addVallLayerToMap = addVallLayerToMap;
         // we need a mapping between the django_id and the hash-like id of a layer to access it in mapviewer.layers
         validation.layerIdMap = {};
         validation.layers = mapviewer.layers;
-        
+
         $scope.$on("mapviewer.alllayersremoved", function () {
             validation.layerIdMap = {};
         });
@@ -140,35 +144,35 @@
         });
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         function loadValidationLayer(site_id, layer) {
             // remove other layers
             mapviewer.removeAllLayers();
             validation.layerIdMap = {};
-            
+
             // reset variables
             validation.segmentListType = '';
             validation.segments = {'features':[]};
-            
+
             // open tab
             validation.layer = layer;
             validation.tabs.activeTab = 1;
-            
+
             // TODO: add site boundaries to map using site_id
-            
+
             // add validation layer to map
             validation.background_layer_ol = mapviewer.addLayer(layer.background_layer);
             var layerObjBG = validation.background_layer_ol.get("layerObj");
             validation.layerIdMap[layerObjBG.django_id] = layerObjBG.id;
-            
+
             validation.validation_layer_ol = mapviewer.addLayer(layer);
-            validation.validation_layer_ol.getSource().on('tileloadend', function(event) { 
+            validation.validation_layer_ol.getSource().on('tileloadend', function(event) {
                  $('#loading-div').hide();
             } );
-            
+
             var layerObj = validation.validation_layer_ol.get("layerObj");
             validation.layerIdMap[layerObj.django_id] = layerObj.id;
-            
+
             validation.parser = new ol.format.GeoJSON();
             validation.highlightOverlay = new ol.layer.Vector({
                   style: new ol.style.Style({
@@ -181,27 +185,27 @@
                   source: new ol.source.Vector(),
                   map: mapviewer.map
             });
-            
+
             mapviewer.map.on('singleclick', function(evt) {
               var url = validation.getFeatureRequestInfoURL(evt, validation.validation_layer_ol);
-              
+
               $('#loading-div').show();
               djangoRequests.request({
                 'method': "GET",
                 'url'   : url
-              }).then(function (response) {                
+              }).then(function (response) {
                     validation.showValidationWindow(response, false);
               }, function () {
                     $('#loading-div').hide();
                     bootbox.alert('<h1>Error while loading feature info</h1>');
               });
             });
-            
+
             var layerExtent = [layer.west, layer.south, layer.east, layer.north];
             layerExtent = ol.proj.transformExtent(layerExtent, 'EPSG:4326', mapviewer.map.getView().getProjection().getCode());
             mapviewer.map.getView().fit(layerExtent);
         }
-        
+
         function showValidationWindow(response, zoomto) {
             var epsg = -1;
             var features = validation.parser.readFeatures(response);
@@ -210,7 +214,7 @@
                 bootbox.alert('No features found. Please select one in the map!');
                 return true;
             }
-            
+
             var feature = response.features[0];
             try {
                 var crs = response.crs.properties.name;
@@ -247,39 +251,73 @@
             } catch(e) {
                 console.log(e);
             }
-            
+
             var output = '<table>';
             output += '<tr><td>Segment ID:</td><td>'+feature.properties.SEGMENT_ID+'</td></tr>';
             output += '<tr><td>ValID:</td><td>'+feature.properties.ValID+'</td></tr>';
-            
+
             var legend;
             if (validation.layer.hasOwnProperty('legend')) {
                 legend = lulcLegend[validation.layer.legend]
             }
-            
+
+            $scope.legend_list = legend;
+
             var select = '<select name="valcode" id="valcode">';
             select += '<option value="-1">== No class ==</option>\n';
+            var text_list = [];
+
             $.each(legend, function(key, value){
-                if (parseInt(value[0]) === parseInt(feature.properties.ValCode)) {
-                    select += '<option value="'+value[0]+'" selected="selected" style="color:'+value[2]+'">'+value[1]+'</option>\n';
+                if (parseInt(value[1]) === parseInt(feature.properties.ValCode)) {
+                    select += '<option value="'+value[1]+'" selected="selected" style="color:'+value[3]+'">'+value[2]+'</option>\n';
                 } else {
-                    select += '<option value="'+value[0]+'" style="color:'+value[2]+'">'+value[1]+'</option>\n';
+                    select += '<option value="'+value[1]+'" style="color:'+value[3]+'">'+value[2]+'</option>\n';
                 }
-            })
+
+                if (key == 0){}
+                else {
+                    if (value[0] == 1){
+                       text_list[1] = value[2];
+                    }
+                    else if ( $scope.legend_list[key - 1][0] < value[0]) {
+                        text_list[value[0]] = text_list[value[0]-1] + " " + $scope.legend_list[key - 1][2];
+                        value[4] = text_list[value[0]];
+                        $scope.legend_list[key] = value;
+                    }
+                    else if ($scope.legend_list[key - 1][0] < value[0]) {
+                        value[4] = text_list[value[0]];
+                        $scope.legend_list[key] = value;
+                    }
+                    else if ($scope.legend_list[key - 1][0] == value[0]) {
+                        value[4] = text_list[value[0]];
+                        $scope.legend_list[key] = value;
+                    }
+                }
+            });
+
+
             select += '</select>';
             output += '<tr><td>ValCode:</td><td>'+select+'</td></tr>';
-            
+
             output += '</table>';
-            
+                $scope.selectedClass = 0;
+            output += '' +
+                '<input type="text" ng-model="search" placeholder="Filter by ...">' +
+                '<table ng-controller="ValidationCtrl as val"><tr  ng-repeat="item in legend_list | filter: search">' +
+                '<td class="legend-color" ng-attr-style="background-color:{{ item[3] }};" style="background-color:#be0000;">&nbsp;</td>' +
+                '<td><div id="legend_{{item[1]}}" ng-click="val.setClass(item[1])" class="level_{{item[0]}}">{{item[2]}}</div><div id="level_{{item[1]}}" style="display:None;">{{item[4]}}</div></td>' +
+                '</tr>' +
+                '</table></div>';
+
             try {
                 if (validation.dialog != null) {
                     validation.dialog_pos = $('.modal-content', validation.dialog).position();
                 }
                 validation.dialog.modal('hide');
             } catch(e) {}
-            
+
             $('#loading-div').hide();
-            
+
             var buttons = {
                 savenext: {
                     label: "Save & Next",
@@ -291,7 +329,7 @@
                         params['feature_id'] = feature.id;
                         params['val_code'] = $('#valcode').val();
                         params['val_id'] = feature.properties.ValID;
-                        
+
                         $('#loading-div').show();
                         djangoRequests.request({
                             'method': 'GET',
@@ -315,7 +353,7 @@
                             $('#loading-div').hide();
                             bootbox.alert('<h1>Error while updating feature</h1>');
                         });
-                        
+
                         return false;
                     }
                 },
@@ -328,7 +366,7 @@
                         params['layer'] = validation.layer.ogc_layer;
                         params['feature_id'] = feature.id;
                         params['val_code'] = $('#valcode').val();
-                        
+
                         $('#loading-div').show();
                         djangoRequests.request({
                             'method': 'GET',
@@ -346,7 +384,7 @@
                             $('#loading-div').hide();
                             bootbox.alert('<h1>Error while updating feature</h1>');
                         });
-                        
+
                         return false;
                     }
                 },
@@ -360,14 +398,16 @@
                     }
                 }
             };
-            
+
             if (feature.properties.ValID == null) {
                 delete buttons['savenext'];
             }
-            
+
+            var output_simple = '<div id="validation"></div>';
+
             validation.dialog = bootbox.dialog({
                 title: 'Segment ID: ' + feature.properties.SEGMENT_ID,
-                message: output,
+                message: output_simple,
                 backdrop: false,
                 closeButton: false,
                 buttons: buttons,
@@ -375,6 +415,8 @@
                     console.log('This was logged in the callback: ' + result);
                 }
             });
+
+            angular.element('#validation').append($compile(output)($scope));
 
             validation.dialog.removeClass('modal').addClass('mymodal').drags({handle: '.modal-header'});
             if (validation.dialog_pos == null) {
@@ -387,7 +429,11 @@
                 $('.modal-content', validation.dialog).css('left', validation.dialog_pos.left).css('top', validation.dialog_pos.top);
             }
         }
-        
+
+        function setClass(id, text){
+            $('#valcode').val(id);
+        }
+
         function getFeatureRequestInfoURL(evt, layer) {
             var viewResolution = mapviewer.map.getView().getResolution();
             var source = layer.getSource();
@@ -401,26 +447,26 @@
                 var tilegrid = source.getTileGrid();
                 var tileResolutions = tilegrid.getResolutions();
                 var zoomIdx, diff = Infinity;
-                
+
                 for (var i = 0; i < tileResolutions.length; i++) {
                     var tileResolution = tileResolutions[i];
                     var diffP = Math.abs(resolution - tileResolution);
-                    
+
                     if (diffP < diff) {
                         diff = diffP;
                         zoomIdx = i;
                     }
-                    
+
                     if (tileResolution < resolution) {
                         break;
                     }
                 }
-                
+
                 //Getting parameters
                 //Reference: OpenLayers.Layer.WMTS.getTileInfo
                 var tileSize = tilegrid.getTileSize(zoomIdx);
                 var tileOrigin = tilegrid.getOrigin(zoomIdx);
-                
+
                 var fx = (evt.coordinate[0] - tileOrigin[0]) / (resolution * tileSize);
                 var fy = (tileOrigin[1] - evt.coordinate[1]) / (resolution * tileSize);
                 var tileCol = Math.floor(fx);
@@ -429,7 +475,7 @@
                 var tileJ = Math.floor((fy - tileRow) * tileSize);
                 var matrixIds = tilegrid.getMatrixIds()[zoomIdx];
                 var matrixSet = source.getMatrixSet();
-                
+
                 var params = {
                     SERVICE: 'WMTS',
                     REQUEST: 'GetFeatureInfo',
@@ -449,15 +495,15 @@
             }
             return '/layers/data?url='+encodeURIComponent(url);
         }
-        
+
         function addVallLayerToMap(layer, $event) {
             var checkbox = $event.target;
             if (checkbox.checked) {
                 validation.validation_layer_ol = mapviewer.addLayer(layer);
-                validation.validation_layer_ol.getSource().on('tileloadend', function(event) { 
+                validation.validation_layer_ol.getSource().on('tileloadend', function(event) {
                      $('#loading-div').hide();
                 } );
-                
+
                 var layerObj = validation.validation_layer_ol.get("layerObj");
                 validation.layerIdMap[layerObj.django_id] = layerObj.id;
             } else {
