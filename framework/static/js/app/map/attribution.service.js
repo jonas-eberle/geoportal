@@ -37,7 +37,7 @@
             // extract all URLs from attributions and prepare them for the view
             var urlList = rawAttributionList.map(function(attr) {
                 // extract the URLs looking like (url, text)
-                var urlPatterns = attr.match(/\(https?:\/\/(\w+[\w-]*\.)+\w+[\w\/\-?=&#%]*, ?\w[\w ]+\)/g);
+                var urlPatterns = attr.match(/\(https?:\/\/(?:\w+[\.\-]\w+)+[\w\/\-?=&#%]*, ?\w[\w ]+\)/g);
 
                 // if there is no URL, simply return null
                 if (!urlPatterns) {
@@ -58,7 +58,7 @@
             attributionList = [];
             for (var attrIndex = 0; attrIndex < rawAttributionList.length; attrIndex++) {
                 // split a complete, raw attribution string at the contained URLs
-                var splitparts = rawAttributionList[attrIndex].split(/\(https?:\/\/(?:\w+[\w-]*\.)+\w+[\w\/\-?=&#%]*, ?\w[\w ]+\)/);
+                var splitparts = rawAttributionList[attrIndex].split(/\(https?:\/\/(?:\w+[\.\-]\w+)+[\w\/\-?=&#%]*, ?\w[\w ]+\)/);
 
                 if (splitparts.length === 1) {
                     // there was no URL in the attribution string
