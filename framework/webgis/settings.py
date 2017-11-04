@@ -239,5 +239,9 @@ ELASTICSEARCH = False #true: active , empty/false: deactivated
 ELASTICSEARCH_HOSTS = ['ANPASSEN'] 
 
 ##################################################
+# Data download
+
+DATA_ROOT = 'ANPASSEN'
+##################################################
 # END
 ##################################################
