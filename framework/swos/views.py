@@ -8,6 +8,7 @@ import requests
 import sqlite3 as sdb
 import uuid
 import glob
+import zipfile
 from datetime import datetime
 
 from django.shortcuts import render
@@ -741,6 +742,179 @@ class Elasticsearch(APIView):
 
         return Response(finalJSON)
 
+
+class ListFilesForDownload(APIView):
+
+    def get_layer_files(self):
+        file_size_list = dict()
+        download_files = DownloadFiles()
+
+        #list for one layer
+        #layers = [WetlandLayer.objects.get(pk=3267), ]
+
+        #list for product
+        layers = WetlandLayer.objects.filter(product_id = 7, wetland_id = 6)
+
+        # list for indicator
+        #layers = WetlandLayer.objects.filter(indicator_id = 1, wetland_id = 6)
+
+        #list for complete Wetland
+        #layers = WetlandLayer.objects.filter(wetland_id = 6)
+
+        for layer in layers:
+            file_list = download_files.get_file_names(layer.identifier, "complete")
+
+            file_size_list[layer.identifier] = dict()
+            file_size_list[layer.identifier]["shape"] = 0
+            file_size_list[layer.identifier]["pdf"] = 0
+            file_size_list[layer.identifier]["tiff"] = 0
+
+            for filepath in file_list:
+                res = filepath.split(".")
+
+                if res[-1] in ["CPG", "dbf", "prj", "sbn", "sbx", "shp"]:
+                    file_size_list[layer.identifier]["shape"] += os.path.getsize(filepath)
+                if res[-1] in ["pdf", ]:
+                    file_size_list[layer.identifier]["pdf"] += os.path.getsize(filepath)
+                if res[-1] in ["tfw", "ovr", "tif"]:
+                    file_size_list[layer.identifier]["tiff"] += os.path.getsize(filepath)
+
+        return file_size_list
+
+
+    def get(self, request):
+
+        file_list = self.get_layer_files()
+
+        return Response(json.dumps(file_list))
+
+class DownloadFiles(APIView):
+
+    def get(self, request):
+
+        rename = dict()
+        filenames = []
+
+        # Example for ids: ids=3267%complete_3269%pdf
+        ids = request.query_params.get('ids')
+        ids_list = ids.split("_")
+
+        for id in ids_list:
+
+            layer_id, type = id.split("%")
+            layer = WetlandLayer.objects.get(pk = layer_id)
+
+            filenames += self.get_file_names(layer.identifier, type)
+
+            # Add Metadata XML
+            if type in ["complete", "tiff", "shape"]:
+                if os.path.isfile(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_insert.xml')):
+                    filenames.append(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_insert.xml'))
+                    rename[str(layer_id) + '_insert.xml'] = layer.identifier + "_metadata.xml"
+
+        return self.download_as_archive(filenames, rename)
+
+    def get_file_names(self, file_id, type):
+        file_list = []
+
+        shape = False
+        pdf = False
+        tiff = False
+
+        data_path = settings.DATA_ROOT
+
+        ident_parts = file_id.split("_")
+        # in case of ... [site_name]_2001_2014.shp
+        if ident_parts[-2].isdigit():
+            catchment_name = ident_parts[-3]
+        # in case of ... [site_name]_2001-2014.shp
+        else:
+            catchment_name = ident_parts[-2]
+
+        #first part of product ident
+        product_name = ident_parts[1]
+
+        if type == "complete":
+            shape = True
+            pdf = True
+            tiff = True
+        if type == "pdf":
+            pdf = True
+        if type == "tiff":
+            tiff = True
+
+        #find all files by file_id
+        for path in os.listdir(data_path):
+            # wetland folder
+            wetland_folder = os.path.join(data_path, path)
+            if os.path.isdir(wetland_folder) and catchment_name in path:
+                for subfolder in os.listdir(wetland_folder):
+                    # product folder
+                    product_folder = os.path.join(wetland_folder, subfolder)
+                    if os.path.isdir(product_folder) and subfolder in product_name:
+                        for files in os.listdir(product_folder):
+                            filepath = os.path.join(product_folder, files)
+                            file_list = self.filter_file(file_list, filepath, files, file_id,  shape, pdf, tiff)
+                            # subfolder in product
+                            if os.path.isdir(filepath):
+                                for files2 in os.listdir(filepath):
+                                    filepath_2 = os.path.join(filepath, files2)
+                                    file_list = self.filter_file(file_list, filepath_2, files2, file_id, shape, pdf, tiff)
+                                    # subfolder in subfolder in product (e.g. in WQ)
+                                    if os.path.isdir(filepath_2):
+                                        for files3 in os.listdir(filepath_2):
+                                            filepath_3 = os.path.join(filepath_2,  files3)
+                                            file_list = self.filter_file(file_list, filepath_3, files3, file_id, shape, pdf, tiff)
+
+        return file_list
+
+    def filter_file(self, file_list, filepath, files, file_id, shape, pdf, tiff):
+
+        res = files.split(".")
+
+        if shape == True and (res[-1] in ["CPG", "dbf", "prj", "sbn", "sbx", "shp"] or (res[-1] in ["xml"] and len(res) > 2)) and res[0] == file_id:
+            file_list.append(filepath)
+        if pdf == True and res[-1] in ["pdf"] and res[0] == file_id:
+            file_list.append(filepath)
+        if tiff == True and (res[-1] in ["tfw", "ovr", "tif"] or (res[-1] in ["xml"] and len(res) > 2)) and res[0] == file_id:
+            file_list.append(filepath)
+
+        return file_list
+
+    def download_as_archive(self, filenames, rename):
+
+        #todo subdirs needs to be adjusted once it is possible to download more than one dataset
+        zip_subdir = "SWOS_GEO_Wetlands_Community_portal"
+        zip_filename = "%s.zip" % zip_subdir
+
+        # Open StringIO to grab in-memory ZIP contents
+        s = StringIO.StringIO()
+
+        # The zip compressor
+        zf = zipfile.ZipFile(s, "w")
+
+        for fpath in filenames:
+            # Calculate path for file in zip
+            fdir, fname = os.path.split(fpath)
+
+            # Rename XML file(s)
+            if fname in rename:
+                fname = rename[fname]
+
+            zip_path = os.path.join(zip_subdir, fname)
+
+            # Add file, at correct path
+            zf.write(fpath, zip_path)
+
+        # Must close zip for all contents to be written
+        zf.close()
+
+        # Grab ZIP file from in-memory, make response with correct MIME-type
+        resp = HttpResponse(s.getvalue(),content_type = "application/x-zip-compressed")
+        # ..and correct content-disposition
+        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+        return resp
 
 class CurlHTTPStream(object):
     def __init__(self, url, login=False):

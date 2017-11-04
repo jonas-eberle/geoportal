@@ -17,6 +17,9 @@ urlpatterns = [
     url(r'^searchresult.json$', views.Elasticsearch.as_view(), name="search"),
     url(r'^layer.json$', views.Layer.as_view(), name="layer"),
     url(r'^download$', views.DownloadData.as_view(), name="download_test"),
+    url(r'^download_as_archive$', views.DownloadFiles.as_view(), name="download_archive"),
+    url(r'^list_files$', views.ListFilesForDownload.as_view(), name="list_files"),
     url(r'^wetland/(?P<pk>[0-9]+)/satdata/download$', views.DownloadDataSentinel.as_view(), name="download_test2"),
     url(r'^wetland/(?P<pk>[0-9]+)/satdata/results', views.SatelliteMetadataExport.as_view(), name="download_satdata_results")
 ]
+

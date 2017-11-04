@@ -28,6 +28,7 @@
         wetlands.formatValue = formatValue;
         wetlands.showSatdataExplorer = showSatdataExplorer;
         wetlands.externalDBSearchGeoss = externalDBSearchGeoss;
+        wetlands.download = download;
         // wetlands.wetlands_opened = {};
 
         $scope.$on("mapviewer.alllayersremoved", function () {
@@ -448,6 +449,11 @@
             }).rendered.then(function(){
                 initSearchBar();
             });
+        }
+
+        function download(django_id){
+            var url = '/swos/download_as_archive?ids='+ django_id + '%complete';
+            window.open(url, '_self');
         }
     }
 })();
