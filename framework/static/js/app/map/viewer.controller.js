@@ -449,7 +449,6 @@
 
         function showAttribution() {
             var attributionList = Attribution.getList();
-            console.log(attributionList);
 
             $modal.open({
                 bindToController: true,

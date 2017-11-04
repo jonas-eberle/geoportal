@@ -281,18 +281,7 @@ body {
     top: auto;
 }
 
-#map_icons {
-    left: 15px;
-    position: absolute;
-    top: 30px;
-    width: 20px;
-    z-index: 1001;
-}
-
 #map_search {
-    position: absolute;
-    /*right: 20px;*/
-    top: 10px;
     width: 300px;
     z-index: 1001;
 }
@@ -600,6 +589,7 @@ input[type=checkbox]:checked + label:before {
     margin-top: -2px;
     overflow: hidden;
     padding: 0 10px;
+    position: absolute;
     width: 200px;
 }
 
