@@ -4,7 +4,7 @@
   "description": "",
   "main": "framework/index.wsgi",
   "dependencies": {
-    "@turf/turf": "^4.5.2",
+    "@turf/turf": "^4.7.3",
     "angular": "^1.6.6",
     "angular-animate": "^1.6.6",
     "angular-bootstrap-slider": "github:seiyria/angular-bootstrap-slider#master",
