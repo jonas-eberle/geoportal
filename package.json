@@ -21,7 +21,7 @@
     "bootstrap": "^3.3.7",
     "bootstrap-select": "^1.12.4",
     "bootstrap-slider": "^9.9.0",
-    "chart.js": "^2.6.0",
+    "chart.js": "^2.7.1",
     "d3": "^3.5.17",
     "dygraphs": "^2.0.0",
     "fancybox": "^2.1.8",
