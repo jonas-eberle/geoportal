@@ -219,7 +219,7 @@
             try {
                 var crs = response.crs.properties.name;
                 if (crs.includes('EPSG')) {
-                    epsg = crs.split('::')[1]
+                    epsg = crs.split('::')[1];
                     if (ol.proj.get('EPSG:'+epsg) == null) {
                         $.get({
                             url: 'http://epsg.io/' + epsg + '.proj4',
