@@ -5,6 +5,8 @@ from swos.search_es import LayerIndex, ExternalDatabaseIndex, WetlandIndex
 from swos.csw import create_update_csw, delete_csw
 from swos.models import WetlandLayer, ExternalLayer, Wetland, ExternalDatabase
 
+from djgeojson.serializers import Serializer as GeoJSONSerializer
+
 #Create/update csw records after creation or update if publishable is true
 #Delete: delete and publishable changes to false
 def keep_track_save(sender, instance, created, **kwargs):
@@ -23,6 +25,11 @@ def keep_track_save(sender, instance, created, **kwargs):
             x.indexing()
         for y in wetland_layer:
             y.indexing()
+    if sender == Wetland:
+        #update wetlands.geojson
+        f = open(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson', 'w')
+        geojson = GeoJSONSerializer().serialize(Wetland.objects.all(), geometry_field='geom', properties=('id', 'name', 'country', 'geo_scale', 'size', 'description','ecoregion', 'wetland_type', 'site_type', 'products'), precision = 4)
+        f.write(geojson)
 
 def keep_track_delete(sender, instance, **kwargs):
     if settings.CSW_T == True and sender == WetlandLayer:

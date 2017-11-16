@@ -1,11 +1,11 @@
 import json
-import pycurl
-import urllib2
+#import pycurl
+#import urllib2
 import httplib
 import StringIO
 import os
 import requests
-import sqlite3 as sdb
+#import sqlite3 as sdb
 import uuid
 import glob
 import zipfile
@@ -30,11 +30,32 @@ from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, Ind
 from layers.models import LayerSerializer
 from swos.search_es import WetlandSearch
 
+
+
 # Create your views here.
 class WetlandsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wetland
         fields = ('id', 'name', 'description', 'country', 'geo_scale', 'ecoregion', 'site_type', 'wetland_type', 'products', 'geom')
+
+#  Create / Get wetlands GeoJSON file
+class WetlandGeometry(APIView):
+
+    def get(self, request):
+        if os.path.isfile(os.path.join(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson')):
+            data = self.file_get_contents(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson')
+        else:
+            # create file/folder if it does not exist
+            if not os.path.exists(settings.MEDIA_ROOT + 'wetlands'):
+                os.makedirs(settings.MEDIA_ROOT + 'wetlands')
+            first_wetland = Wetland.objects.all().first()
+            first_wetland.save() # force post_save signal
+            data = self.file_get_contents(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson')
+        return HttpResponse(data)
+
+    def file_get_contents(self, filename):
+        with open(filename) as f:
+            return f.read()
 
 
 class WetlandsList(APIView):
@@ -764,20 +785,20 @@ class ListFilesForDownload(APIView):
         for layer in layers:
             file_list = download_files.get_file_names(layer.identifier, "complete")
 
-            file_size_list[layer.identifier] = dict()
-            file_size_list[layer.identifier]["shape"] = 0
-            file_size_list[layer.identifier]["pdf"] = 0
-            file_size_list[layer.identifier]["tiff"] = 0
+            file_size_list[layer.id] = dict()
+            file_size_list[layer.id]["shape"] = 0
+            file_size_list[layer.id]["pdf"] = 0
+            file_size_list[layer.id]["tiff"] = 0
 
             for filepath in file_list:
                 res = filepath.split(".")
 
                 if res[-1] in ["CPG", "dbf", "prj", "sbn", "sbx", "shp"]:
-                    file_size_list[layer.identifier]["shape"] += os.path.getsize(filepath)
+                    file_size_list[layer.id]["shape"] += os.path.getsize(filepath)
                 if res[-1] in ["pdf", ]:
-                    file_size_list[layer.identifier]["pdf"] += os.path.getsize(filepath)
+                    file_size_list[layer.id]["pdf"] += os.path.getsize(filepath)
                 if res[-1] in ["tfw", "ovr", "tif"]:
-                    file_size_list[layer.identifier]["tiff"] += os.path.getsize(filepath)
+                    file_size_list[layer.id]["tiff"] += os.path.getsize(filepath)
 
         return file_size_list
 
