@@ -16,7 +16,7 @@
     {% assets "swosVendorCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
-    
+
     {% assets "geossVendorCssBundle" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
@@ -51,7 +51,7 @@
         var _paq = _paq || [];
         // add individual tracking code
     </script>
-    
+
     <style type="text/css">
         #geoss-search-widget .rating-icon, #geoss-search-widget .rating {
             display:none;
@@ -69,7 +69,7 @@
 
     {% verbatim %}
     <div id="alerts" ng-controller="AlertCtrl as ac">
-        <div uib-alert ng-repeat="alert in ac.alerts" class="alert alert-{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</div> 
+        <div uib-alert ng-repeat="alert in ac.alerts" class="alert alert-{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</div>
     </div>
     {% endverbatim %}
 
@@ -175,13 +175,13 @@
                         </span>
                     </div>
                     <div id="wetland_legend">
-                        <svg width=" 270" height="40" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="155" y="27" width="25" height="10" style="fill:rgba(255, 255, 255, 0.4); stroke:#319FD3;" />
-                        <rect x="5" y="27" width="25" height="10" style="fill:rgba(226, 125, 5, 0.4); stroke:rgba(226, 125, 5, 1);" />
-                        <text x="35" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">filtered wetlands</text>
-                        <text x="185" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">wetlands</text>
-                        <text x="5" y="16" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">Click on a wetland to select and zoom.</text>
-                       </svg>
+                        <svg width="270" height="40" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="155" y="27" width="25" height="10" style="fill:rgba(255, 255, 255, 0.4); stroke:#319FD3;"></rect>
+                            <rect x="5" y="27" width="25" height="10" style="fill:rgba(226, 125, 5, 0.4); stroke:rgba(226, 125, 5, 1);"></rect>
+                            <text x="35" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">filtered wetlands</text>
+                            <text x="185" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">wetlands</text>
+                            <text x="5" y="16" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">Click on a wetland to select and zoom.</text>
+                        </svg>
                     </div>
                     <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
 
@@ -552,13 +552,13 @@
                                             <p>
                                                 <strong>USGS Earth Explorer</strong><br/>
                                                 Landsat MSS, Landsat TM (Collection 1), Landsat ETM (Collection 1), Landsat-8 (Collection 1), Sentinel 2A data have been searched through the USGS Earth Explorer API. <br />
-                                                <a href="https://earthexplorer.usgs.gov" target="_blank">https://earthexplorer.usgs.gov</a>  
+                                                <a href="https://earthexplorer.usgs.gov" target="_blank">https://earthexplorer.usgs.gov</a>
                                             </p>
                                             <hr/>
                                             <p>
                                                 <strong>Sinergise Sentinel Hub Services</strong><br/>
                                                 Landsat TM and Landsat ETM data from ESA archives have been searched through the Sentinel Hub WFS Services. Furthermore WMS services for Landsat TM, Landsat ETM, Landsat 8 and Sentinel datasets have been integrated within the satellite data explorer for data visualization.<br />
-                                                <a href="http://sentinel-hub.com" target="_blank">http://sentinel-hub.com</a>   
+                                                <a href="http://sentinel-hub.com" target="_blank">http://sentinel-hub.com</a>
                                             </p>
                                         </div>
                                     </uib-accordion>
@@ -727,7 +727,7 @@
         <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
         <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2017</p>
     </div>
-    
+
     <!-- Geoss Search Widget popup container -->
     <!-- 'geoss' class is needed -->
     <div id="geoss-popup" style="display:none;">
@@ -747,7 +747,7 @@
     {% assets "swosVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}
-    
+
     {% assets "geossVendorJsBundle" %}
     <script src="{{ ASSET_URL }}" type="text/javascript"></script>
     {% endassets %}

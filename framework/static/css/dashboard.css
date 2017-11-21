@@ -136,7 +136,7 @@ body {
     font-size: 1.1em;
     font-weight: bold;
     white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
-    white-space: -webkit-pre-wrap; /*Chrome & Safari */ 
+    white-space: -webkit-pre-wrap; /*Chrome & Safari */
     white-space: -pre-wrap;      /* Opera 4-6 */
     white-space: -o-pre-wrap;    /* Opera 7 */
     white-space: pre-wrap;       /* css-3 */
@@ -468,7 +468,6 @@ nav.navbar.navbar-default.navbar-fixed-top {
 #nav-top-right2 li.dropdown {
     border-right: 1px solid #eee;
     text-align: center;
-    width: 50px;
 }
 
 .modal {

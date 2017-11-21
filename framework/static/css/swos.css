@@ -125,7 +125,7 @@ ul.products li:hover {
     overflow: auto;
     width: 100%;
 }
-*/ 
+*/
 
 .external_data h3, .geospatial_data h3 {
     background: #336a5c;
@@ -270,7 +270,7 @@ h4 {
     display: none;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 890px) {
     .wetland-image {
         display: block;
     }
@@ -613,10 +613,6 @@ button.btn-loadmore:hover {
 .partners img {
     margin-left: 8px;
     float: right;
-}
-
-#nav-top-right2 li.dropdown {
-    width: 110px;
 }
 
 .item_left button:hover{
