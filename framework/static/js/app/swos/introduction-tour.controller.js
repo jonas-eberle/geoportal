@@ -831,6 +831,7 @@
                             open_close_active_layer("open");
 
                             move_map_elements_higher();
+                            $('.map-controls-wrapper').css('z-index', '');
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
