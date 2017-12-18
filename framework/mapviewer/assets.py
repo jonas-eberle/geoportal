@@ -49,8 +49,6 @@ make_bundle('arbisVendorJsBundle', arbisVendorJs, filters='rjsmin', output='buil
 
 swosVendorJs = baseVendorJs[:]
 swosVendorJs.extend([
-    'chart.js/dist/Chart.min.js',
-    'angular-chart.js/dist/angular-chart.min.js',
     'd3/d3.min.js',
     'lib/nv.d3_adjusted_swos.js',  # not on npmjs.com
     'angular-nvd3/dist/angular-nvd3.min.js',

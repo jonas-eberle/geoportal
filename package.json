@@ -8,7 +8,6 @@
     "angular": "^1.6.6",
     "angular-animate": "^1.6.6",
     "angular-bootstrap-slider": "github:seiyria/angular-bootstrap-slider#master",
-    "angular-chart.js": "^1.1.1",
     "angular-cookies": "^1.6.6",
     "angular-drag-and-drop-lists": "^2.1.0",
     "angular-filter": "^0.5.17",
@@ -21,7 +20,6 @@
     "bootstrap": "^3.3.7",
     "bootstrap-select": "^1.12.4",
     "bootstrap-slider": "^9.9.0",
-    "chart.js": "^2.7.1",
     "d3": "^3.5.17",
     "dygraphs": "^2.0.0",
     "fancybox": "^2.1.8",
@@ -37,7 +35,7 @@
     "save-svg-as-png": "^1.2.0"
   },
   "devDependencies": {
-    "uglify-js": "^3.0.16"
+    "uglify-js": "^3.2.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
