@@ -112,6 +112,8 @@ swosAppJs = []
     baseAppJs,
     ['js/app/tracking/tracking.module.js'],
     glob_files('js/app/tracking/*.js'),
+    ['js/app/legend/legend.module.js'],
+    glob_files('js/app/legend/*.js'),
     ['js/app/swos/swos.module.js'],
     glob_files('js/app/swos/*.js')
 ]]
@@ -122,6 +124,8 @@ validationAppJs = []
     baseAppJs,
     ['js/app/tracking/tracking.module.js'],
     glob_files('js/app/tracking/*.js'),
+    ['js/app/legend/legend.module.js'],
+    glob_files('js/app/legend/*.js'),
     ['js/app/swos/swos-layer-controls.directive.js'],
     ['js/app/validation/validation.module.js'],
     glob_files('js/app/validation/*.js')

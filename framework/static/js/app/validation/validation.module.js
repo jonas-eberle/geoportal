@@ -5,7 +5,8 @@
         .module('webgisApp.validation', [
             'webgisApp.core',
             'webgisApp.map',
-            'webgisApp.tracking'
+            'webgisApp.tracking',
+            'webgisApp.legend'
         ]);
 
     angular.module('webgisApp').requires.push('webgisApp.validation');

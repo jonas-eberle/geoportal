@@ -8,7 +8,8 @@
             'webgisApp.tracking',
             /* 3rd party modules */
             'nvd3',
-            'infinite-scroll'
+            'infinite-scroll',
+            'webgisApp.legend'
         ]);
 
     angular.module('webgisApp').requires.push('webgisApp.swos');

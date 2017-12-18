@@ -13,7 +13,7 @@
         diagram.onclickCreate = onclickCreate;
         diagram.formatValue = formatValue;
         diagram.requestTimeSeries = requestTimeSeries;
-
+     //   diagram.onclickCreateIndicator = onclickCreateIndicator;
 
         diagram.data = [];
         diagram.options = [];
@@ -29,6 +29,7 @@
 
             var key2;
             for (key2 in size) {
+
                 var key_level_higher = key2.slice(0, -3);
                 if (size[key_level_higher]) {
                     size[key_level_higher + "9"] = size[key_level_higher];
@@ -57,6 +58,233 @@
                 }
             }
             return [size, id_name_color_clc];
+        }
+
+        function add_no_data_level_10digit(size, data) {
+
+            var no_data_color = "#fff";
+            var no_data_text = "";
+            var key_level_higher = "";
+
+            var key2;
+            var id_name_color_clc = data[0];
+            var level = data[1];
+            for (key2 in size) {
+
+
+            if (level[key2] == 2){
+                var level_1_key = key2 - key2.slice(-8);
+                if (size[level_1_key]){
+                     size[(parseInt(level_1_key) + 99000000)] = size[level_1_key];
+                     size[(parseInt(level_1_key) + 99990000)] = size[level_1_key];
+
+                     id_name_color_clc[(parseInt(level_1_key) + 99000000)] = [no_data_text, no_data_color];
+                     id_name_color_clc[(parseInt(level_1_key) + 99990000)] = [no_data_text, no_data_color];
+                }
+            }
+            if (level[key2] == 3){
+                var level_1_key = key2 - key2.slice(-8);
+                if (size[level_1_key]){
+                     size[(parseInt(level_1_key) + 99000000)] = size[level_1_key];
+                     size[(parseInt(level_1_key) + 99990000)] = size[level_1_key];
+
+                     id_name_color_clc[(parseInt(level_1_key) + 99000000)] = [no_data_text, no_data_color];
+                     id_name_color_clc[(parseInt(level_1_key) + 99990000)] = [no_data_text, no_data_color];
+                }
+                var level_2_key = key2 - key2.slice(-6);
+                if (size[level_2_key]){
+                     size[(parseInt(level_2_key) + 990000)] = size[level_2_key];
+
+                    id_name_color_clc[(parseInt(level_2_key) + 990000)] = [no_data_text, no_data_color];
+                }
+            }
+            if (level[key2] == 4){
+                var level_1_key = key2 - key2.slice(-8);
+                if (size[level_1_key]){
+                     size[(parseInt(level_1_key) + 99000000)] = size[level_1_key];
+                     size[(parseInt(level_1_key) + 99990000)] = size[level_1_key];
+                     size[(parseInt(level_1_key) + 99999900)] = size[level_1_key];
+
+                     id_name_color_clc[(parseInt(level_1_key) + 99000000)] = [no_data_text, no_data_color];
+                     id_name_color_clc[(parseInt(level_1_key) + 99990000)] = [no_data_text, no_data_color];
+                     id_name_color_clc[(parseInt(level_1_key) + 99999900)] = [no_data_text, no_data_color];
+                }
+                var level_2_key = key2 - key2.slice(-6);
+                if (size[level_2_key]){
+                     size[(parseInt(level_2_key) + 990000)] = size[level_2_key];
+                     size[(parseInt(level_2_key) + 999900)] = size[level_2_key];
+
+                    id_name_color_clc[(parseInt(level_2_key) + 990000)] = [no_data_text, no_data_color];
+                    id_name_color_clc[(parseInt(level_2_key) + 999900)] = [no_data_text, no_data_color];
+                }
+                var level_3_key = key2 - key2.slice(-4);
+                if (size[level_3_key]){
+                     size[(parseInt(level_3_key) + 9900)] = size[level_3_key];
+
+                     id_name_color_clc[(parseInt(level_3_key) + 9900)] = [no_data_text, no_data_color];
+                }
+
+            }
+
+
+            }
+            return [size, id_name_color_clc];
+        }
+
+        function create_value_legend_10digit(id_name_color_clc, size_arr){
+            var data_new, new_key, key;
+            var children = [];
+            var children_water = [];
+            var diagram_data = {};
+            var diagram_data_water = {};
+            var data_2 = [];
+            var data_3 = [];
+            var data_4 = [];
+            var data_2_size_count = [];
+            var data_3_size_count = [];
+            var data_4_size_count = [];
+
+
+            for (key in id_name_color_clc) {
+                if (key.slice(-2) == "00" && key.slice(-4) != "0000" ) {
+                    new_key = key - key.slice(-4);
+
+                    data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    };
+
+                    if (!size_arr[key]) {
+                        continue;
+                    }
+
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                        data_4_size_count[new_key] = 1;
+                    }
+
+                    if (!data_4[new_key]) {
+                        data_4[new_key] = [];
+                        data_4[new_key].push(data_new);
+                    } else {
+                        data_4[new_key].push(data_new);
+                    }
+                    data_new = {};
+                }
+            }
+            for (key in id_name_color_clc) {
+                if (key.slice(-4) == "0000" && key.slice(-6) != "000000" ) {
+                    new_key = key - key.slice(-6);
+
+
+                    data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    };
+
+                        if (!size_arr[key] && !data_4[key]) {
+                        continue;
+                    }
+
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                        data_3_size_count[new_key] = 1;
+                    }
+
+                    if (data_4[key] && data_4_size_count[key] === 1) {
+                        data_new.children = data_4[key];
+                    }
+                    if (!data_3[new_key]) {
+                        data_3[new_key] = [];
+                        data_3[new_key].push(data_new);
+                    } else {
+                        data_3[new_key].push(data_new);
+                    }
+                    data_new = {};
+                }
+            }
+            for (key in id_name_color_clc) {
+                if (key.slice(-6) == "000000" && key.slice(-8) != "00000000"  ) {
+                    new_key = key - key.slice(-8);
+
+                    data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1],
+                    };
+
+                       if (!size_arr[key] && !data_3[key]) {
+                        continue;
+                    }
+
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                        data_2_size_count[new_key] = 1;
+                    }
+
+                    if (data_3[key] && data_3_size_count[key] === 1) {
+                        data_new.children = data_3[key];
+                    }
+                    if (!data_2[new_key]) {
+                        data_2[new_key] = [];
+                        data_2[new_key].push(data_new);
+                    } else {
+                        data_2[new_key].push(data_new);
+                    }
+                    data_new = {};
+                }
+            }
+            for (key in id_name_color_clc) {
+                if (key.slice(-8) == "00000000") {
+
+
+                    data_new = {
+                        "name": id_name_color_clc[key][0],
+                        "color": id_name_color_clc[key][1]
+                    };
+
+                    console.log(data_new);
+
+                    if (!size_arr[key] && !data_2[key]) {
+                        continue;
+                    }
+
+                    if (size_arr[key]) {
+                        data_new.size = size_arr[key];
+                    }
+                    if (data_2[key]) {
+                        data_new.children = data_2[key];
+                    }
+
+                    children.push(data_new);
+
+
+                    data_new = {};
+                }
+            }
+            console.log(data_new);
+
+                        // test.push(data_1);
+            diagram_data.name = "Total area";
+            diagram_data.color = "white";
+            diagram_data.children = children;
+
+            diagram_data_water.name = "Water bodies & Wetlands";
+            diagram_data_water.color = "white";
+            diagram_data_water.children = children_water;
+
+            return ([[diagram_data], [diagram_data_water]]);
+        }
+
+        function reformat(legend){
+
+            var legend_new = {};
+            var level = [];
+
+            $.each(legend, function(index, value){
+                legend_new[value[0]] = [value[2], value[3]];
+                level[value[0]] = value[1]
+            });
+            return [legend_new, level] ;
         }
 
         function create_value_legend_clc_data(id_name_color_clc, size_arr) {
@@ -241,18 +469,21 @@
             var type;
             var options = {};
             var data = -1;
+
             if (layer.identifier.includes("CLC") && layer.identifier.includes("LULC_")) {
                 data = lulcLegend.CLC;
-                data = add_no_data_level_clc(value, data);
-                data = create_value_legend_clc_data(data[1], data[0])[0];
+                data = reformat(data);
+                data = add_no_data_level_clc(value, data[0]); // data = add_no_data_level_10digit(value, data);
+                data = create_value_legend_clc_data(data[1], data[0])[0]; // data = create_value_legend_10digit(data[1], data[0])[0];
                 type = 'sunburstChart';
                 options['height'] = 450;
                 options['showLabels'] = false;
             }
             if (layer.identifier.includes("MAES") && layer.identifier.includes("LULC_")) {
                 data = lulcLegend.MAES;
-                data = add_no_data_level_clc(value, data);
-                data = create_value_legend_clc_data(data[1], data[0])[0];
+                data = reformat(data);
+                data = add_no_data_level_clc(value, data[0]); // data = add_no_data_level_10digit(value, data);
+                data = create_value_legend_clc_data(data[1], data[0])[0]; // data = create_value_legend_10digit(data[1], data[0])[0];
                 type = 'sunburstChart';
                 options['height'] = 450;
                 options['showLabels'] = false;
@@ -343,7 +574,7 @@
                         //"labelFormat":function (d){if(d.size < 5){console.log(d);return d.name}else{return ''}''}
                         "tooltip": {
                             "valueFormatter": function (d) {
-                                return diagram.formatValue(d.toFixed(2)) + ' ha';
+                                    return diagram.formatValue(d.toFixed(2)) + ' ha';
                             }
                         }
                     }

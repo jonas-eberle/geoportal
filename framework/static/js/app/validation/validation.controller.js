@@ -206,6 +206,7 @@
             mapviewer.map.getView().fit(layerExtent);
         }
 
+
         function showValidationWindow(response, zoomto) {
             var epsg = -1;
             var features = validation.parser.readFeatures(response);
@@ -261,6 +262,7 @@
                 legend = lulcLegend[validation.layer.legend]
             }
 
+
             $scope.legend_list = legend;
 
             var select = '<select name="valcode" id="valcode">';
@@ -268,28 +270,28 @@
             var text_list = [];
 
             $.each(legend, function(key, value){
-                if (parseInt(value[1]) === parseInt(feature.properties.ValCode)) {
-                    select += '<option value="'+value[1]+'" selected="selected" style="color:'+value[3]+'">'+value[2]+'</option>\n';
+                if (parseInt(value[0]) === parseInt(feature.properties.ValCode)) {
+                    select += '<option value="'+value[0]+'" selected="selected" style="color:'+value[3]+'">'+value[2]+'</option>\n';
                 } else {
-                    select += '<option value="'+value[1]+'" style="color:'+value[3]+'">'+value[2]+'</option>\n';
+                    select += '<option value="'+value[0]+'" style="color:'+value[3]+'">'+value[2]+'</option>\n';
                 }
 
                 if (key == 0){}
                 else {
-                    if (value[0] == 1){
+                    if (value[1] == 1){
                        text_list[1] = value[2];
                     }
-                    else if ( $scope.legend_list[key - 1][0] < value[0]) {
-                        text_list[value[0]] = text_list[value[0]-1] + " " + $scope.legend_list[key - 1][2];
-                        value[4] = text_list[value[0]];
+                    else if ( $scope.legend_list[key - 1][1] < value[1]) {
+                        text_list[value[1]] = text_list[value[1]-1] + " " + $scope.legend_list[key - 1][2];
+                        value[4] = text_list[value[1]];
                         $scope.legend_list[key] = value;
                     }
-                    else if ($scope.legend_list[key - 1][0] < value[0]) {
-                        value[4] = text_list[value[0]];
+                    else if ($scope.legend_list[key - 1][1] < value[1]) {
+                        value[4] = text_list[value[1]];
                         $scope.legend_list[key] = value;
                     }
-                    else if ($scope.legend_list[key - 1][0] == value[0]) {
-                        value[4] = text_list[value[0]];
+                    else if ($scope.legend_list[key - 1][1] == value[1]) {
+                        value[4] = text_list[value[1]];
                         $scope.legend_list[key] = value;
                     }
                 }
@@ -305,7 +307,7 @@
                 '<input type="text" ng-model="search" placeholder="Filter by ...">' +
                 '<table ng-controller="ValidationCtrl as val"><tr  ng-repeat="item in legend_list | filter: search">' +
                 '<td class="legend-color" ng-attr-style="background-color:{{ item[3] }};" style="background-color:#be0000;">&nbsp;</td>' +
-                '<td><div id="legend_{{item[1]}}" ng-click="val.setClass(item[1])" class="level_{{item[0]}}">{{item[2]}}</div><div id="level_{{item[1]}}" style="display:None;">{{item[4]}}</div></td>' +
+                '<td><div id="legend_{{item[0]}}" ng-click="val.setClass(item[0])" class="level_{{item[1]}}">{{item[2]}}</div><div id="level_{{item[1]}}" style="display:None;">{{item[4]}}</div></td>' +
                 '</tr>' +
                 '</table></div>';
 
