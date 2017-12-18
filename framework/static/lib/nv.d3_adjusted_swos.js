@@ -576,12 +576,11 @@ nv.models.tooltip = function() {
     // You can override this function if a custom tooltip is desired. For instance, you could directly manipulate
     // the DOM by accessing elem and returning false.
     var contentGenerator = function(d, elem) {
-        console.log(d);
+
 //-- add lines for SWOS
         if (d.hasOwnProperty("data")) {
             if (d.data.hasOwnProperty("name")) {
                 if (d.data.name == "") {
-                    console.log('returning!');
                     return '';
                 }
             }
@@ -15168,7 +15167,10 @@ nv.models.sunburst = function() {
         , labelThreshold = 0.02
         , sort = function(d1, d2){return d1.name > d2.name;}
         , key = function(d,i){
-            if (d.parent !== undefined) {
+            //-- add lines for SWOS
+            if (d.name == ""){return d.name;}
+            
+            else if (d.parent !== undefined) {
                 return d.name + '-' + d.parent.name + '-' + i;
             } else {
                 return d.name;
