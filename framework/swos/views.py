@@ -1,11 +1,11 @@
 import json
-#import pycurl
-#import urllib2
+import pycurl
+import urllib2
 import httplib
 import StringIO
 import os
 import requests
-#import sqlite3 as sdb
+import sqlite3 as sdb
 import uuid
 import glob
 import zipfile
