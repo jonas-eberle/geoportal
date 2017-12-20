@@ -1098,6 +1098,7 @@ class StoryLine(models.Model):
     description = models.TextField(null=True, blank=True)
     authors = models.TextField(null=True, blank=True)
     wetland = models.ForeignKey(Wetland, null=True)
+    link_to_product = models.BooleanField(default="False", help_text="Storyline will be linked to a product instead of a wetland")
     story_line_file_name = models.CharField(max_length=50, blank=True, null=True, help_text="File name for download")
     story_line_file = models.FileField("Storyline file", upload_to='downloads', null=True, blank=True, help_text="Upload storyline as pdf file")
     active = models.BooleanField(default=False)

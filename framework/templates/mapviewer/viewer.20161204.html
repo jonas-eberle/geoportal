@@ -469,6 +469,7 @@
                                             Remove all layers of this Wetland
                                         </button>
                                     </div>
+                                    <div>
                                     <ul class="items products">
 
                                         <uib-accordion close-others="false">
@@ -479,7 +480,7 @@
                                                 </uib-accordion-heading>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
-                                                    <p ng-if="product.story_line.length != 0"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
+                                                    <p ng-if="product.story_line.length != 0 && product.story_line != false"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                     <div class="products_datasets">
                                                         <strong>Layers:</strong>
                                                         <div class="select" ng-if="product.layers.length > 0">
@@ -499,6 +500,7 @@
                                             </div>
                                         </uib-accordion>
                                     </ul>
+                                    </div>
                                 </uib-tab>
 
                                 <!-- Data -->

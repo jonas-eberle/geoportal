@@ -1,11 +1,11 @@
 import json
-import pycurl
-import urllib2
+#import pycurl
+#import urllib2
 import httplib
 import StringIO
 import os
 import requests
-import sqlite3 as sdb
+#import sqlite3 as sdb
 import uuid
 import glob
 import zipfile
@@ -78,7 +78,7 @@ class WetlandDetail(APIView):
         story_line_parts = []
         story_line_list = []
 
-        story_line = StoryLineInline.objects.filter(Q(story_line__active=True), Q(story_line_part__product_layer=layer_id) | Q(story_line_part__indicator_layer=layer_id) | Q(story_line_part__external_layer=layer_id)).order_by("order")
+        story_line = StoryLineInline.objects.filter(Q(story_line__active=True), (Q(story_line_part__product_layer=layer_id) | Q(story_line_part__indicator_layer=layer_id) | Q(story_line_part__external_layer=layer_id))).order_by("order")
 
         if not story_line:
             return False
@@ -86,6 +86,27 @@ class WetlandDetail(APIView):
         for story_line_part in story_line:
             if story_line_part.story_line_id not in story_line_list:
                 story_line_parts.append({'story_line': story_line_part.story_line_id, 'order': story_line_part.order, 'title': story_line_part.story_line.title, 'authors':story_line_part.story_line.authors, 'description': story_line_part.story_line.description})
+                story_line_list.append(story_line_part.story_line_id)
+
+        return story_line_parts
+
+    def get_story_line_by_product_id(self, product_id):
+
+        story_line_parts = []
+        story_line_list = []
+
+        story_line = StoryLineInline.objects.filter(Q(story_line__active=True),
+        Q(story_line_part__product_layer__product_id=product_id), Q(story_line__link_to_product=True)).order_by("order")
+
+        if not story_line:
+            return False
+
+        for story_line_part in story_line:
+            if story_line_part.story_line_id not in story_line_list:
+                story_line_parts.append({'story_line': story_line_part.story_line_id, 'order': story_line_part.order,
+                                         'title': story_line_part.story_line.title,
+                                         'authors': story_line_part.story_line.authors,
+                                         'description': story_line_part.story_line.description})
                 story_line_list.append(story_line_part.story_line_id)
 
         return story_line_parts
@@ -129,6 +150,13 @@ class WetlandDetail(APIView):
             if layer.product:
                 layer_data['product_name'] = layer.product.name
                 if layer.product.id not in temp_products_layers:
+                    story_line_product = self.get_story_line_by_product_id(layer.product.id)
+                    if layer_data['story_line'] != "" and story_line_product != False :
+                        for story in story_line_product:
+                            if story not in layer_data['story_line']:
+                                layer_data['story_line'].append(story)
+                    else:
+                        temp_product_story_lines[layer.product.id] = story_line_product
                     temp_products[layer.product.id] = layer.product
                     temp_products_layers[layer.product.id] = [layer_data]
                 else:
