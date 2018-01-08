@@ -801,7 +801,7 @@
 
                     $http({
                         method: 'POST',
-                        url: 'http://artemis.geogr.uni-jena.de/ocpu/user/opencpu/library/swos/R/extractWQName/json',
+                        url: 'http://artemis.geogr.uni-jena.de/ocpu/library/swos/R/extractWQName/json',
                         data: 'x=' + lonlat[0] + '&y=' + lonlat[1] + '&layer=%22' + layer.identifier + '%22'
 
                     }).then(function successCallback(response) {
