@@ -155,7 +155,7 @@ class WetlandDetail(APIView):
                         for story in story_line_product:
                             if story not in layer_data['story_line']:
                                 layer_data['story_line'].append(story)
-                    else:
+                    elif story_line_product != False:
                         temp_product_story_lines[layer.product.id] = story_line_product
                     temp_products[layer.product.id] = layer.product
                     temp_products_layers[layer.product.id] = [layer_data]
