@@ -24,10 +24,15 @@ def create_csw_xml(instance):
         'online_resources': online_resources
     })
 
-    md_doc = tpl.render(ctx)
+    md_doc_meta = tpl.render(ctx)
+    f = open(settings.MEDIA_ROOT + 'csw/' + str(instance.id) + '_metadata.xml', 'w')
+    f.write(md_doc_meta)
+
+    ctx["csw"] = "1"
+    md_doc_csw = tpl.render(ctx)
     f = open(settings.MEDIA_ROOT + 'csw/' + str(instance.id) + '_insert.xml', 'w')
-    f.write(md_doc.encode('UTF-8'))
-    f.close()
+    f.write(md_doc_csw)
+
 
     tpl = get_template('CSW/delete.xml')
     ctx =({
@@ -36,8 +41,7 @@ def create_csw_xml(instance):
 
     md_doc = tpl.render(ctx)
     f = open(settings.MEDIA_ROOT + 'csw/' + str(instance.id) + '_delete.xml', 'w')
-    f.write(md_doc.encode('UTF-8'))
-    f.close()
+    f.write(md_doc)
 
 
 def create_record(id):
@@ -62,6 +66,10 @@ def delete_csw(instance):
 def create_update_csw_all():
     wetland_layer = WetlandLayer.objects.filter(publishable = True)
     for layer in wetland_layer:
-        print layer.title
-        print layer.id
+        #print layer.__dict__
+        from layers.models import MetadataSerializer
+        data = MetadataSerializer(layer).data
+        import json
+        data_obj = json.loads(json.dumps(data))
+        print data_obj["identifier"] + "%" + data_obj["abstract"]+ "%" + str(data_obj["topicCategory"]) + "%" + str(data_obj["layer_keywords"]) + "%" + str(data_obj["scope"]) + "%" + str(data_obj["layer_conformity"]) + "%" + str(data_obj["layer_constraints_limit"]) + "%" + str(data_obj["layer_constraints_cond"]) + "%" + data_obj["meta_lineage"] + "%" + str(data_obj["point_of_contacts"])
         create_update_csw(layer, "update")
