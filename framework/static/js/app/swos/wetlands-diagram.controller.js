@@ -705,7 +705,7 @@
                             label: "Export as CSV",
                             className: "btn-default",
                             callback: function () {
-                                var csvContent = "data:text/csv;charset=utf-8,";
+                                var csvContent = "";
                                 var data_arr = [];
                                 var value = "";
                                 var header = "#date";
@@ -738,14 +738,23 @@
                                     var dataString = data_arr[key].join(",");
                                     csvContent += key + "," + dataString + "\n";
                                 }
-                                var encodedUri = encodeURI(csvContent);
-                                var link = document.createElement("a");
-                                link.setAttribute("href", encodedUri);
-                                var name = layer.title;
-                                link.setAttribute("download", name.replace(" ", "_") + ".csv");
-                                document.body.appendChild(link); // Required for FF
 
-                                link.click();
+                                var blob = new Blob([csvContent], {
+                                    "type": "text/csv;charset=utf8;"
+                                });
+                                var link = document.createElement("a");
+
+                                if (link.download !== undefined) { // feature detection
+                                    // Browsers that support HTML5 download attribute
+                                    link.setAttribute("href", window.URL.createObjectURL(blob));
+                                    var name = layer.title;
+                                    link.setAttribute("download", name.replace(" ", "_") + ".csv");
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                } else {
+                                    alert('CSV export only works in Chrome, Firefox, and Opera.');
+                                }
 
                                 return false;
                             }
@@ -802,6 +811,7 @@
                     $http({
                         method: 'POST',
                         url: 'http://artemis.geogr.uni-jena.de/ocpu/library/swos/R/extractWQName/json',
+
                         data: 'x=' + lonlat[0] + '&y=' + lonlat[1] + '&layer=%22' + layer.identifier + '%22'
 
                     }).then(function successCallback(response) {
