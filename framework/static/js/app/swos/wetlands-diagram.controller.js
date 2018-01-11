@@ -823,7 +823,7 @@
 
                             var format = d3.time.format("%Y-%m-%d");
 
-                            if (response.data.values[key] == "NA") {
+                            if (response.data.values[key] == "NA" || response.data.values[key] == "-Inf") {
                                 response.data.values[key] = NaN;
                             }
                             data_value = {
