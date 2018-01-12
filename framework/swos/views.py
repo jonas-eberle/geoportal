@@ -18,6 +18,7 @@ from django.http import StreamingHttpResponse
 from django.db.models import Q
 from django.db import connection
 from django.contrib.gis.db.models import Extent
+from django.utils.dateformat import format
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -42,7 +43,8 @@ class WetlandsSerializer(serializers.ModelSerializer):
 class WetlandGeometry(APIView):
 
     def get(self, request):
-        if os.path.isfile(os.path.join(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson')):
+
+        if os.path.isfile(os.path.join(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson')) and int(self.get_last_modification_time()) < self.get_file_time():
             data = self.file_get_contents(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson')
         else:
             # create file/folder if it does not exist
@@ -56,6 +58,14 @@ class WetlandGeometry(APIView):
     def file_get_contents(self, filename):
         with open(filename) as f:
             return f.read()
+
+    def get_file_time(self):
+        return os.path.getmtime(os.path.join(settings.MEDIA_ROOT + 'wetlands/wetlands.geojson'))
+
+    def get_last_modification_time(self):
+       result = WetlandLayer.objects.latest('updated_at')
+       timestamp_string = format(result.updated_at, u'U')
+       return timestamp_string
 
 
 class WetlandsList(APIView):
@@ -197,17 +207,17 @@ class WetlandDetail(APIView):
             finalJSON['indicators'].append(
                 {'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name,
                  'order': indicator.order, 'description': indicator.description, 'layers': layers})
-        for indicator_value in indicator_values:
-            print indicator_value.__dict__
-            if indicator_value.indicator_id not in temp_indicator_values:
+        #for indicator_value in indicator_values:
+        #    print indicator_value.__dict__
+        #    if indicator_value.indicator_id not in temp_indicator_values:
 
-                temp_indicator_values[indicator_value.indicator_id] = [
-                    {'time': indicator_value.time, 'time_end': indicator_value.time_end}]
-            else:
-                temp_indicator_values[indicator_value.indicator_id].append(
-                    {'time': indicator_value.time, 'time_end': indicator_value.time_end})
+                #temp_indicator_values[indicator_value.indicator_id] = [
+                #    {'time': indicator_value.time, 'time_end': indicator_value.time_end}]
+            #else:
+            #    temp_indicator_values[indicator_value.indicator_id].append(
+            #        {'time': indicator_value.time, 'time_end': indicator_value.time_end})
 
-        print temp_indicator_values
+        #print temp_indicator_values
 
         # finalJSON['indicator_values'].append({'id': indicator_value.id, 'values': indicator_value.value})
 
