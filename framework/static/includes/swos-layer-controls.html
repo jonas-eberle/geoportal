@@ -26,9 +26,9 @@
         <button ng-controller="DiagramCtrl as diagram"  ng-if="layer.statistic == 'time'" tooltip-placement="bottom"  uib-tooltip="Create time series"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);diagram.requestTimeSeries(layer);"
                 class="btn btn-default hidden-xs" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Download data" ng-if="layer.downloadable" type="button"
+<!--        <button tooltip-placement="bottom"  uib-tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
-                class="fa fa-download fa-lg"></i></button>
+                class="fa fa-download fa-lg"></i></button>-->
         <button tooltip-placement="bottom"  uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Show/Hide station list" type="button"
@@ -36,7 +36,7 @@
                 aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Download" type="button" ng-click="wetlands.download(slc.layer.django_id)"
+        <button tooltip-placement="bottom"  uib-tooltip="Download" type="button" ng-if="layer.downloadable" ng-click="wetlands.download(slc.layer.django_id)"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)" ng-if="!slc.hideShare"
                 class="btn btn-default" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
