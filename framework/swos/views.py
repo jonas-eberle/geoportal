@@ -1,11 +1,11 @@
 import json
-import pycurl
-import urllib2
+#import pycurl
+#import urllib2
 import httplib
 import StringIO
 import os
 import requests
-import sqlite3 as sdb
+#import sqlite3 as sdb
 import uuid
 import glob
 import zipfile
@@ -869,7 +869,7 @@ class DownloadFiles(APIView):
             if type in ["complete", "tiff", "shape"]:
                 if os.path.isfile(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_insert.xml')):
                     filenames.append(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_metadata.xml'))
-                    #rename[str(layer_id) + '_insert.xml'] = layer.identifier + "_metadata.xml"
+                    rename[str(layer_id) + '_metadata.xml'] = layer.identifier + "_metadata.xml"
 
         return self.download_as_archive(filenames, rename)
 
