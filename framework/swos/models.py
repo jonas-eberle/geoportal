@@ -656,9 +656,17 @@ class WetlandLayer(Layer):
         elif self.product.short_name in ['LSTT']:
             date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
         elif self.product.short_name in ['SATDATA']:
-            wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1').replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('XX', 'VV VH').replace('-', ' ')
+            wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1').replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
             date_string = str(self.date_begin.year)
             product = ''
+        elif self.product.short_name in ['SATDATA_OP']:
+            product = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-')
+            wq_type = self.identifier.split('_')[3]
+            date_string = self.date_begin.strftime('%Y-%m-%d')
+        elif self.product.short_name in ['SEGM']:
+            product = 'Segmentation'
+            wq_type = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-') + ' (%s)' % self.identifier.split('_')[3]
+            date_string = str(self.date_begin.year)
         return ' '.join([product,wq_type, date_string])
 
     def indexing(self):
