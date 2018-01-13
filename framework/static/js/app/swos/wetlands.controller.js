@@ -128,7 +128,7 @@
 
                 $('#loading-div').hide();
                 bootbox.dialog({
-                    title   : 'Welcome to the SWOS Geoportal',
+                    title   : 'Welcome to the GEO Wetlands Community Portal',
                     message : $('#welcome_text').html(),
                     backdrop: true,
                     onEscape: true,
