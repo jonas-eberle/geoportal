@@ -1,11 +1,11 @@
 import json
-#import pycurl
-#import urllib2
+import pycurl
+import urllib2
 import httplib
 import StringIO
 import os
 import requests
-#import sqlite3 as sdb
+import sqlite3 as sdb
 import uuid
 import glob
 import zipfile
@@ -831,7 +831,7 @@ class ListFilesForDownload(APIView):
             for filepath in file_list:
                 res = filepath.split(".")
 
-                if res[-1] in ["CPG", "dbf", "prj", "sbn", "sbx", "shp"]:
+                if res[-1] in ["CPG", "dbf", "prj", "sbn", "shx", "sbx", "shp", "qix"]:
                     file_size_list[layer.id]["shape"] += os.path.getsize(filepath)
                 if res[-1] in ["pdf", ]:
                     file_size_list[layer.id]["pdf"] += os.path.getsize(filepath)
@@ -863,17 +863,17 @@ class DownloadFiles(APIView):
             layer_id, type = id.split("%")
             layer = WetlandLayer.objects.get(pk = layer_id)
 
-            filenames += self.get_file_names(layer.identifier, type)
+            filenames += self.get_file_names(layer.identifier, type, layer.wetland.identifier, layer.product.short_name)
 
             # Add Metadata XML
             if type in ["complete", "tiff", "shape"]:
-                if os.path.isfile(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_insert.xml')):
+                if os.path.isfile(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_metadata.xml')):
                     filenames.append(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_metadata.xml'))
-                    rename[str(layer_id) + '_metadata.xml'] = layer.identifier + "_metadata.xml"
+                    rename[str(layer_id) + '_metadata.xml'] = layer.identifier + ".xml"
 
-        return self.download_as_archive(filenames, rename)
+            return self.download_as_archive(layer.identifier, filenames, rename)
 
-    def get_file_names(self, file_id, type):
+    def get_file_names(self, file_id, type, catchment_name, product_name):
         file_list = []
 
         shape = False
@@ -884,14 +884,14 @@ class DownloadFiles(APIView):
 
         ident_parts = file_id.split("_")
         # in case of ... [site_name]_2001_2014.shp
-        if ident_parts[-2].isdigit():
-            catchment_name = ident_parts[-3]
+        #if ident_parts[-2].isdigit():
+        #    catchment_name = ident_parts[-3]
         # in case of ... [site_name]_2001-2014.shp
-        else:
-            catchment_name = ident_parts[-2]
+        #else:
+        #    catchment_name = ident_parts[-2]
 
         #first part of product ident
-        product_name = ident_parts[1]
+        #product_name = ident_parts[1]
 
         if type == "complete":
             shape = True
@@ -931,19 +931,21 @@ class DownloadFiles(APIView):
 
         res = files.split(".")
 
-        if shape == True and (res[-1] in ["CPG", "dbf", "prj", "sbn", "sbx", "shp"] or (res[-1] in ["xml"] and len(res) > 2)) and res[0] == file_id:
+        if shape == True and (res[-1] in ["CPG", "dbf", "prj", "sbn", "sbx", "shx", "shp", "qix"] or (res[-1] in ["xml"] and len(res) > 2)) and res[0] == file_id:
             file_list.append(filepath)
         if pdf == True and res[-1] in ["pdf"] and res[0] == file_id:
             file_list.append(filepath)
         if tiff == True and (res[-1] in ["tfw", "ovr", "tif"] or (res[-1] in ["xml"] and len(res) > 2)) and res[0] == file_id:
-            file_list.append(filepath)
+            if filepath not in file_list:
+                file_list.append(filepath)
 
         return file_list
 
-    def download_as_archive(self, filenames, rename):
+    def download_as_archive(self, identifier, filenames, rename):
 
         #todo subdirs needs to be adjusted once it is possible to download more than one dataset
-        zip_subdir = "SWOS_GEO_Wetlands_Community_portal"
+        #zip_subdir = "SWOS_GEO_Wetlands_Community_portal"
+        zip_subdir = identifier
         zip_filename = "%s.zip" % zip_subdir
 
         # Open StringIO to grab in-memory ZIP contents
@@ -960,10 +962,11 @@ class DownloadFiles(APIView):
             if fname in rename:
                 fname = rename[fname]
 
-            zip_path = os.path.join(zip_subdir, fname)
+            #zip_path = os.path.join(zip_subdir, fname)
 
             # Add file, at correct path
-            zf.write(fpath, zip_path)
+            #zf.write(fpath, zip_path)
+            zf.write(fpath, fname)
 
         # Must close zip for all contents to be written
         zf.close()
