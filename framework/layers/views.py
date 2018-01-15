@@ -130,7 +130,7 @@ class LayerInfo(APIView):
                         output = output[:output.find('<td>')] + output[output.find('</td>')+5:]
 
                     import re
-                    matches = re.findall(r'<td>(.*?)</td>', output)
+                    matches = re.findall(r'<td>(\d.*\d)</td>', output)
                     for match in matches:
                         print match
                         try:
