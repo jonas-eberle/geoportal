@@ -47,12 +47,20 @@ class Wetland(models.Model):
     
     @property
     def products(self):
-        layers = WetlandLayer.objects.filter(wetland_id=self.id,publishable=True)
+        layers = WetlandLayer.objects.filter(wetland_id=self.id,publishable=True).exclude(product__isnull=True)
         products = set()
         for l in layers:
             products.add(l.product.short_name)
         return list(products)
-    
+
+    @property
+    def indicators(self):
+        layers = WetlandLayer.objects.filter(wetland_id=self.id, publishable=True).exclude(indicator__isnull=True)
+        indicators = set()
+        for l in layers:
+            indicators.add(l.indicators.short_name)
+        return list(indicators)
+
     @property
     def count_images(self):
         return len(self.panoramio()['photos'])
@@ -585,8 +593,10 @@ class Product(models.Model):
 class Indicator(models.Model):
     name = models.CharField(max_length=200)
     short_name = models.CharField(max_length = 10)
-    description = models.TextField(blank=True,)
-    parent_indicator = models.ForeignKey("self",blank=True, null=True, verbose_name="Parent indicator")
+    number = models.IntegerField
+    description_meaning = models.TextField(blank=True)
+    description_usage = models.TextField(blank=True)
+    description_creation = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
@@ -595,79 +605,83 @@ class Indicator(models.Model):
 class IndicatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicator
-        fields = ('name', 'description', 'short_name', 'parent_indicator')
+        fields = ('name', 'description', 'short_name', 'number', 'short_description')
 
-class IndicatorValue(models.Model):
-    time = models.DateField (blank=True, null=True, verbose_name="Time Begin")
-    time_end  = models.DateField (blank=True, null=True, verbose_name="Time End (only for time intervals)")
-    time_ref_parts = models.CharField("Date type (referring date parts)", max_length=30, default="Day", choices=(('Day','Day'),('Month','Month'), ('Year', 'Year')))
-    value_absolut = models.FloatField(verbose_name="Absolut value")
-    unit = models.CharField(max_length=10)
-    value_percent = models.FloatField(verbose_name="Relative value (%)")
-    nomenclature = models.CharField(max_length=10, blank=True, null=True)
-    indicator = models.ForeignKey(Indicator, related_name="value_indicator", verbose_name="Indicator")
-    wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
+class SubIndicator(models.Model):
+    name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=10, verbose_name="Short name (will be used for file names)")
+    identifier = models.CharField(max_length=10, verbose_name="Identifier (CSV import)")
+    description = models.CharField(blank=True, max_length=200)
+    sub_number = models.IntegerField(verbose_name="Subnumber")
+    parent_ind = models.ForeignKey(Indicator, related_name='sub_indicator', verbose_name="Indicator")
 
-class IndicatorValueSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IndicatorValue
-        fields = ('name', 'value_absolut', 'unit', 'value_percent', 'time', 'time_end',  'time_ref_parts', 'nomenclature', 'indicator', 'wetland')
+    def __unicode__(self):
+        return u"%s" %(self.name)
 
 class WetlandLayer(Layer):
     wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
-    indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
+    indicator = models.ForeignKey(SubIndicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def alternate_title(self):
         wq_type = ''
         date_string = ''
-        product = self.product.short_name
-        if self.product.short_name in ['WQ']:
-            wq_type = ' '.join(self.identifier.split('_')[2:5])
-        elif self.product.short_name in ['LULC']:
-            wq_type = self.identifier.split('_')[2]
-            if self.date_begin.year == self.date_end.year:
+        if hasattr(self.product, 'short_name'):
+            product = self.product.short_name
+
+            if self.product.short_name in ['WQ']:
+                wq_type = ' '.join(self.identifier.split('_')[2:5])
+            elif self.product.short_name in ['LULC']:
+                wq_type = self.identifier.split('_')[2]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['SWD']:
+                wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['LULCC_S']:
+                wq_type = self.identifier.split('_')[3] + ' ' + self.identifier.split('_')[4]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['FloodReg', 'InvDel']:
+                wq_type = self.identifier.split('_')[2]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['LULCC_L']:
+                wq_type = self.identifier.split('_')[3]
+                date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
+            elif self.product.short_name in ['LSTT']:
+                date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
+            elif self.product.short_name in ['SATDATA']:
+                wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1').replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
                 date_string = str(self.date_begin.year)
-            else:
-                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['SWD']:
-            wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
-            if self.date_begin.year == self.date_end.year:
+                product = ''
+            elif self.product.short_name in ['SATDATA_OP']:
+                product = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-')
+                wq_type = self.identifier.split('_')[3]
+                date_string = self.date_begin.strftime('%Y-%m-%d')
+            elif self.product.short_name in ['SEGM']:
+                product = 'Segmentation'
+                wq_type = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-') + ' (%s)' % self.identifier.split('_')[3]
                 date_string = str(self.date_begin.year)
-            else:
-                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['LULCC_S']:
-            wq_type = self.identifier.split('_')[3] + ' ' + self.identifier.split('_')[4]
-            if self.date_begin.year == self.date_end.year:
-                date_string = str(self.date_begin.year)
-            else:
-                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['FloodReg', 'InvDel']:
-            wq_type = self.identifier.split('_')[2]
-            if self.date_begin.year == self.date_end.year:
-                date_string = str(self.date_begin.year)
-            else:
-                date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-        elif self.product.short_name in ['LULCC_L']:
-            wq_type = self.identifier.split('_')[3]
-            date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-        elif self.product.short_name in ['LSTT']:
-            date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-        elif self.product.short_name in ['SATDATA']:
-            wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1').replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
-            date_string = str(self.date_begin.year)
-            product = ''
-        elif self.product.short_name in ['SATDATA_OP']:
-            product = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-')
-            wq_type = self.identifier.split('_')[3]
-            date_string = self.date_begin.strftime('%Y-%m-%d')
-        elif self.product.short_name in ['SEGM']:
-            product = 'Segmentation'
-            wq_type = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-') + ' (%s)' % self.identifier.split('_')[3]
-            date_string = str(self.date_begin.year)
-        return ' '.join([product,wq_type, date_string])
+
+            return ' '.join([product,wq_type, date_string])
+
+        if hasattr(self.indicator, 'short_name'): #todo Add alternate_title for Indicator
+            product = self.indicator.short_name
+            wq_type = self.identifier
+
+            return ' '.join([product, wq_type, date_string])
 
     def indexing(self):
 
@@ -1195,3 +1209,38 @@ class StoryLineInline(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class IndicatorValue(models.Model):
+    sub_indicator = models.ForeignKey(SubIndicator, related_name="value_indicator", verbose_name="SubIndicator")
+    wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
+    nomenclature = models.CharField(max_length=10, blank=True, null=True)
+    creation_date = models.DateField
+    total_pixel = models.IntegerField(verbose_name="Total count of pixel (refers to input 1)")
+    total_sqm = models.FloatField(blank=True, null=True, verbose_name="Total area in sqm")
+    unclassified_pixel = models.FloatField(blank=True, null=True, verbose_name="Number of unclassified pixel")
+    unclassified_sqm = models.FloatField(blank=True, null=True, verbose_name="Area of unclassified pixel")
+    time_ref_parts = models.CharField("Date type (referring date parts)", max_length=10, default="Year",choices=(('Day', 'Day'), ('Month', 'Month'), ('Year', 'Year')))
+    input_1_time = models.DateField (blank=True, null=True, verbose_name="Time input 1")
+    input_layer_1 = models.ForeignKey(WetlandLayer, blank=True, null=True, verbose_name="Input layer 1", related_name="ind_input_layer_1")
+    input_2_time = models.DateField (blank=True, null=True, verbose_name="Time input 2")
+    input_layer_2 = models.ForeignKey(WetlandLayer, blank=True, null=True, verbose_name="Input layer 2", related_name="ind_input_layer_2")
+    additional_input_layer = models.ManyToManyField(WetlandLayer, blank=True, verbose_name="Additional Input Layer", related_name="additional_input_layer")
+    input_data_description = models.CharField(max_length=800, blank=True, null=True, verbose_name="Input data description (e.g. selected classes)")
+    value_increase_pixel = models.IntegerField(blank=True, null=True, verbose_name="Increase in pixel")
+    value_increase_sqm = models.FloatField(blank=True, null=True, verbose_name="Increase in sqm")
+    value_increase_percent = models.FloatField(blank=True, null=True, verbose_name="Increase in percent")
+    value_decrease_pixel = models.IntegerField(blank=True, null=True, verbose_name="Decrease in pixel")
+    value_decrease_sqm = models.FloatField(blank=True, null=True, verbose_name="Decrease in sqm")
+    value_decrease_percent = models.FloatField(blank=True, null=True, verbose_name="Decrease in percent")
+    value_sum_pixel = models.IntegerField(blank=True, null=True, verbose_name="Sum in pixel")
+    value_sum_sqm = models.FloatField(blank=True, null=True, verbose_name="Sum in sqm")
+    value_sum_percent = models.FloatField(blank=True, null=True, verbose_name="Sum in percent")
+
+    def __unicode__(self):
+        return u"%s" %(self.sub_indicator + "_" + self.wetland)
+
+class IndicatorValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndicatorValue
+        fields = ('sub_indicator', 'wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )

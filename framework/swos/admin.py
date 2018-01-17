@@ -1,7 +1,7 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
 from django import forms
-from .models import Wetland, Product, Indicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart
+from .models import Wetland, Product, Indicator, SubIndicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart
 
 from layers.admin import LayersAdmin
 
@@ -104,10 +104,12 @@ class ProductAdmin(SortableModelAdmin):
 
 class IndicatorAdmin(SortableModelAdmin):
     sortable = 'order'
-    list_display = ('name', 'description', 'short_name', 'parent_indicator')
 
-class IndicatorValuesAdmin(admin.ModelAdmin):
-    list_display = ('value_absolut', 'unit', 'value_percent', 'time', 'time_end', 'time_ref_parts', 'indicator', 'wetland')
+class SubIndicatorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent_ind', 'sub_number')
+
+class IndicatorValueAdmin(admin.ModelAdmin):
+    list_display = ('sub_indicator','wetland' )
 
 class StoryLinePartForm(forms.ModelForm):
     class Meta:
@@ -138,8 +140,9 @@ class StoryLinePartAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Indicator, IndicatorAdmin)
-admin.site.register(IndicatorValue, IndicatorValuesAdmin)
+admin.site.register(Indicator,IndicatorAdmin)
+admin.site.register(SubIndicator, SubIndicatorAdmin)
+admin.site.register(IndicatorValue,IndicatorValueAdmin)
 admin.site.register(WetlandLayer, WetlandLayerAdmin)
 admin.site.register(ExternalDatabase, ExternalDatabaseAdmin)
 admin.site.register(ExternalLayer, ExternalLayerAdmin)

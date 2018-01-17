@@ -100,13 +100,16 @@ class WetlandDetail(APIView):
 
         return story_line_parts
 
-    def get_story_line_by_product_id(self, product_id):
+    def get_story_line_by_product_or_indicator_id(self, type, product_indicator_id):
 
         story_line_parts = []
         story_line_list = []
+        story_line = False
 
-        story_line = StoryLineInline.objects.filter(Q(story_line__active=True),
-        Q(story_line_part__product_layer__product_id=product_id), Q(story_line__link_to_product=True)).order_by("order")
+        if (type == "product"):
+            story_line = StoryLineInline.objects.filter(Q(story_line__active=True), Q(story_line_part__product_layer__product_id=product_indicator_id), Q(story_line__link_to_product=True)).order_by("order")
+        if (type == "indicator"):
+            story_line = StoryLineInline.objects.filter(Q(story_line__active=True), Q(story_line_part__indicator_layer__indicator_id=product_indicator_id), Q(story_line__link_to_product=True)).order_by("order")
 
         if not story_line:
             return False
@@ -129,6 +132,8 @@ class WetlandDetail(APIView):
         indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('indicator', 'time')
         temp_products_layers = dict()
         temp_indicators_layers = dict()
+        temp_ind_parent = dict()
+        temp_ind_parent_descr = dict()
         temp_external_layers = dict()
         temp_external_story_lines = dict()
         temp_products = dict()
@@ -136,6 +141,7 @@ class WetlandDetail(APIView):
         temp_indicators = dict()
         temp_indicator_values = dict()
         temp_indicators_story_lines = dict()
+        temp_ind_parent_story_line = dict()
         
         finalJSON = {'id': wetland.id, 'title': wetland.name, 'image': wetland.image_url,
                      'image_desc': wetland.image_desc, 'products': [], 'indicators': [], 'externaldb': [],
@@ -160,7 +166,7 @@ class WetlandDetail(APIView):
             if layer.product:
                 layer_data['product_name'] = layer.product.name
                 if layer.product.id not in temp_products_layers:
-                    story_line_product = self.get_story_line_by_product_id(layer.product.id)
+                    story_line_product = self.get_story_line_by_product_or_indicator_id("product", layer.product.id)
                     if layer_data['story_line'] != "" and story_line_product != False :
                         for story in story_line_product:
                             if story not in layer_data['story_line']:
@@ -180,6 +186,15 @@ class WetlandDetail(APIView):
             if layer.indicator:
                 layer_data['indicator_name'] = layer.indicator.name
                 if layer.indicator.id not in temp_indicators_layers:
+                    story_line_indicator = self.get_story_line_by_product_or_indicator_id("indicator", layer.indicator.id)
+                    print story_line_indicator
+                    print "hjghjghj"
+                    if layer_data['story_line'] != "" and story_line_indicator != False:
+                        for story in story_line_indicator:
+                            if story not in layer_data['story_line']:
+                                layer_data['story_line'].append(story)
+                    elif story_line_indicator != False:
+                        temp_indicators_story_lines[layer.indicator.id] = story_line_indicator
                     temp_indicators[layer.indicator.id] = layer.indicator
                     temp_indicators_layers[layer.indicator.id] = [layer_data]
                 else:
@@ -204,9 +219,31 @@ class WetlandDetail(APIView):
         for indicator in temp_indicators:
             indicator = temp_indicators[indicator]
             layers = temp_indicators_layers[indicator.id]
+            if indicator.id in temp_indicators_story_lines:
+                story_line_data = temp_indicators_story_lines[indicator.id]
+            else:
+                story_line_data = ""
+            temp_ind_parent_descr[indicator.parent_ind.id] = indicator.parent_ind
+            if indicator.parent_ind.id in temp_ind_parent_story_line and temp_ind_parent_story_line[indicator.parent_ind.id] != "":
+                temp_ind_parent_story_line[indicator.parent_ind.id].append(story_line_data)
+            else:
+                temp_ind_parent_story_line[indicator.parent_ind.id] = story_line_data
+
+            if indicator.parent_ind.id not in temp_ind_parent:
+                temp_ind_parent[indicator.parent_ind.id] = [{'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
+                  'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data}]
+            else:
+                temp_ind_parent[indicator.parent_ind.id].append({'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
+                  'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data})
+
+        for ind_parent in temp_ind_parent:
             finalJSON['indicators'].append(
-                {'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name,
-                 'order': indicator.order, 'description': indicator.description, 'layers': layers})
+                {'id': ind_parent,'name': temp_ind_parent_descr[ind_parent].name, 'order_ind': temp_ind_parent_descr[ind_parent].order,
+                 'description_meaning': temp_ind_parent_descr[ind_parent].description_meaning, 'description_usage': temp_ind_parent_descr[ind_parent].description_usage,
+                 'description_creation': temp_ind_parent_descr[ind_parent].description_creation,'ind_layer': temp_ind_parent[ind_parent],'story_line': temp_ind_parent_story_line[ind_parent] })
+
+
+
         #for indicator_value in indicator_values:
         #    print indicator_value.__dict__
         #    if indicator_value.indicator_id not in temp_indicator_values:
@@ -322,7 +359,7 @@ class WetlandDetail(APIView):
 
         # sort the products according to the order attribute
         finalJSON['products'] = sorted(finalJSON['products'], key=lambda x: x['order'], reverse=False)
-        finalJSON['indicators'] = sorted(finalJSON['indicators'], key=lambda x: x['order'], reverse=False)
+        #finalJSON['indicators'] = sorted(finalJSON['indicators'], key=lambda x: x['sub_number'], reverse=False)
 
         finalJSON['count'] = dict()
         finalJSON['count']['images'] = wetland.count_images
