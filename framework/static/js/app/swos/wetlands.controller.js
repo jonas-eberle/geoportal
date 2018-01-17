@@ -235,17 +235,17 @@
                 // about it. using cookies to prevent the dialog from popping up everytime.
                 if (mapviewer.layersMeta.length > 1 && $cookies.get('hasNotifiedAboutLayers') === undefined) {
                     bootbox.dialog({
-                        title      : "Warning",
+                        title      : "Information",
                         message    : "More than one layer has been added to the map. This means " +
                         "that layers are visualized in combination, i.e. the layer added most " +
-                        "recently is displayed on top.",
+                        "recently is displayed on top. To view underlying layer you can change the transparency for each layer, hide a layer or change the order (left menu: Active layers).",
                         closeButton: false,
-                        buttons    : {
-                            "Do not show again": function () {
-                                $cookies.put('hasNotifiedAboutLayers', true);
-                            },
-                            cancel             : {
-                                label: "Close"
+                        buttons     :{
+                            cancel: {
+                                label: "Close",
+                                callback: function () {
+                                    $cookies.put('hasNotifiedAboutLayers', true);
+                                }
                             }
                         }
                     });
@@ -402,10 +402,7 @@
         }
 
         function trackAddLayer(layer) {
-            TrackingService.trackPageView(
-                '/wetland/' + WetlandsService.value.name + '/products/' + layer.product_name + '/' + layer.alternate_title,
-                'Map: ' + layer.title
-            );
+            tracking("Map", layer);
         }
 
         function showSatdataExplorer() {
@@ -451,9 +448,37 @@
             });
         }
 
-        function download(django_id){
-            var url = '/swos/download_as_archive?ids='+ django_id + '%complete';
+        function download(layer){
+
+            tracking("Download", layer);
+
+            var url = '/swos/download_as_archive?ids='+ layer.django_id + '%complete';
             window.open(url, '_self');
+        }
+
+        function tracking(type, layer){ //type: e.g. Map, Download
+
+            var layer_type = "/unknown/";
+            var type_name = "";
+
+            if(layer.product_name){
+                layer_type = '/products/';
+                type_name = layer.product_name;
+            }
+            else if(layer.indicator_name){
+                layer_type = '/indicators/';
+                type_name = layer.indicator_name;
+            }
+            else{
+                layer_type = '/external/';
+                type_name = "";
+            }
+
+            TrackingService.trackPageView(
+                '/wetland/' + WetlandsService.value.name + layer_type + type_name + '/' + layer.alternate_title,
+                type + ': ' + layer.title
+            );
+
         }
     }
 })();
