@@ -110,5 +110,5 @@ These 4 lists serve as the base for defining bundles specific for a Mapviewer. E
 
 
 ## Anchors to story lines
-#/storyline/2 --> open story line with id 2
+#/storyline/2 --> open story line with id 2  
 #/storyline/2/2 --> open story line with id 2 part 2
