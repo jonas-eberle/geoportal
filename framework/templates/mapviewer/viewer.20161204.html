@@ -313,7 +313,7 @@
                                <option ng-repeat="option in wetlandsFilter.country_list | unique | orderBy " value="{{option}}">{{option}}</option>-->
                             </select>
                             <select ng-model="wetlandsFilter.filtered_geo_scale" ng-change="wetlandsFilter.filterScale()" style="width: 40%; margin-bottom: 10px;">
-                                <option value="">- Filter by scale -</option>
+                                <option value="">- Filter by size -</option>
                                <!-- <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>-->
                                 <option value="1">Wetlands < 20k ha</option>
                                 <option value="2">Wetlands 20k ha - 50k ha</option>
