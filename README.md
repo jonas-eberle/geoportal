@@ -106,3 +106,9 @@ These 4 lists serve as the base for defining bundles specific for a Mapviewer. E
 #/wetland/4/product/ --> open wetland with id 4 and select products  
 #/wetland/4/product/1932 --> open wetland with id 4, select product, add layer with id 1932 and open menu  
 #/wetland/4/product/2551_1932 --> open wetland with id 4, select products, add layer with id 2551 and 1932 and open menu (type (e.g. "product") should fit to last layer id --> #/wetland/4/externaldb/1932_2551 )
+
+
+
+## Anchors to story lines
+#/storyline/2 --> open story line with id 2
+#/storyline/2/2 --> open story line with id 2 part 2
