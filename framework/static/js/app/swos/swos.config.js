@@ -21,6 +21,14 @@
                 controller: 'WetlandsCtrl',
                 controllerAs: 'wetlands'
             })
+            .when('/storyline/:story_line_id', {
+                controller: 'StoryLineCtrl',
+                controllerAs: 'storyLine'
+            })
+            .when('/storyline/:story_line_id/:story_line_part_id', {
+                controller: 'StoryLineCtrl',
+                controllerAs: 'storyLine'
+            })
         ;
     }
 

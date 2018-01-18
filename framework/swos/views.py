@@ -698,7 +698,7 @@ class StoryLineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StoryLine
-        fields = ('title', 'description', 'authors', 'story_line', 'story_line_file_name', 'story_line_file')
+        fields = ('title', 'description', 'authors', 'story_line', 'story_line_file_name', 'story_line_file', 'wetland', 'id')
 
 
 class StoryLineData(APIView):

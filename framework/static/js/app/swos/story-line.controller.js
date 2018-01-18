@@ -5,8 +5,8 @@
         .module('webgisApp.swos')
         .controller('StoryLineCtrl', StoryLineCtrl);
 
-    StoryLineCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', 'djangoRequests', 'TrackingService', '$compile','$timeout', '$cookies'];
-    function StoryLineCtrl($scope, mapviewer, WetlandsService, djangoRequests, TrackingService, $compile, $timeout, $cookies) {
+    StoryLineCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', 'djangoRequests', 'TrackingService', '$compile','$timeout', '$cookies', '$routeParams', '$location', '$window'];
+    function StoryLineCtrl($scope, mapviewer, WetlandsService, djangoRequests, TrackingService, $compile, $timeout, $cookies, $routeParams, $location, $window) {
         var storyLine = this;
         var cur_story_line_id = "";
         var cur_story_line_title = "";
@@ -18,6 +18,12 @@
         storyLine.setVisibilityStoryLine = setVisibilityStoryLine;
 
         $scope.show_story_lines = false;
+
+        $scope.$on('wetlands_loaded', function () {
+            if ($routeParams.story_line_id){
+                show_story_line($routeParams.story_line_id, parseInt($routeParams.story_line_part_id));
+            }
+        });
 
 
         function setVisibilityStoryLine(){
@@ -92,7 +98,9 @@
         }
 
         function addFirstPart(data){
-            var story_line_part = {"order": -1, "story_line_part": {"title": data.title, "headline": "Overview", "description": data.description, "authors": data.authors, "product_layer": "", "indicator_layer":"", "external_layer":"", "story_line_file_url": data.story_line_file, "story_line_file_name": data.story_line_file_name}};
+            var permalink =  $location.protocol() +"://"+ $location.host() + $window.location.pathname + "#/storyline/" + data.id;
+            console.log(data);
+            var story_line_part = {"order": -1, "story_line_part": {"title": data.title, "headline": "Overview", "description": data.description, "authors": data.authors, "product_layer": "", "indicator_layer":"", "external_layer":"", "story_line_file_url": data.story_line_file, "story_line_file_name": data.story_line_file_name, "wetland": data.wetland, "permalink": permalink}};
 
             return data.story_line.unshift(story_line_part);
         }
@@ -266,6 +274,7 @@
                 '<span ng-if="story_line_part.image_copyright && story_line_part.image_date" >,</span> {{story_line_part.image_date}}' +
                 '<pan ng-if="story_line_part.image_copyright || story_line_part.image_date" n>)</span></figcaption></figure>' +
                 '<div ng-if="story_line_part.story_line_file_url">Download as pdf: <a href="{{story_line_part.story_line_file_url}}" download="{{story_line_part.story_line_file_name}}">{{story_line_part.story_line_file_name}}</a> </div>' +
+                '<div ng-if="story_line_part.permalink">Please use the following link to share the story line: <a href="story_line_part.permalink" target="_blank">{{story_line_part.permalink}}</a></div>' +
                 '</div>';
 
             var template_select = '<div style="margin-bottom: 40px;">' +

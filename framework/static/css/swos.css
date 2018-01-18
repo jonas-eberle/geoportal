@@ -719,3 +719,5 @@ button.btn-loadmore:hover {
 .level_4{
     padding-left: 35px;
 }
+
+.bootbox.modal {z-index: 2051 !important;}

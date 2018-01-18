@@ -5,8 +5,8 @@
         .module('webgisApp.swos')
         .controller('WetlandsCtrl', WetlandsCtrl);
 
-    WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location', 'Attribution', '$uibModal'];
-    function WetlandsCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location, Attribution, $modal) {
+    WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location', 'Attribution', '$uibModal', '$rootScope'];
+    function WetlandsCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location, Attribution, $modal, $rootScope) {
         var proceed = true;
         var wetlands = this;
 
@@ -149,6 +149,8 @@
                     }
                 });
                 loadWetland();
+                $rootScope.$broadcast("wetlands_loaded");
+
             }, function () {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
             })
