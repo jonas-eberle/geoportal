@@ -354,7 +354,7 @@
                                 var closestPanel = $(last_layer_id).closest('.panel');
                                 if (type_name === "product") {
                                     $location.path('/wetland/' + wetland_id + '/product/' + layer_id);
-                                    closestPanel.find('a').trigger('click'); // find headline and open accordion
+                                    closestPanel.find('a').first().trigger('click'); // find headline and open accordion
                                 }
 
                                 if (type_name === "externaldb") {
