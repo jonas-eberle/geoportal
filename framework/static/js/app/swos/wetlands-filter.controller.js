@@ -97,7 +97,21 @@
             wetlandsFilter.filtered_testmapping = false;
             wetlandsFilter.sortByCountryName = false;
             $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = ((this['geo_scale'] === wetlandsFilter.filtered_geo_scale) || (wetlandsFilter.filtered_geo_scale === ''));
+                if (wetlandsFilter.filtered_geo_scale == 1){
+                    this['show'] = ((this['size'] < 20000));
+                }
+                else if(wetlandsFilter.filtered_geo_scale == 2){
+                    this['show'] = ((this['size'] > 20000 && this['size'] < 50000));
+                }
+                else if(wetlandsFilter.filtered_geo_scale == 3){
+                    this['show'] = ((this['size'] > 50000 && this['size'] < 500000));
+                }
+                else if(wetlandsFilter.filtered_geo_scale == 4){
+                    this['show'] = ((this['size'] > 500000 ));
+                }
+                else if (wetlandsFilter.filtered_geo_scale === ''){
+                    this['show'] = true;
+                }
             });
             wetlandsFilter.filtered_country = '';
             wetlandsFilter.filtered_ecoregion = '';
