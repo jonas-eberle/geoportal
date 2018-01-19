@@ -50,7 +50,7 @@
             return item.country.includes(wetlandsFilter.filtered_country) || wetlandsFilter.filtered_country === '';
         }
         function check_product(item){
-            return jQuery.inArray(wetlandsFilter.filtered_products,item.products > -1) || wetlandsFilter.filtered_products === '';
+            return jQuery.inArray(wetlandsFilter.filtered_products,item.products) > -1 || wetlandsFilter.filteredh_products === '';
         }
         function check_site_type(item) {
             return item.site_type === wetlandsFilter.filtered_site_type || wetlandsFilter.filtered_site_type === '';
