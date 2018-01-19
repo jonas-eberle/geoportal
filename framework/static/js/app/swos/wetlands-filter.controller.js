@@ -14,169 +14,70 @@
         wetlandsFilter.filtered_geo_scale = '';
         wetlandsFilter.filtered_products = '';
         wetlandsFilter.filtered_site_type = '';
-        wetlandsFilter.filtered_testmapping = true;
+        wetlandsFilter.filtered_product_count = true;
         wetlandsFilter.filtered_wetland_type = '';
-        wetlandsFilter.filterCountry = filterCountry;
-        wetlandsFilter.filterEcoregion = filterEcoregion;
-        wetlandsFilter.filterProduct = filterProduct;
-        wetlandsFilter.filterReset = filterReset;
-        wetlandsFilter.filterScale = filterScale;
-        wetlandsFilter.filterSiteType = filterSiteType;
-        wetlandsFilter.filterTestmapping = filterTestmapping;
-        wetlandsFilter.filterWetlandType = filterWetlandType;
         wetlandsFilter.setSortOrder = setSortOrder;
-        wetlandsFilter.sortByCountryName = false;
-        wetlandsFilter.sortOrder = 'name';
+        wetlandsFilter.sortByCountryName = true;
+        wetlandsFilter.sortOrder = ['country', 'name'];
         wetlandsFilter.wetlands_without_geom = WetlandsService.wetlands_without_geom;
         wetlandsFilter.country_list = WetlandsService.country_list;
+        wetlandsFilter.product_count = product_count;
+        wetlandsFilter.filterWetlands = filterWetlands;
+        wetlandsFilter.check_wetland_type = check_wetland_type;
+        wetlandsFilter.check_ecoregion = check_ecoregion;
+        wetlandsFilter.check_country = check_country;
+        wetlandsFilter.check_product = check_product;
+        wetlandsFilter.check_site_type = check_site_type;
+        wetlandsFilter.check_scale = check_scale;
 
-        function filterCountry() {
-            wetlandsFilter.filtered_testmapping = false;
-            wetlandsFilter.sortByCountryName = false;
-            $.each(wetlandsFilter.wetlands_without_geom, function(){
-                this['show'] = ((this['country'].includes(wetlandsFilter.filtered_country) || wetlandsFilter.filtered_country === ''));
-            });
-
-            wetlandsFilter.filtered_geo_scale = '';
-            wetlandsFilter.filtered_ecoregion = '';
-            wetlandsFilter.filtered_wetland_type = '';
-            wetlandsFilter.filtered_site_type = '';
-            wetlandsFilter.filtered_products = '';
-            if (wetlandsFilter.filtered_country === null) {
-                wetlandsFilter.filterReset();
+        function product_count(){
+            if(wetlandsFilter.filtered_product_count == true){
+                return 1
             }
-
-            updateWetlandLayer();
+            else
+            {
+                return 0
+            }
         }
 
-        function filterEcoregion() {
-            wetlandsFilter.filtered_testmapping = false;
-            wetlandsFilter.sortByCountryName = false;
+        function check_wetland_type(item){
+            return item.wetland_type === wetlandsFilter.filtered_wetland_type || wetlandsFilter.filtered_wetland_type === '';
+        }
+        function check_ecoregion(item) {
+            return item.ecoregion.includes(wetlandsFilter.filtered_ecoregion)  || wetlandsFilter.filtered_ecoregion === '';
+        }
+        function check_country(item) {
+            return item.country.includes(wetlandsFilter.filtered_country) || wetlandsFilter.filtered_country === '';
+        }
+        function check_product(item){
+            return jQuery.inArray(wetlandsFilter.filtered_products,item.products > -1) || wetlandsFilter.filtered_products === '';
+        }
+        function check_site_type(item) {
+            return item.site_type === wetlandsFilter.filtered_site_type || wetlandsFilter.filtered_site_type === '';
+        }
+
+        function check_scale(item) {
+            if (wetlandsFilter.filtered_geo_scale == 1) {
+                return item.size < 20000;
+            }
+            else if (wetlandsFilter.filtered_geo_scale == 2) {
+                return item.size > 20000 && item.size < 50000;
+            }
+            else if (wetlandsFilter.filtered_geo_scale == 3) {
+                return item.size > 50000 && item.size < 500000;
+            }
+            else if (wetlandsFilter.filtered_geo_scale == 4) {
+                return item.size > 500000 ;
+            }
+            else if (wetlandsFilter.filtered_geo_scale === '') {
+                return true;
+            }
+        }
+
+        function filterWetlands() {
             $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = ((this['ecoregion'].includes(wetlandsFilter.filtered_ecoregion) || (wetlandsFilter.filtered_ecoregion === '')));
+                this['show'] = (check_wetland_type(this) && check_ecoregion(this) && check_country(this) && check_product(this) && check_site_type(this) && check_scale(this) && this.products.length >= product_count());
             });
-            wetlandsFilter.filtered_country = '';
-            wetlandsFilter.filtered_geo_scale = '';
-            wetlandsFilter.filtered_wetland_type = '';
-            wetlandsFilter.filtered_site_type = '';
-            wetlandsFilter.filtered_products = '';
-            if (wetlandsFilter.filtered_ecoregion === null) {
-                wetlandsFilter.filterReset();
-            }
-
-            updateWetlandLayer();
-        }
-
-        function filterProduct() {
-            wetlandsFilter.filtered_testmapping = false;
-            wetlandsFilter.sortByCountryName = false;
-            $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = ((jQuery.inArray(wetlandsFilter.filtered_products, this['products']) > -1) || (wetlandsFilter.filtered_products === ''));
-            });
-            wetlandsFilter.filtered_country = '';
-            wetlandsFilter.filtered_geo_scale = '';
-            wetlandsFilter.filtered_ecoregion = '';
-            wetlandsFilter.filtered_wetland_type = '';
-            wetlandsFilter.filtered_site_type = '';
-            if (wetlandsFilter.filtered_products === null) {
-                wetlandsFilter.filterReset();
-            }
-
-            updateWetlandLayer();
-        }
-
-        function filterReset() {
-            $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = true;
-            });
-
-            updateWetlandLayer();
-        }
-
-        function filterScale() {
-            wetlandsFilter.filtered_testmapping = false;
-            wetlandsFilter.sortByCountryName = false;
-            $.each(wetlandsFilter.wetlands_without_geom, function () {
-                if (wetlandsFilter.filtered_geo_scale == 1){
-                    this['show'] = ((this['size'] < 20000));
-                }
-                else if(wetlandsFilter.filtered_geo_scale == 2){
-                    this['show'] = ((this['size'] > 20000 && this['size'] < 50000));
-                }
-                else if(wetlandsFilter.filtered_geo_scale == 3){
-                    this['show'] = ((this['size'] > 50000 && this['size'] < 500000));
-                }
-                else if(wetlandsFilter.filtered_geo_scale == 4){
-                    this['show'] = ((this['size'] > 500000 ));
-                }
-                else if (wetlandsFilter.filtered_geo_scale === ''){
-                    this['show'] = true;
-                }
-            });
-            wetlandsFilter.filtered_country = '';
-            wetlandsFilter.filtered_ecoregion = '';
-            wetlandsFilter.filtered_wetland_type = '';
-            wetlandsFilter.filtered_site_type = '';
-            wetlandsFilter.filtered_products = '';
-            if (wetlandsFilter.filtered_geo_scale === null) {
-                wetlandsFilter.filterReset();
-            }
-
-            updateWetlandLayer();
-        }
-
-        function filterSiteType() {
-            wetlandsFilter.filtered_testmapping = false;
-            wetlandsFilter.sortByCountryName = false;
-            $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = ((this['site_type'] === wetlandsFilter.filtered_site_type) || (wetlandsFilter.filtered_site_type === ''));
-            });
-            wetlandsFilter.filtered_country = '';
-            wetlandsFilter.filtered_geo_scale = '';
-            wetlandsFilter.filtered_ecoregion = '';
-            wetlandsFilter.filtered_wetland_type = '';
-            wetlandsFilter.filtered_products = '';
-            if (wetlandsFilter.filtered_site_type === null) {
-                wetlandsFilter.filterReset();
-            }
-
-            updateWetlandLayer();
-        }
-
-        function filterTestmapping() {
-            wetlandsFilter.filtered_country = '';
-            wetlandsFilter.filtered_geo_scale = '';
-            wetlandsFilter.filtered_ecoregion = '';
-            wetlandsFilter.filtered_wetland_type = '';
-            wetlandsFilter.filtered_site_type = '';
-            wetlandsFilter.filtered_products = '';
-
-            if (wetlandsFilter.filtered_testmapping === false) {
-                wetlandsFilter.filterReset();
-            } else {
-                $.each(wetlandsFilter.wetlands_without_geom, function () {
-                    //this['show'] = (this['id'] <= 9);
-                    this['show'] = (this['products'].length > 0);
-                })
-            }
-
-            updateWetlandLayer();
-        }
-
-        function filterWetlandType() {
-            wetlandsFilter.filtered_testmapping = false;
-            wetlandsFilter.sortByCountryName = false;
-            $.each(wetlandsFilter.wetlands_without_geom, function () {
-                this['show'] = ((this['wetland_type'] === wetlandsFilter.filtered_wetland_type) || (wetlandsFilter.filtered_wetland_type === ''));
-            });
-            wetlandsFilter.filtered_country = '';
-            wetlandsFilter.filtered_geo_scale = '';
-            wetlandsFilter.filtered_ecoregion = '';
-            wetlandsFilter.filtered_site_type = '';
-            wetlandsFilter.filtered_products = '';
-            if (wetlandsFilter.filtered_wetland_type === null) {
-                wetlandsFilter.filterReset();
-            }
 
             updateWetlandLayer();
         }
