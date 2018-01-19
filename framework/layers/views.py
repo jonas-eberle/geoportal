@@ -133,6 +133,7 @@ class LayerInfo(APIView):
                     matches = re.findall(r'<td>(\d.*\d)</td>', output)
                     for match in matches:
                         print match
+                        match_float = None
                         try:
                             match_float = float(match)
                         except ValueError:
