@@ -19,16 +19,23 @@
 
         $scope.show_story_lines = false;
 
+        //watch change of selected_part (via next/back or selection list)
+        $scope.$watch('selected_part', function() {
+                changePart()
+        });
+
         $scope.$on('wetlands_loaded', function () {
-            if ($routeParams.story_line_id){
-                show_story_line($routeParams.story_line_id, parseInt($routeParams.story_line_part_id));
+            if ($routeParams.story_line_id && $routeParams.story_line_part_id){
+                show_story_line($routeParams.story_line_id, Number($routeParams.story_line_part_id));
+            }
+            else if ($routeParams.story_line_id){
+                show_story_line($routeParams.story_line_id);
             }
         });
 
-
-        function setVisibilityStoryLine(){
-                    $scope.show_story_lines = !$scope.show_story_lines;
-                }
+        function setVisibilityStoryLine() {
+            $scope.show_story_lines = !$scope.show_story_lines;
+        }
 
         function show_story_line(story_line_id, selected_part) {
             if (typeof(selected_part)==='undefined') selected_part = null;
@@ -99,7 +106,6 @@
 
         function addFirstPart(data){
             var permalink =  $location.protocol() +"://"+ $location.host() + $window.location.pathname + "#/storyline/" + data.id;
-            console.log(data);
             var story_line_part = {"order": -1, "story_line_part": {"title": data.title, "headline": "Overview", "description": data.description, "authors": data.authors, "product_layer": "", "indicator_layer":"", "external_layer":"", "story_line_file_url": data.story_line_file, "story_line_file_name": data.story_line_file_name, "wetland": data.wetland, "permalink": permalink}};
 
             return data.story_line.unshift(story_line_part);
@@ -115,12 +121,14 @@
         }
 
         function changePart() {
-            $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
-            $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
+            if ($scope.selected_part) {
+                $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
+                $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
 
-            checkWetland_addLayer_zoom();
-            prev_story_line_part = $scope.story_line_part;
-            trackStoryLine();
+                checkWetland_addLayer_zoom();
+                prev_story_line_part = $scope.story_line_part;
+                trackStoryLine();
+            }
         }
 
         function checkWetland_addLayer_zoom() {
@@ -207,11 +215,11 @@
                                 $scope.story_line_pos = $scope.story_lines.length - 1
                             }
                             $scope.selected_part = pos_order_map[$scope.story_line_pos];
-                            $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
+                            //$scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
                             $scope.$apply();
-                            checkWetland_addLayer_zoom();
-                            prev_story_line_part = $scope.story_line_part;
-                            trackStoryLine();
+                            //checkWetland_addLayer_zoom();
+                            //prev_story_line_part = $scope.story_line_part;
+                            //trackStoryLine();
 
                             return false;
                         }
@@ -227,11 +235,11 @@
                                 $scope.story_line_pos = 0;
                             }
                             $scope.selected_part = pos_order_map[$scope.story_line_pos];
-                            $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
+                            //$scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
                             $scope.$apply();
-                            checkWetland_addLayer_zoom();
-                            prev_story_line_part = $scope.story_line_part;
-                            trackStoryLine();
+                            //checkWetland_addLayer_zoom();
+                            //prev_story_line_part = $scope.story_line_part;
+                            //trackStoryLine();
 
                             return false;
                         }
@@ -278,7 +286,7 @@
                 '</div>';
 
             var template_select = '<div style="margin-bottom: 40px;">' +
-                ' <select  ng-model="selected_part" ng-change="storyline.changePart()" ng-options="option.order as option.story_line_part.headline for option in story_lines" style="margin-top: 10px;right: 20px;position: absolute;""></select>' +
+                '<select  ng-model="selected_part" ng-options="option.order as option.story_line_part.headline for option in story_lines" style="margin-top: 10px;right: 20px;position: absolute;""></select>' +
                 '</div>';
 
             angular.element('#story_line').append($compile(template)($scope));
