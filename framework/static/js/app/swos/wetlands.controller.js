@@ -127,29 +127,36 @@
                 mapviewer.map.addLayer(WetlandsService.olLayer);
 
                 $('#loading-div').hide();
-                bootbox.dialog({
-                    title   : 'Welcome to the GEO Wetlands Community Portal',
-                    message : $('#welcome_text').html(),
-                    backdrop: true,
-                    onEscape: true,
-                    buttons : {
-                        confirm: {
-                            label   : 'Start Tour',
-                            className: 'hidden-xs',
-                            callback: function () {
-                                var sidebar = document.getElementById('wetland_sites');
-                                var scope = angular.element(sidebar).scope();
-                                var rootScope = scope.$root;
-                                scope.$apply(function () {
-                                    rootScope.$broadcast("start_tour");
-                                });
-                            }
-                        },
-                        close  : {label: 'Close'}
-                    }
-                });
-                loadWetland();
-                $rootScope.$broadcast("wetlands_loaded");
+
+                //prevent open welcome info box if open via direct link
+                if ($routeParams.wetland_id || $routeParams.story_line_id){
+                    loadWetland();
+                    $rootScope.$broadcast("wetlands_loaded");
+                }
+                else {
+
+                    bootbox.dialog({
+                        title: 'Welcome to the GEO Wetlands Community Portal',
+                        message: $('#welcome_text').html(),
+                        backdrop: true,
+                        onEscape: true,
+                        buttons: {
+                            confirm: {
+                                label: 'Start Tour',
+                                className: 'hidden-xs',
+                                callback: function () {
+                                    var sidebar = document.getElementById('wetland_sites');
+                                    var scope = angular.element(sidebar).scope();
+                                    var rootScope = scope.$root;
+                                    scope.$apply(function () {
+                                        rootScope.$broadcast("start_tour");
+                                    });
+                                }
+                            },
+                            close: {label: 'Close'}
+                        }
+                    });
+                }
 
             }, function () {
                 bootbox.alert('<h1>Error while loading wetlands</h1>');
