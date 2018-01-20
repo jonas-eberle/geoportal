@@ -19,7 +19,6 @@
             videos: {},
             wetlandList: [],
             wetlands_without_geom: [],
-            country_list: [],
             wetland_id: "",
             wetlandFeature: "",
 

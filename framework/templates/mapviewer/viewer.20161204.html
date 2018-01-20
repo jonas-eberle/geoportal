@@ -307,62 +307,43 @@
 
                 <div class="tab-content" style="top:93px">
                     <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
+                        <button type="button" ng-click="wetlandsFilter.clearFilter()" ng-if="wetlandsFilter.filtered_geo_scale != '' || wetlandsFilter.filtered_country != ''  || wetlandsFilter.filtered_wetland_type != ''  || wetlandsFilter.filtered_site_type != ''  || wetlandsFilter.filtered_ecoregion != ''  || wetlandsFilter.filtered_products != ''" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 1px 6px; margin-left: 10px;" >x Clear filter</button>
                         <div class="filter" style="padding: 10px;padding-bottom: 0;">
                             <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterWetlands()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by country -</option>
-                               <option ng-repeat="option in wetlandsFilter.country_list | unique | orderBy " value="{{option}}">{{option}}</option>-->
+                               <option ng-repeat="option in wetlandsFilter.country_list | unique | orderBy "  value="{{option}}">{{option}}</option>-->
                             </select>
                             <select ng-model="wetlandsFilter.filtered_geo_scale" ng-change="wetlandsFilter.filterWetlands()" style="width: 40%; margin-bottom: 10px;">
                                 <option value="">- Filter by size -</option>
                                <!-- <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>-->
-                                <option value="1">Wetlands < 20k ha</option>
-                                <option value="2">Wetlands 20k ha - 50k ha</option>
-                                <option value="3">Wetlands 50k ha - 500k</option>
-                                <option value="4">Wetlands > 500k ha</option>
+                                <option ng-if="wetlandsFilter.show_size[1] == true" value="1">Wetlands < 20k ha</option>
+                                <option ng-if="wetlandsFilter.show_size[2] == true" value="2">Wetlands 20k ha - 50k ha</option>
+                                <option ng-if="wetlandsFilter.show_size[3] == true" value="3">Wetlands 50k ha - 500k</option>
+                                <option ng-if="wetlandsFilter.show_size[4] == true" value="4">Wetlands > 500k ha</option>
                             </select>
                             <select ng-model="wetlandsFilter.filtered_wetland_type" ng-change="wetlandsFilter.filterWetlands()" style="width: 50%; margin-bottom: 10px;">
                                 <option value="">- Filter by wetland type -</option>
-                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'wetland_type'" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'wetland_type'" ng-if="wetlandsFilter.show_wetland_type[option.wetland_type] == true" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
                             </select>
                             <select ng-model="wetlandsFilter.filtered_site_type" ng-change="wetlandsFilter.filterWetlands()" style="width: 40%;margin-bottom: 10px;">
                                 <option value="">- Filter by site type -</option>
-                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'site_type'" value="{{option.site_type}}">{{option.site_type}}</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'site_type'" ng-if="wetlandsFilter.show_site_type[option.site_type] == true" value="{{option.site_type}}">{{option.site_type}}</option>
                             </select>
                             <select ng-model="wetlandsFilter.filtered_ecoregion" ng-change="wetlandsFilter.filterWetlands()" style="width: 91%;margin-bottom: 10px;">
                                 <option value="">- Filter by ecoregion -</option>
-                              <!--  <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'ecoregion'  | orderBy: 'ecoregion'" value="{{option.ecoregion}}">{{option.ecoregion}}</option>-->
-                                <option value="Boreal Forests/Taiga">Boreal Forests/Taiga</option>
-                                <option value="Deserts">Deserts</option>
-                                <option value="Deserts and Xeric Shrublands">Deserts and Xeric Shrublands</option>
-                                <option value="Flooded Grasslands and Savannas">Flooded Grasslands and Savannas</option>
-                                <option value="Lake">Lake</option>
-                                <option value="Mediterranean Forests">Mediterranean Forests</option>
-                                <option value="Savannas">Savannas</option>
-                                <option value="Savannas and Shrublands">Savannas and Shrublands</option>
-                                <option value="Shrublands">Shrublands</option>
-                                <option value="Temperate Broadleaf and Mixed Forests">Temperate Broadleaf and Mixed Forests</option>
-                                <option value="Temperate Conifer Forests">Temperate Conifer Forests</option>
-                                <option value="Temperate Grasslands">Temperate Grasslands</option>
-                                <option value="Tropical and Subtropical Grasslands">Tropical and Subtropical Grasslands</option>
-                                <option value="Tropical and Subtropical Grasslands and Savannas">Tropical and Subtropical Grasslands and Savannas</option>
-                                <option value="Tropical and Subtropical Moist Broadleaf Forests">Tropical and Subtropical Moist Broadleaf Forests</option>
-                                <option value="Tundra">Tundra</option>
-                                <option value="Woodlands and Scrub">Woodlands and Scrub</option>
-                                <option value="Xeric Shrublands">Xeric Shrublands</option>
-
+                                <option ng-repeat="ecoregion in wetlandsFilter.ecoregion_list | unique" ng-if="wetlandsFilter.show_ecoregion[ecoregion] == true" value="{{ecoregion}}">{{ecoregion}}</option>
                             </select>
                             <select ng-model="wetlandsFilter.filtered_products" ng-change="wetlandsFilter.filterWetlands()" style="width: 85%">
                                 <option value="">- Filter by product -</option>
                                 <!-- products is an array for each wetland, thus first of all manual list of products -->
-                                <!--<option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'products'" value="{{option.products}}">{{option.products}}</option>-->
-                                <option value="FloodReg">Flood Regulation</option>
-                                <option value="LSTT">Land Surface Temperature Trend</option>
-                                <option value="LULC">Land Use Land Cover</option>
-                                <option value="LULCC_L">Land Use Land Cover Change Long-term</option>
-                                <option value="LULCC_S">Land Use Land Cover Change Short-term</option>
-                                <option value="InvDel">Potential Wetland areas</option>
-                                <option value="SWD">Surface Water Dynamics</option>
-                                <option value="WQ">Water Quality</option>
+                                <option ng-if="wetlandsFilter.show_product['FloodReg'] == true" value="FloodReg">Flood Regulation</option>
+                                <option ng-if="wetlandsFilter.show_product['LSTT'] == true" value="LSTT">Land Surface Temperature Trend</option>
+                                <option ng-if="wetlandsFilter.show_product['LULC'] == true" value="LULC">Land Use Land Cover</option>
+                                <option ng-if="wetlandsFilter.show_product['LULCC_L'] == true" value="LULCC_L">Land Use Land Cover Change Long-term</option>
+                                <option ng-if="wetlandsFilter.show_product['LULCC_S'] == true" value="LULCC_S">Land Use Land Cover Change Short-term</option>
+                                <option ng-if="wetlandsFilter.show_product['InvDel'] == true" value="InvDel">Potential Wetland areas</option>
+                                <option ng-if="wetlandsFilter.show_product['SWD'] == true" value="SWD">Surface Water Dynamics</option>
+                                <option ng-if="wetlandsFilter.show_product['WQ'] == true" value="WQ">Water Quality</option>
                             </select>
                             <!--<button type="button" ng-controller="InfoCtrl as ic" ng-click=" ic.helpFilter()" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 1px 6px;" >?</button>-->
                         </div>
@@ -377,7 +358,7 @@
                         <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
                         <hr/>
                         <div ng-if="wetlandsFilter.wetlands_without_geom.length==0">Loading wetlands... please wait </div>
-                        <div ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
+                        <div ng-init="wetlandsFilter.filterWetlands()" ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
                              ng-if="layer.show" class="list-group-item clearfix"
                              ng-click="wetlands.selectWetland(layer)" title="{{layer.title}}">
                             <!-- ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
@@ -455,7 +436,6 @@
                                 <!-- Indicators -->
                                 <uib-tab class="flaticon-business" heading="" uib-tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
                                     <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
-
 
                                 </uib-tab>
                                 <!-- Products -->

@@ -54,14 +54,7 @@
                     WetlandsService.wetlandList[ prop['id'] ] = prop;
 
                     var without_geom;
-                    if (prop["country"].includes("-")) {
-                        var country_array = prop["country"].split("-");
-                        for (var key in country_array) {
-                            WetlandsService.country_list.push(country_array[key])
-                        }
-                    } else {
-                        WetlandsService.country_list.push(prop["country"]);
-                    }
+
                         without_geom = {
                             "name"        : prop["name"],
                             "country"     : prop["country"].replace(/-/g, ", "),
