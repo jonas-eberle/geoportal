@@ -32,6 +32,7 @@
         mcl.showMetadata = showMetadata;
         mcl.showToggleButton = false;
         mcl.sliderValues = mapviewer.sliderValues;
+        mcl.sliderTooltipFormatter = sliderTooltipFormatter;
         mcl.toggleLayerControls = toggleLayerControls;
         mcl.toggleLegend = toggleLegend;
         mcl.toggleStations = toggleStations;
@@ -176,6 +177,10 @@
 
             var status = olLayer.getVisible();
             olLayer.setVisible(!status);
+        }
+
+        function sliderTooltipFormatter(id){
+            return "Opacity: " + mcl.sliderValues[id] + " %";
         }
 
         function downloadLayer(layer) {

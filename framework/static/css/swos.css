@@ -720,4 +720,6 @@ button.btn-loadmore:hover {
     padding-left: 35px;
 }
 
-.bootbox.modal {z-index: 2051 !important;}
+.btn-legend {
+    width: 42px;
+}
