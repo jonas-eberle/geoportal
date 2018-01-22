@@ -13,6 +13,7 @@
         ic.help = help;
         ic.imprint = imprint;
         ic.info = info;
+        ic.helpFilter = helpFilter;
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -62,6 +63,25 @@
                 }
             });
         }
+
+        function helpFilter() {
+
+
+            var url = subdir + '/static/includes/filter_help.html';
+
+            $modal.open({
+                bindToController: true,
+                controller      : 'ModalInstanceCtrl',
+                controllerAs    : 'mi',
+                templateUrl     : url,
+                backdrop        : 'static',
+                resolve         : {
+                    data : function(){return {};},
+                    title: function(){return '';}
+                }
+            });
+        }
+
 
         function imprint() {
             try {

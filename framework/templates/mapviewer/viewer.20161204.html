@@ -345,7 +345,7 @@
                                 <option ng-if="wetlandsFilter.show_product['SWD'] == true" value="SWD">Surface Water Dynamics</option>
                                 <option ng-if="wetlandsFilter.show_product['WQ'] == true" value="WQ">Water Quality</option>
                             </select>
-                            <!--<button type="button" ng-controller="InfoCtrl as ic" ng-click=" ic.helpFilter()" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 1px 6px;" >?</button>-->
+                            <button type="button" ng-controller="InfoCtrl as ic" ng-click=" ic.helpFilter()" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 2px 6px;; margin-bottom: 2px;    border-radius: 15px;     border-color: rgb(169, 169, 169);" >?</button>
                         </div>
                         <div style="padding: 10px;padding-bottom: 0;">
                             <input type="checkbox" ng-model="wetlandsFilter.filtered_product_count" ng-change="wetlandsFilter.filterWetlands()"
