@@ -19,6 +19,7 @@ from django.db.models import Q
 from django.db import connection
 from django.contrib.gis.db.models import Extent
 from django.utils.dateformat import format
+from django.template.loader import get_template
 
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -28,7 +29,7 @@ from webgis import settings
 from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline
 from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, IndicatorValueSerializer, WetlandLayer, \
     ExternalDatabase, ExternalLayer, Country
-from layers.models import LayerSerializer
+from layers.models import LayerSerializer, MetadataSerializer
 from swos.search_es import WetlandSearch
 
 
@@ -129,7 +130,7 @@ class WetlandDetail(APIView):
         wetland = self.get_object(pk)
         
         layers = WetlandLayer.objects.filter(wetland_id=wetland.id, publishable=True).order_by('title')
-        indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('indicator', 'time')
+        indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('sub_indicator', 'input_1_time')
         temp_products_layers = dict()
         temp_indicators_layers = dict()
         temp_ind_parent = dict()
@@ -187,8 +188,6 @@ class WetlandDetail(APIView):
                 layer_data['indicator_name'] = layer.indicator.name
                 if layer.indicator.id not in temp_indicators_layers:
                     story_line_indicator = self.get_story_line_by_product_or_indicator_id("indicator", layer.indicator.id)
-                    print story_line_indicator
-                    print "hjghjghj"
                     if layer_data['story_line'] != "" and story_line_indicator != False:
                         for story in story_line_indicator:
                             if story not in layer_data['story_line']:
@@ -244,19 +243,20 @@ class WetlandDetail(APIView):
 
 
 
-        #for indicator_value in indicator_values:
-        #    print indicator_value.__dict__
-        #    if indicator_value.indicator_id not in temp_indicator_values:
+        for indicator_value in indicator_values:
 
-                #temp_indicator_values[indicator_value.indicator_id] = [
-                #    {'time': indicator_value.time, 'time_end': indicator_value.time_end}]
-            #else:
-            #    temp_indicator_values[indicator_value.indicator_id].append(
-            #        {'time': indicator_value.time, 'time_end': indicator_value.time_end})
+            if indicator_value.sub_indicator_id not in temp_indicator_values:
+                temp_indicator_values[indicator_value.sub_indicator_id] = [
+                    {'input_1_time': indicator_value.input_1_time, 'input_2_time': indicator_value.input_2_time,
+                     'values': {"sum_percent": indicator_value.value_sum_percent}}]
+            else:
+                temp_indicator_values[indicator_value.sub_indicator_id].append(
+                    {'input_1_time': indicator_value.input_1_time, 'input_2_time': indicator_value.input_2_time,
+                      'values': {"sum_percent": indicator_value.value_sum_percent}})
 
         #print temp_indicator_values
-
-        # finalJSON['indicator_values'].append({'id': indicator_value.id, 'values': indicator_value.value})
+        for ind_val in temp_indicator_values:
+            finalJSON['indicator_values'].append({'id': ind_val, 'values': temp_indicator_values[ind_val]})
 
 
         # get wetland country --> find continent and add to list
@@ -908,6 +908,32 @@ class DownloadFiles(APIView):
                     filenames.append(os.path.join(settings.MEDIA_ROOT, 'csw', str(layer_id) + '_metadata.xml'))
                     rename[str(layer_id) + '_metadata.xml'] = layer.identifier + ".xml"
 
+            #create readme file
+            tpl = get_template('Download/readme_download.txt')
+            layer_meta = MetadataSerializer(layer)
+            file_names = []
+            for fpath in filenames:
+                fdir, fname = os.path.split(fpath)
+                if fname in rename:
+                    fname = rename[fname]
+
+                file_names.append(fname)
+            now = datetime.now()
+            ctx = ({
+                'archive_name' : layer.identifier + ".zip",
+                'layer': layer_meta.data,
+                'files': file_names,
+                'date': now.strftime("%Y-%m-%d %H:%M")
+            })
+
+            readme = tpl.render(ctx)
+            f = open(settings.MEDIA_ROOT + 'tmp/' + str(layer.id) + "_" + str(now) + ".txt", 'w')
+            f.write(readme.encode('UTF-8'))
+            f.close()
+
+            filenames.append(os.path.join(settings.MEDIA_ROOT, 'tmp', str(layer_id) + "_" + str(now) + ".txt"))
+            rename[str(layer_id) + "_" + str(now) + ".txt"] = "Readme.txt"
+
             return self.download_as_archive(layer.identifier, filenames, rename)
 
     def get_file_names(self, file_id, type, catchment_name, product_name):
@@ -1003,6 +1029,7 @@ class DownloadFiles(APIView):
 
             # Add file, at correct path
             #zf.write(fpath, zip_path)
+
             zf.write(fpath, fname)
 
         # Must close zip for all contents to be written
