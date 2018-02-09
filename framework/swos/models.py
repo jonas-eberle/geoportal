@@ -1137,7 +1137,7 @@ class StoryLinePart(models.Model):
     image_description = models.TextField(null=True, blank=True)
     image_copyright = models.CharField("Copyright / Owner", max_length=200, blank=True)
     image_date = models.DateField(blank=True, null=True)
-    image = ImageWithThumbsField(upload_to='images/', sizes=((125, 125), (200, 300), (300, 200), (600, 400), (400, 600)), null=True, blank=True, help_text="To avoid cutting off parts of ou image please resize it in advance. Right position: max. 300px width; Bottom max. 600px.")
+    image = ImageWithThumbsField(upload_to='images/', sizes=((125, 125), (200, 300), (300, 200), (600, 400), (400, 600)), null=True, blank=True, help_text="To avoid cutting off parts of your image please resize it in advance. Right position: max. 300px width; Bottom max. 600px. If you upload a GIF please make sure the size is not higher than 500kb")
     image_position = models.CharField(max_length=20, choices=(("right", "right"), ("bottom","bottom")), default="right")
     wetland = models.ForeignKey(Wetland, help_text="Plaese click - Save and continue editing - to update the layer lists below")
     product_layer = models.ManyToManyField(WetlandLayer, blank=True)
@@ -1238,7 +1238,7 @@ class IndicatorValue(models.Model):
     value_sum_percent = models.FloatField(blank=True, null=True, verbose_name="Sum in percent")
 
     def __unicode__(self):
-        return u"%s" %(self.sub_indicator + "_" + self.wetland)
+        return u"%s" %(self.sub_indicator.name + "_" + self.wetland.name)
 
 class IndicatorValueSerializer(serializers.ModelSerializer):
     class Meta:

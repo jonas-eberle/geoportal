@@ -267,7 +267,8 @@
                 '<h4 ng-if="!story_line_part.title">{{story_line_part.headline}}</h4>' +
                 '<h3 ng-if="story_line_part.title">{{story_line_part.title}}</h3>' +
                 '<figure ng-if="story_line_part.image_position == \'right\' && story_line_part.image_url_300.length > 2" style="float: right; display: table;";>' +
-                '<img  ng-src="{{story_line_part.image_url_300}}"  width: 45%;">' +
+                '<img  ng-if="!story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image_url_300}}"  width: 45%;">' +
+                '<img  ng-if="story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image}}"  width: 45%;">' +
                 '<figcaption style="display: table-caption; caption-side: bottom ;">{{story_line_part.image_description}} ' +
                 '<span ng-if="story_line_part.image_copyright || story_line_part.image_date">(</span> {{story_line_part.image_copyright}}' +
                 '<span ng-if="story_line_part.image_copyright && story_line_part.image_date" >,</span> {{story_line_part.image_date}}' +
@@ -276,7 +277,8 @@
                 '<p>{{ story_line_part.description }}</p>' +
                 '<p>{{ story_line_part.explanation }}</p>' +
                 '<figure ng-if="story_line_part.image_position == \'bottom\' && story_line_part.image_url_600.length > 2" style="display: table;";>' +
-                '<img  ng-src="{{story_line_part.image_url_600}}"  width: 100%;">' +
+                '<img  ng-if="!story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image_url_600}}"  width: 100%;">' +
+                '<img  ng-if="story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image}}"  width: 100%;">' +
                 '<figcaption style="display: table-caption; caption-side: bottom ;">{{story_line_part.image_description}} ' +
                 '<span ng-if="story_line_part.image_copyright || story_line_part.image_date">(</span> {{story_line_part.image_copyright}}' +
                 '<span ng-if="story_line_part.image_copyright && story_line_part.image_date" >,</span> {{story_line_part.image_date}}' +
