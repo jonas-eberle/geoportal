@@ -20,6 +20,7 @@ Metadata
 Description:     {{layer.abstract}}
 
 Lineage:         {{layer.meta_lineage}}
+
 Temporal extent: {{layer.date_begin}} - {{layer.date_end}}
 Category:        {% for topicCategory in layer.topicCategory %}{{topicCategory.identifier}}, {% endfor %}
 Keywords:        {% for keyword in layer.layer_keywords %}{{ keyword.keyword }},{% endfor %}{% for keyword in keyword_list %}{{ keyword }},{% endfor %}
