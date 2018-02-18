@@ -5,8 +5,8 @@
         .module('webgisApp.map')
         .controller('MapViewerCtrl', MapViewerCtrl);
 
-    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$uibModal', '$window', '$timeout', '$cookies', 'Attribution'];
-    function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $window, $timeout, $cookies, Attribution){
+    MapViewerCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$uibModal', '$window', '$timeout', '$cookies', 'Attribution',  'lulcLegend'];
+    function MapViewerCtrl($scope, mapviewer, djangoRequests, $modal, $window, $timeout, $cookies, Attribution,  lulcLegend){
         var mv = this;
 
         mv.data = mapviewer.data;
@@ -319,16 +319,27 @@
                     var names = [];
                     $.each(mapviewer.map.getLayers().getArray().slice(1), function () {
                         var layer = this;
+                        var name = layer.get('name');
                         if (layer.getVisible() === false) {
                             return true;
                         }
+
+                        // Request JSON for SWOS layer
+                        if (String(name).includes("SWOS")){
+                            var info_format = 'application/json';
+                        }
+                        // Request Text for all other
+                        else{
+                            var info_format = 'text/html';
+                        }
+
                         // Works only for WMS layers
                         try {
                             var source = layer.getSource();
                             var url = '';
                             if (source instanceof ol.source.TileWMS) {
                                 url = source.getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapviewer.displayProjection, {
-                                    'INFO_FORMAT': 'text/html'
+                                    'INFO_FORMAT': info_format
                                 });
                             } else if (source instanceof ol.source.WMTS) {
                                 var resolution = viewResolution;
@@ -369,7 +380,7 @@
                                     REQUEST      : 'GetFeatureInfo',
                                     VERSION      : source.getVersion(),
                                     LAYER        : source.getLayer(),
-                                    INFOFORMAT   : 'text/html',
+                                    INFOFORMAT   : info_format,
                                     STYLE        : source.getStyle(),
                                     FORMAT       : source.getFormat(),
                                     TileCol      : tileCol,
@@ -379,7 +390,6 @@
                                     I            : tileI,
                                     J            : tileJ
                                 };
-                                console.log(params);
                                 url = layer.get('layerObj').ogc_link + '?' + jQuery.param(params);
                             }
                             if (url !== '') {
@@ -395,10 +405,11 @@
                             url   : '/layers/info?url=' + urls.join('||') + '&names=' + names.join('||'),
                             method: 'GET'
                         }).then(function (data) {
+                            console.log(data);
                             if (!angular.element('#feature_info').length) {
                                 var dialog = bootbox.dialog({
                                     title: 'Feature Info Response',
-                                    message: '<p id="feature_info"></p><div class="feature_result">' + coordinate + data + "</div>",
+                                    message: showFeatureRequestResult(coordinate, data),
                                     backdrop: false,
                                     buttons: {
                                         "Clear": {
@@ -428,7 +439,7 @@
                                 $('.modal-content', dialog).css('left', width);
                             }
                             else {
-                                $("<div class=\"feature_result\">" + coordinate + data + '<div class="divider_feature_info"></div></div><div>').insertAfter('#feature_info');
+                                $(showFeatureRequestResult(coordinate, data)).insertAfter('#feature_info');
                             }
                             $('#loading-div').removeClass('nobg').hide();
                         }, function (err) {
@@ -445,6 +456,183 @@
                 mapviewer.pointFeatureLayer('featureRequest',"remove");
             }
             mapviewer.selectInteraction.setActive(!mv.infoStatus);
+        }
+
+        function showFeatureRequestResult(coordinate, data) {
+            var result = '<p id="feature_info"></p><div class="feature_result"><div>' + coordinate + '</div>';
+            var table_values = [];
+
+            if (data["json"].length > 0) {
+                var output = [];
+                for (var i = 0; i < data["json"].length; i++) {
+
+                    if (!data["json"][i]["output"].includes("ExceptionReport ")) {
+                        output = JSON.parse(data["json"][i]["output"]);
+                    } else {
+                        continue;
+                    }
+
+                    console.log(output, data["json"][i]["name"]);
+
+                    if ("features" in output && output["features"].length == 0) {
+                        // do not show layer without result
+                    }
+
+                    else if (data["json"][i]["name"].includes("LULC RAMSAR-CLC")) {
+                        var property_value;
+                        var legend_value = Math.max(output["features"][0]["properties"]["CLC_L1"], output["features"][0]["properties"]["CLC_L2"], output["features"][0]["properties"]["CLC_L3"], output["features"][0]["properties"]["CLC_L4"]);
+                        $.each(lulcLegend.CLC, function (index, value) {
+                            if (value[0] == legend_value) {
+                                property_value = value[2];
+                                return false;
+                            }
+                        });
+                        table_values = [];
+                        table_values["CLC class"] = property_value;
+                        table_values["Area (ha)"] = output["features"][0]["properties"]["Area_ha"];
+                        table_values["Perimeter (m)"] = output["features"][0]["properties"]["Perimeter"];
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+
+                    }
+                    else if (data["json"][i]["name"].includes("LULC MAES")) {
+                        var property_value;
+                        var legend_value = Math.max(output["features"][0]["properties"]["MAES_L1"], output["features"][0]["properties"]["MAES_L2"], output["features"][0]["properties"]["MAES_L3"], output["features"][0]["properties"]["MAES_L4"]);
+                        $.each(lulcLegend.MAES, function (index, value) {
+                            if (value[0] == legend_value) {
+                                property_value = value[2];
+                                return false;
+                            }
+                        });
+                        table_values = [];
+                        table_values["MAES class"] = property_value;
+                        table_values["Area (ha)"] = output["features"][0]["properties"]["Area_ha"];
+                        table_values["Perimeter (m)"] = output["features"][0]["properties"]["Perimeter"];
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+
+                    }
+                    else if (data["json"][i]["name"].includes("LULCC_L")) {
+                        var property_value;
+                        var legend_value = Math.max(output["features"][0]["properties"]["MAES_L1"], output["features"][0]["properties"]["MAES_L2"], output["features"][0]["properties"]["MAES_L3"], output["features"][0]["properties"]["MAES_L4"]);
+
+                        table_values = [];
+                        table_values["Land Use Land Cover Change code"] = output["features"][0]["properties"]["ChangeCode"];
+                        table_values["Area (ha)"] = output["features"][0]["properties"]["Area_ha"];
+                        table_values["Perimeter (m)"] = output["features"][0]["properties"]["Perimeter"];
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("LULCC S")) {
+                        table_values = [];
+                        table_values["Frequency of change"] = output["features"][0]["properties"]["GRAY_INDEX"];
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("Sentinel-1")) {
+                        table_values = [];
+                        table_values["Time series statistics value of SAR satellite data"] = output["features"][0]["properties"]["GRAY_INDEX"];
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("WQ CDOM")) {
+                        table_values = [];
+                        var value;
+                        if (output["features"][0]["properties"]["GRAY_INDEX"] == -1) {
+                            value = "no result"
+                        }
+                        else {
+                            value = parseFloat(output["features"][0]["properties"]["GRAY_INDEX"]).toFixed(3);
+                        }
+                        table_values["Colored dissolved organic matter (m<sup>-1</sup>)"] = value;
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("WQ CHL")) {
+                        table_values = [];
+                        var value;
+                        if (output["features"][0]["properties"]["GRAY_INDEX"] == -1) {
+                            value = "no result"
+                        }
+                        else {
+                            value = parseFloat(output["features"][0]["properties"]["GRAY_INDEX"]).toFixed(3);
+                        }
+                        table_values["Chlorophyll (µg/l)"] = value;
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("WQ TSM")) {
+                        table_values = [];
+                        var value;
+                        if (output["features"][0]["properties"]["GRAY_INDEX"] == -1) {
+                            value = "no result"
+                        }
+                        else {
+                            value = parseFloat(output["features"][0]["properties"]["GRAY_INDEX"]).toFixed(3);
+                        }
+                        table_values["Suspended sediments (TSM)(mg/l)"] = value;
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("SWD TD OP")) {
+                        var swd_class = [];
+                        swd_class[1] = "permanently flooded";
+                        swd_class[2] = "temporarly flooded";
+                        swd_class[3] = "never flooded";
+
+                        table_values = [];
+                        table_values["SWD class"] = swd_class[output["features"][0]["properties"]["PALETTE_INDEX"]].toFixed(3);
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("SWD TF OP")) {
+                        table_values = [];
+                        table_values["Temporal frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("SWD TF SAR")) {
+                        table_values = [];
+                        table_values["Temporal frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("LSTT")) {
+                        table_values = [];
+                        table_values["Land Surface Temperature Trend (°C)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("InvDel")) {
+                        table_values = [];
+                        table_values["Probability for wetlands"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                    else if (data["json"][i]["name"].includes("FloodReg")) {
+                        table_values = [];
+                        table_values["Estimated capacity for flood regulation"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
+                }
+            }
+            result += data["html"];
+
+            result += "</div>";
+
+            return result;
+        }
+
+        function createHTML(table_values, name) {
+            var result = '<p><strong>' + name + '</strong><br/>';
+
+            result += '<div style="display: table; padding-left: 20px;">';
+            for (var index in table_values) {
+                result += '<div style="display: table-row"><div style="padding-right: 15px;display: table-cell">' + index + ':</div><div style="display: table-cell">' + table_values[index] + '</div></div>';
+            }
+            result += '</div></p>';
+            return result;
         }
 
         function showAttribution() {

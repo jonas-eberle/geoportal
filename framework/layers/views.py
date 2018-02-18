@@ -86,8 +86,12 @@ class LayerInfo(APIView):
         names = request.query_params.get('names')
         names = names.split('||')
 
+        return_json =[]
+        return_all = {}
+
         htmloutput = ''
         for index, url in enumerate(urls):
+
             try:
                 #url = url.replace('text%2Fhtml', 'text%2Fplain')
                 f = urllib2.urlopen(url)
@@ -96,6 +100,11 @@ class LayerInfo(APIView):
             except Exception as e:
                 code = e.code
                 output = e.read()
+
+            # return json object as it is if info_format / infoformat was application/json (only SWOS layer)
+            if "application" in url and "json" in url:
+                return_json.append({"output": output, "name":names[index] })
+                continue
 
             htmloutput += '<p><strong>'+names[index]+'</strong><br/>'
 
@@ -157,7 +166,9 @@ class LayerInfo(APIView):
                 htmloutput += 'An error occurred while requesting data'
             htmloutput += '</p>'
 
-        return HttpResponse(htmloutput)
+        return_all["json"] = return_json
+        return_all["html"] = htmloutput
+        return Response(return_all)
 
 
 # REST view for proxying external resources
