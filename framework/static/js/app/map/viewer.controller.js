@@ -581,7 +581,7 @@
                         swd_class[3] = "never flooded";
 
                         table_values = [];
-                        table_values["SWD class"] = swd_class[output["features"][0]["properties"]["PALETTE_INDEX"]].toFixed(3);
+                        table_values["SWD class"] = swd_class[output["features"][0]["properties"]["PALETTE_INDEX"]];
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
