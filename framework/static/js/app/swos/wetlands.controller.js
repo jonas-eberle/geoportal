@@ -82,10 +82,18 @@
                         var fill_color = fill;
                         var stroke_ = stroke;
 
+                        //count listed wetlands
+                        var count_listed_wetlands = 0;
+                        for (var i = 0; i < WetlandsService.wetlands_without_geom.length; i++){
+                                if (WetlandsService.wetlands_without_geom[i].show) {
+                                    count_listed_wetlands++;
+                                }
+                        }
                         // change style for listed wetlands
                         for (var i = 0; i < WetlandsService.wetlands_without_geom.length; i++){
                             if (WetlandsService.wetlands_without_geom[i].id === feature.get("id")){
-                                if (WetlandsService.wetlands_without_geom[i].show) {
+                                // mark filtered wetland;do not mark if all are shown
+                                if (WetlandsService.wetlands_without_geom[i].show && WetlandsService.wetlands_without_geom.length != count_listed_wetlands ) {
                                     fill_color = new ol.style.Fill({color: "rgba(226, 125, 5, 0.4)"});
                                     stroke_ = new ol.style.Stroke({color: "rgba(226, 125, 5, 1)", width: 2})
                                 }
