@@ -2,6 +2,8 @@ from django.template.loader import get_template
 from webgis import settings
 from owslib.util import http_post
 import os.path
+from django.contrib.sites.models import Site
+
 
 from layers.models import MetadataSerializer
 from swos.models import WetlandLayer
@@ -16,6 +18,10 @@ def create_csw_xml(instance):
     # Add online resource
     online_resources = []
     online_resources.append({'linkage': instance.ogc_link, 'name': instance.title, 'protocol': instance.ogc_type })
+
+    # Add download link
+    if instance.downloadable == True:
+        online_resources.append({'linkage': "http://" + Site.objects.get_current().domain + "/swos/download_as_archive?ids=" + str(instance.id) +"%complete" , 'name': "Download data", 'function': {'identifier': "download"}})
 
     ctx =({
         'layer': layer.data,
