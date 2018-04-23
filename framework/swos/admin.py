@@ -37,7 +37,7 @@ def make_downloadable(modeladmin, request, queryset):
 make_downloadable.short_description = "Mark as donwloadable"
 
 def make_non_downloadable(modeladmin, request, queryset):
-    queryset.update(publishable=False)
+    queryset.update(downloadable=False)
 
 make_non_downloadable.short_description = "Mark as not downloadable"
 
