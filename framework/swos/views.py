@@ -900,6 +900,10 @@ class DownloadFiles(APIView):
             layer_id, type = id.split("%")
             layer = WetlandLayer.objects.get(pk = layer_id)
 
+            # do not create archive if publish or downloadable is false
+            if layer.downloadable == False or layer.publishable == False:
+                return HttpResponse("Download not allowed!",content_type = "text/html")
+
             filenames += self.get_file_names(layer.identifier, type, layer.wetland.identifier, layer.product.short_name)
 
             # Add Metadata XML
