@@ -31,6 +31,7 @@
                 'canRequestFeatureInfo': false
             },
             'maxExtent': [0, 0, -11, 70],
+            'showExtentInfo': [],
 
             /* functions */
             'createMap': function(id) {

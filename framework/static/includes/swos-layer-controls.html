@@ -62,6 +62,10 @@
     </ul>
 </div>
 
+<div ng-if="mcl.requestShowExtentInfo(layer.id) == true" style="margin-top: 10px;">
+     <p ng-text-truncate='mcl.extentInfo' ng-tt-chars-threshold="100"></p>
+</div>
+
 <div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showLegend">
     <div><strong>Legend</strong></div>
     <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ slc.layer.legend_url }}.jpg" ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>

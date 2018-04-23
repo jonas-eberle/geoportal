@@ -43,8 +43,8 @@
         mcl.wetlandListState = "";
         mcl.zoomToLayer = zoomToLayer;
         mcl.zoomToStation = zoomToStation;
-
-        //--------------------------------------------------------------------------------------------------------------
+        mcl.requestShowExtentInfo = requestShowExtentInfo;
+        mcl.extentInfo = "<b>Hint</b>: The product does not match the site area. Possible reasons are: (i) The site area changed later due to user requirements. (ii) The area covered by the product is limited due to the availability of input data."
 
         $scope.$on("mapviewer.layeradded", function (event, olLayer) {
             mcl.showToggleButton = true;
@@ -241,6 +241,10 @@
             ) {
                 checkbox.checked = "";
             }
+        }
+
+        function requestShowExtentInfo(layer_id) {
+            return mapviewer.showExtentInfo[layer_id]
         }
 
         function requestWCS(layer) {

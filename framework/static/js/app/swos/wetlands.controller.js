@@ -230,6 +230,32 @@
                 };
 
                 var intersection = turf.intersect(mapJSON, layerJSON);
+
+
+                var wetlandpExtent = WetlandsService.wetlandList[WetlandsService.wetland_id].geometry.getExtent();
+                wetlandpExtent = ol.proj.transformExtent(wetlandpExtent, 'EPSG:3857', 'EPSG:4326');
+                var wetlandJSON = {
+                    "type"      : "Feature",
+                    "properties": {"fill": "#fff"},
+                    "geometry"  : {
+                        "type"       : "Polygon",
+                        "coordinates": [[
+                            [wetlandpExtent[0], wetlandpExtent[1]],
+                            [wetlandpExtent[0], wetlandpExtent[3]],
+                            [wetlandpExtent[2], wetlandpExtent[3]],
+                            [wetlandpExtent[2], wetlandpExtent[1]],
+                            [wetlandpExtent[0], wetlandpExtent[1]]
+                        ]]
+                    }
+                };
+
+                if (turf.area(wetlandJSON) < (turf.area(layerJSON) - turf.area(layerJSON)* 0.05) || turf.area(wetlandJSON) > (turf.area(layerJSON) + turf.area(layerJSON)* 0.05 )){
+                    mapviewer.showExtentInfo[layer.id] = true;
+                }
+                else {
+                     mapviewer.showExtentInfo[layer.id] = false;
+                }
+
                 //Zoom to extent except of global extent
                 if (typeof intersection === 'undefined' && !(layer.west === -180 && layer.south === -90 && layer.east === 180 && layer.north === 90)) {
 
