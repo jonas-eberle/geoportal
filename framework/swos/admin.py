@@ -32,19 +32,29 @@ def make_unpublishable(modeladmin, request, queryset):
 
 make_unpublishable.short_description = "Mark selected layers as unfit for publication"
 
+def make_downloadable(modeladmin, request, queryset):
+    queryset.update(downloadable=True)
+make_downloadable.short_description = "Mark as donwloadable"
+
+def make_non_downloadable(modeladmin, request, queryset):
+    queryset.update(publishable=False)
+
+make_non_downloadable.short_description = "Mark as not downloadable"
+
+
 class WetlandLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
             'classes': ('suit-tab', 'suit-tab-swos',),
             'fields': ('wetland', 'product', 'indicator')
         }),)
-    list_display=('title','publishable', 'wetland', 'product')
+    list_display=('title','publishable', 'downloadable', 'wetland', 'product')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
     search_fields=('title','abstract','wetland__name', 'product__name')
     ordering =['title']
-    list_filter=('publishable','wetland','product')
-    suit_list_filter_horizontal = ('wetland','product','publishable')
+    list_filter=('publishable', 'downloadable', 'wetland','product')
+    suit_list_filter_horizontal = ('wetland','product','publishable', 'downloadable')
 
-    actions=[make_publishable,make_unpublishable]
+    actions=[make_publishable,make_unpublishable, make_downloadable, make_non_downloadable]
 
     def suit_row_attributes(self, obj, request):
         class_map = {
@@ -109,7 +119,8 @@ class SubIndicatorAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent_ind', 'sub_number')
 
 class IndicatorValueAdmin(admin.ModelAdmin):
-    list_display = ('sub_indicator','wetland' )
+    list_display = ('sub_indicator','wetland', 'input_1_time' )
+    save_as = True
 
 class StoryLinePartForm(forms.ModelForm):
     class Meta:
