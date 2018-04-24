@@ -633,7 +633,7 @@ class WetlandLayer(Layer):
 
             if self.product.short_name in ['WQ']:
                 wq_type = ' '.join(self.identifier.split('_')[2:5])
-            elif self.product.short_name in ['LULC']:
+            elif self.product.short_name in ['LULC', 'SSM']:
                 wq_type = self.identifier.split('_')[2]
                 if self.date_begin.year == self.date_end.year:
                     date_string = str(self.date_begin.year)
