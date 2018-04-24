@@ -531,7 +531,16 @@
                     }
                     else if (data["json"][i]["name"].includes("Sentinel-1")) {
                         table_values = [];
-                        table_values["Time series statistics value of SAR satellite data"] = output["features"][0]["properties"]["GRAY_INDEX"];
+
+                        if (data["json"][i]["name"].includes("Max")) {
+                            table_values["Maximum value over one year in dB"] = output["features"][0]["properties"]["GRAY_INDEX"];
+                        }
+                        if (data["json"][i]["name"].includes("Min")) {
+                            table_values["Minimum value over one year in dB"] = output["features"][0]["properties"]["GRAY_INDEX"];
+                        }
+                        if (data["json"][i]["name"].includes("Mean")) {
+                            table_values["Maen value over one year in dB"] = output["features"][0]["properties"]["GRAY_INDEX"];
+                        }
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
@@ -587,13 +596,13 @@
                     }
                     else if (data["json"][i]["name"].includes("SWD TF OP")) {
                         table_values = [];
-                        table_values["Temporal frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+                        table_values["Temporal flood frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
                     else if (data["json"][i]["name"].includes("SWD TF SAR")) {
                         table_values = [];
-                        table_values["Temporal frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+                        table_values["Temporal flood frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
