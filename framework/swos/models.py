@@ -613,7 +613,7 @@ class SubIndicator(models.Model):
     identifier = models.CharField(max_length=10, verbose_name="Identifier (CSV import)")
     description = models.CharField(blank=True, max_length=200)
     sub_number = models.IntegerField(verbose_name="Subnumber")
-    parent_ind = models.ForeignKey(Indicator, related_name='sub_indicator', verbose_name="Indicator")
+    #parent_ind = models.ForeignKey(Indicator, related_name='sub_indicator', verbose_name="Indicator")
 
     def __unicode__(self):
         return u"%s" %(self.name)
@@ -621,7 +621,7 @@ class SubIndicator(models.Model):
 class WetlandLayer(Layer):
     wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
-    indicator = models.ForeignKey(SubIndicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
+    indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     @property

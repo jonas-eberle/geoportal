@@ -235,28 +235,28 @@ class WetlandDetail(APIView):
                 temp_ind_parent[indicator.parent_ind.id].append({'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
                   'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data})
 
-        for ind_parent in temp_ind_parent:
-            finalJSON['indicators'].append(
-                {'id': ind_parent,'name': temp_ind_parent_descr[ind_parent].name, 'order_ind': temp_ind_parent_descr[ind_parent].order,
-                 'description_meaning': temp_ind_parent_descr[ind_parent].description_meaning, 'description_usage': temp_ind_parent_descr[ind_parent].description_usage,
-                 'description_creation': temp_ind_parent_descr[ind_parent].description_creation,'ind_layer': temp_ind_parent[ind_parent],'story_line': temp_ind_parent_story_line[ind_parent] })
+        #for ind_parent in temp_ind_parent:
+        #    finalJSON['indicators'].append(
+        #        {'id': ind_parent,'name': temp_ind_parent_descr[ind_parent].name, 'order_ind': temp_ind_parent_descr[ind_parent].order,
+        #         'description_meaning': temp_ind_parent_descr[ind_parent].description_meaning, 'description_usage': temp_ind_parent_descr[ind_parent].description_usage,
+        #         'description_creation': temp_ind_parent_descr[ind_parent].description_creation,'ind_layer': temp_ind_parent[ind_parent],'story_line': temp_ind_parent_story_line[ind_parent] })
 
 
 
-        for indicator_value in indicator_values:
-
-            if indicator_value.sub_indicator_id not in temp_indicator_values:
-                temp_indicator_values[indicator_value.sub_indicator_id] = [
-                    {'input_1_time': indicator_value.input_1_time, 'input_2_time': indicator_value.input_2_time,
-                     'values': {"sum_percent": indicator_value.value_sum_percent}}]
-            else:
-                temp_indicator_values[indicator_value.sub_indicator_id].append(
-                    {'input_1_time': indicator_value.input_1_time, 'input_2_time': indicator_value.input_2_time,
-                      'values': {"sum_percent": indicator_value.value_sum_percent}})
+        #for indicator_value in indicator_values:
+        #
+        #    if indicator_value.sub_indicator_id not in temp_indicator_values:
+        #        temp_indicator_values[indicator_value.sub_indicator_id] = [
+        #            {'input_1_time': indicator_value.input_1_time, 'input_2_time': indicator_value.input_2_time,
+        #             'values': {"sum_percent": indicator_value.value_sum_percent}}]
+        #    else:
+        #        temp_indicator_values[indicator_value.sub_indicator_id].append(
+        #            {'input_1_time': indicator_value.input_1_time, 'input_2_time': indicator_value.input_2_time,
+        #              'values': {"sum_percent": indicator_value.value_sum_percent}})
 
         #print temp_indicator_values
-        for ind_val in temp_indicator_values:
-            finalJSON['indicator_values'].append({'id': ind_val, 'values': temp_indicator_values[ind_val]})
+        #for ind_val in temp_indicator_values:
+        #    finalJSON['indicator_values'].append({'id': ind_val, 'values': temp_indicator_values[ind_val]})
 
 
         # get wetland country --> find continent and add to list

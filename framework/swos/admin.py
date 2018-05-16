@@ -116,10 +116,10 @@ class IndicatorAdmin(SortableModelAdmin):
     sortable = 'order'
 
 class SubIndicatorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent_ind', 'sub_number')
+    list_display = ('name', 'sub_number')
 
 class IndicatorValueAdmin(admin.ModelAdmin):
-    list_display = ('sub_indicator','wetland', 'input_1_time' )
+    list_display = ('wetland', 'input_1_time' )
     save_as = True
 
 class StoryLinePartForm(forms.ModelForm):
