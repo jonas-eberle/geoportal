@@ -292,7 +292,7 @@
                 '</div>';
 
             angular.element('#story_line').append($compile(template)($scope));
-            angular.element('.modal-header').after($compile(template_select)($scope))
+            angular.element('#story_line').parent().parent().before($compile(template_select)($scope))
         }
 
         function trackStoryLine() {
