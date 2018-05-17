@@ -15,9 +15,9 @@
             <gco:CharacterString>{{ layer.meta_language }}</gco:CharacterString>
         </gmd:language>
     {% else %}
-        <language>
-            <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng" codeSpace="ISO639-2">eng</LanguageCode>
-        </language>
+        <gmd:language>
+            <gmd:LanguageCode codeList="http://www.isotc211.org/2005/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="eng">eng</gmd:LanguageCode>
+        </gmd:language>
     {% endif %}
 
 
@@ -275,7 +275,7 @@
           {% endif %}
          </gmd:MD_Keywords>
        </gmd:descriptiveKeywords>
-       {% endfor %}
+           {% endfor %}
 
        {% for keyword in keyword_list %}
        <gmd:descriptiveKeywords>
@@ -384,9 +384,9 @@
             <gco:CharacterString>{{ layer.language }}</gco:CharacterString>
         </gmd:language>
      {% else %}
-        <language>
-            <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng" codeSpace="ISO639-2">eng</LanguageCode>
-        </language>
+        <gmd:language>
+            <gmd:LanguageCode codeList="http://www.isotc211.org/2005/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="eng">eng</gmd:LanguageCode>
+        </gmd:language>
      {% endif %}
        <gmd:characterSet>
          <gmd:MD_CharacterSetCode codeSpace="ISOTC211/19115" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
