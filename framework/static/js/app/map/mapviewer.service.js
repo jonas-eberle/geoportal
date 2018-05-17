@@ -37,17 +37,20 @@
             'createMap': function(id) {
                 var _this = this;
 
-                this.gmap = new google.maps.Map(document.getElementById('gmap'), {
-                    disableDefaultUI: true,
-                    keyboardShortcuts: false,
-                    draggable: false,
-                    disableDoubleClickZoom: true,
-                    scrollwheel: false,
-                    streetViewControl: false,
-                    maxZoom: this.zoom_max,
-                    minZoom: this.zoom_min,
-                    zoom: this.zoom_init
-                });
+                try {
+                    this.gmap = new google.maps.Map(document.getElementById('gmap'), {
+                        disableDefaultUI: true,
+                        keyboardShortcuts: false,
+                        draggable: false,
+                        disableDoubleClickZoom: true,
+                        scrollwheel: false,
+                        streetViewControl: false,
+                        maxZoom: this.zoom_max,
+                        minZoom: this.zoom_min,
+                        zoom: this.zoom_init
+                    });
+                } catch(e){}
+                
 
                 var view = new ol.View({
                     center: this.center,
@@ -59,34 +62,36 @@
                 });
 
                 var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
+                
+                try {
+                    this.gmap.setZoom(view.getZoom());
+                    this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+                
 
-                this.gmap.setZoom(view.getZoom());
-                this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
-
-
-                view.on('change:center', function() {
-                    var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
-                    _this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
-                });
-                view.on('change:resolution', function() {
-                    if (view.getZoom() >= _this.zoom_max) {
-                        angular.element('#zoomInButton').addClass('disabled');
-                    } else {
-                        angular.element('#zoomInButton').removeClass('disabled');
-                    }
-                    if (view.getZoom() <= _this.zoom_min) {
-                        angular.element('#zoomOutButton').addClass('disabled');
-                    } else {
-                        angular.element('#zoomOutButton').removeClass('disabled');
-                    }
-                    _this.gmap.setZoom(view.getZoom());
-
-                    if (view.getZoom() < 7) {
-                        $('#wetland_legend').show();
-                    } else {
-                        $('#wetland_legend').hide();
-                    }
-                });
+                    view.on('change:center', function() {
+                        var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
+                        _this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
+                    });
+                    view.on('change:resolution', function() {
+                        if (view.getZoom() >= _this.zoom_max) {
+                            angular.element('#zoomInButton').addClass('disabled');
+                        } else {
+                            angular.element('#zoomInButton').removeClass('disabled');
+                        }
+                        if (view.getZoom() <= _this.zoom_min) {
+                            angular.element('#zoomOutButton').addClass('disabled');
+                        } else {
+                            angular.element('#zoomOutButton').removeClass('disabled');
+                        }
+                        _this.gmap.setZoom(view.getZoom());
+    
+                        if (view.getZoom() < 7) {
+                            $('#wetland_legend').show();
+                        } else {
+                            $('#wetland_legend').hide();
+                        }
+                    });
+                } catch(e){}
                 //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
 
                 var baseLayers = [];
@@ -174,7 +179,7 @@
                 layers.remove(this.baseLayers[this.currentBaseLayerIndex]);
                 layers.insertAt(0,layer);
                 this.currentBaseLayerIndex = index;
-                Attribution.update(this.layers);
+                Attribution.update(jQuery.extend({}, this.layers, [layer]));
             },
             'getLayerById': function(id) {
                 return this.layers[id];
@@ -512,7 +517,7 @@
                 if (layer.max_zoom != null && layer.max_zoom < this.map.getView().getZoom()){
                     this.map.getView().setZoom(layer.max_zoom)
                 }
-                Attribution.update(this.layers);
+                Attribution.update(jQuery.extend({}, this.layers, [this.baseLayers[this.currentBaseLayerIndex]]));
                 return olLayer;
             },
             'getIndexFromLayer': function(title) {
@@ -564,7 +569,7 @@
                         $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
                     }
 
-                    Attribution.update(this.layers);
+                    Attribution.update(jQuery.extend({}, this.layers, [this.baseLayers[this.currentBaseLayerIndex]]));
                 }
             },
             'removeAllLayers': function() {
