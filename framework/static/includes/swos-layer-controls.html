@@ -23,8 +23,8 @@
                 type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default btn-legend" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
-        <button ng-controller="DiagramCtrl as diagram" ng-if="layer.legend_colors && layer.legend_colors[0].size" tooltip-placement="bottom"  uib-tooltip="Show statistic"
-                type="button" ng-click="diagram.onclickCreate(layer);"
+        <button ng-controller="DiagramCtrl as diagram" ng-if="layer.legend_colors && (layer.legend_colors[0].size || layer.legend_colors[0].size == 0)" tooltip-placement="bottom"  uib-tooltip="Show statistic"
+                type="button" ng-click="diagram.onclickCreate(product.layers, layer.id);"
                 class="btn btn-default hidden-xs btn-legend" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
         <button ng-controller="DiagramCtrl as diagram"  ng-if="layer.statistic == 'time'" tooltip-placement="bottom"  uib-tooltip="Create time series"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);diagram.requestTimeSeries(layer);"
