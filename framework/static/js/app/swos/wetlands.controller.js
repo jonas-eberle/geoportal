@@ -409,6 +409,7 @@
             WetlandsService.closeWetland();
             wetlands.value = WetlandsService.value;
             wetlands.data = WetlandsService.data;
+            wetlands.dataCount = WetlandsService.dataCount;
         }
 
         function removeAllLayers() {
