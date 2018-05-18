@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="webgisApp" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>GEO Wetlands Community Portal</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+
+    {% load staticfiles %}
+    {% load assets %}
+    {% assets "swosVendorCssBundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+
+    {% assets "geossVendorCssBundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+
+    {# requires fonts and css to be in the same directory, so no inclusion in bundle #}
+    <link href="{% static "img/flaticon/font/flaticon.css" %}" rel="stylesheet" />
+
+    {% assets "swosAppCssBundle" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+
+    {% verbatim %}
+    <script type="text/ng-template" id="close">
+        <div class="triangle"></div>
+        <div class="ns-popover-tooltip" ng-bind="layer.title">
+            <button ng-click="hidePopover()">Close</button>
+        </div>
+    </script>
+    {% endverbatim %}
+    
+    <style type="text/css">
+    #sidebar-tabs li {
+        width: 25% !important;
+    }
+    .geospatial_data > h2 {
+        background-color: #336a5c;
+        color: white;
+        margin: 0 !important;
+        padding-left: 10px;
+        padding-bottom: 2px;
+        padding-top: 2px;
+        font-size: 20px !important;
+    }
+    .geospatial_data .tab-content {
+        height: calc(100% - 300px);
+    }
+    .geospatial_data.noImage .tab-content {
+        height: calc(100% - 75px);
+    }
+    .panoramio-wapi-tos.wetland_image {
+        top: 216px;
+    }
+    #wetland_legend {
+        z-index: 1;
+    }
+    #national .btn-info, #national .btn-info.active, #national .btn-info:active, #national .open>.dropdown-toggle.btn-info {
+        color: #fff;
+        background-color: #336a5c;
+        border-color: #336a5c;
+    }
+    </style>
+
+    <script type="text/javascript">
+        var mapId = {{id}};
+        var subdir = '{{subdir}}';
+    </script>
+
+    
+    <script type="text/javascript">
+        var _paq = _paq || [];
+        // add individual tracking code
+    </script>
+
+    <style type="text/css">
+        #geoss-search-widget .rating-icon, #geoss-search-widget .rating {
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <div ng-controller="StoryLineCtrl"></div>
+    <div id="loading-div">
+        <div class="loading">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+            <button class="btn btn-default btn-primary btn-sm" onclick="$('#loading-div').hide()" style="margin-left: -18px;margin-top: -65px;">... loading...</button>
+        </div>
+    </div>
+
+    {% verbatim %}
+    <div id="alerts" ng-controller="AlertCtrl as ac">
+        <div uib-alert ng-repeat="alert in ac.alerts" class="alert alert-{{alert.type}}" close="ac.closeAlert()">{{alert.msg}}</div>
+    </div>
+    {% endverbatim %}
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div class="navbar-brand" id="title-left" style="padding-top: 4px;"><a href="1.html"><img src="/static/img/geo-wetlands-portal.jpg" border="0" height="60"></a></div>
+            </div>
+
+            <!-- TOOLBAR in Navigation fuer Tablet und Desktop -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl as lc" style="padding-right:0;">
+                    <li>
+                        <div style="margin-top: 5px;font-size: 0.8em;padding-left: 5px;" class="partners">
+                            <a href="http://www.geowetlands.org" target="_blank"><img src="/static/img/GEO_wetland_color_pos_40.png" border="0" height="40"></a>
+                            <img src="/static/img/eu_40.png" alt="EU Logo" height="40">
+                            <a href="http://www.eo.uni-jena.de" target="_blank"><img src="/static/img/UniJena_BildWortMarke_blue.jpg" border="0" height="40"></a>
+                            <a href="http://www.swos-service.eu" target="_blank"><img src="/static/img/swos_logo_40.png" border="0" height="40" style="margin-left: 0;"></a>
+                        </div>
+                    </li>
+                    <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
+                </ul>
+                <ul class="nav navbar-nav pull-right" id="nav-top-right2">
+                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'" style="width:50px;"></li>
+                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_swos.html" %}'"></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div>
+    </nav>
+
+    {% verbatim %}
+    <!-- NAVBAR SEARCH SMARTPHONE - Zweite Version, die auf dem Smartphone in einer separaten Zeile angezeigt wird.-->
+    <nav class="navbar visible-xs" role="navigation" id="navbar-search" ng-controller="SearchBoxCtrl as sb">
+        <div class="container-fluid">
+          <!--  <form class="navbar-form navbar-right" ng-submit="sb.search();" role="search" id="xs-search">
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="sb.text" placeholder="Search">
+                </div>
+            </form>-->
+            <button class="btn btn-primary" type="submit"  id="toggle-sidebar">Menu</button>
+        </div>
+    </nav><!-- END NAVBAR SEARCH SMARTPHONE -->
+
+    <!-- NAVBAR END -->
+
+    <div class="container-fluid" id="center">
+        <div class="row" ng-controller="MapCurrentLayersCtrl as mcl">
+            <div ng-controller="MapViewerCtrl as mv">
+                <div class="map-controls-wrapper">
+
+                    <div id="wetland_sites" class="btn btn-primary">
+                        <input type="checkbox" ng-click="mv.changeSitesVisibility($event)" id="layer_sites"
+                               checked="checked" autocomplete="off" /><label for="layer_sites">Show Wetland sites </label>
+                    </div>
+                    <div id="map_icons">
+                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                                class="fa-plus fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                                class="fa-minus fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                                class="fa-globe fa fa-lg"></i></button>
+                        <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
+                        <button type="button" uib-tooltip="Activate to request information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" ng-disabled="!mv.data.canRequestFeatureInfo" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Show layer attribution" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showAttribution()"
+                                class="btn btn-default btn-circle attributions-button" ng-disabled="mv.layer_attribution == false || mv.layer_attribution == undefined"><i class="fa-copyright fa fa-lg"></i></button>
+                        <!--<button class="btn btn-default btn-circle hidden-xs hidden-sm" type="button" uib-tooltip="Search"
+                                tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showSearch()"><i
+                                class="fa-search fa fa-lg"></i></button>-->
+                    </div>
+
+                    <div class="input-group hidden-xs hidden-sm" id="map_search" ng-controller="SearchBoxCtrl as sb">
+                        <form ng-submit="sb.search_es();">
+                            <input type="text" ng-model="sb.text" class="form-control" placeholder="Search for ..."
+                                   id="search_desktop" autocomplete="off" ng-focus="mv.expandSearchBox()">
+                            <br style="clear:both"/>
+                            <div id="search-extend">
+                                <!--
+                                <div style="float: left; padding-top: 10px;">
+                                  <input type="checkbox" id="check_search" checked="checked" /><label for="check_search"></label> Checkbox
+                                </div>
+                                -->
+                                <button class="btn btn-primary" type="submit" style="float: right; margin: 4px auto;">
+                                    Search
+                                </button>
+                                <br style="clear:both;"/>
+                            </div>
+
+                        </form>
+                    </div>
+
+                <!-- /input-group -->
+                </div>
+                
+                <div class="col-sm-9 col-md-9 col-xs-12 main" map-openlayers id="map">
+
+                    <div id="wetland_attribution">
+                        <span ng-repeat="attribution in mv.layer_attribution">
+                            | &copy;
+                            <span ng-repeat="textpart in attribution">
+                                <a ng-if="textpart.url" href="{{ textpart.url }}" target="_blank" style="text-decoration-line: underline; color: #d6d6d6;">{{ textpart.text }}</a>
+                                <span ng-if="!textpart.url">{{ textpart.text }}</span>
+                            </span>
+                        </span>
+                    </div>
+                    <div id="wetland_legend">
+                        <svg width="270" height="40" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="155" y="27" width="25" height="10" style="fill:rgba(255, 255, 255, 0.4); stroke:#319FD3;"></rect>
+                            <rect x="5" y="27" width="25" height="10" style="fill:rgba(226, 125, 5, 0.4); stroke:rgba(226, 125, 5, 1);"></rect>
+                            <text x="35" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">filtered wetlands</text>
+                            <text x="185" y="35" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">wetlands</text>
+                            <text x="5" y="16" font-family="Droid Sans', sans-serif" font-size="14px" fill="black">Click on a wetland to select and zoom.</text>
+                        </svg>
+                    </div>
+                    <div id="disclaimer"><strong>Disclaimer: </strong>Please note, all maps have preliminary status and have not yet been validated!</div>
+
+                    <div id="cookienote" ng-hide="mv.hideCookieNote"><strong>Cookies: </strong>This website uses cookies to ensure you get the best experience on our website. <button ng-click="mv.closeCookieNote()">Okay</button></div>
+
+                    <div id="map_legend"></div>
+                    <div class="layers-container geoss" style="display:none"></div>
+
+                    <div id="slider" style="display:none">
+                        <div class="input"><input type="text" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer-list">
+                <div id="current" ng-show="mcl.wetlandListState">
+
+                    <!--
+                       <div id="addexternallayer" ng-if="mapviewerdata.addexternallayer">
+                           <hr />
+                           <div align="center"><button type="button" ng-click="mcl.addOwnLayer()" class="btn btn-primary">Add own layer</button></div>
+                           <hr />
+                       </div>
+                       -->
+                    <!-- List GROUP -->
+                    <!--<div ng-show="!mcl.layersMeta.length">No layers added to the map!</div>-->
+                    <div class="layer-list-top-bar">
+                        <div class="div-button" ng-click="mcl.removeAllLayers()">
+                            <div class="glyphicon glyphicon-remove div-button-icon"></div>
+                            <div class="div-button-text">Remove all layers</div>
+                        </div>
+                    </div>
+                    <div class="list-group" dnd-list="mcl.layersMeta" dnd-drop="mcl.prepareIndex(index, item)">
+                        <div class="list-group-item clearfix" ng-repeat="layer in mcl.layersMeta" dnd-draggable="layer"
+                             dnd-moved="mcl.changeLayer($index)" dnd-effect-allowed="move" style="border-radius:0;">
+
+                            <div class="catalog-item">
+                                <div class="item_left" style="padding-top:12px;">
+                                    <button tooltip-append-to-body="true" tooltip-placement="right"
+                                            uib-tooltip="Hide layer"
+                                            type="button" ng-click="mcl.changeVisibility(layer.id, $event)"
+                                            ng-if="mcl.getVisibility(layer.id)" class="btn btn-default"
+                                            style="padding: 0;border-color: white;"
+                                            aria-label="Left Align"><i
+                                            class="fa fa-eye fa-lg"></i></button>
+                                    <button tooltip-append-to-body="true" tooltip-placement="right"
+                                            uib-tooltip="Show layer"
+                                            type="button" ng-click="mcl.changeVisibility(layer.id, $event)"
+                                            ng-if="!mcl.getVisibility(layer.id)" class="btn btn-default"
+                                            style="padding: 0;border-color: white;"
+                                            aria-label="Left Align"><i
+                                            class="fa fa-eye-slash fa-lg"></i></button>
+                                </div>
+                                <div class="item_catalog">
+                                    <div class="layer-title-wrapper">
+                                        <div tooltip-placement="bottom" uib-tooltip="Show/Hide details" class="glyphicon glyphicon-chevron-down" style="float: left; width: 0;padding-left: 0; padding-top: 20px" ng-click="mcl.toggleLayerControls(layer.id, $event)"></div>
+                                        <div class="item_title" style="float: left;width:206px;padding-left: 20px;" ng-click="mcl.zoomToLayer(layer.id)" ng-bind="layer.title"></div>
+                                        <div tooltip-placement="bottom" uib-tooltip="Remove layer" class="glyphicon glyphicon-remove" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)"></div>
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                    <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;margin-left:-14px;width:260px;border-top:1px solid #ddd; padding: 5px 10px;">
+                                        <div class="item_desc">
+                                            <slider class="slider" ng-model="mcl.sliderValues[layer.id]" min="0" max="100" step="1" on-slide="mcl.changeOpacity(layer.id)" on-stop-slide="mcl.changeOpacity(layer.id)" style="width:95%;"></slider>
+                                            <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[layer.id]" ng-change="mcl.updateLayer(layer.id)" ng-options="o as o for o in layer.ogc_times"></select></div>
+                                            <div ng-if="layer.layers">Specify layer: <select ng-model="mcl.selectedLayerNames[layer.id]" ng-change="mcl.updateLayerName(layer.id)" ng-options="o as o for o in layer.layers"></select></div>
+                                        </div>
+                                        <div class="item_icon" ng-if="layer.source != 'sentinelhub'">
+                                            <button tooltip-placement="bottom" uib-tooltip="Show/Hide legend" type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-click="mcl.toggleLegend(layer)"  class="btn btn-default" aria-label="Left Align"><i class="fa fa-list fa-lg"></i></button>
+<!--                                            <button tooltip-placement="bottom" uib-tooltip="Download data" ng-if="layer.downloadable" type="button" ng-click="mcl.download(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>-->
+                                            <button tooltip-placement="bottom" uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" uib-tooltip="Show/Hide station list" type="button" ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(layer)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
+                                            <button tooltip-placement="bottom" uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(layer.id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
+                                           <!-- <button tooltip-placement="bottom" uib-tooltip="Remove layer" type="button" ng-click="mcl.removeLayer(layer.id, $index, layer.django_id)" class="btn btn-default" aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layer-control-wrapper" ng-class="layer.id" style="display: none;">
+                                    <div class="item_stations" ng-if="layer.ogc_type == 'SOS'" ng-hide="!layer.showStations">
+                                        <strong>Available stations:</strong>
+                                        <ul style="padding-left:20px;">
+                                            <li ng-repeat="station in layer.stations"><a href="#" ng-click="mcl.zoomToStation(station);">{{ station.name }}
+                                                ({{ station.lat.toFixed(2) }} {{ station.lon.toFixed(2) }})</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="item_legend" style="margin-left:40px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
+                                        <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}.jpg" ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
+                                        <img ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
+                                        <table ng-if="layer.legend_colors">
+                                            <tr ng-repeat="item in layer.legend_colors track by $index">
+                                                <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
+                                                <td class="legend-label">{{ item.label }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- END List GROUP -->
+                </div>
+                <div id="active_layer" class="toggle-button-wrapper" ng-class="mcl.wetlandListState">
+                    <button id="show_active_layer" class="glyphicon" ng-if="mcl.showToggleButton" ng-click="mcl.toggleWetlandList('click')"></button>
+                </div>
+            </div>
+
+            <div class="col-md-3 sidebar first" id="sidebar" ng-controller="WetlandsCtrl as wetlands">
+                <!-- Nav tabs -->
+
+                <!--<div class="scroller scroller-left"><i class="glyphicon glyphicon-chevron-left"></i></div>-->
+                <!--<div class="scroller scroller-right"><i class="glyphicon glyphicon-chevron-right"></i></div>-->
+                <div class="wrapper">
+
+                    <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
+                        <li role="presentation"  ng-class="{active: wetlands.data.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="wetlands.data.activeTab = -1" ><span> Wetlands </span></a></li>
+                        <!--<li role="presentation" ng-if="wetlands.value.id != null" ng-class="{active: wetlands.data.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{wetlands.value.id}}" aria-controls="wetland_{{wetlands.value.id}}" role="tab" data-toggle="tab" ng-bind="wetlands.value.name"></a></li>-->
+                        <!--<li ng-repeat="(key, value) in wetlands.wetlands_opened" ng-class="{active: wetlands.data.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="wetlands.foo()" ng-click="wetlands.closeWetland(value.id)">&#10006;</span></a> </li>-->
+                        <li role="presentation"><a href="#national" aria-controls="national" role="tab" data-toggle="tab">National</a></li>
+                        <li role="presentation"><a href="#continental" aria-controls="continental" role="tab" data-toggle="tab">Continental</a></li>
+                        <li role="presentation"><a href="#global" aria-controls="global" role="tab" data-toggle="tab">Global</a></li>
+                    </ul>
+
+                </div>
+
+                <!-- Tab panes -->
+
+                <div class="tab-content" style="top:93px">
+                    <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
+                        <div  ng-if="!wetlands.value['id']">
+                        <button type="button" ng-click="wetlandsFilter.clearFilter()" ng-if="wetlandsFilter.filtered_geo_scale != '' || wetlandsFilter.filtered_country != ''  || wetlandsFilter.filtered_wetland_type != ''  || wetlandsFilter.filtered_site_type != ''  || wetlandsFilter.filtered_ecoregion != ''  || wetlandsFilter.filtered_products != ''" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 1px 6px; margin-left: 10px;" >x Clear filter</button>
+                        <div class="filter" style="padding: 10px;padding-bottom: 0;">
+                            <select ng-model="wetlandsFilter.filtered_country" ng-change="wetlandsFilter.filterWetlands()" style="width: 50%; margin-bottom: 10px;">
+                                <option value="">- Filter by country -</option>
+                               <option ng-repeat="option in wetlandsFilter.country_list | unique | orderBy "  value="{{option}}">{{option}}</option>-->
+                            </select>
+                            <select ng-model="wetlandsFilter.filtered_geo_scale" ng-change="wetlandsFilter.filterWetlands()" style="width: 40%; margin-bottom: 10px;">
+                                <option value="">- Filter by size -</option>
+                               <!-- <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'geo_scale'" value="{{option.geo_scale}}">{{option.geo_scale}}</option>-->
+                                <option ng-if="wetlandsFilter.show_size[1] == true" value="1">Wetlands < 20k ha</option>
+                                <option ng-if="wetlandsFilter.show_size[2] == true" value="2">Wetlands 20k ha - 50k ha</option>
+                                <option ng-if="wetlandsFilter.show_size[3] == true" value="3">Wetlands 50k ha - 500k</option>
+                                <option ng-if="wetlandsFilter.show_size[4] == true" value="4">Wetlands > 500k ha</option>
+                            </select>
+                            <select ng-model="wetlandsFilter.filtered_wetland_type" ng-change="wetlandsFilter.filterWetlands()" style="width: 50%; margin-bottom: 10px;">
+                                <option value="">- Filter by wetland type -</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'wetland_type'" ng-if="wetlandsFilter.show_wetland_type[option.wetland_type] == true" value="{{option.wetland_type}}">{{option.wetland_type}}</option>
+                            </select>
+                            <select ng-model="wetlandsFilter.filtered_site_type" ng-change="wetlandsFilter.filterWetlands()" style="width: 40%;margin-bottom: 10px;">
+                                <option value="">- Filter by site type -</option>
+                                <option ng-repeat="option in wetlandsFilter.wetlands_without_geom | unique:'site_type'" ng-if="wetlandsFilter.show_site_type[option.site_type] == true" value="{{option.site_type}}">{{option.site_type}}</option>
+                            </select>
+                            <select ng-model="wetlandsFilter.filtered_ecoregion" ng-change="wetlandsFilter.filterWetlands()" style="width: 91%;margin-bottom: 10px;">
+                                <option value="">- Filter by ecoregion -</option>
+                                <option ng-repeat="ecoregion in wetlandsFilter.ecoregion_list | unique" ng-if="wetlandsFilter.show_ecoregion[ecoregion] == true" value="{{ecoregion}}">{{ecoregion}}</option>
+                            </select>
+                            <select ng-model="wetlandsFilter.filtered_products" ng-change="wetlandsFilter.filterWetlands()" style="width: 85%">
+                                <option value="">- Filter by product -</option>
+                                <!-- products is an array for each wetland, thus first of all manual list of products -->
+                                <option ng-if="wetlandsFilter.show_product['FloodReg'] == true" value="FloodReg">Flood Regulation</option>
+                                <option ng-if="wetlandsFilter.show_product['LSTT'] == true" value="LSTT">Land Surface Temperature Trend</option>
+                                <option ng-if="wetlandsFilter.show_product['LULC'] == true" value="LULC">Land Use Land Cover</option>
+                                <option ng-if="wetlandsFilter.show_product['LULCC_L'] == true" value="LULCC_L">Land Use Land Cover Change Long-term</option>
+                                <option ng-if="wetlandsFilter.show_product['LULCC_S'] == true" value="LULCC_S">Land Use Land Cover Change Short-term</option>
+                                <option ng-if="wetlandsFilter.show_product['InvDel'] == true" value="InvDel">Potential Wetland areas</option>
+                                <option ng-if="wetlandsFilter.show_product['SWD'] == true" value="SWD">Surface Water Dynamics</option>
+                                <option ng-if="wetlandsFilter.show_product['SSM'] == true" value="SSM">Surface Soil Moisture</option>
+                                <option ng-if="wetlandsFilter.show_product['WQ'] == true" value="WQ">Water Quality</option>
+                            </select>
+                            <button type="button" ng-controller="InfoCtrl as ic" ng-click=" ic.helpFilter()" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 2px 6px;; margin-bottom: 2px;    border-radius: 15px;     border-color: rgb(169, 169, 169);" >?</button>
+                        </div>
+                        <div style="padding: 10px;padding-bottom: 0;">
+                            <input type="checkbox" ng-model="wetlandsFilter.filtered_product_count" ng-change="wetlandsFilter.filterWetlands()"
+                                   id="cb_testmapping"/><label for="cb_testmapping">List only wetlands with products</label>
+                        </div>
+                        <div style="padding: 10px;padding-bottom: 0;padding-top: 0;">
+                            <input type="checkbox" ng-model="wetlandsFilter.sortByCountryName" ng-change="wetlandsFilter.setSortOrder()"
+                                   id="cb_groupbycountry"><label for="cb_groupbycountry">Sort by country</label>
+                        </div>
+                        <!--<div style="padding: 10px;padding-bottom: 0;"><input ng-model="search" placeholder="Search for ..."></div>-->
+                        <hr/>
+                        <div ng-if="wetlandsFilter.wetlands_without_geom.length==0">Loading wetlands... please wait </div>
+                        <div ng-init="wetlandsFilter.filterWetlands()" ng-repeat="layer in wetlandsFilter.wetlands_without_geom | filter:search | orderBy: wetlandsFilter.sortOrder "
+                             ng-if="layer.show" class="list-group-item clearfix"
+                             ng-click="wetlands.selectWetland(layer)" title="{{layer.title}}">
+                            <!-- ng-mouseenter="hoverLayer(this, layer.id, $event)" data-toggle="popover"
+                             data-trigger="manual" data-placement="left" data-container="body"
+                             data-html="true" data-content="{{layer.abstract}}" ns-popover ns-popover-template="close"
+                             ns-popover-trigger="mouseenter" ns-popover-theme="ns-popover-tooltip-theme"
+                             ns-popover-hide-on-click="false" ns-popover-timeout="1"-->
+                            <div class="catalog-item">
+                                <div class="item_center">
+                                    <div class="item_title">{{layer.name}}</div>
+                                    <div class="item_desc">{{layer.country}}</div>
+                                </div>
+                                <div class="item_right">
+                                    <button type="button" class="btn btn-default btn-xs button_catalog_meta" aria-label="Left Align" >
+                                        <!-- tooltip-placement="bottom" uib-tooltip="Show metadata" ng-click="showMetadata(layer)" -->
+                                        <i class="fa fa-file-text-o fa-lg "></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    <!--</div>-->
+
+                        <!--<div role="tabpanel" class="tab-pane geospatial_data" ng-if="wetlands.value['id']"
+                             ng-class="{active: wetlands.data.activeTab==1, noImage: wetlands.value.data.image == null}" id="wetland_{{wetlands.value.id}}">-->
+                        <div class="geospatial_data" ng-if="wetlands.value['id']" ng-class="{noImage: wetlands.value.data.image == null}" id="wetland_{{wetlands.value.id}}">
+                            <div id="closeWetland" ng-click="wetlands.closeWetland()" style="float:right;color:white;cursor: pointer;margin-right: 5px;margin-top: 3px;">&#10060;</div>
+                            <h2>{{wetlands.value.name}}</h2>
+                            <div ng-if="wetlands.value.data.image!=null" class="wetland-image">
+                                <a href="{{wetlands.value.data.image}}" class="fancybox" rel="wetland_{{wetlands.value.id}}" title="{{wetlands.value.data.image_desc}}">
+                                    <img ng-src="{{wetlands.value.data.image}}" width="100%"/>
+                                </a>
+                                <div class="panoramio-wapi-tos wetland_image">
+                                    <div class="desc">{{wetlands.value.data.image_desc}}</div>
+                                    <div ng-if="wetlands.value.data.image.indexOf('panoramio') > -1">
+                                        <a href="http://www.panoramio.com" target="_blank" style="font-size:12px;color:white;">
+                                            Panoramio: 
+                                        </a>
+                                        <span style="font-size:12px;">The owners of the photos hold their copyrights!</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-controller="StoryLineCtrl as storyline">
+                            <div ng-controller="TrackingCtrl as tracking">
+                                <uib-tabset justified="true">
+                                    <!-- Overview -->
+                                    <uib-tab class="flaticon-bars" heading="" uib-tooltip="Overview" tooltip-append-to-body="true" select="tracking.trackWetlandTab('overview')">
+                                        <h4>Wetland specifications</h4>
+                                        <div class="properties">
+                                            <strong>Country: </strong>{{wetlands.value.country}}<br>
+                                            <strong>Scale: </strong>{{wetlands.value.geo_scale}}<br>
+                                            <strong>Type: </strong>{{wetlands.value.site_type}} | {{wetlands.value.wetland_type}}<br>
+                                            <strong>Ecoregion: </strong>{{wetlands.value.ecoregion}}<br>
+                                            <strong>Size: </strong>{{wetlands.formatValue(wetlands.value.size)}} ha<br>
+                                            <div ng-if="wetlands.value.data.story_lines.length != 0"><h4>Storylines</h4>
+                                                <div ng-repeat="story_line in wetlands.value.data.story_lines" style="margin-left: 20px;">
+                                                    <a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{story_line.title}}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h4 style="margin-top:15px">Datasets and Services</h4>
+                                        <div class="buttons" style="text-align: center;margin-top: 20px;">
+                                            <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-business a').click()">
+                                                <div class="flaticon-business"></div>{{wetlands.dataCount.indicators}} Indicators</button>
+                                            <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()">
+                                                <div class="flaticon-layers"></div>{{wetlands.dataCount.products}} Products</button>
+                                            <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()">
+                                                <div class="flaticon-space-satellite-station"></div>{{wetlands.dataCount.satdata}} Satellite scenes</button>
+                                            <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-1 a').click()">
+                                                <div class="flaticon-technology-1"></div>{{wetlands.dataCount.images}} Photos</button>
+                                            <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology a').click()">
+                                                <div class="flaticon-technology"></div>{{wetlands.dataCount.videos}} Videos</button>
+                                            <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()">
+                                                <div class="flaticon-technology-2"></div>{{wetlands.dataCount.externaldb}} External databases</button>
+                                        </div>
+                                    </uib-tab>
+    
+                                    <!-- Indicators -->
+                                    <uib-tab class="flaticon-business" heading="" uib-tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
+                                        <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
+    
+                                    </uib-tab>
+                                    <!-- Products -->
+                                    <uib-tab class="flaticon-layers"  heading="" uib-tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
+                                        <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>
+                                        <div class="remove-button-wrapper hidden-xs">
+                                            <button class="btn btn-default btn-sm" ng-click="wetlands.removeAllLayers()">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                                Remove all layers
+                                            </button>
+                                            <button class="btn btn-default btn-sm" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                                Remove all layers of this Wetland
+                                            </button>
+                                        </div>
+                                        <div>
+                                        <ul class="items products">
+    
+                                            <uib-accordion close-others="false">
+                                                <div uib-accordion-group ng-repeat="product in wetlands.value.data.products"  heading="{{product.name}}" is-open="product.open">
+                                                    <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
+                                                        <span class="project">[SWOS]</span> {{product.name}}
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+                                                    </uib-accordion-heading>
+                                                    <div class="options">
+                                                        <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                        <p ng-if="product.story_line.length != 0 && product.story_line != false"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
+                                                        <div class="products_datasets">
+                                                            <strong>Layers:</strong>
+                                                            <div class="select" ng-if="product.layers.length > 0">
+                                                                <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
+                                                                    <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                    <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                    <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                </div>
+                                                            </div>
+                                                            <div class="select" ng-if="product.layers.length == 0">
+                                                                No datasets available.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+    
+                                                </div>
+                                            </uib-accordion>
+                                        </ul>
+                                        </div>
+                                    </uib-tab>
+    
+                                    <!-- Data -->
+                                    <uib-tab class="flaticon-space-satellite-station" heading="" uib-tooltip="Satellite scenes" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group is-open="wetlands.satdata_image">
+                                                <uib-accordion-heading>
+                                                    Satellite scenes explorer
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
+                                                </uib-accordion-heading>
+                                                <a href="javascript:;" uib-tooltip="Click to open the satellite scenes explorer application" ng-click="wetlands.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{wetlands.value.id}}_small.png" width="100%" /></a>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2017-10-07</div>
+                                            </div>
+                                            <div uib-accordion-group is-open="wetlands.satdata_table">
+                                                <uib-accordion-heading>
+                                                    Total amount by sensor
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_table, 'glyphicon-chevron-right': !wetlands.satdata_table}"></i>
+                                                </uib-accordion-heading>
+                                                <table class="table data">
+                                                    <tr>
+                                                        <!--<th>&nbsp;</th>-->
+                                                        <th>Sensor</th>
+                                                        <th>Scenes</th>
+                                                        <th>Start</th>
+                                                        <th>End</th>
+                                                    </tr>
+                                                    <tr ng-if="!wetlands.value.satdata">
+                                                        <td colspan="4">Loading...</td>
+                                                    </tr>
+                                                    <tr ng-repeat="data in wetlands.value.satdata" >
+                                                        <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
+                                                        <td>{{data.dataset}}</td>
+                                                        <td>{{data.count}}</td>
+                                                        <td>{{data.min}}</td>
+                                                        <td>{{data.max}}</td>
+                                                    </tr>
+                                                </table>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2017-10-07</div>
+                                            </div>
+                                            <div uib-accordion-group is-open="wetlands.satdata_sources">
+                                                <uib-accordion-heading>
+                                                    Data sources
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_sources, 'glyphicon-chevron-right': !wetlands.satdata_sources}"></i>
+                                                </uib-accordion-heading>
+                                                <p>
+                                                    <strong>Copernicus Open Access Hub</strong><br/>
+                                                    Sentinel-1 A&B IW GRD data have been searched through the Copernicus Open Access Hub OpenSearch API. <br />
+                                                    <a href="https://scihub.copernicus.eu" target="_blank">https://scihub.copernicus.eu</a>
+                                                </p>
+                                                <hr/>
+                                                <p>
+                                                    <strong>USGS Earth Explorer</strong><br/>
+                                                    Landsat MSS, Landsat TM (Collection 1), Landsat ETM (Collection 1), Landsat-8 (Collection 1), Sentinel 2A data have been searched through the USGS Earth Explorer API. <br />
+                                                    <a href="https://earthexplorer.usgs.gov" target="_blank">https://earthexplorer.usgs.gov</a>
+                                                </p>
+                                                <hr/>
+                                                <p>
+                                                    <strong>Sinergise Sentinel Hub Services</strong><br/>
+                                                    Landsat TM and Landsat ETM data from ESA archives have been searched through the Sentinel Hub WFS Services. Furthermore WMS services for Landsat TM, Landsat ETM, Landsat 8 and Sentinel datasets have been integrated within the satellite scenes explorer for data visualization.<br />
+                                                    <a href="http://sentinel-hub.com" target="_blank">http://sentinel-hub.com</a>
+                                                </p>
+                                            </div>
+                                        </uib-accordion>
+                                    </uib-tab>
+    
+                                    <!-- Photos -->
+                                    <uib-tab class="flaticon-technology-1" heading="" uib-tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
+                                        <div ng-controller="WetlandsImageCtrl as wetlandsImage">
+                                            <uib-accordion ng-if="wetlandsImage.images.photos.length > 0">
+                                                <div uib-accordion-group is-open="wetlandsImage.imagesIsOpen">
+                                                    <uib-accordion-heading>Images
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.imagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.imagesIsOpen}"></i>
+                                                    </uib-accordion-heading>
+                                                    <div style="/*height: 185px;overflow-y: auto;*/">
+                                                        <!--<span ng-if="!wetlandsImage.images">Loading...</span>-->
+                                                        <a ng-repeat="image in wetlandsImage.images.photos"
+                                                           ng-click="'{{image.photo_title}}'"
+                                                           class="fancybox" rel="gallery1" data-fancybox-href="{{ image.photo_show_url }}"
+                                                           data-fancybox-title="{{ image.description }}&nbsp;({{ image.date }}) {{image.photo_title}} ({{image.owner_name}})"
+                                                           href="{{image.photo_url_thumb}}" target="_blank"><img
+                                                                ng-src="{{image.photo_url_thumb}}"
+                                                                alt="{{image.photo_title}} ({{image.owner_name}})"
+                                                                title="{{image.photo_title}} ({{image.owner_name}})"
+                                                                style="width: 52px; height: 52px; left: 0; top: 0;margin: 5px;"></a>
+                                                    </div>
+                                                    <button style="margin-left: 5px;" ng-if="wetlandsImage.images.currentPage > 1" type="button"
+                                                            class="btn btn-prev" ng-click="wetlandsImage.moreImages('prev')">Previous
+                                                    </button>
+                                                    <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.images.currentPage < wetlandsImage.images.lastPage" type="button"
+                                                            class="btn btn-next" ng-click="wetlandsImage.moreImages('next')">Next
+                                                    </button>
+                                                </div>
+                                            </uib-accordion>
+                                            <uib-accordion ng-if="wetlandsImage.externalImages.photos.length > 0">
+                                                <div uib-accordion-group is-open="wetlandsImage.externalImagesIsOpen">
+                                                    <uib-accordion-heading>Panoramio images
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.externalImagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.externalImagesIsOpen}"></i>
+                                                    </uib-accordion-heading>
+                                                    <div style="/*height: 185px;overflow-y: auto;*/">
+                                                        <!--<span ng-if="!wetlandsImage.externalImages">Loading...</span>-->
+                                                        <a ng-repeat="image in wetlandsImage.externalImages.photos"
+                                                           ng-click="tracking.trackShowImage('http://static.panoramio.com/photos/large/{{image.photo_id}}.jpg', '{{image.photo_title}')"
+                                                           class="fancybox" rel="gallery1"
+                                                           data-fancybox-href="http://static.panoramio.com/photos/large/{{image.photo_id}}.jpg"
+                                                           data-fancybox-title="<a href='{{image.photo_url}}' target='_blank'>{{image.photo_title}}</a> (<a href='{{image.owner_url}}' target='_blank'>{{image.owner_name}}</a>)"
+                                                           href="{{image.photo_url}}" target="_blank"><img
+                                                                ng-src="{{image.photo_file_url}}"
+                                                                alt="{{image.photo_title}} ({{image.owner_name}})"
+                                                                title="{{image.photo_title}} ({{image.owner_name}})"
+                                                                style="width: 52px; height: 52px; left: 0; top: 0;margin: 5px;"></a>
+                                                    </div>
+                                                    <div class="panoramio-wapi-tos"
+                                                         style="width: 396px; color: black !important; background-color: white !important;">
+                                                        <a href="http://www.panoramio.com" target="_top"><img
+                                                                src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
+                                                        <span style="font-size:12px;">The copyright of the photos hold their owners!</span>
+                                                    </div>
+                                                    <button style="margin-left: 5px;" ng-if="wetlandsImage.externalImages.currentPage > 1" type="button"
+                                                            class="btn btn-prev" ng-click="wetlandsImage.moreExternalImages('prev')">Previous
+                                                    </button>
+                                                    <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.externalImages.currentPage < wetlandsImage.externalImages.lastPage"
+                                                            type="button" class="btn btn-next" ng-click="wetlandsImage.moreExternalImages('next')">Next
+                                                    </button>
+                                                </div>
+                                            </uib-accordion>
+                                        </div>
+                                    </uib-tab>
+    
+                                    <!-- Videos -->
+                                    <uib-tab class="flaticon-technology" heading="" uib-tooltip="Videos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('video')">
+                                        <div ng-controller="WetlandsVideoCtrl as wetlandsVideo">
+                                            <div>
+                                                <span ng-if="!wetlandsVideo.videos.videos">Loading...</span>
+                                                <a ng-repeat="video in wetlandsVideo.videos.videos" ng-click="tracking.trackShowVideo('{{video.url}}')"
+                                                   class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1"
+                                                   href="{{video.url}}" target="_blank">
+                                                    <img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0; top: 0;margin: 5px;">
+                                                </a>
+                                            </div>
+                                            <button ng-if="wetlandsVideo.videos.currentPage < wetlandsVideo.videos.lastPage" type="button" class="btn btn-loadmore" ng-click="wetlandsVideo.loadMoreVideos()">Load more videos</button>
+                                        </div>
+                                    </uib-tab>
+    
+                                    <!-- External databases -->
+                                    <uib-tab class="flaticon-technology-2" heading="" uib-tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
+                                        <div ng-if="wetlands.value.data.externaldb.length == 0">No external databases registered!</div>
+                                        <div ng-if="wetlands.value.data.externaldb.length != 0"><!--{{ wetlands.value.data.externaldb.length }} external databases registered!-->
+                                            <div ><input ng-model="wetlands.externaldb_search.searchText" placeholder="Search for ...">
+                                                <input  type="checkbox" ng-model="wetlands.externaldb_search.layer_exist" id="only_layer">
+                                                <label for="only_layer" style="margin-top: 8px;" >
+                                                    <div class="flaticon-layers" style="display: inline-block;"></div> Filter by maps
+                                                </label>
+                                            </div>
+                                        </div>
+    
+                                        <uib-accordion>
+                                            <div uib-accordion-group ng-repeat="externaldb_group in wetlands.value.data.externaldb" is-open="externaldb_group.open">
+                                                <uib-accordion-heading>
+                                                    {{ externaldb_group.group }} ({{ (externaldb_group.datasets|filter: wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist ).length }})
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb_group.open, 'glyphicon-chevron-right': !externaldb_group.open}"></i>
+                                                </uib-accordion-heading>
+                                                <uib-accordion>
+                                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in externaldb_group.datasets | filter:wetlands.externaldb_search.searchText | filter:externaldb.layer_exist = wetlands.externaldb_search.layer_exist " >
+                                                        <uib-accordion-heading>
+                                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                                        </uib-accordion-heading>
+                                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                                        <strong>Link:</strong>
+                                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                                        </div>
+                                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                                            <strong>Layers:</strong>
+                                                            <div ng-repeat="layer in externaldb.layers"
+                                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-accordion>
+                                            </div>
+                                        </uib-accordion>
+                                    </uib-tab>
+                                </uib-tabset>
+                            </div>
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div role="tabpanel" class="tab-pane national_data" id="national" ng-controller="NationalDataCtrl as nationalData">
+                        
+                        <select id="contries-selection" class="selectpicker" data-live-search="true">
+                          <option ng-repeat="country in nationalData.countries">{{country.name}}</option>
+                        </select>
+                        
+                        <uib-accordion close-others="false" ng-if="nationalData.selectedCountry != null">
+                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="nationalData.maps.length > 0">
+                                <uib-accordion-heading>
+                                    Own layers
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_national_maps, 'glyphicon-chevron-right': !nationalData.open_national_maps}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.maps">
+                                        <uib-accordion-heading>
+                                            Product name
+                                        </uib-accordion-heading>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            
+                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="nationalData.wetlands.length > 0">
+                                <uib-accordion-heading>
+                                    Wetlands
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_wetlands, 'glyphicon-chevron-right': !nationalData.open_wetlands}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group ng-repeat="wetland in nationalData.wetlands">
+                                        <uib-accordion-heading>
+                                            {{wetland.name}}
+                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_global_maps, 'glyphicon-chevron-right': !nationalData.open_global_maps}"></i>
+                                        </uib-accordion-heading>
+                                        <div class="properties">
+                                            <table>
+                                                <tr>
+                                                    <th valign="top">Description:</th>
+                                                    <td valign="top">{{wetland.description}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Scale:</th>
+                                                    <td>{{wetland.geo_scale}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Type:</th>
+                                                    <td>{{wetland.site_type}} | {{wetland.wetland_type}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th valign="top">Ecoregion:</th>
+                                                    <td valign="top">{{wetland.ecoregion}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Size:</th>
+                                                    <td>{{nationalData.formatValue(wetland.size)}} ha</td>
+                                                </tr>
+                                                <tr ng-if="wetland.products.length > 0">
+                                                    <th valign="top">Products:</th>
+                                                    <td valign="top">{{wetland.products.join(', ')}}</td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <a href="javascript:;" ng-click="nationalData.loadWetland(wetland.id);">&#10095; Show all data from this wetland</a>
+                                            
+                                        </div>
+
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            
+                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="nationalData.layers.length > 0">
+                                <uib-accordion-heading>
+                                    National maps & layers
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_global_maps, 'glyphicon-chevron-right': !nationalData.open_global_maps}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.layers">
+                                        <uib-accordion-heading>
+                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </uib-accordion-heading>
+                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                        <strong>Link:</strong>
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                        </div>
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Layers:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            <div uib-accordion-group is-open="global_databases.open" ng-if="nationalData.databases.length > 0">
+                                <uib-accordion-heading>
+                                    National databases
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_databases.open, 'glyphicon-chevron-right': !global_databases.open}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.databases">
+                                        <uib-accordion-heading>
+                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </uib-accordion-heading>
+                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                        <strong>Link:</strong>
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                        </div>
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Layers:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            <div uib-accordion-group is-open="global_geoss.open">
+                                <uib-accordion-heading>
+                                    Search within GEOSS
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_geoss.open, 'glyphicon-chevron-right': !global_geoss.open}"></i>
+                                </uib-accordion-heading>
+                                <div>
+                                    Input search field with button to search for
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        
+                    </div>
+                    
+                    <div role="tabpanel" class="tab-pane national_data" id="continental" ng-controller="ContinentalDataCtrl as continentalData">
+                        
+                        <div class="btn-group" uib-dropdown is-open="status.isopen" style="width:100%">
+                          <button id="continent-selection" type="button" class="btn btn-primary btn-block" uib-dropdown-toggle ng-disabled="disabled" style="width:100%;background-color:#336a5c;">
+                            <span ng-if="continentalData.selectedContinent == ''">Please select a continent</span>
+                            <span ng-if="continentalData.selectedContinent != ''">Continent: {{continentalData.selectedContinent}}</span>
+                            <span class="caret" style="margin-top:0;"></span>
+                          </button>
+                          <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button" style="width:100%;text-align:center;">
+                            <li role="menuitem"><a href="#" ng-click="continentalData.selectContinent(continent)" ng-repeat="continent in continentalData.continents">{{continent}}</a></li>
+                          </ul>
+                        </div>
+                        
+                        <uib-accordion close-others="false" ng-if="continentalData.selectedContinent != ''">
+                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="continentalData.layers.length > 0">
+                                <uib-accordion-heading>
+                                    Maps & layers
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.open_global_maps, 'glyphicon-chevron-right': !continentalData.open_global_maps}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in continentalData.layers">
+                                        <uib-accordion-heading>
+                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </uib-accordion-heading>
+                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                        <strong>Link:</strong>
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                        </div>
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Layers:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            <div uib-accordion-group is-open="global_databases.open" ng-if="continentalData.databases.length > 0">
+                                <uib-accordion-heading>
+                                    Databases
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_databases.open, 'glyphicon-chevron-right': !global_databases.open}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in continentalData.databases">
+                                        <uib-accordion-heading>
+                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </uib-accordion-heading>
+                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                        <strong>Link:</strong>
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                        </div>
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Layers:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            <div uib-accordion-group is-open="global_geoss.open">
+                                <uib-accordion-heading>
+                                    Search within GEOSS
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_geoss.open, 'glyphicon-chevron-right': !global_geoss.open}"></i>
+                                </uib-accordion-heading>
+                                <div>
+                                    Input search field with button to search for
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        
+                    </div>
+                    
+                    <div role="tabpanel" class="tab-pane national_data" id="global" ng-controller="GlobalDataCtrl as globalData">
+                        
+                        <uib-accordion close-others="false">
+                            <div uib-accordion-group is-open="globalData.open_global_maps">
+                                <uib-accordion-heading>
+                                    Global maps & layers
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': globalData.open_global_maps, 'glyphicon-chevron-right': !globalData.open_global_maps}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in globalData.layers">
+                                        <uib-accordion-heading>
+                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </uib-accordion-heading>
+                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                        <strong>Link:</strong>
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                        </div>
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Layers:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            <div uib-accordion-group is-open="global_databases.open">
+                                <uib-accordion-heading>
+                                    Global databases
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_databases.open, 'glyphicon-chevron-right': !global_databases.open}"></i>
+                                </uib-accordion-heading>
+                                <uib-accordion close-others="false">
+                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in globalData.databases">
+                                        <uib-accordion-heading>
+                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
+                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
+                                        </uib-accordion-heading>
+                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
+                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
+                                        <strong>Link:</strong>
+                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
+                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                        </div>
+                                        <div class="select" ng-if="externaldb.layers.length > 0">
+                                            <strong>Layers:</strong>
+                                            <div ng-repeat="layer in externaldb.layers"
+                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </uib-accordion>
+                            </div>
+                            <div uib-accordion-group is-open="global_geoss.open">
+                                <uib-accordion-heading>
+                                    Search within GEOSS
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_geoss.open, 'glyphicon-chevron-right': !global_geoss.open}"></i>
+                                </uib-accordion-heading>
+                                <div>
+                                    Input search field with button to search for
+                                </div>
+                            </div>
+                        </uib-accordion>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            {% endverbatim %}
+
+        </div>
+    </div>
+
+    <div style="display:none">
+        <div id="popup"></div>
+        <div id="stationPopup"></div>
+    </div>
+
+    <div id="info_text" style="display:none;">
+        <div class="modal-header">
+            <h1>Info</h1>
+        </div>
+        <div class="modal-body">
+            <div class="text window_info">{{html_info|safe|linebreaks}}</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="mi.close()">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div id="welcome_text" style="display:none">
+        <p>Welcome to the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
+        <p>The SWOS team has made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
+        <p class="hidden-xs">You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
+        <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
+        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">January 2018</p>
+    </div>
+
+    <!-- Geoss Search Widget popup container -->
+    <!-- 'geoss' class is needed -->
+    <div id="geoss-popup" style="display:none;">
+        <div modal-draggable class="modal-header">
+            <h1>Metadata</h1>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+            <div class="text popups-container geoss"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="mi.close()">
+                Close
+            </button>
+        </div>
+    </div>
+
+    {% assets "swosVendorJsBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
+
+    {% assets "geossVendorJsBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
+
+    {% assets "swosAppJsBundle" %}
+    <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+    {% endassets %}
+
+    <div ng-view></div>
+
+</body>
+</html>

@@ -748,6 +748,7 @@ class Category(models.Model):
 class Country(models.Model):
     name = models.CharField(max_length=200)
     continent = models.CharField(max_length=200, blank=True)
+    bbox = models.CharField(max_length=200, blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" % (self.name)
@@ -998,7 +999,7 @@ class ExternalDatabase(models.Model):
         return obj.to_dict(include_meta=True)
 
 class ExternalLayer(Layer):
-    datasource = models.ForeignKey(ExternalDatabase, related_name="layer_datasource", verbose_name="External Datasbase", blank=True, null=True)
+    datasource = models.ForeignKey(ExternalDatabase, related_name="layer_datasource", verbose_name="External Database", blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" %(self.title)

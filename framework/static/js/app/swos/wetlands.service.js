@@ -21,6 +21,18 @@
             wetlands_without_geom: [],
             wetland_id: "",
             wetlandFeature: "",
+            
+            closeWetland: function() {
+                this.dataCount = {};
+                this.externalImages = {};
+                this.images = {};
+                this.value = {};
+                this.videos = {};
+                this.wetland_id = "";
+                mapviewer.selectInteraction.getFeatures().clear();
+                mapviewer.currentFeature.setStyle(null);
+                WetlandsService.wetlandFeature = null;
+            },
 
             selectFeature: function (id) {
 
@@ -133,7 +145,14 @@
 
                     wetland_service.selectFeature(wetland.id);
                     $rootScope.$broadcast("wetland_loaded",wetland);
-                    wetland_service.data.activeTab = 1;
+                    if (mapId < 7) {
+                        wetland_service.data.activeTab = 1;   
+                    } else {
+                        wetland_service.data.activeTab = -1;
+                        $timeout(function(){
+                            $("#link_wetland_list").click();
+                        }, 1);
+                    }
                     if (typeof(callback)  === 'function') {
                         callback();
                     }
@@ -151,7 +170,9 @@
                 return $q.reject();
             },
             styleOnZoom: function (evt) {
-
+                if (WetlandsService.wetlandFeature == null) {
+                    return true;
+                }
                 var zoom = mapviewer.map.getView().getZoom();
                 var oldZoom = mapviewer.map.getView().getZoomForResolution(evt.oldValue);
 
@@ -180,9 +201,9 @@
                             width: width
                         }),
                         fill: new ol.style.Fill({color: fill_color})
-                    })
-                    ;
-                WetlandsService.wetlandFeature.setStyle(newStyle);
+                });
+                WetlandsService.wetlandFeature.setStyle(newStyle);   
+                
             },
             loadLayer: function (wetland_id, type_name, layer_id, load_layer, no_scroll) {
                 if (typeof(no_scroll)==='undefined') no_scroll = false;

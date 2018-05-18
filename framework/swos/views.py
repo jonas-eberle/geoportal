@@ -38,7 +38,7 @@ from swos.search_es import WetlandSearch
 class WetlandsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wetland
-        fields = ('id', 'name', 'description', 'country', 'geo_scale', 'ecoregion', 'site_type', 'wetland_type', 'products', 'geom')
+        fields = ('id', 'name', 'description', 'country', 'geo_scale', 'ecoregion', 'site_type', 'wetland_type', 'products', 'geom', 'size')
 
 #  Create / Get wetlands GeoJSON file
 class WetlandGeometry(APIView):
@@ -1202,3 +1202,68 @@ class DownloadDataSentinel(APIView):
         response = StreamingHttpResponse(write(req))
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         return response
+
+
+class GetExternalDatabases(APIView):
+    def get(self, request):
+        continent = request.query_params.get('continent', '')
+        country = request.query_params.get('country', '')
+        
+        if country != '':
+            extdata = ExternalDatabase.objects.filter(country__name=country)
+        else:
+            extdata = ExternalDatabase.objects.filter(continent=continent)
+        
+        temp_external_layers = dict()
+        datasets = dict(layers=[], databases=[])
+        for extdb in extdata:
+            layer_extern = ExternalLayer.objects.filter(datasource_id=extdb.id, publishable=True)
+            if layer_extern:
+                for ex_layer in layer_extern:
+                    layer_data = LayerSerializer(ex_layer).data
+            
+                    if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
+                        layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
+                        layer_data['selectedDate'] = layer_data['ogc_times'][-1]
+                    if layer_data['legend_colors']:
+                        layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                    if extdb.id not in temp_external_layers:
+                        temp_external_layers[extdb.id] = [layer_data]
+                    else:
+                        temp_external_layers[extdb.id].append(layer_data)
+            
+                layers = temp_external_layers[extdb.id]
+            
+                datasets['layers'].append({'name': extdb.name, 'description': extdb.description,
+                                 'provided_info': extdb.provided_information, 'online_link': extdb.online_link,
+                                 'language': extdb.dataset_language,
+                                 'geoss_datasource_id': extdb.geoss_datasource_id, 'layers': layers,
+                                 'layer_exist': "True"})
+            else:
+                datasets['databases'].append({'ext_db_id': extdb.id, 'name': extdb.name, 'description': extdb.description,
+                                 'provided_info': extdb.provided_information, 'online_link': extdb.online_link,
+                                 'language': extdb.dataset_language,
+                                 'geoss_datasource_id': extdb.geoss_datasource_id, 'layer_exist': "False"})
+
+        return Response(datasets)
+
+
+class GetCountries(APIView):
+    def get(self, request):
+        countries = Country.objects.all()
+        return Response([{'name':i.name, 'id':i.id, 'bbox':i.bbox} for i in countries])
+
+
+class GetNationalData(APIView):
+    def get(self, request):
+        country = request.query_params.get('country', '')
+        if country == '':
+            return Response({})
+        
+        
+        wetlands = Wetland.objects.filter(country__contains=country)
+        wetlands = [WetlandsSerializer(i).data for i in wetlands]
+        
+        layers = []
+        
+        return Response(dict(wetlands=wetlands, layers=layers))

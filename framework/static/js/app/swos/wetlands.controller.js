@@ -24,6 +24,7 @@
         wetlands.satdata_image = true;
         wetlands.satdata_table = false;
         wetlands.selectWetland = selectWetland;
+        wetlands.closeWetland = closeWetland;
         wetlands.value = WetlandsService.value;
         wetlands.formatValue = formatValue;
         wetlands.showSatdataExplorer = showSatdataExplorer;
@@ -231,29 +232,30 @@
 
                 var intersection = turf.intersect(mapJSON, layerJSON);
 
-
-                var wetlandpExtent = WetlandsService.wetlandList[WetlandsService.wetland_id].geometry.getExtent();
-                wetlandpExtent = ol.proj.transformExtent(wetlandpExtent, 'EPSG:3857', 'EPSG:4326');
-                var wetlandJSON = {
-                    "type"      : "Feature",
-                    "properties": {"fill": "#fff"},
-                    "geometry"  : {
-                        "type"       : "Polygon",
-                        "coordinates": [[
-                            [wetlandpExtent[0], wetlandpExtent[1]],
-                            [wetlandpExtent[0], wetlandpExtent[3]],
-                            [wetlandpExtent[2], wetlandpExtent[3]],
-                            [wetlandpExtent[2], wetlandpExtent[1]],
-                            [wetlandpExtent[0], wetlandpExtent[1]]
-                        ]]
+                if (parseInt(WetlandsService.wetland_id) > 0) {
+                    var wetlandpExtent = WetlandsService.wetlandList[WetlandsService.wetland_id].geometry.getExtent();
+                    wetlandpExtent = ol.proj.transformExtent(wetlandpExtent, 'EPSG:3857', 'EPSG:4326');
+                    var wetlandJSON = {
+                        "type"      : "Feature",
+                        "properties": {"fill": "#fff"},
+                        "geometry"  : {
+                            "type"       : "Polygon",
+                            "coordinates": [[
+                                [wetlandpExtent[0], wetlandpExtent[1]],
+                                [wetlandpExtent[0], wetlandpExtent[3]],
+                                [wetlandpExtent[2], wetlandpExtent[3]],
+                                [wetlandpExtent[2], wetlandpExtent[1]],
+                                [wetlandpExtent[0], wetlandpExtent[1]]
+                            ]]
+                        }
+                    };
+    
+                    if (turf.area(wetlandJSON) < (turf.area(layerJSON) - turf.area(layerJSON)* 0.05) || turf.area(wetlandJSON) > (turf.area(layerJSON) + turf.area(layerJSON)* 0.05 )){
+                        mapviewer.showExtentInfo[layer.id] = true;
                     }
-                };
-
-                if (turf.area(wetlandJSON) < (turf.area(layerJSON) - turf.area(layerJSON)* 0.05) || turf.area(wetlandJSON) > (turf.area(layerJSON) + turf.area(layerJSON)* 0.05 )){
-                    mapviewer.showExtentInfo[layer.id] = true;
-                }
-                else {
-                     mapviewer.showExtentInfo[layer.id] = false;
+                    else {
+                         mapviewer.showExtentInfo[layer.id] = false;
+                    }
                 }
 
                 //Zoom to extent except of global extent
@@ -401,6 +403,12 @@
                     }
                 });
             }
+        }
+        
+        function closeWetland() {
+            WetlandsService.closeWetland();
+            wetlands.value = WetlandsService.value;
+            wetlands.data = WetlandsService.data;
         }
 
         function removeAllLayers() {

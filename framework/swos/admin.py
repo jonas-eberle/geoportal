@@ -92,7 +92,8 @@ class ExternalDatabaseAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'description')
 
 class CountryAdmin(admin.OSMGeoAdmin):
-    list_display = ('name', 'continent')
+    list_display = ('name', 'continent', 'bbox',)
+    search_fields= ('name',)
 
 class WetlandImageAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'image_tag', 'date', 'description', 'wetland' )

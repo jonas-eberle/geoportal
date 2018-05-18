@@ -80,6 +80,7 @@
                 {size: mapviewer.map.getSize()}
             );
 
+            $('#closeWetland').click();
             WetlandsService.selectTab(); // Open wetland Catalog
 
             $('.main').css('position', 'fixed'); // set back to origin

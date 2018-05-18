@@ -26,6 +26,9 @@ urlpatterns = [
     url(r'^download_as_archive$', views.DownloadFiles.as_view(), name="download_archive"),
     url(r'^list_files$', views.ListFilesForDownload.as_view(), name="list_files"),
     url(r'^wetland/(?P<pk>[0-9]+)/satdata/download$', views.DownloadDataSentinel.as_view(), name="download_test2"),
-    url(r'^wetland/(?P<pk>[0-9]+)/satdata/results', views.SatelliteMetadataExport.as_view(), name="download_satdata_results")
+    url(r'^wetland/(?P<pk>[0-9]+)/satdata/results', views.SatelliteMetadataExport.as_view(), name="download_satdata_results"),
+    url(r'^externaldb.json', views.GetExternalDatabases.as_view(), name="global_data"),
+    url(r'^countries.json', views.GetCountries.as_view(), name="national_data_countries"),
+    url(r'^nationaldata.json', views.GetNationalData.as_view(), name="national_data"),
 ]
 
