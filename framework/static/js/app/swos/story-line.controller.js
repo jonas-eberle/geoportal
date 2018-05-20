@@ -1,3 +1,5 @@
+var storylinePopup;
+
 (function () {
     'use strict';
 
@@ -12,13 +14,38 @@
         var cur_story_line_title = "";
         var pos_order_map = new Array;
         var prev_story_line_part = false;
+        var story_feature_source = new ol.source.Vector({});
+        var story_feature_layer = null;
+        
+        var style = new ol.style.Style({
+            fill: new ol.style.Fill({
+              color: 'rgba(255, 255, 255, 0)'
+            }),
+            stroke: new ol.style.Stroke({
+              //color: '#319FD3',
+              color: '#FF0000',
+              width: 3
+            })
+          });
+          
+        var styleHover = new ol.style.Style({
+            fill: new ol.style.Fill({
+              color: 'rgba(255, 255, 255, 0)'
+            }),
+            stroke: new ol.style.Stroke({
+              color: '#FF0000',
+              width: 5
+            })
+          });
+
 
         storyLine.show_story_line = show_story_line;
         storyLine.changePart = changePart;
         storyLine.setVisibilityStoryLine = setVisibilityStoryLine;
+        storyLine.overlay = storylinePopup;
 
         $scope.show_story_lines = false;
-
+        
         //watch change of selected_part (via next/back or selection list)
         $scope.$watch('selected_part', function() {
                 changePart()
@@ -31,6 +58,9 @@
             else if ($routeParams.story_line_id){
                 show_story_line($routeParams.story_line_id);
             }
+            storylinePopup = new ol.Overlay({element: document.getElementById('storylinePopup')});
+            mapviewer.map.addOverlay(storylinePopup);
+
         });
 
         function setVisibilityStoryLine() {
@@ -88,7 +118,7 @@
             // Apply new position, if already open; use first if no position is given
             else {
                 if (selected_part == null) {
-                    $scope.selected_part = $scope.selected_part = pos_order_map[0];
+                    $scope.selected_part = pos_order_map[0];
                 }
                 else {
                     $scope.selected_part = selected_part;
@@ -121,7 +151,7 @@
         }
 
         function changePart() {
-            if ($scope.selected_part) {
+            if ($scope.selected_part != null) {
                 $scope.story_line_pos = arraySearch(pos_order_map, $scope.selected_part);
                 $scope.story_line_part = $scope.story_lines[$scope.story_line_pos].story_line_part;
 
@@ -135,6 +165,11 @@
 
             if (prev_story_line_part.remove_layer == true){
                 removeLayer(prev_story_line_part);
+                //remove features
+                if (prev_story_line_part.features.length > 0 && story_feature_layer != null) {
+                        story_feature_source.clear();
+                        mapviewer.map.removeLayer(story_feature_layer);
+                }
             }
 
             if ($scope.story_line_part.wetland > 0 && WetlandsService.wetland_id != $scope.story_line_part.wetland) {
@@ -179,6 +214,58 @@
                             WetlandsService.selectTab('externaldb');
                             WetlandsService.loadLayer($scope.story_line_part.wetland, 'externaldb', $scope.story_line_part.external_layer[key3], "yes");
 
+                        }
+                        // Add features
+                        if ($scope.story_line_part.features.length > 0) {
+                            $timeout(function () {
+                                story_feature_source.clear();
+                                $.each($scope.story_line_part.features, function(){
+                                    var geom = new ol.format.WKT().readGeometry(this.geom.split(';')[1], {
+                                        'dataProjection': 'EPSG:4326',
+                                        'featureProjection': 'EPSG:3857'
+                                    });
+                                    var feature = new ol.Feature({
+                                        name: this.name,
+                                        geometry: geom,
+                                        description: this.description
+                                    });
+                                    story_feature_source.addFeature(feature);
+                                });
+                                story_feature_layer = new ol.layer.Vector({
+                                      source: story_feature_source,
+                                      style: style
+                                })
+                                mapviewer.map.addLayer(story_feature_layer);
+                                
+                                var hoverInteraction = new ol.interaction.Select({
+                                    condition: ol.events.condition.pointerMove,
+                                    layers: [story_feature_layer],
+                                    style: styleHover
+                                });
+                                hoverInteraction.on('select', function(evt){
+                                    var element = storyLine.overlay.getElement();
+                                    if (evt.selected.length > 0) {
+                                        console.log(evt.selected[0].get('description'));   
+                                        // Mouseover Popup
+                                        var content = '<div style="width:300px">' + evt.selected[0].get('description') +'</div>';
+                                        storyLine.overlay.setPosition(evt.mapBrowserEvent.coordinate);
+                                        
+                                        console.log(element);
+                                        $(element).popover({
+                                            'placement': 'right',
+                                            'animation': false,
+                                            'html'     : true,
+                                            'title'    : evt.selected[0].get('name'),
+                                            'content'  : content
+                                        });
+                                        $(element).popover('show');
+                                    } else {
+                                        storyLine.overlay.setPosition(undefined);
+                                        $(element).popover('destroy');
+                                    }
+                                });
+                                mapviewer.map.addInteraction(hoverInteraction);                                
+                            });
                         }
                     });
                 });
@@ -248,7 +335,8 @@
                         label: "Close",
                         className: "btn-primary",
                         callback: function () {
-
+                            story_feature_source.clear();
+                            mapviewer.map.removeLayer(story_feature_layer);
                         }
                     }
                 }
@@ -267,8 +355,8 @@
                 '<h4 ng-if="!story_line_part.title">{{story_line_part.headline}}</h4>' +
                 '<h3 ng-if="story_line_part.title">{{story_line_part.title}}</h3>' +
                 '<figure ng-if="story_line_part.image_position == \'right\' && story_line_part.image_url_300.length > 2" style="float: right; display: table;";>' +
-                '<img  ng-if="!story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image_url_300}}"  width: 45%;">' +
-                '<img  ng-if="story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image}}"  width: 45%;">' +
+                '<img  ng-if="!story_line_part.image_url_600.includes(\'.gif\')" ng-src="{{story_line_part.image_url_300}}"  width: 45%;">' +
+                '<img  ng-if="story_line_part.image_url_600.includes(\'.gif\')" ng-src="{{story_line_part.image}}"  width: 45%;">' +
                 '<figcaption style="display: table-caption; caption-side: bottom ;">{{story_line_part.image_description}} ' +
                 '<span ng-if="story_line_part.image_copyright || story_line_part.image_date">(</span> {{story_line_part.image_copyright}}' +
                 '<span ng-if="story_line_part.image_copyright && story_line_part.image_date" >,</span> {{story_line_part.image_date}}' +
@@ -277,14 +365,14 @@
                 '<p>{{ story_line_part.description }}</p>' +
                 '<p>{{ story_line_part.explanation }}</p>' +
                 '<figure ng-if="story_line_part.image_position == \'bottom\' && story_line_part.image_url_600.length > 2" style="display: table;";>' +
-                '<img  ng-if="!story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image_url_600}}"  width: 100%;">' +
-                '<img  ng-if="story_line_part.image_url_600.includes(.gif)" ng-src="{{story_line_part.image}}"  width: 100%;">' +
+                '<img  ng-if="!story_line_part.image_url_600.includes(\'.gif\')" ng-src="{{story_line_part.image_url_600}}"  width: 100%;">' +
+                '<img  ng-if="story_line_part.image_url_600.includes(\'.gif\')" ng-src="{{story_line_part.image}}"  width: 100%;">' +
                 '<figcaption style="display: table-caption; caption-side: bottom ;">{{story_line_part.image_description}} ' +
                 '<span ng-if="story_line_part.image_copyright || story_line_part.image_date">(</span> {{story_line_part.image_copyright}}' +
                 '<span ng-if="story_line_part.image_copyright && story_line_part.image_date" >,</span> {{story_line_part.image_date}}' +
                 '<pan ng-if="story_line_part.image_copyright || story_line_part.image_date" n>)</span></figcaption></figure>' +
                 '<div ng-if="story_line_part.story_line_file_url">Download as pdf: <a href="{{story_line_part.story_line_file_url}}" download="{{story_line_part.story_line_file_name}}">{{story_line_part.story_line_file_name}}</a> </div>' +
-                '<div ng-if="story_line_part.permalink">Please use the following link to share the story line: <a href="story_line_part.permalink" target="_blank">{{story_line_part.permalink}}</a></div>' +
+                '<div ng-if="story_line_part.permalink">Please use the following link to share the story line: <a href="{{story_line_part.permalink}}" target="_blank">{{story_line_part.permalink}}</a></div>' +
                 '</div>';
 
             var template_select = '<div style="margin-bottom: 40px;">' +

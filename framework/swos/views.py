@@ -26,7 +26,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from webgis import settings
-from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline
+from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline, StoryLineFeature
 from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, IndicatorValueSerializer, WetlandLayer, \
     ExternalDatabase, ExternalLayer, Country
 from layers.models import LayerSerializer, MetadataSerializer
@@ -222,18 +222,18 @@ class WetlandDetail(APIView):
                 story_line_data = temp_indicators_story_lines[indicator.id]
             else:
                 story_line_data = ""
-            temp_ind_parent_descr[indicator.parent_ind.id] = indicator.parent_ind
-            if indicator.parent_ind.id in temp_ind_parent_story_line and temp_ind_parent_story_line[indicator.parent_ind.id] != "":
-                temp_ind_parent_story_line[indicator.parent_ind.id].append(story_line_data)
-            else:
-                temp_ind_parent_story_line[indicator.parent_ind.id] = story_line_data
+            #temp_ind_parent_descr[indicator.parent_ind.id] = indicator.parent_ind
+            #if indicator.parent_ind.id in temp_ind_parent_story_line and temp_ind_parent_story_line[indicator.parent_ind.id] != "":
+            #    temp_ind_parent_story_line[indicator.parent_ind.id].append(story_line_data)
+            #else:
+            #    temp_ind_parent_story_line[indicator.parent_ind.id] = story_line_data
 
-            if indicator.parent_ind.id not in temp_ind_parent:
-                temp_ind_parent[indicator.parent_ind.id] = [{'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
-                  'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data}]
-            else:
-                temp_ind_parent[indicator.parent_ind.id].append({'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
-                  'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data})
+            #if indicator.parent_ind.id not in temp_ind_parent:
+            #    temp_ind_parent[indicator.parent_ind.id] = [{'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
+            #      'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data}]
+            #else:
+            #    temp_ind_parent[indicator.parent_ind.id].append({'id': indicator.id, 'name': indicator.name, 'short_name': indicator.short_name, 'sub_number': indicator.sub_number,
+            #      'description': indicator.description, 'parent_ind': indicator.parent_ind.name, 'layers': layers, 'story_line': story_line_data})
 
         #for ind_parent in temp_ind_parent:
         #    finalJSON['indicators'].append(
@@ -676,9 +676,16 @@ class LayerColors(APIView):
         # return Response(rgbData)
 
 
+class StoryLineFeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StoryLineFeature
+        fields = ('__all__')
+
+
 class StoryLinePartSerializer(serializers.ModelSerializer):
     image_url_300 = serializers.ReadOnlyField()
     image_url_600 = serializers.ReadOnlyField()
+    features = StoryLineFeatureSerializer(many=True, read_only=True)
 
     class Meta:
         model = StoryLinePart

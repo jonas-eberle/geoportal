@@ -1,7 +1,7 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
 from django import forms
-from .models import Wetland, Product, Indicator, SubIndicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart
+from .models import Wetland, Product, Indicator, SubIndicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart, StoryLineFeature
 
 from layers.admin import LayersAdmin
 
@@ -149,6 +149,9 @@ class StoryLinePartAdmin(admin.ModelAdmin):
     form = StoryLinePartForm
     list_display = ('headline', 'wetland')
 
+class StoryLineFeatureAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
 admin.site.register(Product, ProductAdmin)
@@ -163,3 +166,4 @@ admin.site.register(WetlandImage, WetlandImageAdmin)
 admin.site.register(WetlandVideo, WetlandVideoAdmin)
 admin.site.register(StoryLine, StoryLineAdmin)
 admin.site.register(StoryLinePart, StoryLinePartAdmin)
+admin.site.register(StoryLineFeature, StoryLineFeatureAdmin)

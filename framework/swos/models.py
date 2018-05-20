@@ -662,8 +662,12 @@ class WetlandLayer(Layer):
                 date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
             elif self.product.short_name in ['LSTT']:
                 date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-            elif self.product.short_name in ['SATDATA']:
-                wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1').replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
+            elif self.product.short_name in ['SATDATA_OP']:
+                wq_type = self.identifier.split('_')[2].replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('-', ' ')
+                date_string = str(self.date_begin.year)
+                product = ''
+            elif self.product.short_name in ['SATDATA_SAR']:
+                wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
                 date_string = str(self.date_begin.year)
                 product = ''
             elif self.product.short_name in ['SATDATA_OP']:
@@ -1117,6 +1121,16 @@ class WetlandVideo(models.Model):
     def __unicode__(self):
         return self.name
 
+
+class StoryLineFeature(models.Model):
+    name = models.CharField(max_length=200)
+    geom = models.PolygonField()
+    description = models.TextField(blank=True)
+    
+    def __unicode__(self):
+        return self.name
+
+
 class StoryLine(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField(null=True, blank=True)
@@ -1144,6 +1158,7 @@ class StoryLinePart(models.Model):
     product_layer = models.ManyToManyField(WetlandLayer, blank=True)
     indicator_layer = models.ManyToManyField(WetlandLayer, blank=True, related_name="indicator_layer")
     external_layer = models.ManyToManyField(ExternalLayer, blank=True, related_name="indicator_layer")
+    features = models.ManyToManyField(StoryLineFeature, blank=True, null=True)
     remove_layer = models.BooleanField(default="False", help_text="Remove added layer on the next step")
     west = models.FloatField("BBOX west coordinate", blank=True, null=True, help_text="e.g. -5,3")
     east = models.FloatField("BBOX east coordinate", blank=True, null=True, help_text="e.g. 10,5")
