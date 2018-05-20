@@ -522,6 +522,9 @@ button.btn-loadmore:hover {
 .ol-mouse-position::before {
     content: "Coordinates: ";
 }
+.ol-mouse-position:empty {
+    display: none;
+}
 
 /* hide openlayers icon and link in front of attribution */
 .ol-attribution li a img{
@@ -726,4 +729,3 @@ button.btn-loadmore:hover {
 .btn-legend {
     width: 42px;
 }
-
