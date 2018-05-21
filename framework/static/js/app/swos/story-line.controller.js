@@ -136,7 +136,7 @@ var storylinePopup;
 
         function addFirstPart(data){
             var permalink =  $location.protocol() +"://"+ $location.host() + $window.location.pathname + "#/storyline/" + data.id;
-            var story_line_part = {"order": -1, "story_line_part": {"title": data.title, "headline": "Overview", "description": data.description, "authors": data.authors, "product_layer": "", "indicator_layer":"", "external_layer":"", "story_line_file_url": data.story_line_file, "story_line_file_name": data.story_line_file_name, "wetland": data.wetland, "permalink": permalink}};
+            var story_line_part = {"order": -1, "story_line_part": {"title": data.title, "headline": "Overview", "description": data.description, "authors": data.authors, "product_layer": "", "indicator_layer":"", "external_layer":"", "story_line_file_url": data.story_line_file, "story_line_file_name": data.story_line_file_name, "wetland": data.wetland, "permalink": permalink, "features": []}};
 
             return data.story_line.unshift(story_line_part);
         }
@@ -243,12 +243,12 @@ var storylinePopup;
                                     style: styleHover
                                 });
                                 hoverInteraction.on('select', function(evt){
-                                    var element = storyLine.overlay.getElement();
+                                    var element = storylinePopup.getElement();
                                     if (evt.selected.length > 0) {
                                         console.log(evt.selected[0].get('description'));   
                                         // Mouseover Popup
                                         var content = '<div style="width:300px">' + evt.selected[0].get('description') +'</div>';
-                                        storyLine.overlay.setPosition(evt.mapBrowserEvent.coordinate);
+                                        storylinePopup.setPosition(evt.mapBrowserEvent.coordinate);
                                         
                                         console.log(element);
                                         $(element).popover({
@@ -260,7 +260,7 @@ var storylinePopup;
                                         });
                                         $(element).popover('show');
                                     } else {
-                                        storyLine.overlay.setPosition(undefined);
+                                        storylinePopup.setPosition(undefined);
                                         $(element).popover('destroy');
                                     }
                                 });
