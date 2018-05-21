@@ -62,10 +62,19 @@
     #wetland_legend {
         z-index: 1;
     }
-    #national .btn-info, #national .btn-info.active, #national .btn-info:active, #national .open>.dropdown-toggle.btn-info {
-        color: #fff;
-        background-color: #336a5c;
-        border-color: #336a5c;
+    .btn-info, .btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {
+        color: #fff !important;
+        background-color: #336a5c !important;
+        border-color: #336a5c !important;
+    }
+    #national .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text, #continental .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text, #global .bootstrap-select.btn-group.show-tick .dropdown-menu li a span.text {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    #national .bootstrap-select.btn-group .dropdown-menu, #continental .bootstrap-select.btn-group .dropdown-menu, #global .bootstrap-select.btn-group .dropdown-menu {
+        max-width: 375px;
     }
     </style>
 
@@ -722,10 +731,10 @@
                         </select>
                         
                         <uib-accordion close-others="false" ng-if="nationalData.selectedCountry != null">
-                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="nationalData.maps.length > 0">
+                            <div uib-accordion-group is-open="nationalData.ownmaps_open" ng-if="nationalData.maps.length > 0">
                                 <uib-accordion-heading>
                                     Own layers
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_national_maps, 'glyphicon-chevron-right': !nationalData.open_national_maps}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.ownmaps_open, 'glyphicon-chevron-right': !nationalData.ownmaps_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.maps">
@@ -736,10 +745,10 @@
                                 </uib-accordion>
                             </div>
                             
-                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="nationalData.wetlands.length > 0">
+                            <div uib-accordion-group is-open="nationalData.wetlands_open" ng-if="nationalData.wetlands.length > 0">
                                 <uib-accordion-heading>
                                     Wetlands
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_wetlands, 'glyphicon-chevron-right': !nationalData.open_wetlands}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.wetlands_open, 'glyphicon-chevron-right': !nationalData.wetlands_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group ng-repeat="wetland in nationalData.wetlands">
@@ -783,10 +792,10 @@
                                 </uib-accordion>
                             </div>
                             
-                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="nationalData.layers.length > 0">
+                            <div uib-accordion-group is-open="nationalData.maps_open" ng-if="nationalData.layers.length > 0">
                                 <uib-accordion-heading>
                                     National maps & layers
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_global_maps, 'glyphicon-chevron-right': !nationalData.open_global_maps}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.maps_open, 'glyphicon-chevron-right': !nationalData.maps_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.layers">
@@ -801,7 +810,7 @@
                                         <strong>Link:</strong>
                                         <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="nationalData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                         </div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Layers:</strong>
@@ -816,10 +825,10 @@
                                     </div>
                                 </uib-accordion>
                             </div>
-                            <div uib-accordion-group is-open="global_databases.open" ng-if="nationalData.databases.length > 0">
+                            <div uib-accordion-group is-open="nationalData.databases_open" ng-if="nationalData.databases.length > 0">
                                 <uib-accordion-heading>
                                     National databases
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_databases.open, 'glyphicon-chevron-right': !global_databases.open}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.databases_open, 'glyphicon-chevron-right': !nationalData.databases_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.databases">
@@ -834,7 +843,7 @@
                                         <strong>Link:</strong>
                                         <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="nationalData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                         </div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Layers:</strong>
@@ -849,14 +858,32 @@
                                     </div>
                                 </uib-accordion>
                             </div>
-                            <div uib-accordion-group is-open="global_geoss.open">
+                            <div uib-accordion-group is-open="nationalData.geoss_open">
                                 <uib-accordion-heading>
                                     Search within GEOSS
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_geoss.open, 'glyphicon-chevron-right': !global_geoss.open}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.geoss_open, 'glyphicon-chevron-right': !nationalData.geoss_open}"></i>
                                 </uib-accordion-heading>
-                                <div>
-                                    Input search field with button to search for
-                                </div>
+                                <form>
+                                    <label style="margin-left:11px;" for="national_geoss_name">Filter by text: </label><br/>
+                                    <input name="national_geoss_name" id="national_geoss_name" type="text" ng-model="nationalData.geoss_text" />
+                                    <br /><br/>
+                                                                        
+                                    <label style="margin-left:11px;" for="national_geoss_select">Filter by data source: </label><br/>
+                                    <select id="national_geoss_select" name="national_geoss_select" class="selectpicker" ng-model="nationalData.geoss_source" multiple data-live-search="true" title="All - To filter please select">
+                                        <optgroup label="National" ng-if="nationalData.geoss.national.length > 0">
+                                            <option ng-repeat="geoss in nationalData.geoss.national" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
+                                        </optgroup>
+                                        <optgroup label="Continental" ng-if="nationalData.geoss.continental.length > 0">
+                                            <option ng-repeat="geoss in nationalData.geoss.continental" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
+                                        </optgroup>
+                                        <optgroup label="Global" ng-if="nationalData.geoss.global.length > 0">
+                                            <option ng-repeat="geoss in nationalData.geoss.global" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
+                                        </optgroup>
+                                    </select>
+                                    <br /><br/>
+                                    <button ng-click="nationalData.externalDBSearchGeoss(null, 'CONTAINS')" class="btn btn-primary" style="cursor:pointer;">Search</button>
+                                    <div style="font-size:0.8em;font-style:italic;margin-top:5px;">Please note: Only results within the bounding box of the selected country are returned.</div>
+                                </form>
                             </div>
                         </uib-accordion>
                         
@@ -876,10 +903,10 @@
                         </div>
                         
                         <uib-accordion close-others="false" ng-if="continentalData.selectedContinent != ''">
-                            <div uib-accordion-group is-open="continentalData.open_maps" ng-if="continentalData.layers.length > 0">
+                            <div uib-accordion-group is-open="continentalData.maps_open" ng-if="continentalData.layers.length > 0">
                                 <uib-accordion-heading>
                                     Maps & layers
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.open_global_maps, 'glyphicon-chevron-right': !continentalData.open_global_maps}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.maps_open, 'glyphicon-chevron-right': !continentalData.maps_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in continentalData.layers">
@@ -894,7 +921,7 @@
                                         <strong>Link:</strong>
                                         <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="continentelData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                         </div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Layers:</strong>
@@ -909,10 +936,10 @@
                                     </div>
                                 </uib-accordion>
                             </div>
-                            <div uib-accordion-group is-open="global_databases.open" ng-if="continentalData.databases.length > 0">
+                            <div uib-accordion-group is-open="continentalData.databases_open" ng-if="continentalData.databases.length > 0">
                                 <uib-accordion-heading>
                                     Databases
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_databases.open, 'glyphicon-chevron-right': !global_databases.open}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.databases_open, 'glyphicon-chevron-right': !continentalData.databases_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in continentalData.databases">
@@ -927,7 +954,7 @@
                                         <strong>Link:</strong>
                                         <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="continentelData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                         </div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Layers:</strong>
@@ -942,26 +969,41 @@
                                     </div>
                                 </uib-accordion>
                             </div>
-                            <div uib-accordion-group is-open="global_geoss.open">
+                            <div uib-accordion-group is-open="continentalData.geoss_open">
                                 <uib-accordion-heading>
                                     Search within GEOSS
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_geoss.open, 'glyphicon-chevron-right': !global_geoss.open}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.geoss_open, 'glyphicon-chevron-right': !continentalData.geoss_open}"></i>
                                 </uib-accordion-heading>
-                                <div>
-                                    Input search field with button to search for
-                                </div>
+                                <form>
+                                    <label style="margin-left:11px;" for="continental_geoss_name">Filter by text: </label><br/>
+                                    <input name="continental_geoss_name" id="continental_geoss_name" type="text" ng-model="continentalData.geoss_text" />
+                                    <br /><br/>
+                                                                        
+                                    <label style="margin-left:11px;" for="continental_geoss_select">Filter by data source: </label><br/>
+                                    <select id="continental_geoss_select" name="continental_geoss_select" class="selectpicker" ng-model="continentalData.geoss_source" multiple data-live-search="true" title="All - To filter please select">
+                                        <optgroup label="Continental" ng-if="continentalData.geoss.continental.length > 0">
+                                            <option ng-repeat="geoss in continentalData.geoss.continental" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
+                                        </optgroup>
+                                        <optgroup label="Global" ng-if="continentalData.geoss.global.length > 0">
+                                            <option ng-repeat="geoss in continentalData.geoss.global" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
+                                        </optgroup>
+                                    </select>
+                                    <br /><br/>
+                                    <button ng-click="continentalData.externalDBSearchGeoss(null, 'CONTAINS')" class="btn btn-primary" style="cursor:pointer;">Search</button>
+                                    <div style="font-size:0.8em;font-style:italic;margin-top:5px;">Please note: Only results within the bounding box of the selected continent are returned.</div>
+                                </form>
                             </div>
                         </uib-accordion>
                         
                     </div>
                     
-                    <div role="tabpanel" class="tab-pane national_data" id="global" ng-controller="GlobalDataCtrl as globalData">
+                    <div role="tabpanel" class="tab-pane global_data" id="global" ng-controller="GlobalDataCtrl as globalData">
                         
                         <uib-accordion close-others="false">
-                            <div uib-accordion-group is-open="globalData.open_global_maps">
+                            <div uib-accordion-group is-open="globalData.maps_open">
                                 <uib-accordion-heading>
                                     Global maps & layers
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': globalData.open_global_maps, 'glyphicon-chevron-right': !globalData.open_global_maps}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': globalData.maps_open, 'glyphicon-chevron-right': !globalData.maps_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in globalData.layers">
@@ -976,7 +1018,7 @@
                                         <strong>Link:</strong>
                                         <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="globalData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                         </div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Layers:</strong>
@@ -991,10 +1033,10 @@
                                     </div>
                                 </uib-accordion>
                             </div>
-                            <div uib-accordion-group is-open="global_databases.open">
+                            <div uib-accordion-group is-open="globalData.databases_open">
                                 <uib-accordion-heading>
                                     Global databases
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_databases.open, 'glyphicon-chevron-right': !global_databases.open}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': globalData.databases_open, 'glyphicon-chevron-right': !globalData.databases_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
                                     <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in globalData.databases">
@@ -1009,7 +1051,7 @@
                                         <strong>Link:</strong>
                                         <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
                                         <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="wetlands.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
+                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="globalData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
                                         </div>
                                         <div class="select" ng-if="externaldb.layers.length > 0">
                                             <strong>Layers:</strong>
@@ -1024,14 +1066,25 @@
                                     </div>
                                 </uib-accordion>
                             </div>
-                            <div uib-accordion-group is-open="global_geoss.open">
+                            <div uib-accordion-group is-open="globalData.geoss_open">
                                 <uib-accordion-heading>
                                     Search within GEOSS
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': global_geoss.open, 'glyphicon-chevron-right': !global_geoss.open}"></i>
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': globalData.geoss_open, 'glyphicon-chevron-right': !globalData.geoss_open}"></i>
                                 </uib-accordion-heading>
-                                <div>
-                                    Input search field with button to search for
-                                </div>
+                                <form>
+                                    <label style="margin-left:11px;" for="global_geoss_name">Filter by text: </label><br/>
+                                    <input name="global_geoss_name" id="global_geoss_name" type="text" ng-model="globalData.geoss_text" />
+                                    <br /><br/>
+                                                                        
+                                    <label style="margin-left:11px;" for="global_geoss_select">Filter by data source: </label><br/>
+                                    <select id="global_geoss_select" name="global_geoss_select" class="selectpicker" ng-model="globalData.geoss_source" multiple data-live-search="true" title="All - To filter please select">
+                                        <optgroup label="Global" ng-if="globalData.geoss.length > 0">
+                                            <option ng-repeat="geoss in globalData.geoss" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
+                                        </optgroup>
+                                    </select>
+                                    <br /><br/>
+                                    <button ng-click="globalData.externalDBSearchGeoss(null, 'CONTAINS')" class="btn btn-primary" style="cursor:pointer;">Search</button>
+                                </form>
                             </div>
                         </uib-accordion>
                         

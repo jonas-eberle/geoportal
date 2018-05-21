@@ -751,6 +751,7 @@ class Category(models.Model):
 
 class Country(models.Model):
     name = models.CharField(max_length=200)
+    ne_feature_id = models.IntegerField(blank=True, null=True)
     continent = models.CharField(max_length=200, blank=True)
     bbox = models.CharField(max_length=200, blank=True, null=True)
 
@@ -950,7 +951,7 @@ class ExternalDatabase(models.Model):
         ('Africa', 'Africa'),
         ('Antarctica', 'Antarctica'),
         ('Asia', 'Asia'),
-        ('Australasia', 'Australasia'),
+        ('Oceania', 'Oceania'),
         ('Europe', 'Europe'),
         ('North America', 'North America'),
         ('South America', 'South America')
@@ -963,7 +964,7 @@ class ExternalDatabase(models.Model):
     provided_information = models.TextField(blank=True)
     category = models.ManyToManyField(Category, blank=True)
     dataset_language = models.CharField(max_length=20, choices=LANG_CODES, default="en", blank=True, help_text="Language of the provided data")
-    geoss_datasource_id = models.CharField(max_length=100, blank=True, null=True)
+    geoss_datasource_id = models.CharField(max_length=255, blank=True, null=True)
     continent = models.CharField(max_length=30, choices=CONTINENT, blank=True)
     country = models.ManyToManyField(Country, blank=True)
     wetland = models.ForeignKey(Wetland, related_name="external_wetland", verbose_name="Wetland", blank=True, null=True)

@@ -29,6 +29,6 @@ urlpatterns = [
     url(r'^wetland/(?P<pk>[0-9]+)/satdata/results', views.SatelliteMetadataExport.as_view(), name="download_satdata_results"),
     url(r'^externaldb.json', views.GetExternalDatabases.as_view(), name="global_data"),
     url(r'^countries.json', views.GetCountries.as_view(), name="national_data_countries"),
-    url(r'^nationaldata.json', views.GetNationalData.as_view(), name="national_data"),
+    url(r'^(?P<pk>[0-9]+)/nationaldata.json', views.GetNationalData.as_view(), name="national_data"),
 ]
 

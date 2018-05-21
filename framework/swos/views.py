@@ -1252,25 +1252,51 @@ class GetExternalDatabases(APIView):
                                  'language': extdb.dataset_language,
                                  'geoss_datasource_id': extdb.geoss_datasource_id, 'layer_exist': "False"})
 
+        geoss_search = request.query_params.get('geoss_search', 'false')
+        if geoss_search == 'true':
+            if continent == 'Global':
+                extdata_global = ExternalDatabase.objects.filter(continent=continent, geoss_datasource_id__isnull=False)
+                datasets['geoss'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
+            else:
+                datasets['geoss'] = dict(continental=[])
+                extdata_global = ExternalDatabase.objects.filter(continent='Global', geoss_datasource_id__isnull=False)
+                datasets['geoss']['global'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
+                extdata_continent = ExternalDatabase.objects.filter(continent=continent, geoss_datasource_id__isnull=False)
+                datasets['geoss']['continental'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_continent]
+        
         return Response(datasets)
 
 
 class GetCountries(APIView):
     def get(self, request):
         countries = Country.objects.all()
-        return Response([{'name':i.name, 'id':i.id, 'bbox':i.bbox} for i in countries])
+        return Response([{'name':i.name, 'id':i.id, 'bbox':i.bbox, 'ne_feature_id':i.ne_feature_id} for i in countries])
 
 
 class GetNationalData(APIView):
-    def get(self, request):
-        country = request.query_params.get('country', '')
-        if country == '':
+    def get_object(self, pk):
+        try:
+            return Country.objects.get(pk=pk)
+        except Country.DoesNotExist:
             return Response({})
+            
+    def get(self, request, pk):
+        #country = request.query_params.get('country', '')
+        country = self.get_object(pk)        
         
-        
-        wetlands = Wetland.objects.filter(country__contains=country)
+        wetlands = Wetland.objects.filter(country__contains=country.name)
         wetlands = [WetlandsSerializer(i).data for i in wetlands]
         
         layers = []
         
-        return Response(dict(wetlands=wetlands, layers=layers))
+        geoss = dict(national=[], continental=[])
+        extdata_country = ExternalDatabase.objects.filter(country=country, geoss_datasource_id__isnull=False)
+        extdata_continent = ExternalDatabase.objects.filter(continent=country.continent, geoss_datasource_id__isnull=False).exclude(country=country)
+        extdata_global = ExternalDatabase.objects.filter(continent='Global', geoss_datasource_id__isnull=False)
+        
+        geoss['national'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_country]
+        geoss['continental'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_continent]
+        geoss['global'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
+        
+        return Response(dict(wetlands=wetlands, layers=layers, geoss=geoss))
+
