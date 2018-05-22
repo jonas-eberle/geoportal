@@ -243,14 +243,17 @@ var storylinePopup;
                                     style: styleHover
                                 });
                                 hoverInteraction.on('select', function(evt){
-                                    var element = storylinePopup.getElement();
-                                    if (evt.selected.length > 0) {
-                                        console.log(evt.selected[0].get('description'));   
-                                        // Mouseover Popup
+                                    var element;
+                                    try {
+                                        element = storylinePopup.getElement();
+                                    } catch(e) {
+                                        storylinePopup = new ol.Overlay({element: document.getElementById('storylinePopup')});
+                                        mapviewer.map.addOverlay(storylinePopup);
+                                        element = storylinePopup.getElement();
+                                    }
+                                    if (evt.selected.length > 0) {   
                                         var content = '<div style="width:300px">' + evt.selected[0].get('description') +'</div>';
                                         storylinePopup.setPosition(evt.mapBrowserEvent.coordinate);
-                                        
-                                        console.log(element);
                                         $(element).popover({
                                             'placement': 'right',
                                             'animation': false,
