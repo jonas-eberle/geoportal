@@ -137,6 +137,8 @@ class Layer(models.Model):
     meta_characterset = models.CharField(max_length=200, blank=True, null=True, verbose_name="Metadata character set")
     meta_date = models.DateField(blank=True, null=True, verbose_name="Metadata date")
     meta_lineage = models.TextField("Lineage information", blank=True, default="")
+    meta_file_info = models.TextField("File info e.g. source", null=True, blank=True)
+    data_source = models.ManyToManyField("self", verbose_name="Data source" )
 
 
     #Legend
@@ -434,7 +436,7 @@ class LayerSerializer(serializers.ModelSerializer):
             'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'dataset_epsg',
             'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image',
             'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply','wmts_prefix_matrix_ids',
-            'min_zoom', 'max_zoom')
+            'min_zoom', 'max_zoom', 'meta_file_info')
 
 
 # Metadata serializer to output metadata related information from a given layer

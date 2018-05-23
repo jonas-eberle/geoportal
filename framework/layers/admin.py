@@ -97,7 +97,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-ogc',),
-            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'min_zoom', 'max_zoom', 'sos_default_field')
+            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'min_zoom', 'max_zoom', 'sos_default_field', 'meta_file_info')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-wmts',),
@@ -105,7 +105,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-dataset',),
-            'fields': ('dataset_contact_new', 'point_of_contacts', 'date_creation','date_publication', 'date_revision', 'language', 'characterset', 'dataset_epsg', 'format',  'meta_lineage')
+            'fields': ('dataset_contact_new', 'point_of_contacts', 'date_creation','date_publication', 'date_revision', 'language', 'characterset', 'dataset_epsg', 'format',  'meta_lineage', 'data_source')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-location',),
