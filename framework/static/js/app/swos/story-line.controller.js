@@ -86,11 +86,11 @@ var storylinePopup;
 
                     for (var part = 0; part < data.story_line.length; part++){
                         pos_order_map[pos] = data.story_line[part].order;
-                        if (part != 0){
-                            var parts = data.story_line[part].story_line_part.description.split("<br>")
-                            data.story_line[part].story_line_part.description = parts[0];
-                            data.story_line[part].story_line_part.explanation = parts[1];
-                        }
+                        //if (part != 0){
+                        //    var parts = data.story_line[part].story_line_part.description.split("<br>")
+                        //    data.story_line[part].story_line_part.description = parts[0];
+                        //    data.story_line[part].story_line_part.explanation = parts[1];
+                        //}
 
                         pos++;
                     }
@@ -365,8 +365,8 @@ var storylinePopup;
                 '<span ng-if="story_line_part.image_copyright && story_line_part.image_date" >,</span> {{story_line_part.image_date}}' +
                 '<pan ng-if="story_line_part.image_copyright || story_line_part.image_date" n>)</span></figcaption></figure>' +
                 '<div ng-if="story_line_part.authors">Author(s): <span style="font-style: italic;">{{story_line_part.authors}}</span></div>' +
-                '<p>{{ story_line_part.description }}</p>' +
-                '<p>{{ story_line_part.explanation }}</p>' +
+                '<p ng-bind-html="story_line_part.description"></p>' +
+
                 '<figure ng-if="story_line_part.image_position == \'bottom\' && story_line_part.image_url_600.length > 2" style="display: table;";>' +
                 '<img  ng-if="!story_line_part.image_url_600.includes(\'.gif\')" ng-src="{{story_line_part.image_url_600}}"  width: 100%;">' +
                 '<img  ng-if="story_line_part.image_url_600.includes(\'.gif\')" ng-src="{{story_line_part.image}}"  width: 100%;">' +

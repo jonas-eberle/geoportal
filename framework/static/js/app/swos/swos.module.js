@@ -9,7 +9,8 @@
             /* 3rd party modules */
             'nvd3',
             'infinite-scroll',
-            'webgisApp.legend'
+            'webgisApp.legend',
+            'ngSanitize'
         ]);
 
     angular.module('webgisApp').requires.push('webgisApp.swos');
