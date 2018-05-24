@@ -592,7 +592,7 @@ class Product(models.Model):
 
 class Indicator(models.Model):
     name = models.CharField(max_length=200)
-    short_name = models.CharField(max_length = 10)
+    short_name = models.CharField(max_length = 20)
     number = models.IntegerField
     description_meaning = models.TextField(blank=True)
     description_usage = models.TextField(blank=True)
@@ -1229,7 +1229,7 @@ class StoryLineInline(models.Model):
 
 
 class IndicatorValue(models.Model):
-    sub_indicator = models.ForeignKey(SubIndicator, related_name="value_indicator", verbose_name="SubIndicator")
+    #sub_indicator = models.ForeignKey(SubIndicator, related_name="value_indicator", verbose_name="SubIndicator")
     wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
     nomenclature = models.CharField(max_length=10, blank=True, null=True)
     creation_date = models.DateField
@@ -1255,9 +1255,9 @@ class IndicatorValue(models.Model):
     value_sum_percent = models.FloatField(blank=True, null=True, verbose_name="Sum in percent")
 
     def __unicode__(self):
-        return u"%s" %(self.sub_indicator.name + "_" + self.wetland.name)
+        return u"%s" %(self.wetland.name)
 
 class IndicatorValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndicatorValue
-        fields = ('sub_indicator', 'wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )
+        fields = ('wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )

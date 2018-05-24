@@ -115,6 +115,7 @@ class ProductAdmin(SortableModelAdmin):
 
 class IndicatorAdmin(SortableModelAdmin):
     sortable = 'order'
+    list_display = ('name', 'short_name', 'order')
 
 class SubIndicatorAdmin(admin.ModelAdmin):
     list_display = ('name', 'sub_number')
