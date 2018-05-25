@@ -1275,4 +1275,3 @@ class StoryLineInline(models.Model):
 #    class Meta:
 #        model = IndicatorValue
 #        fields = ('sub_indicator', 'wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )
->>>>>>> Stashed changes
