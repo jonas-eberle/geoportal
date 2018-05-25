@@ -27,7 +27,7 @@ from rest_framework.response import Response
 
 from webgis import settings
 from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline, StoryLineFeature
-from .models import Product, Indicator, IndicatorSerializer, IndicatorValue, IndicatorValueSerializer, WetlandLayer, \
+from .models import Product, Indicator, IndicatorSerializer, WetlandLayer, \
     ExternalDatabase, ExternalLayer, Country
 from layers.models import LayerSerializer, MetadataSerializer
 from swos.search_es import WetlandSearch
@@ -130,7 +130,7 @@ class WetlandDetail(APIView):
         wetland = self.get_object(pk)
         
         layers = WetlandLayer.objects.filter(wetland_id=wetland.id, publishable=True).order_by('title')
-        indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('sub_indicator', 'input_1_time')
+        #indicator_values = IndicatorValue.objects.filter(wetland_id=wetland.id).order_by('sub_indicator', 'input_1_time')
         temp_products_layers = dict()
         temp_indicators_layers = dict()
         temp_ind_parent = dict()
@@ -161,6 +161,8 @@ class WetlandDetail(APIView):
 
             if layer_data['legend_colors']:
                 layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+            if layer_data['meta_file_info']:
+                layer_data['meta_file_info'] = json.loads(layer_data['meta_file_info'])
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
                 layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
                 layer_data['selectedDate'] = layer_data['ogc_times'][-1]
@@ -222,6 +224,10 @@ class WetlandDetail(APIView):
                 story_line_data = temp_indicators_story_lines[indicator.id]
             else:
                 story_line_data = ""
+
+            finalJSON['indicators'].append(
+                {'id': indicator.id, 'name': indicator.name, 'order': indicator.order, 'description': indicator.description_meaning,
+                'layers': layers, 'story_line': story_line_data })
             #temp_ind_parent_descr[indicator.parent_ind.id] = indicator.parent_ind
             #if indicator.parent_ind.id in temp_ind_parent_story_line and temp_ind_parent_story_line[indicator.parent_ind.id] != "":
             #    temp_ind_parent_story_line[indicator.parent_ind.id].append(story_line_data)
@@ -241,8 +247,6 @@ class WetlandDetail(APIView):
         #         'description_meaning': temp_ind_parent_descr[ind_parent].description_meaning, 'description_usage': temp_ind_parent_descr[ind_parent].description_usage,
         #         'description_creation': temp_ind_parent_descr[ind_parent].description_creation,'ind_layer': temp_ind_parent[ind_parent],'story_line': temp_ind_parent_story_line[ind_parent] })
 
-
-
         #for indicator_value in indicator_values:
         #
         #    if indicator_value.sub_indicator_id not in temp_indicator_values:
@@ -257,7 +261,6 @@ class WetlandDetail(APIView):
         #print temp_indicator_values
         #for ind_val in temp_indicator_values:
         #    finalJSON['indicator_values'].append({'id': ind_val, 'values': temp_indicator_values[ind_val]})
-
 
         # get wetland country --> find continent and add to list
 
@@ -359,7 +362,7 @@ class WetlandDetail(APIView):
 
         # sort the products according to the order attribute
         finalJSON['products'] = sorted(finalJSON['products'], key=lambda x: x['order'], reverse=False)
-        #finalJSON['indicators'] = sorted(finalJSON['indicators'], key=lambda x: x['sub_number'], reverse=False)
+        finalJSON['indicators'] = sorted(finalJSON['indicators'], key=lambda x: x['order'], reverse=False)
 
         finalJSON['count'] = dict()
         finalJSON['count']['images'] = wetland.count_images
@@ -675,12 +678,10 @@ class LayerColors(APIView):
         #    rgbData[self.hex_to_rgb(key)] = data[key]
         # return Response(rgbData)
 
-
 class StoryLineFeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoryLineFeature
         fields = ('__all__')
-
 
 class StoryLinePartSerializer(serializers.ModelSerializer):
     image_url_300 = serializers.ReadOnlyField()
@@ -1210,17 +1211,16 @@ class DownloadDataSentinel(APIView):
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         return response
 
-
 class GetExternalDatabases(APIView):
     def get(self, request):
         continent = request.query_params.get('continent', '')
         country = request.query_params.get('country', '')
-        
+
         if country != '':
             extdata = ExternalDatabase.objects.filter(country__name=country)
         else:
             extdata = ExternalDatabase.objects.filter(continent=continent)
-        
+
         temp_external_layers = dict()
         datasets = dict(layers=[], databases=[])
         for extdb in extdata:
@@ -1228,7 +1228,7 @@ class GetExternalDatabases(APIView):
             if layer_extern:
                 for ex_layer in layer_extern:
                     layer_data = LayerSerializer(ex_layer).data
-            
+
                     if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
                         layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
                         layer_data['selectedDate'] = layer_data['ogc_times'][-1]
@@ -1238,9 +1238,9 @@ class GetExternalDatabases(APIView):
                         temp_external_layers[extdb.id] = [layer_data]
                     else:
                         temp_external_layers[extdb.id].append(layer_data)
-            
+
                 layers = temp_external_layers[extdb.id]
-            
+
                 datasets['layers'].append({'name': extdb.name, 'description': extdb.description,
                                  'provided_info': extdb.provided_information, 'online_link': extdb.online_link,
                                  'language': extdb.dataset_language,
@@ -1263,7 +1263,7 @@ class GetExternalDatabases(APIView):
                 datasets['geoss']['global'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
                 extdata_continent = ExternalDatabase.objects.filter(continent=continent, geoss_datasource_id__isnull=False)
                 datasets['geoss']['continental'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_continent]
-        
+
         return Response(datasets)
 
 
@@ -1279,24 +1279,23 @@ class GetNationalData(APIView):
             return Country.objects.get(pk=pk)
         except Country.DoesNotExist:
             return Response({})
-            
+
     def get(self, request, pk):
         #country = request.query_params.get('country', '')
-        country = self.get_object(pk)        
-        
+        country = self.get_object(pk)
+
         wetlands = Wetland.objects.filter(country__contains=country.name)
         wetlands = [WetlandsSerializer(i).data for i in wetlands]
-        
+
         layers = []
-        
+
         geoss = dict(national=[], continental=[])
         extdata_country = ExternalDatabase.objects.filter(country=country, geoss_datasource_id__isnull=False)
         extdata_continent = ExternalDatabase.objects.filter(continent=country.continent, geoss_datasource_id__isnull=False).exclude(country=country)
         extdata_global = ExternalDatabase.objects.filter(continent='Global', geoss_datasource_id__isnull=False)
-        
+
         geoss['national'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_country]
         geoss['continental'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_continent]
         geoss['global'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
-        
-        return Response(dict(wetlands=wetlands, layers=layers, geoss=geoss))
 
+        return Response(dict(wetlands=wetlands, layers=layers, geoss=geoss))

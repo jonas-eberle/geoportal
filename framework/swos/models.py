@@ -607,16 +607,16 @@ class IndicatorSerializer(serializers.ModelSerializer):
         model = Indicator
         fields = ('name', 'description', 'short_name', 'number', 'short_description')
 
-class SubIndicator(models.Model):
-    name = models.CharField(max_length=200)
-    short_name = models.CharField(max_length=10, verbose_name="Short name (will be used for file names)")
-    identifier = models.CharField(max_length=10, verbose_name="Identifier (CSV import)")
-    description = models.CharField(blank=True, max_length=200)
-    sub_number = models.IntegerField(verbose_name="Subnumber")
-    #parent_ind = models.ForeignKey(Indicator, related_name='sub_indicator', verbose_name="Indicator")
+#class SubIndicator(models.Model):
+#    name = models.CharField(max_length=200)
+#    short_name = models.CharField(max_length=10, verbose_name="Short name (will be used for file names)")
+#    identifier = models.CharField(max_length=10, verbose_name="Identifier (CSV import)")
+#    description = models.CharField(blank=True, max_length=200)
+#    sub_number = models.IntegerField(verbose_name="Subnumber")
+#    parent_ind = models.ForeignKey(Indicator, related_name='sub_indicator', verbose_name="Indicator")
 
-    def __unicode__(self):
-        return u"%s" %(self.name)
+#    def __unicode__(self):
+#        return u"%s" %(self.name)
 
 class WetlandLayer(Layer):
     wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
@@ -628,13 +628,14 @@ class WetlandLayer(Layer):
     def alternate_title(self):
         wq_type = ''
         date_string = ''
+
         if hasattr(self.product, 'short_name'):
             product = self.product.short_name
 
             if self.product.short_name in ['WQ']:
                 wq_type = ' '.join(self.identifier.split('_')[2:5])
             elif self.product.short_name in ['LULC', 'SSM']:
-                wq_type = self.identifier.split('_')[2]
+                wq_type = self.identifier.split('_')[2]+ ' ' + self.identifier.split('_')[3]
                 if self.date_begin.year == self.date_end.year:
                     date_string = str(self.date_begin.year)
                 else:
@@ -682,8 +683,20 @@ class WetlandLayer(Layer):
             return ' '.join([product,wq_type, date_string])
 
         if hasattr(self.indicator, 'short_name'): #todo Add alternate_title for Indicator
+
             product = self.indicator.short_name
             wq_type = self.identifier
+
+            if 'IND' in self.indicator.short_name:
+                wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
+
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+
+            if 'IND-' in self.indicator.short_name:
+                product = product[4:]
 
             return ' '.join([product, wq_type, date_string])
 
@@ -1127,9 +1140,10 @@ class StoryLineFeature(models.Model):
     name = models.CharField(max_length=200)
     geom = models.PolygonField()
     description = models.TextField(blank=True)
-    
+
     def __unicode__(self):
         return self.name
+
 
 
 class StoryLine(models.Model):
@@ -1228,36 +1242,37 @@ class StoryLineInline(models.Model):
         ordering = ['order']
 
 
-class IndicatorValue(models.Model):
-    #sub_indicator = models.ForeignKey(SubIndicator, related_name="value_indicator", verbose_name="SubIndicator")
-    wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
-    nomenclature = models.CharField(max_length=10, blank=True, null=True)
-    creation_date = models.DateField
-    total_pixel = models.IntegerField(verbose_name="Total count of pixel (refers to input 1)")
-    total_sqm = models.FloatField(blank=True, null=True, verbose_name="Total area in sqm")
-    unclassified_pixel = models.FloatField(blank=True, null=True, verbose_name="Number of unclassified pixel")
-    unclassified_sqm = models.FloatField(blank=True, null=True, verbose_name="Area of unclassified pixel")
-    time_ref_parts = models.CharField("Date type (referring date parts)", max_length=10, default="Year",choices=(('Day', 'Day'), ('Month', 'Month'), ('Year', 'Year')))
-    input_1_time = models.DateField (blank=True, null=True, verbose_name="Time input 1")
-    input_layer_1 = models.ForeignKey(WetlandLayer, blank=True, null=True, verbose_name="Input layer 1", related_name="ind_input_layer_1")
-    input_2_time = models.DateField (blank=True, null=True, verbose_name="Time input 2")
-    input_layer_2 = models.ForeignKey(WetlandLayer, blank=True, null=True, verbose_name="Input layer 2", related_name="ind_input_layer_2")
-    additional_input_layer = models.ManyToManyField(WetlandLayer, blank=True, verbose_name="Additional Input Layer", related_name="additional_input_layer")
-    input_data_description = models.CharField(max_length=800, blank=True, null=True, verbose_name="Input data description (e.g. selected classes)")
-    value_increase_pixel = models.IntegerField(blank=True, null=True, verbose_name="Increase in pixel")
-    value_increase_sqm = models.FloatField(blank=True, null=True, verbose_name="Increase in sqm")
-    value_increase_percent = models.FloatField(blank=True, null=True, verbose_name="Increase in percent")
-    value_decrease_pixel = models.IntegerField(blank=True, null=True, verbose_name="Decrease in pixel")
-    value_decrease_sqm = models.FloatField(blank=True, null=True, verbose_name="Decrease in sqm")
-    value_decrease_percent = models.FloatField(blank=True, null=True, verbose_name="Decrease in percent")
-    value_sum_pixel = models.IntegerField(blank=True, null=True, verbose_name="Sum in pixel")
-    value_sum_sqm = models.FloatField(blank=True, null=True, verbose_name="Sum in sqm")
-    value_sum_percent = models.FloatField(blank=True, null=True, verbose_name="Sum in percent")
+#class IndicatorValue(models.Model):
+#    sub_indicator = models.ForeignKey(SubIndicator, related_name="value_indicator", verbose_name="SubIndicator")
+#    wetland = models.ForeignKey(Wetland, blank=True, related_name='value_wetland', verbose_name="Wetland")
+#    nomenclature = models.CharField(max_length=10, blank=True, null=True)
+#    creation_date = models.DateField
+#    total_pixel = models.IntegerField(verbose_name="Total count of pixel (refers to input 1)")
+#    total_sqm = models.FloatField(blank=True, null=True, verbose_name="Total area in sqm")
+#    unclassified_pixel = models.FloatField(blank=True, null=True, verbose_name="Number of unclassified pixel")
+#    unclassified_sqm = models.FloatField(blank=True, null=True, verbose_name="Area of unclassified pixel")
+#    time_ref_parts = models.CharField("Date type (referring date parts)", max_length=10, default="Year",choices=(('Day', 'Day'), ('Month', 'Month'), ('Year', 'Year')))
+#    input_1_time = models.DateField (blank=True, null=True, verbose_name="Time input 1")
+#    input_layer_1 = models.ForeignKey(WetlandLayer, blank=True, null=True, verbose_name="Input layer 1", related_name="ind_input_layer_1")
+#    input_2_time = models.DateField (blank=True, null=True, verbose_name="Time input 2")
+#    input_layer_2 = models.ForeignKey(WetlandLayer, blank=True, null=True, verbose_name="Input layer 2", related_name="ind_input_layer_2")
+#    additional_input_layer = models.ManyToManyField(WetlandLayer, blank=True, verbose_name="Additional Input Layer", related_name="additional_input_layer")
+#    input_data_description = models.CharField(max_length=800, blank=True, null=True, verbose_name="Input data description (e.g. selected classes)")
+#    value_increase_pixel = models.IntegerField(blank=True, null=True, verbose_name="Increase in pixel")
+#    value_increase_sqm = models.FloatField(blank=True, null=True, verbose_name="Increase in sqm")
+#    value_increase_percent = models.FloatField(blank=True, null=True, verbose_name="Increase in percent")
+#    value_decrease_pixel = models.IntegerField(blank=True, null=True, verbose_name="Decrease in pixel")
+#    value_decrease_sqm = models.FloatField(blank=True, null=True, verbose_name="Decrease in sqm")
+#    value_decrease_percent = models.FloatField(blank=True, null=True, verbose_name="Decrease in percent")
+#    value_sum_pixel = models.IntegerField(blank=True, null=True, verbose_name="Sum in pixel")
+#    value_sum_sqm = models.FloatField(blank=True, null=True, verbose_name="Sum in sqm")
+#    value_sum_percent = models.FloatField(blank=True, null=True, verbose_name="Sum in percent")
 
-    def __unicode__(self):
-        return u"%s" %(self.wetland.name)
+#    def __unicode__(self):
+#        return u"%s" %(self.sub_indicator.name + "_" + self.wetland.name)
 
-class IndicatorValueSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IndicatorValue
-        fields = ('wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )
+#class IndicatorValueSerializer(serializers.ModelSerializer):
+#    class Meta:
+#        model = IndicatorValue
+#        fields = ('sub_indicator', 'wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )
+>>>>>>> Stashed changes

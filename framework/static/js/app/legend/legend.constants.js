@@ -96,9 +96,12 @@
                 ['5127', '4', '5.1.2.7 Permanent saline/brackish/alkaline lakes with aquatic bed vegetation', 'rgb(28,150,173)'],
                 ['5128', '4', '5.1.2.8 Seasonal/intermittent saline/brackish/alkaline lakes and flats with aquatic bed vegetation', 'rgb(28,99,138)'],
                 ['5129', '4', '5.1.2.9 Aquaculture (e.g., fish/shrimp) ponds', 'rgb(0,101,199)'],
-                ['5130', '4', '5.1.3.0 Ponds, includes farm ponds, stock ponds, small tanks, (generally below 8 ha)', 'rgb(39,127,170)'],
-                ['5131', '4', '5.1.3.1 Water storage areas, reservoirs/barrages/dams/impoundments (generally over 8 ha)', 'rgb(0,0,203)'],
-                ['5132', '4', '5.1.3.2 Wastewater treatment areas, sewage farms, settling ponds, oxidation basins, etc', 'rgb(0,39,144)'],
+                ['5130', '4', '5.1.3.0 Ponds, includes farm ponds, stock ponds, small tanks, (generally below 8 ha)', 'rgb(39,127,170)'],//old
+                ['5131', '4', '5.1.3.1 Water storage areas, reservoirs/barrages/dams/impoundments (generally over 8 ha)', 'rgb(0,0,203)'],//old
+                ['5132', '4', '5.1.3.2 Wastewater treatment areas, sewage farms, settling ponds, oxidation basins, etc', 'rgb(0,39,144)'], //old
+                ['51110', '4', '5.1.3.0 Ponds, includes farm ponds, stock ponds, small tanks, (generally below 8 ha)', 'rgb(39,127,170)'], //new
+                ['51211', '4', '5.1.3.1 Water storage areas, reservoirs/barrages/dams/impoundments (generally over 8 ha)', 'rgb(0,0,203)'], // new
+                ['51212', '4', '5.1.3.2 Wastewater treatment areas, sewage farms, settling ponds, oxidation basins, etc', 'rgb(0,39,144)'], // new
                 ['52', '2', '5.2 Marine waters', 'rgb(122,245,202)'],
                 ['521', '3', '5.2.1 Coastal lagoons', 'rgb(0,255,166)'],
                 ['5211', '4', '5.2.1.1 Coastal brackish/saline lagoons, brackish to saline lagoons with at least one relatively narrow connection to the sea', 'rgb(0,254,165)'],

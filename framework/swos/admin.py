@@ -1,7 +1,7 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
 from django import forms
-from .models import Wetland, Product, Indicator, SubIndicator, IndicatorValue, WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart, StoryLineFeature
+from .models import Wetland, Product, Indicator,  WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart,StoryLineFeature
 
 from layers.admin import LayersAdmin
 
@@ -47,12 +47,12 @@ class WetlandLayerAdmin(LayersAdmin):
             'classes': ('suit-tab', 'suit-tab-swos',),
             'fields': ('wetland', 'product', 'indicator')
         }),)
-    list_display=('title','publishable', 'downloadable', 'wetland', 'product')
+    list_display=('title','publishable', 'downloadable', 'wetland', 'product', 'indicator')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
     search_fields=('title','abstract','wetland__name', 'product__name')
     ordering =['title']
-    list_filter=('publishable', 'downloadable', 'wetland','product')
-    suit_list_filter_horizontal = ('wetland','product','publishable', 'downloadable')
+    list_filter=('publishable', 'downloadable', 'wetland','product', 'indicator')
+    suit_list_filter_horizontal = ('wetland','product','indicator', 'publishable', 'downloadable')
 
     actions=[make_publishable,make_unpublishable, make_downloadable, make_non_downloadable]
 
@@ -93,7 +93,8 @@ class ExternalDatabaseAdmin(admin.OSMGeoAdmin):
 
 class CountryAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'continent', 'bbox',)
-    search_fields= ('name',)
+    search_fields = ('name',)
+
 
 class WetlandImageAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'image_tag', 'date', 'description', 'wetland' )
@@ -117,12 +118,12 @@ class IndicatorAdmin(SortableModelAdmin):
     sortable = 'order'
     list_display = ('name', 'short_name', 'order')
 
-class SubIndicatorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'sub_number')
+#class SubIndicatorAdmin(admin.ModelAdmin):
+#    list_display = ('name', 'parent_ind', 'sub_number')
 
-class IndicatorValueAdmin(admin.ModelAdmin):
-    list_display = ('wetland', 'input_1_time' )
-    save_as = True
+#class IndicatorValueAdmin(admin.ModelAdmin):
+#    list_display = ('sub_indicator','wetland', 'input_1_time' )
+#    save_as = True
 
 class StoryLinePartForm(forms.ModelForm):
     class Meta:
@@ -142,6 +143,9 @@ class StoryLineInlines(SortableTabularInline):
     verbose_name_plural = 'Layers'
     sortable = 'order'
 
+class StoryLineFeatureAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+
 class StoryLineAdmin(admin.ModelAdmin):
     inlines = (StoryLineInlines,)
     list_display = ('title', 'wetland', 'active')
@@ -150,15 +154,12 @@ class StoryLinePartAdmin(admin.ModelAdmin):
     form = StoryLinePartForm
     list_display = ('headline', 'wetland')
 
-class StoryLineFeatureAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
-
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Indicator,IndicatorAdmin)
-admin.site.register(SubIndicator, SubIndicatorAdmin)
-admin.site.register(IndicatorValue,IndicatorValueAdmin)
+#admin.site.register(SubIndicator, SubIndicatorAdmin)
+#admin.site.register(IndicatorValue,IndicatorValueAdmin)
 admin.site.register(WetlandLayer, WetlandLayerAdmin)
 admin.site.register(ExternalDatabase, ExternalDatabaseAdmin)
 admin.site.register(ExternalLayer, ExternalLayerAdmin)

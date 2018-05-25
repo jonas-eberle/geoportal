@@ -522,9 +522,6 @@ button.btn-loadmore:hover {
 .ol-mouse-position::before {
     content: "Coordinates: ";
 }
-.ol-mouse-position:empty {
-    display: none;
-}
 
 /* hide openlayers icon and link in front of attribution */
 .ol-attribution li a img{
@@ -728,4 +725,33 @@ button.btn-loadmore:hover {
 
 .btn-legend {
     width: 42px;
+}
+
+
+#chart_placeholder {
+    text-align: center;
+    float:right;
+    color:#fff;
+    /*width: 750px;*/
+    /*height: 830px;*/
+}
+.details {
+    float:right;
+    width:350px;
+}
+/*
+.dependencyWheel {
+    font: 10px sans-serif;
+}*/
+#circle circle {
+    fill: none;
+    pointer-events: all;
+}
+path.chord {
+    stroke: #000;
+    stroke-width: .10px;
+    transition: opacity 0.3s;
+}
+ #circle:hover path.fade {
+    opacity: 0;
 }
