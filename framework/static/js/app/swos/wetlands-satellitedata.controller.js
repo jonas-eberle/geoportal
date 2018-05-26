@@ -247,7 +247,7 @@
             wsdc.filter_sun_zenith_show = false;            
             
             // Hide tile and optical when only S1 is requested
-            if (jQuery.inArray('S1_GRD_IW', wsdc.filterByDataset) > -1 && wsdc.filterByDataset.length === 1) {
+            if (jQuery.inArray('SENTINEL-1_GRD_IW', wsdc.filterByDataset) > -1 && wsdc.filterByDataset.length === 1) {
                 wsdc.filter_optical_show = false;
                 wsdc.filter_tile_show = false;
             }

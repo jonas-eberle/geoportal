@@ -474,7 +474,7 @@ class SatelliteMetadataExport(APIView):
         
         # construct sql query
         sql_additions = []
-        sql_additions.append('ST_Intersects(wkb_geometry, (SELECT geom from swos_wetland WHERE id=%s))' % wetland.id)
+        #sql_additions.append('ST_Intersects(wkb_geometry, (SELECT geom from swos_wetland WHERE id=%s))' % wetland.id)
         
         datasets = request.query_params.get('datasets', None)
         if datasets is not None:
@@ -491,37 +491,49 @@ class SatelliteMetadataExport(APIView):
         
         sun_elevation = request.query_params.get('sun_elevation')
         sun_elevation = sun_elevation.split(',')
-        sql_additions.append('(sun_elevation IS NULL OR (sun_elevation >= %s AND sun_elevation <= %s))' % (float(sun_elevation[0]), float(sun_elevation[1])))
+        #sql_additions.append('(sun_elevation IS NULL OR (sun_elevation >= %s AND sun_elevation <= %s))' % (float(sun_elevation[0]), float(sun_elevation[1])))
+        sql_additions.append('(sun_elevation == \'\' OR (sun_elevation >= %s AND sun_elevation <= %s))' % (float(sun_elevation[0]), float(sun_elevation[1])))
         
         sun_zenith_angle_mean = request.query_params.get('sun_zenith_angle_mean')
         sun_zenith_angle_mean = sun_zenith_angle_mean.split(',')
-        sql_additions.append('(sun_zenith_angle_mean IS NULL OR (sun_zenith_angle_mean >= %s AND sun_zenith_angle_mean <= %s))' % (float(sun_zenith_angle_mean[0]), float(sun_zenith_angle_mean[1])))
+        #sql_additions.append('(sun_zenith_angle_mean IS NULL OR (sun_zenith_angle_mean >= %s AND sun_zenith_angle_mean <= %s))' % (float(sun_zenith_angle_mean[0]), float(sun_zenith_angle_mean[1])))
+        sql_additions.append('(sun_zenith_angle_mean == \'\' OR (sun_zenith_angle_mean >= %s AND sun_zenith_angle_mean <= %s))' % (float(sun_zenith_angle_mean[0]), float(sun_zenith_angle_mean[1])))
         
         sun_azimuth_angle_mean = request.query_params.get('sun_azimuth_angle_mean')
         sun_azimuth_angle_mean = sun_azimuth_angle_mean.split(',')
-        sql_additions.append('(sun_azimuth_angle_mean IS NULL OR (sun_azimuth_angle_mean >= %s AND sun_azimuth_angle_mean <= %s))' % (float(sun_azimuth_angle_mean[0]), float(sun_azimuth_angle_mean[1])))
+        #sql_additions.append('(sun_azimuth_angle_mean IS NULL OR (sun_azimuth_angle_mean >= %s AND sun_azimuth_angle_mean <= %s))' % (float(sun_azimuth_angle_mean[0]), float(sun_azimuth_angle_mean[1])))
+        sql_additions.append('(sun_azimuth_angle_mean == \'\' OR (sun_azimuth_angle_mean >= %s AND sun_azimuth_angle_mean <= %s))' % (float(sun_azimuth_angle_mean[0]), float(sun_azimuth_angle_mean[1])))
         
         time_start_begin = request.query_params.get('time_start_begin')
         time_start_end = request.query_params.get('time_start_end')
-        sql_additions.append('(time_start >= \'%s\'::DATE AND time_start <= \'%s\'::DATE)' % (time_start_begin, time_start_end))
+        #sql_additions.append('(time_start >= \'%s\'::DATE AND time_start <= \'%s\'::DATE)' % (time_start_begin, time_start_end))
+        sql_additions.append('(time_start >= \'%s\' AND time_start <= \'%s\')' % (time_start_begin, time_start_end))
         
         months = request.query_params.get('months', None)
         if months is not None:
             months = months.split(',')
-            sql_additions.append('extract(MONTH from time_start) IN (%s)' % ','.join(tiles))
+            #sql_additions.append('extract(MONTH from time_start) IN (%s)' % ','.join(months))
+            sql_additions.append('strftime(\'%%m\', time_start) IN (%s)' % ','.join(["'" + "%02d" % int(month) + "'" for month in months]))
+            
         
         # construct sql query
         sql_query = 'SELECT * FROM satdata '
         if len(sql_additions) > 0:
             sql_query += 'WHERE '
             sql_query += ' AND '.join(sql_additions)
-        sql_query += 'ORDER BY time_start ASC;'
+        sql_query += ' ORDER BY time_start ASC;'
         
         filename = os.path.join(settings.MEDIA_ROOT, 'tmp', str(uuid.uuid4()))
         db_conn = settings.DATABASES['default']
-        os.system('ogr2ogr -f "CSV" -sql "%s" %s.csv PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
-        os.system('ogr2ogr -f "ESRI Shapefile" -sql "%s" %s.shp PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
-        os.system('ogr2ogr -f "GeoJSON" -sql "%s" %s.json PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        #return Response(sql_query)
+        #os.system('ogr2ogr -f "CSV" -sql "%s" %s.csv PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        #os.system('ogr2ogr -f "ESRI Shapefile" -sql "%s" %s.shp PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        #os.system('ogr2ogr -f "GeoJSON" -sql "%s" %s.json PG:"host=localhost dbname=%s user=%s password=%s"' % (sql_query, filename, db_conn['NAME'], db_conn['USER'], db_conn['PASSWORD']))
+        
+        # SQLite
+        os.system('ogr2ogr -f "CSV" -sql "%s" %s.csv %s' % (sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite'))
+        os.system('ogr2ogr -f "ESRI Shapefile" -sql "%s" %s.shp %s' % (sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite'))
+        os.system('ogr2ogr -f "GeoJSON" -sql "%s" %s.json %s' % (sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite'))
         
         import zipfile
         s = StringIO.StringIO()
@@ -553,7 +565,7 @@ class SatelliteMetadata(APIView):
         dataset = request.query_params.get('dataset')
         
         # sql query
-        sql = "SELECT * FROM satdata WHERE scene_id='%s'" % scene_id
+        sql = "SELECT * FROM satdata WHERE id='%s'" % scene_id
         
         # sqlite database
         conn = sdb.connect(settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite')
@@ -570,7 +582,7 @@ class SatelliteMetadata(APIView):
         #scene = dict(zip(columns, scene))
              
         if scene:
-            scene['id'] = scene['scene_id']
+            #scene['id'] = scene['scene_id']
             
             if scene_id.startswith('S1'):
                 if "Products('')" in scene['download_url']:
