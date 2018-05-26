@@ -618,146 +618,6 @@ class IndicatorSerializer(serializers.ModelSerializer):
 #    def __unicode__(self):
 #        return u"%s" %(self.name)
 
-class WetlandLayer(Layer):
-    wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
-    product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
-    indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    @property
-    def alternate_title(self):
-        wq_type = ''
-        date_string = ''
-
-        if hasattr(self.product, 'short_name'):
-            product = self.product.short_name
-
-            if self.product.short_name in ['WQ']:
-                wq_type = ' '.join(self.identifier.split('_')[2:5])
-            elif self.product.short_name in ['LULC', 'SSM']:
-                wq_type = self.identifier.split('_')[2]+ ' ' + self.identifier.split('_')[3]
-                if self.date_begin.year == self.date_end.year:
-                    date_string = str(self.date_begin.year)
-                else:
-                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-            elif self.product.short_name in ['SWD']:
-                wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
-                if self.date_begin.year == self.date_end.year:
-                    date_string = str(self.date_begin.year)
-                else:
-                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-            elif self.product.short_name in ['LULCC_S']:
-                wq_type = self.identifier.split('_')[3] + ' ' + self.identifier.split('_')[4]
-                if self.date_begin.year == self.date_end.year:
-                    date_string = str(self.date_begin.year)
-                else:
-                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-            elif self.product.short_name in ['FloodReg', 'InvDel']:
-                wq_type = self.identifier.split('_')[2]
-                if self.date_begin.year == self.date_end.year:
-                    date_string = str(self.date_begin.year)
-                else:
-                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-            elif self.product.short_name in ['LULCC_L']:
-                wq_type = self.identifier.split('_')[3]
-                date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-            elif self.product.short_name in ['LSTT']:
-                date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
-            elif self.product.short_name in ['SATDATA_OP']:
-                wq_type = self.identifier.split('_')[2].replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('-', ' ')
-                date_string = str(self.date_begin.year)
-                product = ''
-            elif self.product.short_name in ['SATDATA_SAR']:
-                wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
-                date_string = str(self.date_begin.year)
-                product = ''
-            elif self.product.short_name in ['SATDATA_OP']:
-                product = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-')
-                wq_type = self.identifier.split('_')[3]
-                date_string = self.date_begin.strftime('%Y-%m-%d')
-            elif self.product.short_name in ['SEGM']:
-                product = 'Segmentation'
-                wq_type = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-') + ' (%s)' % self.identifier.split('_')[3]
-                date_string = str(self.date_begin.year)
-
-            return ' '.join([product,wq_type, date_string])
-
-        if hasattr(self.indicator, 'short_name'): #todo Add alternate_title for Indicator
-
-            product = self.indicator.short_name
-            wq_type = self.identifier
-
-            if 'IND' in self.indicator.short_name:
-                wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
-
-                if self.date_begin.year == self.date_end.year:
-                    date_string = str(self.date_begin.year)
-                else:
-                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
-
-            if 'IND-' in self.indicator.short_name:
-                product = product[4:]
-
-            return ' '.join([product, wq_type, date_string])
-
-    def indexing(self):
-
-        indicator_name = []
-        product_name = []
-        if self.indicator:
-            cat = "indicator"
-            indicator_name = self.indicator.name
-
-        elif self.product:
-            cat = "product"
-            product_name = self.product.name
-
-        topic_cats = []
-        for topic_cat in self.topicCategory.all():
-            res = ISOcodelist.objects.get(pk=topic_cat.id)
-            topic_cats.append(res.identifier)
-
-        keywords = []
-        for keyword in KeywordInline.objects.filter(layer=self.id):
-            keywords.append(keyword.keyword)
-
-        contact_name = []
-        contact_org = []
-        for contact in self.point_of_contacts.all():
-            res = Contact.objects.get(pk=contact.id)
-            contact_name.append(contact.first_name + " " + contact.last_name)
-            contact_org.append(contact.organisation)
-        for meta_contact in self.meta_contacts.all():
-            res = Contact.objects.get(pk=contact.id)
-            contact_name.append(contact.first_name + " " + contact.last_name)
-            contact_org.append(contact.organisation)
-
-        extent = {
-            "type": "Polygon",
-            "coordinates": [[[self.west,self.north],[self.east,self.north],[self.east,self.south],[self.west,self.south],[self.west,self.north]]]
-        }
-
-        obj = LayerIndex(
-            meta={'id': self.id},
-            title=self.title,
-            category=cat,
-            description=self.abstract,
-            topiccat=topic_cats,
-            keywords=keywords,
-            wetland = self.wetland.name,
-            product_name = product_name,
-            indicator_name = indicator_name,
-            contact_name = contact_name,
-            contact_org = contact_org,
-            date_begin=self.date_begin,
-            date_end=self.date_end,
-            lineage = self.meta_lineage,
-            geom = extent
-        )
-        print obj
-        obj.save()
-        return obj.to_dict(include_meta=True)
-
 class Category(models.Model):
 
     category = models.CharField(max_length=60)
@@ -1015,6 +875,149 @@ class ExternalDatabase(models.Model):
         print obj
         obj.save()
         return obj.to_dict(include_meta=True)
+
+
+class WetlandLayer(Layer):
+    wetland = models.ForeignKey(Wetland, related_name="layer_wetland", verbose_name="Wetland", blank=True, null=True)
+    product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
+    indicator = models.ForeignKey(Indicator, related_name="layer_indicator", verbose_name="Indicator", blank=True, null=True)
+    country = models.ForeignKey(Country, related_name="layer_country", verbose_name="Country", blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def alternate_title(self):
+        wq_type = ''
+        date_string = ''
+
+        if hasattr(self.product, 'short_name'):
+            product = self.product.short_name
+
+            if self.product.short_name in ['WQ']:
+                wq_type = ' '.join(self.identifier.split('_')[2:5])
+            elif self.product.short_name in ['LULC', 'SSM']:
+                wq_type = self.identifier.split('_')[2]+ ' ' + self.identifier.split('_')[3]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['SWD']:
+                wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['LULCC_S']:
+                wq_type = self.identifier.split('_')[3] + ' ' + self.identifier.split('_')[4]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['FloodReg', 'InvDel']:
+                wq_type = self.identifier.split('_')[2]
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+            elif self.product.short_name in ['LULCC_L']:
+                wq_type = self.identifier.split('_')[3]
+                date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
+            elif self.product.short_name in ['LSTT']:
+                date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
+            elif self.product.short_name in ['SATDATA_OP']:
+                wq_type = self.identifier.split('_')[2].replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('-', ' ')
+                date_string = str(self.date_begin.year)
+                product = ''
+            elif self.product.short_name in ['SATDATA_SAR']:
+                wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
+                date_string = str(self.date_begin.year)
+                product = ''
+            elif self.product.short_name in ['SATDATA_OP']:
+                product = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-')
+                wq_type = self.identifier.split('_')[3]
+                date_string = self.date_begin.strftime('%Y-%m-%d')
+            elif self.product.short_name in ['SEGM']:
+                product = 'Segmentation'
+                wq_type = self.identifier.split('_')[2].replace('L', 'Landsat-').replace('S', 'Sentinel-') + ' (%s)' % self.identifier.split('_')[3]
+                date_string = str(self.date_begin.year)
+
+            return ' '.join([product,wq_type, date_string])
+
+        if hasattr(self.indicator, 'short_name'): #todo Add alternate_title for Indicator
+
+            product = self.indicator.short_name
+            wq_type = self.identifier
+
+            if 'IND' in self.indicator.short_name:
+                wq_type = self.identifier.split('_')[2] + ' ' + self.identifier.split('_')[3]
+
+                if self.date_begin.year == self.date_end.year:
+                    date_string = str(self.date_begin.year)
+                else:
+                    date_string = ' '.join([str(self.date_begin.year), '/', str(self.date_end.year)])
+
+            if 'IND-' in self.indicator.short_name:
+                product = product[4:]
+
+            return ' '.join([product, wq_type, date_string])
+
+    def indexing(self):
+
+        indicator_name = []
+        product_name = []
+        if self.indicator:
+            cat = "indicator"
+            indicator_name = self.indicator.name
+
+        elif self.product:
+            cat = "product"
+            product_name = self.product.name
+
+        topic_cats = []
+        for topic_cat in self.topicCategory.all():
+            res = ISOcodelist.objects.get(pk=topic_cat.id)
+            topic_cats.append(res.identifier)
+
+        keywords = []
+        for keyword in KeywordInline.objects.filter(layer=self.id):
+            keywords.append(keyword.keyword)
+
+        contact_name = []
+        contact_org = []
+        for contact in self.point_of_contacts.all():
+            res = Contact.objects.get(pk=contact.id)
+            contact_name.append(contact.first_name + " " + contact.last_name)
+            contact_org.append(contact.organisation)
+        for meta_contact in self.meta_contacts.all():
+            res = Contact.objects.get(pk=contact.id)
+            contact_name.append(contact.first_name + " " + contact.last_name)
+            contact_org.append(contact.organisation)
+
+        extent = {
+            "type": "Polygon",
+            "coordinates": [[[self.west,self.north],[self.east,self.north],[self.east,self.south],[self.west,self.south],[self.west,self.north]]]
+        }
+
+        obj = LayerIndex(
+            meta={'id': self.id},
+            title=self.title,
+            category=cat,
+            description=self.abstract,
+            topiccat=topic_cats,
+            keywords=keywords,
+            wetland = self.wetland.name,
+            product_name = product_name,
+            indicator_name = indicator_name,
+            contact_name = contact_name,
+            contact_org = contact_org,
+            date_begin=self.date_begin,
+            date_end=self.date_end,
+            lineage = self.meta_lineage,
+            geom = extent
+        )
+        print obj
+        obj.save()
+        return obj.to_dict(include_meta=True)
+
 
 class ExternalLayer(Layer):
     datasource = models.ForeignKey(ExternalDatabase, related_name="layer_datasource", verbose_name="External Database", blank=True, null=True)

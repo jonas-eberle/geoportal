@@ -1281,13 +1281,42 @@ class GetNationalData(APIView):
             return Response({})
 
     def get(self, request, pk):
-        #country = request.query_params.get('country', '')
         country = self.get_object(pk)
 
         wetlands = Wetland.objects.filter(country__contains=country.name)
         wetlands = [WetlandsSerializer(i).data for i in wetlands]
 
-        layers = []
+        temp_products_layers = dict()
+        temp_products = dict()
+        layers = WetlandLayer.objects.filter(country=country, publishable=True)
+        for layer in layers:
+            layer_data = LayerSerializer(layer).data
+            layer_data['country_id'] = country.id
+            layer_data['statistic'] = layer.statistic
+            
+            if layer_data['legend_colors']:
+                layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+            if layer_data['meta_file_info']:
+                layer_data['meta_file_info'] = json.loads(layer_data['meta_file_info'])
+            if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
+                layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
+                layer_data['selectedDate'] = layer_data['ogc_times'][-1]
+            
+            if layer.product:
+                layer_data['product_name'] = layer.product.name
+                if layer.product.id not in temp_products_layers:
+                    temp_products[layer.product.id] = layer.product
+                    temp_products_layers[layer.product.id] = [layer_data]
+                else:
+                    temp_products_layers[layer.product.id].append(layer_data)
+
+        products = []
+        for product in temp_products:
+            product = temp_products[product]
+            layers = temp_products_layers[product.id]
+            products.append(
+                {'id': product.id, 'name': product.name, 'order': product.order, 'description': product.description,
+                 'layers': layers})
 
         geoss = dict(national=[], continental=[])
         extdata_country = ExternalDatabase.objects.filter(country=country, geoss_datasource_id__isnull=False)
@@ -1298,4 +1327,4 @@ class GetNationalData(APIView):
         geoss['continental'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_continent]
         geoss['global'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
 
-        return Response(dict(wetlands=wetlands, layers=layers, geoss=geoss))
+        return Response(dict(wetlands=wetlands, products=products, geoss=geoss))

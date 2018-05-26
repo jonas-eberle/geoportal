@@ -10,7 +10,8 @@
         var nationalData = this;
         
         nationalData.open_maps = true;
-        nationalData.layers = [];
+        nationalData.products = [];
+        nationalData.layers = []; //external national layers
         nationalData.databases = [];
         nationalData.ownmaps_open = true;
         nationalData.wetlands_open = false;
@@ -74,7 +75,7 @@
                 'url'   : '/swos/'+country.id+'/nationaldata.json'
             }).then(function (data) {
                 nationalData.wetlands = data['wetlands'];
-                nationalData.maps = data['layers'];
+                nationalData.products = data['products'];
                 nationalData.geoss = data['geoss'];
                 
                 $timeout(function(){

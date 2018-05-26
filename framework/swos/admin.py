@@ -45,7 +45,7 @@ make_non_downloadable.short_description = "Mark as not downloadable"
 class WetlandLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
             'classes': ('suit-tab', 'suit-tab-swos',),
-            'fields': ('wetland', 'product', 'indicator')
+            'fields': ('wetland', 'country', 'product', 'indicator')
         }),)
     list_display=('title','publishable', 'downloadable', 'wetland', 'product', 'indicator')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)

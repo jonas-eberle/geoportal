@@ -138,7 +138,7 @@ class Layer(models.Model):
     meta_date = models.DateField(blank=True, null=True, verbose_name="Metadata date")
     meta_lineage = models.TextField("Lineage information", blank=True, default="")
     meta_file_info = models.TextField("File info e.g. source", null=True, blank=True)
-    data_source = models.ManyToManyField("self", verbose_name="Data source" )
+    data_source = models.ManyToManyField("self", verbose_name="Data source", blank=True)
 
 
     #Legend

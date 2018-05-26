@@ -779,17 +779,40 @@
                         </select>
                         
                         <uib-accordion close-others="false" ng-if="nationalData.selectedCountry != null">
-                            <div uib-accordion-group is-open="nationalData.ownmaps_open" ng-if="nationalData.maps.length > 0">
+                            <div uib-accordion-group is-open="nationalData.ownmaps_open" ng-if="nationalData.products.length > 0">
                                 <uib-accordion-heading>
-                                    Own layers
+                                    Products
                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.ownmaps_open, 'glyphicon-chevron-right': !nationalData.ownmaps_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
-                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.maps">
-                                        <uib-accordion-heading>
-                                            Product name
-                                        </uib-accordion-heading>
-                                    </div>
+                                    <ul class="items products" style="padding-left:0;">
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group ng-repeat="product in nationalData.products"  heading="{{product.name}}" is-open="product.open">
+                                                <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
+                                                    <span class="project">[SWOS]</span> {{product.name}}
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+                                                </uib-accordion-heading>
+                                                <div class="options">
+                                                    <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                    <div class="products_datasets">
+                                                        <strong>Layers:</strong>
+                                                        <div class="select" ng-if="product.layers.length > 0">
+                                                            <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
+                                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                            </div>
+                                                        </div>
+                                                        <div class="select" ng-if="product.layers.length == 0">
+                                                            No datasets available.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </uib-accordion>
+                                    </ul>
                                 </uib-accordion>
                             </div>
                             
@@ -842,7 +865,7 @@
                             
                             <div uib-accordion-group is-open="nationalData.maps_open" ng-if="nationalData.layers.length > 0">
                                 <uib-accordion-heading>
-                                    National maps & layers
+                                    External national maps & layers
                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.maps_open, 'glyphicon-chevron-right': !nationalData.maps_open}"></i>
                                 </uib-accordion-heading>
                                 <uib-accordion close-others="false">
