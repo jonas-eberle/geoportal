@@ -160,7 +160,10 @@ class WetlandDetail(APIView):
                 layer_data['story_line'] = ""
 
             if layer_data['legend_colors']:
-                layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                try:
+                    layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                except: 
+                    pass
             if layer_data['meta_file_info']:
                 layer_data['meta_file_info'] = json.loads(layer_data['meta_file_info'])
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
@@ -315,7 +318,10 @@ class WetlandDetail(APIView):
                             layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
                             layer_data['selectedDate'] = layer_data['ogc_times'][-1]
                         if layer_data['legend_colors']:
-                            layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                            try:
+                                layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                            except: 
+                                pass
                         if extdb.id not in temp_external_layers:
                             temp_external_layers[extdb.id] = [layer_data]
                         else:
@@ -1245,7 +1251,10 @@ class GetExternalDatabases(APIView):
                         layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
                         layer_data['selectedDate'] = layer_data['ogc_times'][-1]
                     if layer_data['legend_colors']:
-                        layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                        try:
+                            layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                        except: 
+                            pass
                     if extdb.id not in temp_external_layers:
                         temp_external_layers[extdb.id] = [layer_data]
                     else:
@@ -1307,7 +1316,10 @@ class GetNationalData(APIView):
             layer_data['statistic'] = layer.statistic
             
             if layer_data['legend_colors']:
-                layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                try:
+                    layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                except: 
+                    pass
             if layer_data['meta_file_info']:
                 layer_data['meta_file_info'] = json.loads(layer_data['meta_file_info'])
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
