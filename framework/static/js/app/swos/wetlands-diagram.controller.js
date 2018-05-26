@@ -1187,8 +1187,13 @@
                     '<td class="legend-percent"><span>{{ (item[0]/10000).toFixed(2) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
-                    '<table ng-if="!active_layer.legend_colors" style="width:100%;">' +
-                    '<tr ng-repeat="item in data | orderBy : \'-key\' ">' +
+                    '<table class="chart_time_series" ng-if="!active_layer.legend_colors" style="width:100%;">' +
+                    '<tr class="border">'+
+                    '<th>&nbsp;</th>'+
+                    '<th>Class</th>'+
+                    '<th style="text-align: right" ng-repeat="val in data[0].values">{{val[0]}}</th>'+
+                    '</tr>'+
+                    '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.key }}</td>' +
                     '<td ng-repeat="val in item.values" class="legend-percent"><span>{{ val[1].toFixed(2) }}</span></td>' +

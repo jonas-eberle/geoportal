@@ -758,3 +758,13 @@ path.chord {
  #circle:hover path.fade {
     opacity: 0;
 }
+
+table.chart_time_series th, table.chart_time_series td  {
+    
+}  
+
+table.chart_time_series tr.border th, table.chart_time_series tr.border td {
+    border: 1px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+}
