@@ -480,8 +480,56 @@
                                     <!-- Indicators -->
                                     <uib-tab class="flaticon-business" heading="" uib-tooltip="Indicators" tooltip-append-to-body="true" select="tracking.trackWetlandTab('indicator')">
                                         <div ng-if="wetlands.value.data.indicators.length == 0">No indicators available!</div>
-    
-                                    </uib-tab>
+                                        <div class="remove-button-wrapper hidden-xs">
+                                            <button class="btn btn-default btn-sm" ng-click="wetlands.removeAllLayers()">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                                Remove all layers
+                                            </button>
+                                            <button class="btn btn-default btn-sm" ng-click="wetlands.removeLayersByWetland(wetlands.value.id)">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                                Remove all layers of this Wetland
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(wetlands.value.data.indicators, wetlands.value.data.indicators[0].layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                        </div>
+                                        <div>
+                                            <ul class="items products">
+                                                <uib-accordion close-others="false">
+                                                        <div uib-accordion-group ng-repeat="product in wetlands.value.data.indicators"  heading="{{product.name}}" is-open="product.open">
+                                                            <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);" >
+                                                                <span class="project">[SWOS]</span> {{product.name}}
+                                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+                                                            </uib-accordion-heading>
+                                                              <div>
+                                                                  <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0], product.layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                                              </div>
+                                                            <div class="options">
+                                                                <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                                <p ng-if="product.story_line.length != 0 && product.story_line != false"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
+                                                                <div class="products_datasets">
+            
+                                                                    <strong>Layers:</strong>
+                                                                    <div class="select" ng-if="product.layers.length > 0">
+                                                                        <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
+                                                                            <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                            <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                            <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                            <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="select" ng-if="product.layers.length == 0">
+                                                                        No datasets available.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+            
+                                                        </div>
+                                                    </uib-accordion>
+                                                </ul>
+                                            </div>
+                                        </uib-tab>
+                                
                                     <!-- Products -->
                                     <uib-tab class="flaticon-layers"  heading="" uib-tooltip="Products" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                         <div ng-if="wetlands.value.data.products.length == 0">No products available!</div>

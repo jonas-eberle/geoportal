@@ -1156,22 +1156,17 @@
                     '<button ng-click="diagram.set_legend_type(\'SWD_TF_OP\')" ng-style="diagram.set_style_legend(\'SWD_TF_OP\', legend_type_lulc)">OP</button>' +
                     '<button ng-click="diagram.set_legend_type(\'SWD_TF_SAR\')" ng-style="diagram.set_style_legend(\'SWD_TF_SAR\', legend_type_lulc)">   SAR</button>' +
                     '</div>' +
+                    '<div style="display: inline-block;padding-right: 20px;"><button ng-if="diagram.layers[legend_type_lulc].length > 1" ng-click="diagram.set_data_options_over_time(legend_type_lulc)" uib-tooltip="Show all years" tooltip-append-to-body="true" ><i class="fa fa-line-chart fa-lg"></i></button></div>' +
                     '<div ng-repeat="layer in diagram.layers[legend_type_lulc] track by $index" style="display: inline-block;padding-top: 14px;" ">' +
                     '<button ng-if="layer.layer.id == active_layer.id" ng-click="diagram.set_data_options_year(layer.layer); diagram.updateChords(active_layer.stat)" style="font-weight: bold;" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
-                    '<button ng-if="layer.layer.id != active_layer.id" ng-click="diagram.set_data_options_year(layer.layer);diagram.updateChords(active_layer.stat)"uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
+                    '<button ng-if="layer.layer.id != active_layer.id" ng-click="diagram.set_data_options_year(layer.layer);diagram.updateChords(active_layer.stat)" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '</div >' +
-                    '<div style="display: inline-block;padding-left: 20px;"><button ng-if="diagram.layers[legend_type_lulc].length > 1" ng-click="diagram.set_data_options_over_time(legend_type_lulc)"uib-tooltip="Show all years" tooltip-append-to-body="true" ><i class="fa fa-line-chart fa-lg"></i></button></div>' +
                     '<div style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
                     '</div>' +
                     '</div>' +
-                    // '<button id="WomenOnlyButton">Women Only</button><button id="MenOnlyButton">Men Only</button><button id="AllTripsButton" disabled="true" >All</button> <div id="chart_placeholder"></div>'+
-                    //   '<div ng-init="diagram.chord_diagram()"></div>' +
-                    '<uib-tabset justified="true"> <uib-tab heading="Interactive Chart">' +
+                    
+                    '<uib-tabset justified="true"> <uib-tab heading="Data">' +
 
-                    '<div style="text-align: center;"><strong>Absolute area proportions</strong></div><div style="font-size:0.9em;text-align: center;" class="hint">(Move your mouse over or click on the classes for more details)</div>' +
-                    '<div ng-if="!active_layer.stat" style="display: flex;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>' +
-                    '<div ng-if="active_layer.stat" id="chart_placeholder" ng-init="diagram.init();diagram.updateChords(active_layer.stat)"></div>' +
-                    '</uib-tab><uib-tab heading="Data">' +
                     '<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="active_layer.legend_url || active_layer.legend_graphic || active_layer.legend_colors"> <strong ng-if=active_layer.legend_colors>Relative area proportions</strong></div>' +
                     '<table ng-if="active_layer.legend_colors" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
@@ -1200,6 +1195,13 @@
                     '</tr>' +
                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>'+
                 '</table>' +
+                    
+                    '</uib-tab><uib-tab heading="Interactive Chart">' +
+                    
+                    '<div style="text-align: center;"><strong>Absolute area proportions</strong></div><div style="font-size:0.9em;text-align: center;" class="hint">(Move your mouse over or click on the classes for more details)</div>' +
+                    '<div ng-if="!active_layer.stat" style="display: flex;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>' +
+                    '<div ng-if="active_layer.stat" id="chart_placeholder" ng-init="diagram.init();diagram.updateChords(active_layer.stat)"></div>' +
+          
                 '</div></uib-tab></uib-tabset></div>';
                 $('#diagram_' + layer.id).show();
                 if (layer.identifier.includes("LULC_")) {

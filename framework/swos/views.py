@@ -267,9 +267,9 @@ class WetlandDetail(APIView):
         # use first country of country list to find the continent #todo handel country list
         if ("-" in wetland.country):
             countries = wetland.country.split('-')
-            country_continent = Country.objects.get(name=countries[1])
+            country_continent = Country.objects.get(name=countries[0])
         else:
-            country_continent = Country.objects.get(name=wetland.country)
+            country_continent = Country.objects.get(name=wetland.country.replace('Tanzania', 'United Republic of Tanzania'))
 
         extdata = ExternalDatabase.objects.filter(country__name=wetland.country) | ExternalDatabase.objects.filter(continent="Global") | ExternalDatabase.objects.filter(continent=country_continent.continent) | ExternalDatabase.objects.filter(wetland_id=wetland.id)
 
