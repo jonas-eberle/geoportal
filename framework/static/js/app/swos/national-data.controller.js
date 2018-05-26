@@ -76,6 +76,7 @@
             }).then(function (data) {
                 nationalData.wetlands = data['wetlands'];
                 nationalData.products = data['products'];
+                WetlandsService.national_products = data['products'];
                 nationalData.geoss = data['geoss'];
                 
                 $timeout(function(){

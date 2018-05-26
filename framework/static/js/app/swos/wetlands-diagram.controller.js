@@ -802,7 +802,12 @@
             var stats = [];
             var header_list = [];
             var max_count = [];
-            var c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);
+            var c;
+            try {
+                c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);   
+            } catch(e) {
+                c = WetlandsService.national_products;
+            }
 
             for (var product in c) {
                 var product_layers = c[product].layers;
@@ -894,7 +899,11 @@
 
         }
         $scope.$watch("legend_type_lulc", function() {
-            angular.element('#diagram').parent().parent().parent().parent().prev().children().text(WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name);
+            var title = $scope.category_name;
+            try {
+                title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
+            } catch(e) {}
+            angular.element('#diagram').parent().parent().parent().parent().prev().children().text(title);
         }, true);
 
         function onclickCreate(product_layers, layer_id) {
@@ -961,9 +970,16 @@
             diagram.layers["IND-ALL_RAMSAR-CLC"] = [];
             diagram.layers["IND-ALL_MAES"] = [];
             group_list.push(["IND-ALL_MAES", "IND-ALL_RAMSAR-CLC"]);
-
-            var layer_arr = WetlandsService.value.data.products;
-            var c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);
+            
+            var layer_arr;
+            var c;
+            try {
+                layer_arr = WetlandsService.value.data.products;
+                c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);   
+            } catch(e) {
+                layer_arr = WetlandsService.national_products;
+                c = layer_arr;
+            }
 
             for (var product in c) {
                 //console.log(product)
@@ -1039,9 +1055,14 @@
 
                     '</div>';
                 set_category_name(layer);
+                
+                var title = $scope.category_name;
+                try {
+                    title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
+                } catch(e) {}
 
                 var dialog = bootbox.dialog({
-                    title: WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name,
+                    title: title,
                     message: output,
                     backdrop: false,
                     closeButton: false,
