@@ -90,7 +90,7 @@ class Wetlands(admin.OSMGeoAdmin):
 
 
 class ExternalDatabaseAdminForm(forms.ModelForm):
-   country = forms.ModelMultipleChoiceField(queryset=Country.objects.order_by('name'))
+   country = forms.ModelMultipleChoiceField(queryset=Country.objects.order_by('name'), required=False)
 
    class Meta:
       model = ExternalDatabase
