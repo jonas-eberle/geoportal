@@ -88,8 +88,19 @@ class Wetlands(admin.OSMGeoAdmin):
     list_filter = ('country', 'geo_scale', 'partner', 'ecoregion', 'site_type','wetland_type')
     suit_list_filter_horizontal = ('country','ecoregion', 'partner')
 
+
+class ExternalDatabaseAdminForm(forms.ModelForm):
+   country = forms.ModelMultipleChoiceField(queryset=Country.objects.order_by('name'))
+
+   class Meta:
+      model = ExternalDatabase
+      exclude = []
+
+
 class ExternalDatabaseAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'description')
+    form = ExternalDatabaseAdminForm
+    
 
 class CountryAdmin(admin.OSMGeoAdmin):
     list_display = ('name', 'continent', 'bbox',)

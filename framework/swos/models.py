@@ -837,7 +837,7 @@ class ExternalDatabase(models.Model):
     provided_information = models.TextField(blank=True)
     category = models.ManyToManyField(Category, blank=True)
     dataset_language = models.CharField(max_length=20, choices=LANG_CODES, default="en", blank=True, help_text="Language of the provided data")
-    geoss_datasource_id = models.CharField(max_length=255, blank=True, null=True)
+    geoss_datasource_id = models.TextField(blank=True, null=True)
     continent = models.CharField(max_length=30, choices=CONTINENT, blank=True)
     country = models.ManyToManyField(Country, blank=True)
     wetland = models.ForeignKey(Wetland, related_name="external_wetland", verbose_name="Wetland", blank=True, null=True)
@@ -924,8 +924,8 @@ class WetlandLayer(Layer):
             elif self.product.short_name in ['LSTT']:
                 date_string = ' '.join([str(self.date_begin.year), 'to', str(self.date_end.year)])
             elif self.product.short_name in ['SATDATA_OP']:
-                wq_type = self.identifier.split('_')[2].replace('S2', 'Sentinel-2') + ' ' + self.identifier.split('_')[3].replace('-', ' ')
-                date_string = str(self.date_begin.year)
+                wq_type = self.identifier.split('_')[2].replace('S2', 'Sentinel-2').replace('L', 'Landsat-') + ' ' + self.identifier.split('_')[3].replace('-', ' ')
+                date_string = self.date_begin.strftime('%Y-%m-%d')
                 product = ''
             elif self.product.short_name in ['SATDATA_SAR']:
                 wq_type = self.identifier.split('_')[2].replace('S1', 'Sentinel-1') + ' ' + self.identifier.split('_')[3].replace('XX', 'VH/HV').replace('-', ' ')
