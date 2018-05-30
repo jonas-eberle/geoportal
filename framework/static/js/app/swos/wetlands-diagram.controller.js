@@ -980,12 +980,12 @@ console.log(label_list)
             
             var layer_arr;
             var c;
-            try {
-                layer_arr = WetlandsService.value.data.products;
-                c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);   
-            } catch(e) {
+            if ($('.national_data').is(":visible")) {
                 layer_arr = WetlandsService.national_products;
-                c = layer_arr;
+                c = layer_arr;   
+            } else {
+                layer_arr = WetlandsService.value.data.products;
+                c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);
             }
 
             for (var product in c) {

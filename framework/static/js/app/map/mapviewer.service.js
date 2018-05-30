@@ -72,27 +72,32 @@
                         var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
                         _this.gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
                     });
-                    view.on('change:resolution', function() {
-                        if (view.getZoom() >= _this.zoom_max) {
-                            angular.element('#zoomInButton').addClass('disabled');
-                        } else {
-                            angular.element('#zoomInButton').removeClass('disabled');
-                        }
-                        if (view.getZoom() <= _this.zoom_min) {
-                            angular.element('#zoomOutButton').addClass('disabled');
-                        } else {
-                            angular.element('#zoomOutButton').removeClass('disabled');
-                        }
-                        _this.gmap.setZoom(view.getZoom());
-    
-                        if (view.getZoom() < 7) {
-                            $('#wetland_legend').show();
-                        } else {
-                            $('#wetland_legend').hide();
-                        }
-                    });
                 } catch(e){}
                 //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
+                
+                view.on('change:resolution', function() {
+                    if (view.getZoom() >= _this.zoom_max) {
+                        angular.element('#zoomInButton').addClass('disabled');
+                    } else {
+                        angular.element('#zoomInButton').removeClass('disabled');
+                    }
+                    if (view.getZoom() <= _this.zoom_min) {
+                        angular.element('#zoomOutButton').addClass('disabled');
+                    } else {
+                        angular.element('#zoomOutButton').removeClass('disabled');
+                    }
+                    try {
+                        _this.gmap.setZoom(view.getZoom());
+                    } catch(e) {}
+                    
+                    console.log('Zoom: '+view.getZoom());                        
+
+                    if (view.getZoom() < 7) {
+                        $('#wetland_legend').show();
+                    } else {
+                        $('#wetland_legend').hide();
+                    }
+                });
 
                 var baseLayers = [];
                 if (this.currentBaseLayerIndex > -1) {

@@ -624,6 +624,10 @@
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
+                    else {
+                        table_values = output["features"][0]["properties"];
+                        result += createHTML(table_values, data["json"][i]["name"]);
+                    }
                 }
             }
             result += data["html"];

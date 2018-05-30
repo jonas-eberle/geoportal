@@ -94,6 +94,27 @@
             display:none;
         }
     </style>
+    
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+    window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#3c404d",
+          "text": "#d6d6d6"
+        },
+        "button": {
+          "background": "#8bed4f"
+        }
+      },
+      "position": "bottom-left",
+      "content": {
+        "href": "http://www.jena-optronik.de/en/imprint-data-privacy.html"
+      }
+    })});
+    </script>
 </head>
 <body>
     <div ng-controller="StoryLineCtrl"></div>
@@ -491,7 +512,9 @@
                                             </button>
                                         </div>
                                         <div>
-                                            <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(wetlands.value.data.indicators, wetlands.value.data.indicators[0].layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                            <!--<button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(wetlands.value.data.indicators, wetlands.value.data.indicators[0].layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>-->
+                                            <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(0,'state');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show state indicators</button>
+                                            <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(0,'change');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show change indicators</button>
                                         </div>
                                         <div>
                                             <ul class="items products">
@@ -502,7 +525,7 @@
                                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
                                                             </uib-accordion-heading>
                                                               <div>
-                                                                  <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0], product.layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                                                   <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
                                                               </div>
                                                             <div class="options">
                                                                 <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
