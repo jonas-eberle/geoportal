@@ -448,7 +448,8 @@
                                         </button>
                                     </div>
                                     <div>
-                                        <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  uib-tooltip="Show statistic" type="button" ng-click="diagram.onclickCreate(wetlands.value.data.indicators, wetlands.value.data.indicators[0].layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: 140px;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show statistic</button>
+                                        <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  uib-tooltip="Show statistic state" type="button" ng-click="diagram.onclickCreate(0,'state');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: 170px;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show statistic state</button>
+                                        <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  uib-tooltip="Show statistic change" type="button" ng-click="diagram.onclickCreate(0,'change');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: 180px;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show statistic change</button>
                                     </div>
                                     <div>
                                     <ul class="items products">
@@ -460,7 +461,7 @@
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
                                                 </uib-accordion-heading>
                                                   <div>
-                                                      <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  uib-tooltip="Show statistic" type="button" ng-click="diagram.onclickCreate(product.layers[0], product.layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: 140px;"><i class="fa fa-line-chart fa-lg"></i>  Show statistic</button>
+                                                      <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  uib-tooltip="Show statistic" type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: 140px;"><i class="fa fa-line-chart fa-lg"></i>  Show statistic</button>
                                                   </div>
                                                 <div class="options">
                                                     <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>

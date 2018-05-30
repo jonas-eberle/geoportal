@@ -20,13 +20,13 @@
         diagram.addLayerToMap = addLayerToMap;
         diagram.init = init;
         diagram.updateChords =updateChords;
-        diagram.product_layers = [];
         diagram.options_years = [];
 
         diagram.data = [];
         diagram.options = [];
         diagram.layers = [];
         diagram.legend_type_lulc = [];
+        diagram.window_id = 0;
 
         diagram.data_vals = "";
 
@@ -45,7 +45,7 @@
         diagram.ind_name['123'] = 'Artificial wetland / rivers bodies';
         diagram.ind_name['200'] = 'Urban';
         diagram.ind_name['300'] = 'Agriculture';
-        diagram.ind_name['400'] = 'Naturall habitat not Wetland';
+        diagram.ind_name['400'] = 'Natural habitat not wetland';
         diagram.ind_name['900'] = 'Rice fields';
 
         diagram.ind_color = [];
@@ -512,11 +512,11 @@
             var product_layers = diagram.layers[legend_type_lulc];
             console.log( product_layers)
             for (var p_layer in product_layers) {
-                    data[product_layers[p_layer].name] = [];
+                    data[product_layers[p_layer].key] = [];
                     for (var legend_entries in product_layers[p_layer].layer.legend_colors) {
                         class_id = product_layers[p_layer].layer.legend_colors[legend_entries].code;
                         class_list[class_id] = 1;
-                        data[product_layers[p_layer].name][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].size;
+                        data[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].size;
                         color_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].color;
                         label_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].label;
                         // if (data[product_layers[p_layer].identifier.slice(-4)][class_id] == "undefined") {
@@ -535,12 +535,12 @@
             //    var legend = lulcLegend.LCCS;
             //}
             //legend = reformat_legend(legend);
-
+console.log(label_list)
             var i = 1;
             for (var id in class_list) {
                 data_plot[id] = [];
                 for (var year in data) {
-                    data_plot[id].push([year, data[year][id]]);
+                    data_plot[id].push([year.split("_")[0], data[year][id]]);
                     i++;
                 }
                 data_all_id = {
@@ -563,6 +563,8 @@
             options['y'] = function (d) {
                 return d[1];
             };
+            //options['xAxis'] = [];
+            //options['xAxis']['tickValues']  = ['Label 1','Label 2','Label 3','Label 4','Label 5','Label 6','Label 7','Label 8'];
 
 
             //todo add label ha contentGenerator
@@ -755,9 +757,12 @@
         // set legend type
         function set_legend_type(legend_type_lulc) {
             console.log(legend_type_lulc)
-            if ($scope.active_layer == "") {
+
+            if ($scope.active_layer == "" ) {
                 set_data_options_over_time(legend_type_lulc);
                 $scope.legend_type_lulc = legend_type_lulc;
+
+                set_category_name(diagram.layers[legend_type_lulc][0].layer);
             }
             else {
                 $scope.legend_type_lulc = legend_type_lulc;
@@ -777,6 +782,8 @@
         }
 
         function set_category_name(layer) {
+            console.log(layer)
+            console.log("set category");
             $scope.category_name = get_catagory_name(layer)[0]
         }
 
@@ -900,17 +907,17 @@
         }
         $scope.$watch("legend_type_lulc", function() {
             var title = $scope.category_name;
+            console.log(title)
             try {
                 title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
             } catch(e) {}
-            angular.element('#diagram').parent().parent().parent().parent().prev().children().text(title);
+            console.log('#diagram_'+$scope.window_id)
+            name = '#diagram_'+$scope.window_id;
+            console.log(title)
+            angular.element(name).parent().parent().parent().parent().prev().children().text(title);
         }, true);
 
-        function onclickCreate(product_layers, layer_id) {
-            console.log(layer_id)
-            console.log(product_layers)
-
-            diagram.product_layers = product_layers;
+        function onclickCreate(layer_id, show_type) {
 
             // todo replace CLC with RAMSAR-CLC
             var group_list = [];
@@ -983,7 +990,7 @@
 
             for (var product in c) {
                 //console.log(product)
-                product_layers = c[product].layers;
+                var product_layers = c[product].layers;
                 //console.log(product_layers)
                 for (var p_layer in product_layers) {
 
@@ -992,6 +999,7 @@
                         console.log("layer found")
                         for (var key in diagram.layers) {
                             if (product_layers[p_layer].identifier.includes(key)) {
+                                console.log("legend type set")
                                 $scope.legend_type_lulc = key;
                                 break;
                             }
@@ -1000,6 +1008,7 @@
                     for (var key in diagram.layers) {
                         if (product_layers[p_layer].identifier.includes(key) && product_layers[p_layer].legend_colors && (product_layers[p_layer].legend_colors[0].size || product_layers[p_layer].legend_colors[0].size == 0 )) {
                             diagram.layers[key].push({
+                                key:  product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
                                 name: product_layers[p_layer].identifier.split("_").slice(-1)[0],
                                 title: product_layers[p_layer].identifier.split("_").slice(2)[0] + " " + product_layers[p_layer].identifier.split("_").slice(3)[0] + " " + product_layers[p_layer].identifier.split("_").slice(-1)[0],
                                 layer: product_layers[p_layer]
@@ -1016,10 +1025,19 @@
                                         }
                                     }
                                     new_layer.columns = [product_layers[p_layer].meta_file_info.columns[key2], product_layers[p_layer].meta_file_info.columns[i]],
-                                        new_layer.id = product_layers[p_layer].id + 1000 + parseInt(i)  + (parseInt(key2) * 2);
+                                        new_layer.id = product_layers[p_layer].id + 1000 + (parseInt(i) + 10)  + (parseInt(key2) * 2);
+                                        if (product_layers[p_layer].meta_file_info.columns[key2].year.length == 8){
+                                            var name_year1 = [product_layers[p_layer].meta_file_info.columns[key2].year.slice(0, 4), product_layers[p_layer].meta_file_info.columns[key2].year.slice(4, 6),product_layers[p_layer].meta_file_info.columns[key2].year.slice(6)].join('/');
+                                            var name_year2 = [product_layers[p_layer].meta_file_info.columns[i].year.slice(0, 4), product_layers[p_layer].meta_file_info.columns[i].year.slice(4, 6),product_layers[p_layer].meta_file_info.columns[i].year.slice(6)].join('/');
+                                        }
+                                        else {
+                                            var name_year1 = product_layers[p_layer].meta_file_info.columns[key2].year;
+                                            var name_year2 = product_layers[p_layer].meta_file_info.columns[i].year;
+                                        }
                                     diagram.layers[key].push({
                                         type: "change",
-                                        name: product_layers[p_layer].meta_file_info.columns[key2].year + "-" + product_layers[p_layer].meta_file_info.columns[i].year,
+                                        key:  product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
+                                        name:name_year1 + "-" + name_year2,
                                         title: product_layers[p_layer].identifier.split("_").slice(2)[0] + " " + product_layers[p_layer].meta_file_info.columns[key2].sensor + " " + product_layers[p_layer].meta_file_info.columns[key2].year + "-" + product_layers[p_layer].meta_file_info.columns[i].year,
                                         layer: new_layer
                                     });
@@ -1030,8 +1048,29 @@
                 }
             }
 
+            if (layer_id == 0 && show_type == "state") {
+                if (diagram.layers["IND_RAMSAR-CLC"][0]) {
+                    $scope.legend_type_lulc = "IND_RAMSAR-CLC";
+                }
+                else if (diagram.layers["IND_MAES"][0]) {
+                    $scope.legend_type_lulc = "IND_MAES";
+                }
+            }
+            else if(layer_id == 0 && show_type == "change") {
+                if (diagram.layers["IND-ALL_RAMSAR-CLC"][0]) {
+                    $scope.legend_type_lulc = "IND-ALL_RAMSAR-CLC";
+                }
+                else if (diagram.layers["IND-ALL_MAES"][0]) {
+                    $scope.legend_type_lulc = "IND-ALL_MAES";
+                }
+            }
+
             //console.log(diagram.layers);
             console.log("Creating diagram");
+
+            if (layer == undefined){
+                layer = diagram.layers[$scope.legend_type_lulc][0].layer
+            }
             var charts = angular.element('#diagram_' + layer.id).find('nvd3');
             if (charts.length > 0) {
                 return;
@@ -1045,7 +1084,19 @@
                 value[class_id] = layer.legend_colors[legend_entries].size;
             }
 
-            set_data_options_year(layer);
+            //set year overview as default for indicator
+            if (show_type == "all" && !diagram.layers[$scope.legend_type_lulc][0].name.includes("-") || show_type == 'state' ){
+                console.log("Set over time")
+                console.log($scope.legend_type_lulc)
+                set_data_options_year(layer);
+                set_data_options_over_time($scope.legend_type_lulc );
+            }
+            else{
+                set_data_options_year(layer);
+            }
+
+
+
             if ($scope.data !== -1) {
                 var output = '<div  class="ts_diagram">' +
                     ' ' +
@@ -1054,8 +1105,9 @@
                     '</div>' +
 
                     '</div>';
+
                 set_category_name(layer);
-                
+                $scope.window_id= Math.floor(Math.random() * 1000);
                 var title = $scope.category_name;
                 try {
                     title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
@@ -1089,6 +1141,7 @@
                                 } else {
                                     alert('CSV export only works in Chrome, Firefox, and Opera.');
                                 }
+                                return false;
                             }
                         },
                         "Export all as CSV": {
@@ -1113,6 +1166,7 @@
                                 } else {
                                     alert('CSV export only works in Chrome, Firefox, and Opera.');
                                 }
+                                return false;
                             }
                         },
                         cancel: {
@@ -1165,7 +1219,7 @@
                 //copy_and_insert_new_layer(WetlandsService.value.data.indicators[1].layers[0]);
 
                 var template =
-                    '<div id="diagram"><select ng-change=diagram.set_legend_type(legend_type_lulc) ng-model="legend_type_lulc" ng-options="option.key as option.name for option in select_list" style="margin-top: -10px;right: 15px;position: absolute;""></select></div>' +
+                    '<div id="diagram_{{window_id}}"><select ng-change=diagram.set_legend_type(legend_type_lulc) ng-model="legend_type_lulc" ng-options="option.key as option.name for option in select_list" style="margin-top: -10px;right: 15px;position: absolute;""></select></div>' +
 
                     maes_clc +
 
@@ -1177,12 +1231,12 @@
                     '<button ng-click="diagram.set_legend_type(\'SWD_TF_OP\')" ng-style="diagram.set_style_legend(\'SWD_TF_OP\', legend_type_lulc)">OP</button>' +
                     '<button ng-click="diagram.set_legend_type(\'SWD_TF_SAR\')" ng-style="diagram.set_style_legend(\'SWD_TF_SAR\', legend_type_lulc)">   SAR</button>' +
                     '</div>' +
-                    '<div style="display: inline-block;padding-right: 20px;"><button ng-if="diagram.layers[legend_type_lulc].length > 1" ng-click="diagram.set_data_options_over_time(legend_type_lulc)" uib-tooltip="Show all years" tooltip-append-to-body="true" ><i class="fa fa-line-chart fa-lg"></i></button></div>' +
+                    '<div style="display: inline-block;padding-right: 20px;"><button ng-if="diagram.layers[legend_type_lulc].length > 1 && !diagram.layers[legend_type_lulc][0].name.includes(\'-\')" ng-click="diagram.set_data_options_over_time(legend_type_lulc)" uib-tooltip="Show all years" tooltip-append-to-body="true" ><i class="fa fa-line-chart fa-lg"></i></button></div>' +
                     '<div ng-repeat="layer in diagram.layers[legend_type_lulc] track by $index" style="display: inline-block;padding-top: 14px;" ">' +
                     '<button ng-if="layer.layer.id == active_layer.id" ng-click="diagram.set_data_options_year(layer.layer); diagram.updateChords(active_layer.stat)" style="font-weight: bold;" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '<button ng-if="layer.layer.id != active_layer.id" ng-click="diagram.set_data_options_year(layer.layer);diagram.updateChords(active_layer.stat)" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '</div >' +
-                    '<div style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
+                    '<div ng-if="active_layer" style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
                     '</div>' +
                     '</div>' +
                     
@@ -1208,7 +1262,7 @@
                     '<td class="legend-percent"><span>{{ (item[0]/10000).toFixed(2) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
-                    '<table class="chart_time_series" ng-if="!active_layer.legend_colors" style="width:100%;">' +
+                    '<table class="chart_time_series" ng-if="!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')" style="width:100%;">' +
                     '<tr class="border">'+
                     '<th>&nbsp;</th>'+
                     '<th>Class</th>'+
@@ -1217,7 +1271,7 @@
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.key }}</td>' +
-                    '<td ng-repeat="val in item.values" class="legend-percent"><span>{{ val[1].toFixed(2) }}</span></td>' +
+                    '<td ng-repeat="val in item.values" class="legend-percent"><span>{{ val[1].toFixed(2) }} ha</span></td>' +
                     '</tr>' +
                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>'+
                 '</table>' +
@@ -1545,70 +1599,65 @@
 
 
         var g;
-var formatPercent;
-var numberWithCommas;
-var landuse = [{name: "Wettland", color: "rgb(0,169,230)"},{name: "Wet. ext (nat.)", color: "rgb(0,100,230)"},  {name: "Wetland(art.)", color: "rgb(0,200,230)"},  {name: "Urban", color: "rgb(255,66,66)"},  {name: "Argiculture", color: "rgb(255,255,100)"}, {name: "Other", color: "rgb(0,168,132)"},  {name: "Rice", color: "rgb(0,168,132)"}];
-var last_layout;
-var arc;
-var path;
-var width;
-var height;
-var outerRadius;
-var innerRadius;
+        var formatPercent;
+        var numberWithCommas;
+        var landuse;
+        var last_layout;
+        var arc;
+        var path;
+        var width;
+        var height;
+        var outerRadius;
+        var innerRadius;
 
         function init() {
             console.log("init")
             jQuery(window).trigger('resize');
-    /*** Define parameters and tools ***/
-    width = 500;
-    height = 500;
-    outerRadius = Math.min(width, height) / 2 - 40;//100,
-    innerRadius = outerRadius - 10;
+            /*** Define parameters and tools ***/
+            width = 500;
+            height = 500;
+            outerRadius = Math.min(width, height) / 2 - 40;//100,
+            innerRadius = outerRadius - 10;
 
 
-//create number formatting functions
-    formatPercent = d3.format("%");
-    numberWithCommas = d3.format("0,f");
+            //create number formatting functions
+            formatPercent = d3.format("%");
+            numberWithCommas = d3.format("0,f");
 
-//create the arc path data generator for the groups
-    arc = d3.svg.arc()
-        .innerRadius(innerRadius)
-        .outerRadius(outerRadius);
+            //create the arc path data generator for the groups
+            arc = d3.svg.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
 
-//create the chord path data generator for the chords
-    path = d3.svg.chord()
-        .radius(innerRadius - 4);// subtracted 4 to separate the ribbon
+            //create the chord path data generator for the chords
+            path = d3.svg.chord()
+                .radius(innerRadius - 4);// subtracted 4 to separate the ribbon
 
-//define the default chord layout parameters
-//within a function that returns a new layout object;
-//that way, you can create multiple chord layouts
-//that are the same except for the data.
+            //define the default chord layout parameters
+            //within a function that returns a new layout object;
+            //that way, you can create multiple chord layouts
+            //that are the same except for the data.
 
-    // var last_layout; //store layout between updates
- //    var landuse; //store neighbourhood data outside data-reading function
+            // var last_layout; //store layout between updates
+            //    var landuse; //store neighbourhood data outside data-reading function
 
-     /*** Initialize the visualization ***/
-     g = d3.select("#chart_placeholder").append("svg")
-         .attr("width", width)
-         .attr("height", height)
-         .append("g")
-         .attr("id", "circle")
-         .attr("transform",
-             "translate(" + width / 2 + "," + height / 2 + ")");
-//the entire graphic will be drawn within this <g> element,
-//so all coordinates will be relative to the center of the circle
-console.log(g)
-     g.append("circle")
-         .attr("r", outerRadius);
-//this circle is set in CSS to be transparent but to respond to mouse events
-//It will ensure that the <g> responds to all mouse events within
-//the area, even after chords are faded out.
-
-
-     //var matrix = [[3, 4], [5, 4]];
-    var matrix = [[0, 0, 0, 0, 0, 0, 0], [0, 11625300.0, 0, 0, 294300.0, 575100.0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 815488.97449977, 1845640.78521536, 18000.0, 0], [0, 145800.0, 0, 412708.201096615, 158047211.212593, 1636772.93446553, 0], [0, 314100.0, 0, 7200.0, 1816497.33989708, 1333035.84837072, 9440421.7940151], [0, 0, 0, 0, 0, 0, 0]];
-    //updateChords( matrix);
- }
+            /*** Initialize the visualization ***/
+            g = d3.select("#chart_placeholder").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("id", "circle")
+                .attr("transform",
+                    "translate(" + width / 2 + "," + height / 2 + ")");
+            //the entire graphic will be drawn within this <g> element,
+            //so all coordinates will be relative to the center of the circle
+            //console.log(g)
+            g.append("circle")
+                .attr("r", outerRadius);
+            //this circle is set in CSS to be transparent but to respond to mouse events
+            //It will ensure that the <g> responds to all mouse events within
+            //the area, even after chords are faded out.
+        }
 
 
         // Chord diagram
@@ -1618,124 +1667,128 @@ console.log(g)
                 .sortSubgroups(d3.descending)
                 .sortChords(d3.ascending);
         }
+
         /* Create OR update a chord layout from a data matrix */
-        function updateChords( stat ) {
-console.log(stat);
-console.log(angular.element('#chart_placeholder').length)
-            if (angular.element('#chart_placeholder').length == 0){init()}
-
-            var all_classes = [];
-            for (var key in stat.stat ){
-                all_classes[stat.stat[key][1]] = 1;
-                all_classes[stat.stat[key][2]] = 1;
-            }
-            console.log(all_classes);
-            var landuse = [];
-            for (var key in diagram.ind_name){
-                landuse.push({name: diagram.ind_name[key], color: diagram.ind_color[key]} )
-            }
-            console.log(landuse)
-            //var landuse = [{name: "Wettland", color: "rgb(0,169,230)"},{name: "Wet. ext (nat.)", color: "rgb(0,100,230)"},  {name: "Wetland(art.)", color: "rgb(0,200,230)"},  {name: "Urban", color: "rgb(255,66,66)"},  {name: "Argiculture", color: "rgb(255,255,100)"}, {name: "Other", color: "rgb(0,168,132)"},  {name: "Rice", color: "rgb(0,168,132)"}];
-            //console.log(landuse)
-            var data = [];
-             var data_line = [];
-            for (var key in diagram.ind_name){
-                for (var key2 in diagram.ind_name){
-                    var val = 0;
-
-                    for (var key3 in stat.stat){
-                        if (stat.stat[key3][1] == key && stat.stat[key3][2] == key2){
-                           val = stat.stat[key3][0];
-                            break;
-                        }
-                    }
-                    data_line.push(val)
-
+        function updateChords(stat) {
+            if (stat) {
+                console.log(stat);
+                console.log(angular.element('#chart_placeholder').length)
+                if (angular.element('#chart_placeholder').length == 0) {
+                    init()
                 }
-                data.push( data_line )
+
+                var all_classes = [];
+                for (var key in stat.stat) {
+                    all_classes[stat.stat[key][1]] = 1;
+                    all_classes[stat.stat[key][2]] = 1;
+                }
+                console.log(all_classes);
+                var landuse = [];
+                for (var key in diagram.ind_name) {
+                    landuse.push({name: diagram.ind_name[key], color: diagram.ind_color[key]})
+                }
+                console.log(landuse)
+                //var landuse = [{name: "Wettland", color: "rgb(0,169,230)"},{name: "Wet. ext (nat.)", color: "rgb(0,100,230)"},  {name: "Wetland(art.)", color: "rgb(0,200,230)"},  {name: "Urban", color: "rgb(255,66,66)"},  {name: "Argiculture", color: "rgb(255,255,100)"}, {name: "Other", color: "rgb(0,168,132)"},  {name: "Rice", color: "rgb(0,168,132)"}];
+                //console.log(landuse)
+                var data = [];
                 var data_line = [];
-            }
-            console.log(data);
-            var matrix = data;
-          //  d3.json(datasetURL, function(error, matrix) {
+                for (var key in diagram.ind_name) {
+                    for (var key2 in diagram.ind_name) {
+                        var val = 0;
 
-          //  if (error) {alert("Error reading file: ", error.statusText); return; }
+                        for (var key3 in stat.stat) {
+                            if (stat.stat[key3][1] == key && stat.stat[key3][2] == key2) {
+                                val = stat.stat[key3][0];
+                                break;
+                            }
+                        }
+                        data_line.push(val)
 
-            //var matrix = JSON.parse( d3.select(datasetURL).text() );
+                    }
+                    data.push(data_line)
+                    var data_line = [];
+                }
+                console.log(data);
+                var matrix = data;
+                //  d3.json(datasetURL, function(error, matrix) {
+
+                //  if (error) {alert("Error reading file: ", error.statusText); return; }
+
+                //var matrix = JSON.parse( d3.select(datasetURL).text() );
                 // instead of d3.json
 
-            /* Compute chord layout. */
-            var layout = getDefaultLayout(); //create a new layout object
-            layout.matrix(matrix);
+                /* Compute chord layout. */
+                var layout = getDefaultLayout(); //create a new layout object
+                layout.matrix(matrix);
 
-            /* Create/update "group" elements */
-            var groupG = g.selectAll("g.group")
-                .data(layout.groups(), function (d) {
-                    return d.index;
-                    //use a key function in case the
-                    //groups are sorted differently
-                });
+                /* Create/update "group" elements */
+                var groupG = g.selectAll("g.group")
+                    .data(layout.groups(), function (d) {
+                        return d.index;
+                        //use a key function in case the
+                        //groups are sorted differently
+                    });
 
-            groupG.exit()
-                .transition()
+                groupG.exit()
+                    .transition()
                     .duration(1500)
                     .attr("opacity", 0)
                     .remove(); //remove after transitions are complete
 
-            var newGroups = groupG.enter().append("g")
-                .attr("class", "group");
-            //the enter selection is stored in a variable so we can
-            //enter the <path>, <text>, and <title> elements as well
+                var newGroups = groupG.enter().append("g")
+                    .attr("class", "group");
+                //the enter selection is stored in a variable so we can
+                //enter the <path>, <text>, and <title> elements as well
 
 
-            //Create the title tooltip for the new groups
-            newGroups.append("title");
+                //Create the title tooltip for the new groups
+                newGroups.append("title");
 
-            //Update the (tooltip) title text based on the data
-            groupG.select("title")
-                .text(function(d, i) {
-                    return numberWithCommas(d.value)
-                        + " ha total area of "
-                        + landuse[i].name;
-                });
+                //Update the (tooltip) title text based on the data
+                groupG.select("title")
+                    .text(function (d, i) {
+                        return numberWithCommas(d.value)
+                            + " ha total area of "
+                            + landuse[i].name;
+                    });
 
-            //create the arc paths and set the constant attributes
-            //(those based on the group index, not on the value)
-            newGroups.append("path")
-                .attr("id", function (d) {
-                    return "group" + d.index;
-                    //using d.index and not i to maintain consistency
-                    //even if groups are sorted
-                })
-                .style("fill", function (d) {
-                    return landuse[d.index].color;
-                });
+                //create the arc paths and set the constant attributes
+                //(those based on the group index, not on the value)
+                newGroups.append("path")
+                    .attr("id", function (d) {
+                        return "group" + d.index;
+                        //using d.index and not i to maintain consistency
+                        //even if groups are sorted
+                    })
+                    .style("fill", function (d) {
+                        return landuse[d.index].color;
+                    });
 
-            //update the paths to match the layout
-            groupG.select("path")
-                .transition()
+                //update the paths to match the layout
+                groupG.select("path")
+                    .transition()
                     .duration(1500)
                     //.attr("opacity", 0.5) //optional, just to observe the transition////////////
-                .attrTween("d", arcTween( last_layout ))
-                   // .transition().duration(100).attr("opacity", 1) //reset opacity//////////////
+                    .attrTween("d", arcTween(last_layout))
+                // .transition().duration(100).attr("opacity", 1) //reset opacity//////////////
                 ;
 
-            //create the group labels
-            newGroups.append("svg:text")
-                .attr("xlink:href", function (d) {
-                    return "#group" + d.index;
-                })
-                .attr("dy", ".35em")
-                .attr("color", "#fff")
-                .text(function (d) {
-                  //  return landuse[d.index].name;
-                });
+                //create the group labels
+                newGroups.append("svg:text")
+                    .attr("xlink:href", function (d) {
+                        return "#group" + d.index;
+                    })
+                    .attr("dy", ".35em")
+                    .attr("color", "#fff")
+                    .text(function (d) {
+                        //  return landuse[d.index].name;
+                    });
 
-            //position group labels to match layout
-            groupG.select("text")
-                .transition()
+                //position group labels to match layout
+                groupG.select("text")
+                    .transition()
                     .duration(1500)
-                    .attr("transform", function(d) {
+                    .attr("transform", function (d) {
                         d.angle = (d.startAngle + d.endAngle) / 2;
                         //store the midpoint angle in the data object
 
@@ -1749,26 +1802,26 @@ console.log(angular.element('#chart_placeholder').length)
                     });
 
 
-            /* Create/update the chord paths */
-            var chordPaths = g.selectAll("path.chord")
-                .data(layout.chords(), chordKey );
-                    //specify a key function to match chords
-                    //between updates
+                /* Create/update the chord paths */
+                var chordPaths = g.selectAll("path.chord")
+                    .data(layout.chords(), chordKey);
+                //specify a key function to match chords
+                //between updates
 
 
-            //create the new chord paths
-            var newChords = chordPaths.enter()
-                .append("path")
-                .attr("class", "chord");
+                //create the new chord paths
+                var newChords = chordPaths.enter()
+                    .append("path")
+                    .attr("class", "chord");
 
-            // Add title tooltip for each new chord.
-            newChords.append("title");
+                // Add title tooltip for each new chord.
+                newChords.append("title");
 
-            // Update all chord title texts
-            chordPaths.select("title")
-                .text(function(d) {
-                    if (landuse[d.target.index].name !== landuse[d.source.index].name) {
-                        return [numberWithCommas(d.source.value),
+                // Update all chord title texts
+                chordPaths.select("title")
+                    .text(function (d) {
+                        if (landuse[d.target.index].name !== landuse[d.source.index].name) {
+                            return [numberWithCommas(d.source.value),
                                 " ha change from ",
                                 landuse[d.source.index].name,
                                 " to ",
@@ -1779,60 +1832,62 @@ console.log(angular.element('#chart_placeholder').length)
                                 landuse[d.target.index].name,
                                 " to ",
                                 landuse[d.source.index].name
-                                ].join("");
+                            ].join("");
                             //joining an array of many strings is faster than
                             //repeated calls to the '+' operator,
                             //and makes for neater code!
-                    }
-                    else { //source and target are the same
-                        return numberWithCommas(d.source.value)
-                            + " ha no change in "
-                            + landuse[d.source.index].name;
-                    }
-                });
+                        }
+                        else { //source and target are the same
+                            return numberWithCommas(d.source.value)
+                                + " ha no change in "
+                                + landuse[d.source.index].name;
+                        }
+                    });
 
-            //handle exiting paths:
-            chordPaths.exit().transition()
-                .duration(1500)
-                .attr("opacity", 0)
-                .remove();
+                //handle exiting paths:
+                chordPaths.exit().transition()
+                    .duration(1500)
+                    .attr("opacity", 0)
+                    .remove();
 
-            //update the path shape
-            chordPaths.transition()
-                .duration(1500)
-                //.attr("opacity", 0.5) //optional, just to observe the transition
-                .style("fill", function (d) {
-                    return landuse[d.source.index].color;
-                })
-                .attrTween("d", chordTween(last_layout))
+                //update the path shape
+                chordPaths.transition()
+                    .duration(1500)
+                    //.attr("opacity", 0.5) //optional, just to observe the transition
+                    .style("fill", function (d) {
+                        return landuse[d.source.index].color;
+                    })
+                    .attrTween("d", chordTween(last_layout))
                 //.transition().duration(100).attr("opacity", 1) //reset opacity
-            ;
+                ;
 
-            //add the mouseover/fade out behaviour to the groups
-            //this is reset on every update, so it will use the latest
-            //chordPaths selection
-            groupG.on("mouseover", function(d) {
-                chordPaths.classed("fade", function (p) {
-                    //returns true if *neither* the source or target of the chord
-                    //matches the group that has been moused-over
-                    return ((p.source.index != d.index) && (p.target.index != d.index));
+                //add the mouseover/fade out behaviour to the groups
+                //this is reset on every update, so it will use the latest
+                //chordPaths selection
+                groupG.on("mouseover", function (d) {
+                    chordPaths.classed("fade", function (p) {
+                        //returns true if *neither* the source or target of the chord
+                        //matches the group that has been moused-over
+                        return ((p.source.index != d.index) && (p.target.index != d.index));
+                    });
                 });
-            });
-            //the "unfade" is handled with CSS :hover class on g#circle
-            //you could also do it using a mouseout event:
-            /*
-            g.on("mouseout", function() {
-                if (this == g.node() )
-                    //only respond to mouseout of the entire circle
-                    //not mouseout events for sub-components
-                    chordPaths.classed("fade", false);
-            });
-            */
+                //the "unfade" is handled with CSS :hover class on g#circle
+                //you could also do it using a mouseout event:
+                /*
+                 g.on("mouseout", function() {
+                 if (this == g.node() )
+                 //only respond to mouseout of the entire circle
+                 //not mouseout events for sub-components
+                 chordPaths.classed("fade", false);
+                 });
+                 */
 
-            last_layout = layout; //save for next update
+                last_layout = layout; //save for next update
 
-          //}); //end of d3.json
+                //}); //end of d3.json
+            }
         }
+
         function arcTween(oldLayout) {
             //this function will be called once per update cycle
 
@@ -1842,8 +1897,8 @@ console.log(angular.element('#chart_placeholder').length)
             //(because of sorting)
             var oldGroups = {};
             if (oldLayout) {
-                oldLayout.groups().forEach( function(groupData) {
-                    oldGroups[ groupData.index ] = groupData;
+                oldLayout.groups().forEach(function (groupData) {
+                    oldGroups[groupData.index] = groupData;
                 });
             }
 
@@ -1855,25 +1910,29 @@ console.log(angular.element('#chart_placeholder').length)
                 }
                 else {
                     //create a zero-width arc object
-                    var emptyArc = {startAngle:d.startAngle,
-                                    endAngle:d.startAngle};
+                    var emptyArc = {
+                        startAngle: d.startAngle,
+                        endAngle: d.startAngle
+                    };
                     tween = d3.interpolate(emptyArc, d);
                 }
 
                 return function (t) {
-                    return arc( tween(t) );
+                    return arc(tween(t));
                 };
             };
         }
+
         function chordKey(data) {
             return (data.source.index < data.target.index) ?
-                data.source.index  + "-" + data.target.index:
-                data.target.index  + "-" + data.source.index;
+                data.source.index + "-" + data.target.index :
+                data.target.index + "-" + data.source.index;
 
             //create a key that will represent the relationship
             //between these two groups *regardless*
             //of which group is called 'source' and which 'target'
         }
+
         function chordTween(oldLayout) {
             //this function will be called once per update cycle
 
