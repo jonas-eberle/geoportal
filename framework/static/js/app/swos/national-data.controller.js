@@ -41,6 +41,7 @@
                       size: 10,
                       title: 'Please select a country'
                     });
+                    $('#contries-selection').selectpicker('refresh');
                     
                     $('#contries-selection').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue){
                         data = nationalData.countries[clickedIndex-1];
