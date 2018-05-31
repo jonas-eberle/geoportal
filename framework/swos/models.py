@@ -957,6 +957,8 @@ class WetlandLayer(Layer):
 
             if 'IND-' in self.indicator.short_name:
                 product = product[4:]
+            if 'IND-ALL' in self.indicator.short_name:
+                wq_type = self.identifier.split('_')[2]
 
             return ' '.join([product, wq_type, date_string])
 

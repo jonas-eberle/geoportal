@@ -164,6 +164,11 @@ class WetlandDetail(APIView):
                     layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
                 except: 
                     pass
+
+            if "WET-CHANGE" in layer_data['identifier']:
+                 layer_data['legend_colors'] = self.add_in_decrease_wet_change(layer_data['legend_colors'])
+
+
             if layer_data['meta_file_info']:
                 layer_data['meta_file_info'] = json.loads(layer_data['meta_file_info'])
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
@@ -383,6 +388,27 @@ class WetlandDetail(APIView):
         finalJSON['story_lines'] = story_line_list
 
         return Response(finalJSON)
+
+    def add_in_decrease_wet_change(self,legend_colors):
+        decrease = 0
+        increase = 0
+
+        new_legend = []
+        for legend in legend_colors:
+            if int(legend["code"]) < 100999 and int(legend["code"]) != 100100:
+                legend["size"] = legend["size"] * -1
+                legend["percent"] = legend["percent"] * -1
+                decrease = decrease + int(legend["size"])
+
+            if int(legend["code"]) > 100999:
+                increase = increase + int(legend["size"])
+
+            new_legend.append(legend)
+
+        new_legend.insert(0, {"code": "2", "label": "Wetland decrease", "size": decrease, "percent": 0, "color": "white", "stroke-color":"#f70d00"})
+        new_legend.insert(0, {"code": "1", "label":"Wetland increase", "size": increase, "percent": 0, "color": "white", "stroke-color": "#0930f1"})
+
+        return new_legend
 
 
 class Panoramio(APIView):

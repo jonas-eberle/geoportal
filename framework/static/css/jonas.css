@@ -139,6 +139,12 @@
     width: 20px;
 }
 
+.legend-border-color{
+    border-style: solid;
+    border-width: 2.0px;
+    width: 22px;
+}
+
 .legend-label {
     font-size: 0.9em;
     padding-left: 5px;

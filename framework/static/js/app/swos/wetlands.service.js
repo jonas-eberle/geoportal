@@ -246,6 +246,23 @@
                         }
                     });
                 }
+                if (type_name === "indicator") {
+
+                    $location.path('/wetland/' + wetland_id + '/indicator/' + layer_id);
+
+                    if ($(layer_id_).closest('.panel').find('i')[0].className.includes("glyphicon-chevron-right")) {
+                        $(layer_id_).closest('.panel').find('a').first().trigger('click'); // find headline and open accordion
+                    }
+
+                    $timeout(function () {  //scroll page down
+                        if(no_scroll == true){}
+                        else {
+                            $(".tab-content").animate({
+                                scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 200
+                            }, 2000);
+                        }
+                    });
+                }
                 if (type_name === "externaldb") {
                     $location.path('/wetland/' + wetland_id + '/externaldb/' + layer_id);
 

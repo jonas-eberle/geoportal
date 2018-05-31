@@ -70,10 +70,10 @@
     <div><strong>Legend</strong></div>
     <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ slc.layer.legend_url }}.jpg" ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
     <img ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
-    <table ng-if="layer.legend_colors" style="width:100%;">
+    <table ng-if="layer.legend_colors" style="width:100%;border-collapse: separate; border-spacing: 0px 2px;">
         <tr ng-repeat="item in layer.legend_colors track by $index">
-            <td ng-if="item['stroke-color'] != item.color" class="legend-color"  ng-attr-style="background-color:{{ item.color }}; border-style: solid; border-color: {{ item['stroke-color'] }};border-width: 2.0px;">&nbsp;</td>
-                <td ng-if="item['stroke-color'] == item.color || !item['stroke-color']" class="legend-color"  ng-attr-style="background-color:{{ item.color }};">&nbsp;</td>
+            <td ng-if="item['stroke-color'] != item.color && item['stroke-color']" class="legend-color legend-border-color"  ng-attr-style="background-color:{{ item.color }}; border-color: {{ item['stroke-color'] }};">&nbsp;</td>
+            <td ng-if="item['stroke-color'] == item.color || !item['stroke-color']" class="legend-color"  ng-attr-style="background-color:{{ item.color }};">&nbsp;</td>
             <td class="legend-label">{{ item.label }}</td>
         </tr>
     </table>

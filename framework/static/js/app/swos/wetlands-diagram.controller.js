@@ -509,6 +509,7 @@
             var data_all = [];
             var color_list = [];
             var label_list = [];
+            var resolution_list = [];
             var product_layers = diagram.layers[legend_type_lulc];
             console.log( product_layers)
             for (var p_layer in product_layers) {
@@ -519,6 +520,7 @@
                         data[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].size;
                         color_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].color;
                         label_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].label;
+                        resolution_list[class_id] = product_layers[p_layer].layer.resolution_distance;
                         // if (data[product_layers[p_layer].identifier.slice(-4)][class_id] == "undefined") {
                         //     data[product_layers[p_layer].identifier.slice(-4)][class_id] = 0;
                         //}
@@ -546,7 +548,8 @@ console.log(label_list)
                 data_all_id = {
                     "key": label_list[id],
                     "values": data_plot[id],
-                    "color": color_list[id]
+                    "color": color_list[id],
+                    "resolution": resolution_list[id]
                 };
                 data_all.push(data_all_id);
             }
@@ -577,8 +580,6 @@ console.log(label_list)
 
         //set data and options for all types
         function set_data_options_year(layer) {
-
-
 
             var data = -1;
             var value = [];
@@ -615,6 +616,29 @@ console.log(label_list)
                 data = [{
                     key: 'Area',
                     values: layer.legend_colors
+                }];
+            }
+            else if (layer.identifier.includes("IND-WET-CHANGE")) {
+                console.log(layer.legend_colors)
+                var new_data = [];
+                for (var legend in layer.legend_colors) {
+                    var new_legend = angular.copy(layer.legend_colors[legend]);
+                    if (layer.legend_colors[legend]["code"] == 100100) {
+                    }
+                    else {
+                        if (layer.legend_colors[legend]["code"] < 3) {
+                            new_legend["color"] = layer.legend_colors[legend]["stroke-color"];
+                        }
+                        new_legend["label"] = new_legend["label"].replace("Agriculture", "Argi.");
+                        new_legend["label"] = new_legend["label"].replace("Natural habitat not wetland", "Hab. not W.");
+                        new_legend["label"] = new_legend["label"].replace("Wetland", "Wet.");
+                        new_data.push(new_legend)
+                    }
+                }
+                console.log(new_data)
+                data = [{
+                    key: 'Area',
+                    values: new_data
                 }];
             }
             else if (layer.identifier.includes("IND")) {
@@ -671,6 +695,37 @@ console.log(label_list)
                 };
                 options['showLabels'] = false;
             }
+            else if (layer.identifier.includes("SWD_TD")) {
+                type = 'pieChart';
+                options['height'] = 450;
+                options['x'] = function (d) {
+                    return d.label;
+                };
+                options['y'] = function (d) {
+                    return d.size;
+                };
+                options['showLabels'] = false;
+                options['showLegend'] = false;
+            }
+            else if (layer.identifier.includes("SWD_TF") || layer.identifier.includes("WET-CHANGE")) {
+                type = 'multiBarHorizontalChart';
+                options['height'] = 400;
+                options['width'] = 500;
+                options['margin'] = [];
+                options['margin'] ['left'] = 130;
+                options['x'] = function (d) {
+                    return d.label;
+                };
+                options['y'] = function (d) {
+                    return d.size;
+                };
+                options['barColor'] = function (d) {
+                    return d.color;
+                };
+                options['showLabels'] = false;
+                options['showLegend'] = false;
+                options['showControls'] = false;
+            }
             else if (layer.identifier.includes("IND")) {
                 type = 'discreteBarChart';
                 options['height'] = 200;
@@ -687,35 +742,6 @@ console.log(label_list)
                     return d.size;
                 };
                 options['showLabels'] = false;
-            }
-            else if (layer.identifier.includes("SWD_TD")) {
-                type = 'pieChart';
-                options['height'] = 450;
-                options['x'] = function (d) {
-                    return d.label;
-                };
-                options['y'] = function (d) {
-                    return d.size;
-                };
-                options['showLabels'] = false;
-                options['showLegend'] = false;
-            }
-            else if (layer.identifier.includes("SWD_TF")) {
-                type = 'multiBarHorizontalChart';
-                options['height'] = 400;
-                options['width'] = 450;
-                options['x'] = function (d) {
-                    return d.label;
-                };
-                options['y'] = function (d) {
-                    return d.size;
-                };
-                options['barColor'] = function (d) {
-                    return d.color;
-                };
-                options['showLabels'] = false;
-                options['showLegend'] = false;
-                options['showControls'] = false;
             }
             else {
                 type = 'discreteBarChart';
@@ -907,77 +933,36 @@ console.log(label_list)
         }
         $scope.$watch("legend_type_lulc", function() {
             var title = $scope.category_name;
-            console.log(title)
             try {
                 title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
             } catch(e) {}
-            console.log('#diagram_'+$scope.window_id)
-            name = '#diagram_'+$scope.window_id;
-            console.log(title)
-            angular.element(name).parent().parent().parent().parent().prev().children().text(title);
+            angular.element('#diagram_'+$scope.window_id).parent().parent().parent().parent().prev().children().text(title);
         }, true);
 
+        function compare(a, b) {
+            if (a.label < b.label)
+                return -1;
+            if (a.label > b.label)
+                return 1;
+            return 0;
+        }
+        function set_legend_colors(stat){
+            var new_legend = [];
+
+            for (var key in stat.stat){
+                var data = stat.stat[key];
+                new_legend.push({"code": String(data[1]) + String(data[2]), "size": data[0]/10000, "color": diagram.ind_color[data[1]], "label": diagram.ind_name[data[1]] + " to " + diagram.ind_name[data[2]], "percent": 0, "stroke-color": diagram.ind_color[data[2]]})
+            }
+
+
+           // new_legend.sort(compare);
+
+            return new_legend;
+        }
+
         function onclickCreate(layer_id, show_type) {
+            diagram.layers = [];
 
-            // todo replace CLC with RAMSAR-CLC
-            var group_list = [];
-            diagram.layers["LULC_MAES"] = [];
-            diagram.layers["LULC_RAMSAR-CLC"] = [];
-            group_list.push(["LULC_MAES","LULC_RAMSAR-CLC"]);
-
-            diagram.layers["LULCC_L"] = [];
-            diagram.layers["LULCC_S"] = [];
-            diagram.layers["SWD_TD_OP"] = [];
-            diagram.layers["SWD_TD_SAR"] = [];
-            diagram.layers["SWD_TF_OP"] = [];
-            diagram.layers["SWD_TF_SAR"] = [];
-            diagram.layers["InvDel_OP"] = [];
-            diagram.layers["InvDel_TOPO"] = [];
-
-            diagram.layers["IND_RAMSAR-CLC"] = [];
-            diagram.layers["IND_MAES"] = [];
-            group_list.push(["IND_MAES","IND_RAMSAR-CLC"]);
-
-            diagram.layers["WET-THREATS_RAMSAR-CLC"] = [];
-            diagram.layers["WET-THREATS_MAES"] = [];
-            group_list.push(["WET-THREATS_MAES","WET-THREATS_RAMSAR-CLC"]);
-
-            diagram.layers["OPEN-W-EXT_RAMSAR-CLC"] = [];
-            diagram.layers["OPEN-W-EXT_MAES"] = [];
-            group_list.push(["OPEN-W-EXT_MAES","OPEN-W-EXT_RAMSAR-CLC"]);
-
-            diagram.layers["WET-EXT-NA_RAMSAR-CLC"] = [];
-            diagram.layers["WET-EXT-NA_MAES"] = [];
-            group_list.push(["WET-EXT-NA_MAES","WET-EXT-NA_RAMSAR-CLC"]);
-
-            diagram.layers["WET-EXT-VWR_RAMSAR-CLC"] = [];
-            diagram.layers["WET-EXT-VWR_MAES"] = [];
-            group_list.push(["WET-EXT-VWR_MAES","WET-EXT-VWR_RAMSAR-CLC"]);
-
-            diagram.layers["WET-EXT_RAMSAR-CLC"] = [];
-            diagram.layers["WET-EXT_MAES"] = [];
-            group_list.push(["WET-EXT_MAES","WET-EXT_RAMSAR-CLC"]);
-
-            diagram.layers["WET-CHANGE_RAMSAR-CLC"] = [];
-            diagram.layers["WET-CHANGE_MAES"] = [];
-            group_list.push(["WET-CHANGE_MAES", "WET-CHANGE_RAMSAR-CLC"]);
-
-            diagram.layers["WET-RESTORE_RAMSAR-CLC"] = [];
-            diagram.layers["WET-RESTORE_MAES"] = [];
-            group_list.push(["WET-RESTORE_MAES", "WET-RESTORE_RAMSAR-CLC"]);
-
-            diagram.layers["WET-ART_RAMSAR-CLC"] = [];
-            diagram.layers["WET-ART_MAES"] = [];
-            group_list.push(["WET-ART_MAES", "WET-ART_RAMSAR-CLC"]);
-
-            diagram.layers["IND-URB_RAMSAR-CLC"] = [];
-            diagram.layers["IND-URB_MAES"] = [];
-            group_list.push(["IND-URB_MAES", "IND-URB_RAMSAR-CLC"]);
-
-            diagram.layers["IND-ALL_RAMSAR-CLC"] = [];
-            diagram.layers["IND-ALL_MAES"] = [];
-            group_list.push(["IND-ALL_MAES", "IND-ALL_RAMSAR-CLC"]);
-            
             var layer_arr;
             var c;
             if ($('.national_data').is(":visible")) {
@@ -986,6 +971,31 @@ console.log(label_list)
             } else {
                 layer_arr = WetlandsService.value.data.products;
                 c = WetlandsService.value.data.products.concat(WetlandsService.value.data.indicators);
+            }
+
+            diagram.layers = [];
+            var group_list = [];
+            var layer_list = [];
+            var prev_ident = "";
+            for (var product in c) {
+                var product_layers = c[product].layers;
+                for (var p_layer in product_layers) {
+                    if (product_layers[p_layer].identifier.split("_")[1].includes("SWD")) {
+                        diagram.layers[product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2] + "_" + product_layers[p_layer].identifier.split("_")[3]] = [];
+                    } else {
+                        diagram.layers[product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2]] = [];
+                    }
+
+                    if (prev_ident.split("_")[0] == product_layers[p_layer].identifier.split("_")[1])
+                        if (prev_ident != product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2]) {
+                            if (product_layers[p_layer].identifier.split("_")[1].includes("SWD")) {
+                                group_list.push([prev_ident, product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2] + "_" + product_layers[p_layer].identifier.split("_")[3]]);
+                            } else {
+                                group_list.push([prev_ident, product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2]]);
+                            }
+                        }
+                    prev_ident = product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2];
+                }
             }
 
             for (var product in c) {
@@ -1005,8 +1015,11 @@ console.log(label_list)
                             }
                         }
                     }
+
                     for (var key in diagram.layers) {
-                        if (product_layers[p_layer].identifier.includes(key) && product_layers[p_layer].legend_colors && (product_layers[p_layer].legend_colors[0].size || product_layers[p_layer].legend_colors[0].size == 0 )) {
+                        // Collect layer for each legend type
+                        if (product_layers[p_layer].identifier.includes(key) && product_layers[p_layer].legend_colors && (product_layers[p_layer].legend_colors[0].size || product_layers[p_layer].legend_colors[0].size == 0 ) && !product_layers[p_layer].identifier.includes("IND-ALL")) {
+
                             diagram.layers[key].push({
                                 key:  product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
                                 name: product_layers[p_layer].identifier.split("_").slice(-1)[0],
@@ -1014,7 +1027,14 @@ console.log(label_list)
                                 layer: product_layers[p_layer]
                             });
                         }
-                        else if (product_layers[p_layer].identifier.includes(key) && product_layers[p_layer].identifier.includes("IND-ALL")) {
+
+                        // All new layer for all year combinations for IND-ALL (changes between all years)
+                        if (product_layers[p_layer].identifier.includes(key) && product_layers[p_layer].identifier.includes("IND-ALL")) {
+                            for (var key_ind in WetlandsService.value.data.indicators){
+                                if (WetlandsService.value.data.indicators[key_ind].name == product_layers[p_layer].indicator_name){
+                                    var ind_group_key = key_ind; break;
+                                }
+                            }
 
                             for (var key2 in  product_layers[p_layer].meta_file_info.columns)
                                 for (var i = parseInt(key2) + 1; i <= product_layers[p_layer].meta_file_info.columns.length - 1; i++) {
@@ -1024,20 +1044,41 @@ console.log(label_list)
                                             new_layer.stat = product_layers[p_layer].meta_file_info.stat[key3];
                                         }
                                     }
-                                    new_layer.columns = [product_layers[p_layer].meta_file_info.columns[key2], product_layers[p_layer].meta_file_info.columns[i]],
-                                        new_layer.id = product_layers[p_layer].id + 1000 + (parseInt(i) + 10)  + (parseInt(key2) * 2);
-                                        if (product_layers[p_layer].meta_file_info.columns[key2].year.length == 8){
-                                            var name_year1 = [product_layers[p_layer].meta_file_info.columns[key2].year.slice(0, 4), product_layers[p_layer].meta_file_info.columns[key2].year.slice(4, 6),product_layers[p_layer].meta_file_info.columns[key2].year.slice(6)].join('/');
-                                            var name_year2 = [product_layers[p_layer].meta_file_info.columns[i].year.slice(0, 4), product_layers[p_layer].meta_file_info.columns[i].year.slice(4, 6),product_layers[p_layer].meta_file_info.columns[i].year.slice(6)].join('/');
-                                        }
-                                        else {
-                                            var name_year1 = product_layers[p_layer].meta_file_info.columns[key2].year;
-                                            var name_year2 = product_layers[p_layer].meta_file_info.columns[i].year;
-                                        }
+                                    new_layer.columns = [product_layers[p_layer].meta_file_info.columns[key2], product_layers[p_layer].meta_file_info.columns[i]];
+
+
+                                    if (product_layers[p_layer].meta_file_info.columns[key2].year.length == 8) {
+                                        var name_year1 = [product_layers[p_layer].meta_file_info.columns[key2].year.slice(0, 4), product_layers[p_layer].meta_file_info.columns[key2].year.slice(4, 6), product_layers[p_layer].meta_file_info.columns[key2].year.slice(6)].join('/');
+                                        var name_year2 = [product_layers[p_layer].meta_file_info.columns[i].year.slice(0, 4), product_layers[p_layer].meta_file_info.columns[i].year.slice(4, 6), product_layers[p_layer].meta_file_info.columns[i].year.slice(6)].join('/');
+                                    }
+                                    else {
+                                        var name_year1 = product_layers[p_layer].meta_file_info.columns[key2].year;
+                                        var name_year2 = product_layers[p_layer].meta_file_info.columns[i].year;
+                                    }
+
+                                    if (name_year1 + "-" + name_year2 == product_layers[p_layer].identifier.split("_").slice(-1)[0]) {
+                                    }
+                                    else {
+                                        new_layer.id = product_layers[p_layer].id + 1000 + (parseInt(i) + 10) + (parseInt(key2) * 2);
+                                        new_layer.legend_colors = set_legend_colors(new_layer.stat);
+                                        new_layer.style = product_layers[p_layer].identifier.split("_")[1] + "_DYNAMIC2";
+                                        new_layer.ogc_type = "WMS";
+                                        new_layer.env = "col_1:" + '\\"' + new_layer.columns[0].col_cd.toUpperCase() + '\\"' + ";col_2:" + '\\"' + new_layer.columns[1].col_cd.toUpperCase() + '\\"';
+                                        new_layer.env = "year1:IND_CODE;year2:IND_CODE";
+
+                                        new_layer.ogc_link = new_layer.ogc_link.slice(0, new_layer.ogc_link.indexOf("geoserver")) + "geoserver/wms";
+                                        new_layer.identifier = "SWOS_" + product_layers[p_layer].identifier.split("_")[1] + "_" + product_layers[p_layer].identifier.split("_")[2] + "_" + product_layers[p_layer].identifier.split("_")[3] + "_" + name_year1 + "-" + name_year2;
+                                        new_layer.title = name_year1 + "-" + name_year2;
+                                        new_layer.alternate_title = product_layers[p_layer].alternate_title.split(" ")[0] + " " + product_layers[p_layer].alternate_title.split(" ")[1] + " " + name_year1 + " / " + name_year2;
+
+                                        // WetlandsService.value.data.indicators[ind_group_key].layers.push(new_layer); # todo add only once!
+                                    }
+
+
                                     diagram.layers[key].push({
                                         type: "change",
-                                        key:  product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
-                                        name:name_year1 + "-" + name_year2,
+                                        key:  name_year1 + "_" + name_year2 + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
+                                        name:  name_year1 + "-" + name_year2,
                                         title: product_layers[p_layer].identifier.split("_").slice(2)[0] + " " + product_layers[p_layer].meta_file_info.columns[key2].sensor + " " + product_layers[p_layer].meta_file_info.columns[key2].year + "-" + product_layers[p_layer].meta_file_info.columns[i].year,
                                         layer: new_layer
                                     });
@@ -1048,46 +1089,41 @@ console.log(label_list)
                 }
             }
 
+
+            // set legend type for state / change buttonon top
             if (layer_id == 0 && show_type == "state") {
-                if (diagram.layers["IND_RAMSAR-CLC"][0]) {
+                if (diagram.layers["IND_RAMSAR-CLC"] && diagram.layers["IND_RAMSAR-CLC"][0]) {
                     $scope.legend_type_lulc = "IND_RAMSAR-CLC";
                 }
-                else if (diagram.layers["IND_MAES"][0]) {
+                else if (diagram.layers["IND_MAES"] && diagram.layers["IND_MAES"][0]) {
                     $scope.legend_type_lulc = "IND_MAES";
                 }
             }
-            else if(layer_id == 0 && show_type == "change") {
-                if (diagram.layers["IND-ALL_RAMSAR-CLC"][0]) {
+            else if (layer_id == 0 && show_type == "change") {
+                if (diagram.layers["IND-ALL_RAMSAR-CLC"] && diagram.layers["IND-ALL_RAMSAR-CLC"][0]) {
                     $scope.legend_type_lulc = "IND-ALL_RAMSAR-CLC";
                 }
-                else if (diagram.layers["IND-ALL_MAES"][0]) {
+                else if (diagram.layers["IND-ALL_MAES"] && diagram.layers["IND-ALL_MAES"][0]) {
                     $scope.legend_type_lulc = "IND-ALL_MAES";
                 }
             }
 
-            //console.log(diagram.layers);
+            console.log(diagram.layers);
             console.log("Creating diagram");
 
+            // if layer is undefined use first entry as default
             if (layer == undefined){
                 layer = diagram.layers[$scope.legend_type_lulc][0].layer
             }
+
+            // do not open 2nd window if allready open (based on layer id)
             var charts = angular.element('#diagram_' + layer.id).find('nvd3');
             if (charts.length > 0) {
                 return;
             }
 
-            var value = [];
-            var class_id;
-            for (var legend_entries in layer.legend_colors) {
-                //class_id = myRe.exec(layer.legend_colors[legend_entries].label);
-                class_id = layer.legend_colors[legend_entries].code;
-                value[class_id] = layer.legend_colors[legend_entries].size;
-            }
-
-            //set year overview as default for indicator
+            //set year overview for show type "all" (group button) and "state" (indicator statistic bunnton on top)
             if (show_type == "all" && !diagram.layers[$scope.legend_type_lulc][0].name.includes("-") || show_type == 'state' ){
-                console.log("Set over time")
-                console.log($scope.legend_type_lulc)
                 set_data_options_year(layer);
                 set_data_options_over_time($scope.legend_type_lulc );
             }
@@ -1096,18 +1132,15 @@ console.log(label_list)
             }
 
 
-
             if ($scope.data !== -1) {
-                var output = '<div  class="ts_diagram">' +
-                    ' ' +
-                    '<div id="diagram_' + layer.id + '" style="display:none;">' +
-                    '' +
-                    '</div>' +
+                // Create DIV for diagram to add content later
+                var output = '<div  class="ts_diagram">' + '<div id="diagram_' + layer.id + '" style="display:none;">' + '</div>' + '</div>';
 
-                    '</div>';
-
-                set_category_name(layer);
+                // Create random ID for diagram window
                 $scope.window_id= Math.floor(Math.random() * 1000);
+
+                // Set window title
+                set_category_name(layer);
                 var title = $scope.category_name;
                 try {
                     title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
@@ -1186,8 +1219,8 @@ console.log(label_list)
                 $('.modal-content', dialog).css('left', width);
                 $('#loading-div').removeClass('nobg').hide();
 
+                // Create MAES / CLC buttons for all layer with both
                 var maes_clc = "";
-
                 for (var ident in group_list){
                      maes_clc = maes_clc + '<div ng-if="diagram.layers[\'' + group_list[ident][0] + '\'][0] && diagram.layers[\'' + group_list[ident][1] + '\'][0] && (legend_type_lulc == \'' + group_list[ident][0] + '\' || legend_type_lulc == \'' + group_list[ident][1] + '\')" style="display: inline-block;padding-right: 20px; padding-top: 14px;padding-bottom: 10px;">' +
                     '<button ng-click="diagram.set_legend_type(\'' + group_list[ident][0] + '\');diagram.updateChords(active_layer.stat)" ng-style="diagram.set_style_legend(\'' + group_list[ident][0] + '\', legend_type_lulc)">MAES</button>' +
@@ -1195,20 +1228,26 @@ console.log(label_list)
                     '</div>'
                 }
 
+                // Create selection list
                 $scope.select_list = [];
                 var found = [];
-                for (var key in diagram.layers){
+                for (var key in diagram.layers) {
                     if (diagram.layers[key][0]) {
+
                         var name = get_catagory_name(diagram.layers[key][0].layer);
 
-                        if ( key.split("_").slice(0)[0] != "SWD"){
-                         //   found[key.split("_").slice(0)[0]] = 1;
-                            $scope.select_list.push({name: name[1] + ": "+ name[0] + " (" + key.split("_").slice(1)[0] + ")", key: key})
+                        if (key.split("_").slice(0)[0] != "SWD") {
+                            $scope.select_list.push({
+                                name: name[1] + ": " + name[0] + " (" + key.split("_").slice(1)[0] + ")",
+                                key: key
+                            })
                         }
-                        else if (key.split("_").slice(0)[0] == "SWD"){
-                            $scope.select_list.push({name: name[1] + ": "+ name[0] + " " + key.split("_").slice(1)[0] + " " + key.split("_").slice(2)[0] , key: key})
+                        else if (key.split("_").slice(0)[0] == "SWD") {
+                            $scope.select_list.push({
+                                name: name[1] + ": " + name[0] + " " + key.split("_").slice(1)[0] + " " + key.split("_").slice(2)[0],
+                                key: key
+                            })
                         }
-
                     }
                 }
 
@@ -1216,34 +1255,35 @@ console.log(label_list)
 
                 console.log(diagram.layers)
                 console.log($scope.active_layer)
-                //copy_and_insert_new_layer(WetlandsService.value.data.indicators[1].layers[0]);
 
                 var template =
-                    '<div id="diagram_{{window_id}}"><select ng-change=diagram.set_legend_type(legend_type_lulc) ng-model="legend_type_lulc" ng-options="option.key as option.name for option in select_list" style="margin-top: -10px;right: 15px;position: absolute;""></select></div>' +
+                    '<div id="diagram_{{window_id}}">' +
+                    '<select ng-change=diagram.set_legend_type(legend_type_lulc) ng-model="legend_type_lulc" ng-options="option.key as option.name for option in select_list" style="margin-top: -10px;right: 15px;position: absolute;""></select></div>' +
 
                     maes_clc +
 
-                    '<div ng-if="diagram.layers[\'SWD_TD_OP\'][0] && (legend_type_lulc == \'SWD_TD_OP\' || legend_type_lulc == \'SWD_TD_SAR\')" style="display: inline-block;padding-right: 20px;;padding-top: 14px;padding-bottom: 10px;">' +
+                    '<div ng-if="diagram.layers[\'SWD_TD_OP\'][0] && diagram.layers[\'SWD_TD_SAR\'][0] && (legend_type_lulc == \'SWD_TD_OP\' || legend_type_lulc == \'SWD_TD_SAR\')" style="display: inline-block;padding-right: 20px;;padding-top: 14px;padding-bottom: 10px;">' +
                     '<button ng-click="diagram.set_legend_type(\'SWD_TD_OP\')" ng-style="diagram.set_style_legend(\'SWD_TD_OP\', legend_type_lulc)">OP</button>' +
                     '<button ng-click="diagram.set_legend_type(\'SWD_TD_SAR\')" ng-style="diagram.set_style_legend(\'SWD_TD_SAR\', legend_type_lulc)">   SAR</button>' +
                     '</div>' +
-                    '<div ng-if="diagram.layers[\'SWD_TF_OP\'][0] && (legend_type_lulc == \'SWD_TF_OP\' || legend_type_lulc == \'SWD_TF_SAR\')" style="display: inline-block;padding-right: 20px;padding-top: 14px;padding-bottom: 10px;">' +
+                    '<div ng-if="diagram.layers[\'SWD_TF_OP\'][0] && diagram.layers[\'SWD_TF_SAR\'][0] && (legend_type_lulc == \'SWD_TF_OP\' || legend_type_lulc == \'SWD_TF_SAR\')" style="display: inline-block;padding-right: 20px;padding-top: 14px;padding-bottom: 10px;">' +
                     '<button ng-click="diagram.set_legend_type(\'SWD_TF_OP\')" ng-style="diagram.set_style_legend(\'SWD_TF_OP\', legend_type_lulc)">OP</button>' +
                     '<button ng-click="diagram.set_legend_type(\'SWD_TF_SAR\')" ng-style="diagram.set_style_legend(\'SWD_TF_SAR\', legend_type_lulc)">   SAR</button>' +
                     '</div>' +
-                    '<div style="display: inline-block;padding-right: 20px;"><button ng-if="diagram.layers[legend_type_lulc].length > 1 && !diagram.layers[legend_type_lulc][0].name.includes(\'-\')" ng-click="diagram.set_data_options_over_time(legend_type_lulc)" uib-tooltip="Show all years" tooltip-append-to-body="true" ><i class="fa fa-line-chart fa-lg"></i></button></div>' +
+                    '<div style="display: inline-block;padding-right:20px;"><button ng-if="diagram.layers[legend_type_lulc].length > 1 && !legend_type_lulc.includes(\'IND-ALL\')" ng-click="diagram.set_data_options_over_time(legend_type_lulc)" uib-tooltip="Show all years" tooltip-append-to-body="true" ><i class="fa fa-line-chart fa-lg"></i></button></div>' +
                     '<div ng-repeat="layer in diagram.layers[legend_type_lulc] track by $index" style="display: inline-block;padding-top: 14px;" ">' +
                     '<button ng-if="layer.layer.id == active_layer.id" ng-click="diagram.set_data_options_year(layer.layer); diagram.updateChords(active_layer.stat)" style="font-weight: bold;" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '<button ng-if="layer.layer.id != active_layer.id" ng-click="diagram.set_data_options_year(layer.layer);diagram.updateChords(active_layer.stat)" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '</div >' +
-                    '<div ng-if="active_layer" style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
+                    '<div ng-if="active_layer && !legend_type_lulc.includes(\'IND-ALL\')" style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
                     '</div>' +
                     '</div>' +
                     
                     '<uib-tabset justified="true"> <uib-tab heading="Data">' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="active_layer.legend_url || active_layer.legend_graphic || active_layer.legend_colors"> <strong ng-if=active_layer.legend_colors>Relative area proportions</strong></div>' +
-                    '<table ng-if="active_layer.legend_colors" style="width:100%;">' +
+                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<strong ng-if=active_layer.legend_colors>Relative and absolute area proportions</strong></div>' +
+                    '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}</td>' +
@@ -1252,35 +1292,54 @@ console.log(label_list)
                     '</tr>' +
                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>' +
                     '</table>' +
+
+                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.legend_colors && !active_layer.stat && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<strong ng-if=active_layer.legend_colors>Absolute wetland area changes</strong></div>' +
+                    '<table ng-if="active_layer.legend_colors && !active_layer.stat && legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;border-collapse: separate; border-spacing: 0px 2px;">' +
+                    '<tr ng-repeat="item in active_layer.legend_colors ">' +
+                    '<td class="legend-color legend-border-color" ng-attr-style="background-color:{{item.color}}; border-color:{{item[\'stroke-color\']}}">&nbsp;</td>' +
+                    '<td class="legend-label">{{ item.label }}</td>' +
+                    '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
+                    '</tr>' +
+                    '</table>' +
+
+                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.stat"> ' +
+                    '<strong>Absolute changed area</strong></div>' +
                     '<table ng-if="active_layer.stat" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.stat.stat ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[1]] }};">&nbsp;</td>' +
                     '<td class="legend-label">{{ diagram.ind_name[item[1]] }}</td>' +
                     '<td class="legend-label">to </td>' +
+                    '<td class="legend-label">&nbsp;</td>' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[2]] }};">&nbsp;</td>' +
                     '<td class="legend-label">{{ diagram.ind_name[item[2]] }}</td>' +
-                    '<td class="legend-percent"><span>{{ (item[0]/10000).toFixed(2) }} ha</span></td>' +
+                    '<td class="legend-percent"><span>{{ diagram.formatValue((item[0]/10000).toFixed(2)) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
+
+                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
+                    '<strong>Abolute area over time</strong></div>' +
                     '<table class="chart_time_series" ng-if="!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')" style="width:100%;">' +
                     '<tr class="border">'+
                     '<th>&nbsp;</th>'+
                     '<th>Class</th>'+
                     '<th style="text-align: right" ng-repeat="val in data[0].values">{{val[0]}}</th>'+
                     '</tr>'+
+                    '<tr><td ng-repeat="val in data[0].resolution">{{vsl[0]}}</td></tr>'+
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.key }}</td>' +
-                    '<td ng-repeat="val in item.values" class="legend-percent"><span>{{ val[1].toFixed(2) }} ha</span></td>' +
+                    '<td ng-repeat="val in item.values" class="legend-percent"><span>{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span></td>' +
                     '</tr>' +
                     '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>'+
-                '</table>' +
+                    '</table>' +
                     
                     '</uib-tab><uib-tab heading="Interactive Chart">' +
                     
                     '<div style="text-align: center;"><strong>Absolute area proportions</strong></div><div style="font-size:0.9em;text-align: center;" class="hint">(Move your mouse over or click on the classes for more details)</div>' +
                     '<div ng-if="!active_layer.stat" style="display: flex;"><nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3></div>' +
-                    '<div ng-if="active_layer.stat" id="chart_placeholder" ng-init="diagram.init();diagram.updateChords(active_layer.stat)"></div>' +
+                    '<div ng-if="active_layer.stat" id="chart_placeholder_' + $scope.window_id +
+                    '" ng-init="diagram.init();diagram.updateChords(active_layer.stat)"></div>' +
           
                 '</div></uib-tab></uib-tabset></div>';
                 $('#diagram_' + layer.id).show();
@@ -1293,9 +1352,17 @@ console.log(label_list)
         }
 
         function addLayerToMap(layer) {
+            if (layer.indicator_name){
+                var type = "indicator";
+            }
+            else {
+                 var type = "product";
+            }
+
+
             $timeout(function () {
-                WetlandsService.selectTab("product");
-                WetlandsService.loadLayer(WetlandsService.wetland_id, "product", layer.id, "yes");
+                WetlandsService.selectTab(type);
+                WetlandsService.loadLayer(WetlandsService.wetland_id, type, layer.id, "yes");
             });
         }
 
@@ -1642,7 +1709,8 @@ console.log(label_list)
             //    var landuse; //store neighbourhood data outside data-reading function
 
             /*** Initialize the visualization ***/
-            g = d3.select("#chart_placeholder").append("svg")
+            console.log(g,"#chart_placeholder_" + $scope.window_id )
+            g = d3.select("#chart_placeholder_" + $scope.window_id).append("svg")
                 .attr("width", width)
                 .attr("height", height)
                 .append("g")
@@ -1671,9 +1739,8 @@ console.log(label_list)
         /* Create OR update a chord layout from a data matrix */
         function updateChords(stat) {
             if (stat) {
-                console.log(stat);
-                console.log(angular.element('#chart_placeholder').length)
-                if (angular.element('#chart_placeholder').length == 0) {
+
+                if (angular.element("#chart_placeholder_" + $scope.window_id).length == 0) {
                     init()
                 }
 
@@ -1748,7 +1815,7 @@ console.log(label_list)
                 groupG.select("title")
                     .text(function (d, i) {
                         return numberWithCommas(d.value)
-                            + " ha total area of "
+                            + " m² total area of "
                             + landuse[i].name;
                     });
 
@@ -1828,7 +1895,7 @@ console.log(label_list)
                                 landuse[d.target.index].name,
                                 "\n",
                                 numberWithCommas(d.target.value),
-                                "  ha change from ",
+                                "m² change from ",
                                 landuse[d.target.index].name,
                                 " to ",
                                 landuse[d.source.index].name
@@ -1839,7 +1906,7 @@ console.log(label_list)
                         }
                         else { //source and target are the same
                             return numberWithCommas(d.source.value)
-                                + " ha no change in "
+                                + " m² no change in "
                                 + landuse[d.source.index].name;
                         }
                     });
