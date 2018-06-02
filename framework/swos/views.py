@@ -1316,7 +1316,7 @@ class GetExternalDatabases(APIView):
 
 class GetCountries(APIView):
     def get(self, request):
-        countries = Country.objects.all()
+        countries = Country.objects.all().order_by("name")
         return Response([{'name':i.name, 'id':i.id, 'bbox':i.bbox, 'ne_feature_id':i.ne_feature_id} for i in countries])
 
 
