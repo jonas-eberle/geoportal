@@ -30,6 +30,7 @@
                    $('#global_geoss_select.selectpicker').selectpicker({
                       style: 'btn-info'
                     }); 
+                   $('#global_geoss_select.selectpicker').selectpicker('refresh');
                 });
             });
         });

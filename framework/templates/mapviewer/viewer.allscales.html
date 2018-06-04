@@ -326,9 +326,10 @@
                                     <div class="item_legend" style="margin-left:40px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!layer.showLegend">
                                         <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ layer.legend_url }}.jpg" ng-src="{{ layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
                                         <img ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
-                                        <table ng-if="layer.legend_colors">
+                                        <table ng-if="layer.legend_colors" style="border-collapse: separate; border-spacing: 0px 2px;">
                                             <tr ng-repeat="item in layer.legend_colors track by $index">
-                                                <td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>
+                                                <td ng-if="item['stroke-color'] != item.color && item['stroke-color']" class="legend-color legend-border-color"  ng-attr-style="background-color:{{ item.color }}; border-color: {{ item['stroke-color'] }};">&nbsp;</td>
+                                                <td ng-if="item['stroke-color'] == item.color || !item['stroke-color']" class="legend-color"  ng-attr-style="background-color:{{ item.color }};">&nbsp;</td>
                                                 <td class="legend-label">{{ item.label }}</td>
                                             </tr>
                                         </table>
@@ -511,10 +512,9 @@
                                                 Remove all layers of this Wetland
                                             </button>
                                         </div>
-                                        <div>
-                                            <!--<button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(wetlands.value.data.indicators, wetlands.value.data.indicators[0].layers[0].id);" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>-->
-                                            <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(0,'state');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show state indicators</button>
-                                            <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(0,'change');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;"><i class="fa fa-line-chart fa-lg"></i>  Show change indicators</button>
+                                        <div ng-if="wetlands.value.data.indicators.length > 0">
+                                             <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(0,'state');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;font-size:13px;"><i class="fa fa-line-chart fa-lg"></i>  Show state indicators</button>
+                                             <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(0,'change');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;margin-top:  10px;margin-bottom: 10px;font-size:13px;"><i class="fa fa-line-chart fa-lg"></i>  Show change indicators</button>
                                         </div>
                                         <div>
                                             <ul class="items products">
