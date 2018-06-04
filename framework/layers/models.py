@@ -436,7 +436,7 @@ class LayerSerializer(serializers.ModelSerializer):
             'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'dataset_epsg',
             'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image',
             'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply','wmts_prefix_matrix_ids',
-            'min_zoom', 'max_zoom', 'meta_file_info')
+            'min_zoom', 'max_zoom', 'meta_file_info', 'resolution_distance', 'resolution_unit')
 
 
 # Metadata serializer to output metadata related information from a given layer

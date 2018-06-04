@@ -397,11 +397,10 @@ class WetlandDetail(APIView):
         for legend in legend_colors:
             if int(legend["code"]) < 100999 and int(legend["code"]) != 100100:
                 legend["size"] = legend["size"] * -1
-                legend["percent"] = legend["percent"] * -1
-                decrease = decrease + int(legend["size"])
+                decrease = decrease + float(legend["size"])
 
             if int(legend["code"]) > 100999:
-                increase = increase + int(legend["size"])
+                increase = increase + float(legend["size"])
 
             new_legend.append(legend)
 
