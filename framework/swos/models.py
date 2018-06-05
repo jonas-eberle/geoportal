@@ -598,6 +598,7 @@ class Indicator(models.Model):
     description_usage = models.TextField(blank=True)
     description_creation = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
+    type = models.CharField(max_length=20, choices=(('change','change'),('state','state')), blank=True, help_text="Type of indicator")
 
     def __unicode__(self):
         return u"%s" %(self.name)
@@ -605,7 +606,7 @@ class Indicator(models.Model):
 class IndicatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicator
-        fields = ('name', 'description', 'short_name', 'number', 'short_description')
+        fields = ('name', 'description', 'short_name', 'number', 'short_description', 'type')
 
 #class SubIndicator(models.Model):
 #    name = models.CharField(max_length=200)

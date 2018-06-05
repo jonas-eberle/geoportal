@@ -518,8 +518,17 @@
                                         </div>
                                         <div>
                                             <ul class="items products">
+                                            <uib-accordion>
+
+                                                <div uib-accordion-group is-open="wetlands.indicator_state" >
+                                                <uib-accordion-heading>
+                                                   <span class="project">[SWOS]</span> State indicator
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.indicator_state, 'glyphicon-chevron-right': !wetlands.indicator_state}"></i>
+                                                </uib-accordion-heading>
+                                                <uib-accordion>
+
                                                 <uib-accordion close-others="false">
-                                                        <div uib-accordion-group ng-repeat="product in wetlands.value.data.indicators"  heading="{{product.name}}" is-open="product.open">
+                                                        <div uib-accordion-group ng-repeat="product in wetlands.value.data.indicators"  ng-if="product.type == 'state'" heading="{{product.name}}" is-open="product.open">
                                                             <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);" >
                                                                 <span class="project">[SWOS]</span> {{product.name}}
                                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
@@ -541,14 +550,57 @@
                                                                             <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="select"
+                                                                         ng-if="product.layers.length == 0">
+                                                                        No datasets available.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                </uib-accordion>
+                                                </uib-accordion>
+                                                </div>
+                                            </uib-accordion>
+                                            <uib-accordion>
+                                                <div uib-accordion-group is-open="wetlands.indicator_change" >
+                                                <uib-accordion-heading>
+                                                   <span class="project">[SWOS]</span> Change indicator
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.indicator_change, 'glyphicon-chevron-right': !wetlands.indicator_change}"></i>
+                                                </uib-accordion-heading>
+                                                <uib-accordion close-others="false">
+                                                      <div uib-accordion-group ng-repeat="product in wetlands.value.data.indicators"  ng-if="product.type == 'change'" heading="{{product.name}}" is-open="product.open">
+                                                            <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);" >
+                                                                <span class="project">[SWOS]</span> {{product.name}}
+                                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
+                                                            </uib-accordion-heading>
+                                                              <div>
+                                                                   <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                                              </div>
+
+                                                            <div class="options">
+                                                                <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                                <p ng-if="product.story_line.length != 0 && product.story_line != false"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
+                                                                <div class="products_datasets">
+
+                                                                    <strong>Layers:</strong>
+                                                                    <div class="select" ng-if="product.layers.length > 0">
+                                                                        <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
+                                                                            <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                            <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                            <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                            <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                        </div>
+                                                                    </div>
                                                                     <div class="select" ng-if="product.layers.length == 0">
                                                                         No datasets available.
                                                                     </div>
                                                                 </div>
                                                             </div>
-            
                                                         </div>
-                                                    </uib-accordion>
+                                                </uib-accordion>
+                                                </div>
+                                            </uib-accordion>
                                                 </ul>
                                             </div>
                                         </uib-tab>

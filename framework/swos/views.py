@@ -235,7 +235,7 @@ class WetlandDetail(APIView):
 
             finalJSON['indicators'].append(
                 {'id': indicator.id, 'name': indicator.name, 'order': indicator.order, 'description': indicator.description_meaning,
-                'layers': layers, 'story_line': story_line_data })
+                'layers': layers, 'type': indicator.type, 'story_line': story_line_data })
             #temp_ind_parent_descr[indicator.parent_ind.id] = indicator.parent_ind
             #if indicator.parent_ind.id in temp_ind_parent_story_line and temp_ind_parent_story_line[indicator.parent_ind.id] != "":
             #    temp_ind_parent_story_line[indicator.parent_ind.id].append(story_line_data)

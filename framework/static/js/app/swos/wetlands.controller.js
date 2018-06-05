@@ -23,6 +23,8 @@
         wetlands.removeLayersByWetland = removeLayersByWetland;
         wetlands.satdata_image = true;
         wetlands.satdata_table = false;
+        wetlands.indicator_state = true;
+        wetlands.indicator_change = true;
         wetlands.selectWetland = selectWetland;
         wetlands.closeWetland = closeWetland;
         wetlands.value = WetlandsService.value;
