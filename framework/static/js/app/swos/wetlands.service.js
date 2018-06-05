@@ -32,6 +32,7 @@
                 mapviewer.selectInteraction.getFeatures().clear();
                 mapviewer.currentFeature.setStyle(null);
                 WetlandsService.wetlandFeature = null;
+                this.diagram_layer_list = null;
             },
 
             selectFeature: function (id) {
