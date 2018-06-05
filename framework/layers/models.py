@@ -28,8 +28,10 @@ class Contact(models.Model):
     def __unicode__(self):
         if self.first_name != '' or self.last_name != '':
             name = u"%s %s" %(self.first_name, self.last_name)
+            if self.organisation != '':
+                name = name + " (%s)" % self.organisation 
         elif self.organisation != '':
-            name = self.organisation
+            name = u"%s (%s)" %(self.organisation, self.email)
         elif self.email != '':
             name = self.email
         return name
