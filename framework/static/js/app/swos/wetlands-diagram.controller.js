@@ -1306,6 +1306,10 @@ console.log(label_list)
                 try {
                     title = WetlandsService.wetlandList[WetlandsService.wetland_id].name + " - " + $scope.category_name;
                 } catch(e) {}
+                
+                if ($('.national_data').is(":visible")) {
+                    title = WetlandsService.national_name + " - " + $scope.category_name;
+                }
 
                 var dialog = bootbox.dialog({
                     title: title,

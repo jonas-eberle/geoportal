@@ -30,6 +30,12 @@
         wetlands.showSatdataExplorer = showSatdataExplorer;
         wetlands.externalDBSearchGeoss = externalDBSearchGeoss;
         wetlands.download = download;
+        wetlands.cleanUpDiagram = cleanUpDiagram;
+        
+        function cleanUpDiagram() {
+                WetlandsService.diagram_layer_list = null;
+        }
+        
         // wetlands.wetlands_opened = {};
 
         $scope.$on("mapviewer.alllayersremoved", function () {

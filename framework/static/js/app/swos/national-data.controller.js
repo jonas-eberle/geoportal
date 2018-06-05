@@ -78,6 +78,7 @@
                 nationalData.wetlands = data['wetlands'];
                 nationalData.products = data['products'];
                 WetlandsService.national_products = data['products'];
+                WetlandsService.national_name = country.name;
                 nationalData.geoss = data['geoss'];
                 
                 $timeout(function(){

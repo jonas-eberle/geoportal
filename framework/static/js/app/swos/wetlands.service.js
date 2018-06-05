@@ -72,6 +72,7 @@
             selectWetland: function (wetland, callback) {
                 if (typeof(callback)==='undefined') callback = null;
 
+                this.diagram_layer_list = null;
                 var wetland_service = this;
                 /*
                  try {
