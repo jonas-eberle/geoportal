@@ -1329,8 +1329,8 @@ class GetNationalData(APIView):
     def get(self, request, pk):
         country = self.get_object(pk)
 
-        wetlands = Wetland.objects.filter(country__contains=country.name)
-        wetlands = [WetlandsSerializer(i).data for i in wetlands]
+        wetlands_django = Wetland.objects.filter(country__contains=country.name)
+        wetlands = [WetlandsSerializer(i).data for i in wetlands_django]
 
         temp_products_layers = dict()
         temp_products = dict()
@@ -1366,6 +1366,35 @@ class GetNationalData(APIView):
             products.append(
                 {'id': product.id, 'name': product.name, 'order': product.order, 'description': product.description,
                  'layers': layers})
+        
+        # extract data for national data statistics (available classification legend and years)
+        lulc_layers = dict(MAES=[], CLC=[])
+        for wetland in wetlands_django:
+            lulc_maes_layers = WetlandLayer.objects.filter(wetland=wetland, product__short_name='LULC', identifier__icontains='_MAES_', publishable=True)
+            for l in lulc_maes_layers:
+                year = int(l.identifier.split('_')[-1][0:4])
+                if year not in lulc_layers['MAES']:
+                    lulc_layers['MAES'].append(year)
+            
+            lulc_clc_layers = WetlandLayer.objects.filter(wetland=wetland, product__short_name='LULC', identifier__icontains='_RAMSAR-CLC_', publishable=True)
+            for l in lulc_clc_layers:
+                year = int(l.identifier.split('_')[-1][0:4])
+                if year not in lulc_layers['CLC']:
+                    lulc_layers['CLC'].append(year)
+        
+        
+        lulc_layers_ar = []
+        if len(lulc_layers['MAES']) == 0:
+            del lulc_layers['MAES']
+        else:
+            lulc_layers['MAES'].sort()
+            lulc_layers_ar.append(dict(legend='MAES', dates=lulc_layers['MAES']))
+                
+        if len(lulc_layers['CLC']) == 0:
+            del lulc_layers['CLC']
+        else:
+            lulc_layers['CLC'].sort()
+            lulc_layers_ar.append(dict(legend='RAMSAR-CLC', dates=lulc_layers['CLC']))
 
         geoss = dict(national=[], continental=[])
         extdata_country = ExternalDatabase.objects.filter(country=country, geoss_datasource_id__isnull=False)
@@ -1376,4 +1405,52 @@ class GetNationalData(APIView):
         geoss['continental'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_continent]
         geoss['global'] = [dict(name=extdb.name, geoss_id=extdb.geoss_datasource_id) for extdb in extdata_global]
 
-        return Response(dict(wetlands=wetlands, products=products, geoss=geoss))
+        return Response(dict(wetlands=wetlands, products=products, geoss=geoss, lulc_layers=lulc_layers_ar)) 
+
+
+class NationalWetlandStatistics(APIView):
+    def get(self, request):
+        country = request.query_params.get('country', '')
+        clc = request.query_params.get('clc', 'MAES')
+        year = int(request.query_params.get('year', 0))
+        if year == 0:
+        	return Response({})
+        from swos.models import Wetland, WetlandLayer
+        import json
+        greece_wets = Wetland.objects.filter(country=country)
+        data_all = dict()
+        years_all = dict()
+        for w in greece_wets:
+            layers = WetlandLayer.objects.filter(wetland=w, product__short_name='LULC', identifier__icontains='_%s_' % clc, identifier__contains='_%s' % year, publishable=True)
+            if len(layers) > 0:
+                data_all[w.name] = []
+                years_all[w.name] = []
+            for l in layers:
+                data_year = int(l.identifier.split('_')[-1][0:4])
+                data = json.loads(l.legend_colors)
+                if data_year in years_all[w.name]:
+                    continue
+                else:
+                    years_all[w.name].append(data_year)
+                for entry in data:
+                    data_all[w.name].append({'class': entry['label'], 'year': data_year, w.name: entry['size']})
+        
+        import pandas
+        df_all = []
+        for wetland in data_all:
+            df_all.append(pandas.DataFrame(data_all[wetland]).set_index(['class', 'year']))
+        if len(df_all) > 1:
+            df_all = pandas.concat(df_all, axis=1)
+        elif len(df_all) == 1:
+            df_all = pandas.DataFrame(df_all[0])
+        else:
+            return Response([])
+        
+        df_year = df_all.iloc[df_all.index.get_level_values('year') == year].reset_index(1).drop('year', axis=1)
+        datasets = []
+        for index, row in df_year.fillna(0).iterrows():
+            dataset = {'key': row.name, 'values': []}
+            for index, val in enumerate(row):
+                dataset['values'].append({'class': row.index[index], 'size': val})
+            datasets.append(dataset)
+        return Response(datasets, content_type='application/json')

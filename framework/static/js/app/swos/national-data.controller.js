@@ -14,6 +14,7 @@
         nationalData.layers = []; //external national layers
         nationalData.databases = [];
         nationalData.ownmaps_open = true;
+        nationalData.statistics_open = true;
         nationalData.wetlands_open = false;
         nationalData.maps_open = true;
         nationalData.databases_open = false;
@@ -27,6 +28,19 @@
         nationalData.selected_bbox = null;
         nationalData.externalDBSearchGeoss = externalDBSearchGeoss;
         nationalData.olLayer = null;
+		nationalData.showStatistics = showStatistics;
+        nationalData.clc_type = '-1';
+        $scope.$watch('nationalData.clc_type', function(){
+          if (nationalData.clc_type != '-1') {
+              if (!$.inArray(nationalData.year, nationalData.clc_type.dates)) {
+                    nationalData.year = nationalData.clc_type.dates[0];   
+              }   
+          }
+          $timeout(function(){
+              $('#statistics_year').selectpicker('refresh');
+          }); 
+        });
+        nationalData.year = '';
         
         $scope.$on('mapviewer.catalog_loaded', function () {            
             djangoRequests.request({
@@ -80,14 +94,33 @@
                 WetlandsService.national_products = data['products'];
                 WetlandsService.national_name = country.name;
                 nationalData.geoss = data['geoss'];
+                nationalData.lulc_layers = data['lulc_layers'];
+                nationalData.clc_type = nationalData.lulc_layers[0]; 
+                nationalData.year = nationalData.clc_type.dates[0];
                 
                 $timeout(function(){
                    $('#national_geoss_select.selectpicker').selectpicker({
                       style: 'btn-info'
                     });
-                    $('#national_geoss_select.selectpicker').selectpicker('refresh');
- 
+                   $('#national_geoss_select.selectpicker').selectpicker('refresh');
+                   
+                   $('#statistics_clc').selectpicker({
+                      style: 'btn-info',
+                      width: '100%',
+                      size: 10,
+                      title: 'Please select a classification legend'
+                    });
+                   $('#statistics_clc').selectpicker('refresh');
+                    
+                   $('#statistics_year').selectpicker({
+                      style: 'btn-info',
+                      width: '100%',
+                      size: 10,
+                      title: 'Please select a year to compare'
+                    });
+                   $('#statistics_year').selectpicker('refresh'); 
                 });
+                
             });
             
             djangoRequests.request({
@@ -112,6 +145,39 @@
         function formatValue(value){
             return new Intl.NumberFormat('en-US').format(value);
         }
+		
+		function showStatistics() {
+			$modal.open({
+                bindToController: true,
+                controller: 'NationalDataStatisticsCtrl',
+                controllerAs: 'wsdc',
+                templateUrl: subdir+'/static/includes/national-data-statistics.html',
+                windowClass: 'nationaldata-window',
+                backdrop: 'static',
+				resolve: {
+                    data: function () {
+                        return {'clc': nationalData.clc_type.legend, 'date': nationalData.year, 'country': nationalData.selectedCountry.name};
+                    },
+                    title: function () {
+                        return nationalData.selectedCountry.name + ': National wetland statistics for ' + nationalData.clc_type.legend + ' legend in year ' + nationalData.year;
+                    }
+                }
+            }).rendered.then(function(){
+                $('.modal-backdrop').remove();
+                var left = angular.element('.nationaldata-window .modal-dialog').offset().left;
+                var top = angular.element('.nationaldata-window .modal-dialog').offset().top;
+                var width = 800;
+                angular.element('.nationaldata-window').removeClass('modal').addClass('mymodal');
+                $('.modal-content', angular.element('.nationaldata-window')).css('left', left).css('top', -30).css('width', width);
+				$timeout(function(){
+                    var legend = d3.select('#national-data-chart g.nv-legendWrap').selectAll('g.nv-series');
+					if (legend.length > 0) {
+                        legend[0][0].dispatchEvent(new Event('click'));
+                        legend.each(function(){this.dispatchEvent(new Event('click'))});   
+                    }
+	            }, 100);
+            });
+		}
         
         function externalDBSearchGeoss(geossID, rel) {
             $('#loading-div').show();

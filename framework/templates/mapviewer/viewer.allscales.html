@@ -938,6 +938,22 @@
                                 </uib-accordion>
                             </div>
                             
+                            <div uib-accordion-group is-open="nationalData.statistics_open" ng-if="nationalData.lulc_layers.length > 0">
+                                <uib-accordion-heading>
+                                    National wetland statistics
+                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.statistics_open, 'glyphicon-chevron-right': !nationalData.statistics_open}"></i>
+                                </uib-accordion-heading>
+                                Please specify classification legend: 
+                                <select id="statistics_clc" name="statistics_clc" class="selectpicker" name="clc_type" ng-model="nationalData.clc_type"  ng-options="objMake as objMake.legend for objMake in nationalData.lulc_layers">
+                                    
+                                </select><br /><br/>
+                                Please specify year of data: 
+                                <select id="statistics_year" name="statistics_year" class="selectpicker" name="year" ng-model="nationalData.year" ng-options="date for date in nationalData.clc_type.dates">
+                                    
+                                </select><br/><br/>
+                                <button class="btn btn-primary" ng-click="nationalData.showStatistics();">Show statistics</button>
+                            </div>
+                            
                             <div uib-accordion-group is-open="nationalData.maps_open" ng-if="nationalData.layers.length > 0">
                                 <uib-accordion-heading>
                                     External national maps & layers

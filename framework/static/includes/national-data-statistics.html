@@ -1,0 +1,7 @@
+<div modal-draggable class="modal-header"><h1>{{ wsdc.title }}</h1></div>
+<div class="modal-body" style="padding: 0;height:auto;">
+    <nvd3 id="national-data-chart" options="wsdc.chartOptions" data="wsdc.data" api="wsdc.chart_api" on-ready="wsdc.init_chart"></nvd3>  
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="wsdc.close()">Close</button>
+</div>
