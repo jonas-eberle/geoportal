@@ -533,11 +533,12 @@
                                                                 <span class="project">[SWOS]</span> {{product.name}}
                                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
                                                             </uib-accordion-heading>
-                                                              <div>
-                                                                   <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
-                                                              </div>
+
                                                             <div class="options">
                                                                 <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                                <div>
+                                                                   <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                                                </div>
                                                                 <p ng-if="product.story_line.length != 0 && product.story_line != false"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                                 <div class="products_datasets">
             
@@ -574,12 +575,13 @@
                                                                 <span class="project">[SWOS]</span> {{product.name}}
                                                                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
                                                             </uib-accordion-heading>
-                                                              <div>
-                                                                   <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
-                                                              </div>
+
 
                                                             <div class="options">
                                                                 <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
+                                                                <div>
+                                                                   <button ng-controller="DiagramCtrl as diagram" tooltip-placement="bottom"  type="button" ng-click="diagram.onclickCreate(product.layers[0].id, 'all');" class="btn btn-default hidden-xs btn-legend" aria-label="Left Align" style="width: auto;"><i class="fa fa-line-chart fa-lg"></i>  Show indicator values</button>
+                                                              </div>
                                                                 <p ng-if="product.story_line.length != 0 && product.story_line != false"><strong>Storylines:</strong><div ng-repeat="story_line in product.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div></p>
                                                                 <div class="products_datasets">
 

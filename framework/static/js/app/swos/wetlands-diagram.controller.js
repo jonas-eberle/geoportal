@@ -38,11 +38,11 @@
         diagram.ind_name['110'] = 'Natural wetland';
         diagram.ind_name['111'] = 'Natural wetland / vegetated ';
         diagram.ind_name['112'] = 'Natural wetland / water bodies';
-        diagram.ind_name['113'] = 'Natural wetland / rivers bodies';
+        diagram.ind_name['113'] = 'Natural wetland / river bodies';
         diagram.ind_name['120'] = 'Artificial wetland';
         diagram.ind_name['121'] = 'Artificial wetland / vegetated ';
         diagram.ind_name['122'] = 'Artificial wetland / water bodies';
-        diagram.ind_name['123'] = 'Artificial wetland / rivers bodies';
+        diagram.ind_name['123'] = 'Artificial wetland / river bodies';
         diagram.ind_name['200'] = 'Urban';
         diagram.ind_name['300'] = 'Agriculture';
         diagram.ind_name['400'] = 'Natural habitat not wetland';
@@ -105,7 +105,18 @@
         diagram.ind_color_border['100300'] = '#f70d00';
         diagram.ind_color_border['100400'] = '#f70d00';
 
-
+        diagram.description = [];
+        diagram.description['101'] = [1, 'Vegetated wetland; unknown if natural or artificual wetland'];
+        diagram.description['102'] = [2, 'Water bodies; unknown if natural or artificual wetland'];
+        diagram.description['103'] = [3, 'Rriver bodies; unknown if natural or artificual wetland'];
+        diagram.description['110'] = [4, 'Natural wetland; unknown if vegetated, river or water bodyies'];
+        diagram.description['111'] = [5, 'Vegetated and natural wetland'];
+        diagram.description['112'] = [6, 'Water bodies and natural wetland'];
+        diagram.description['113'] = [7, 'River bodies and natural wetland'];
+        diagram.description['120'] = [8, 'Artificial wetland; unknown if vegetated, river or water bodies'];
+        diagram.description['121'] = [9, 'Vegetated and artificial wetland'];
+        diagram.description['122'] = [10, 'Water bodies and artificial wetland'];
+        diagram.description['123'] = [11, 'River bodies and artificial wetland'];
 
 
         //--------------------------------------------------------------------------------------------------------------
@@ -551,16 +562,17 @@
             var label_list = [];
             var resolution_list = [];
             var product_layers = diagram.layers[legend_type_lulc];
+            var resolution_list = [];
             console.log( product_layers)
             for (var p_layer in product_layers) {
                     data[product_layers[p_layer].key] = [];
+                    resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,product_layers[p_layer].layer.resolution_unit.replace("meter", "m")]) ;
                     for (var legend_entries in product_layers[p_layer].layer.legend_colors) {
                         class_id = product_layers[p_layer].layer.legend_colors[legend_entries].code;
                         class_list[class_id] = 1;
                         data[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].size;
                         color_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].color;
                         label_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].label;
-                        resolution_list[class_id] = product_layers[p_layer].layer.resolution_distance;
                         // if (data[product_layers[p_layer].identifier.slice(-4)][class_id] == "undefined") {
                         //     data[product_layers[p_layer].identifier.slice(-4)][class_id] = 0;
                         //}
@@ -589,7 +601,7 @@ console.log(label_list)
                     "key": label_list[id],
                     "values": data_plot[id],
                     "color": color_list[id],
-                    "resolution": resolution_list[id]
+                    "resol": resolution_list
                 };
                 data_all.push(data_all_id);
             }
@@ -1129,11 +1141,23 @@ console.log(label_list)
                     for (var key in diagram.layers) {
                         // Collect layer for each legend type
                         if (product_layers[p_layer].identifier.includes(key) && product_layers[p_layer].legend_colors && (product_layers[p_layer].legend_colors[0].size || product_layers[p_layer].legend_colors[0].size == 0 )) {
+                            if (product_layers[p_layer].resolution_distance) {
+                                var resol = " (" + product_layers[p_layer].resolution_distance + "m)";
+                            }
+                            else {
+                                var resol = "";
+                            }
+                            if (product_layers[p_layer].identifier.split("_").slice(-1)[0].includes("-")) {
+                                var title = product_layers[p_layer].identifier.split("_").slice(2)[0] + " "  + product_layers[p_layer].identifier.split("_").slice(-1)[0]; // todo add sensor and resol
+                            }
+                            else {
+                                var title = product_layers[p_layer].identifier.split("_").slice(2)[0] + " " + product_layers[p_layer].identifier.split("_").slice(3)[0] + resol + " " + product_layers[p_layer].identifier.split("_").slice(-1)[0];
+                            }
 
                             diagram.layers[key].push({
                                 key: product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
                                 name: product_layers[p_layer].identifier.split("_").slice(-1)[0],
-                                title: product_layers[p_layer].identifier.split("_").slice(2)[0] + " " + product_layers[p_layer].identifier.split("_").slice(3)[0] + " " + product_layers[p_layer].identifier.split("_").slice(-1)[0],
+                                title: title,
                                 layer: product_layers[p_layer]
                             });
                         }
@@ -1451,7 +1475,7 @@ console.log(label_list)
                     '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.label }}</td>' +
+                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 5px;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
@@ -1473,11 +1497,11 @@ console.log(label_list)
                     '<table ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.stat.stat ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[1]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}</td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 5px;" ng-if="diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
                     '<td class="legend-label">to </td>' +
                     '<td class="legend-label">&nbsp;</td>' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[2]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}</td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 5px;" ng-if="diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
                     '<td class="legend-percent"><span>{{ diagram.formatValue((item[0]/10000).toFixed(2)) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
@@ -1489,8 +1513,8 @@ console.log(label_list)
                     '<th>&nbsp;</th>'+
                     '<th>Class</th>'+
                     '<th style="text-align: right" ng-repeat="val in data[0].values">{{val[0]}}</th>'+
-                    '</tr>'+
-                    '<tr><td ng-repeat="val in data[0].resolution">{{vsl[0]}}</td></tr>'+
+                    '</tr>' +
+                 //   '<tr ng-if="data[0].resol" class="border"><td></td><td>Sensor and spat. resol.</td><td class="legend-label" ng-repeat="val in data[0].resol">{{val[0]}} ({{val[1]}} {{val[2]}})</td></tr>'+
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.key }}</td>' +
@@ -1916,7 +1940,9 @@ console.log(label_list)
                 console.log(all_classes);
                 var landuse = [];
                 for (var key in diagram.ind_name) {
-                    landuse.push({name: diagram.ind_name[key], color: diagram.ind_color[key]})
+                    if (key.length == 3) {
+                        landuse.push({name: diagram.ind_name[key], color: diagram.ind_color[key]})
+                    }
                 }
                 console.log(landuse)
                 //var landuse = [{name: "Wettland", color: "rgb(0,169,230)"},{name: "Wet. ext (nat.)", color: "rgb(0,100,230)"},  {name: "Wetland(art.)", color: "rgb(0,200,230)"},  {name: "Urban", color: "rgb(255,66,66)"},  {name: "Argiculture", color: "rgb(255,255,100)"}, {name: "Other", color: "rgb(0,168,132)"},  {name: "Rice", color: "rgb(0,168,132)"}];
@@ -1924,20 +1950,24 @@ console.log(label_list)
                 var data = [];
                 var data_line = [];
                 for (var key in diagram.ind_name) {
-                    for (var key2 in diagram.ind_name) {
-                        var val = 0;
+                     if (key.length == 3) {
+                         for (var key2 in diagram.ind_name) {
+                              if (key2.length == 3) {
+                                  var val = 0;
 
-                        for (var key3 in stat.stat) {
-                            if (stat.stat[key3][1] == key && stat.stat[key3][2] == key2) {
-                                val = stat.stat[key3][0];
-                                break;
-                            }
-                        }
-                        data_line.push(val)
+                                  for (var key3 in stat.stat) {
+                                      if (stat.stat[key3][1] == key && stat.stat[key3][2] == key2) {
+                                          val = stat.stat[key3][0];
+                                          break;
+                                      }
+                                  }
+                                  data_line.push(val)
+                              }
 
-                    }
-                    data.push(data_line)
-                    var data_line = [];
+                         }
+                         data.push(data_line)
+                         var data_line = [];
+                     }
                 }
                 console.log(data);
                 var matrix = data;
