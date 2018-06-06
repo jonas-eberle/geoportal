@@ -960,7 +960,16 @@ class WetlandLayer(Layer):
                 product = product[4:]
             if 'IND-ALL' in self.indicator.short_name:
                 wq_type = self.identifier.split('_')[2]
-
+                product = "CHG"
+            if 'WET-CHANGE' in self.indicator.short_name:
+                product = "WET-CHG"
+            if self.indicator.type == "change":
+                try:
+                    source = json.loads(self.meta_file_info)
+                    length = len(source["source"])
+                    date_string = ' '.join([str(self.date_begin.year), "("+ source["source"][0]["id"].split("_")[3] + ")", '-', str(self.date_end.year), "("+ source["source"][length-1]["id"].split("_")[3] + ")"])
+                except:
+                    pass
             return ' '.join([product, wq_type, date_string])
 
     def indexing(self):
