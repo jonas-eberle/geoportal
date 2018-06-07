@@ -1,4 +1,4 @@
-(tfunction() {
+(function() {
     'use strict';
 
     angular
