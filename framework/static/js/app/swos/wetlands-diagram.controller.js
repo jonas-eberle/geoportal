@@ -1,4 +1,4 @@
-(function() {
+(tfunction() {
     'use strict';
 
     angular
@@ -115,8 +115,8 @@
         diagram.description['103'] = [3, 'Rriver bodies; unknown if natural or artificial wetland'];
         diagram.description['110'] = [4, 'Natural wetland; unknown if vegetated, river or water bodies'];
         diagram.description['111'] = [5, 'Vegetated and natural wetland'];
-        diagram.description['112'] = [6, 'Water bodies within an natural wetland'];
-        diagram.description['113'] = [7, 'River bodies within an natural wetland'];
+        diagram.description['112'] = [6, 'Water bodies within a natural wetland'];
+        diagram.description['113'] = [7, 'River bodies within a natural wetland'];
         diagram.description['120'] = [8, 'Artificial wetland; unknown if vegetated, river or water bodies'];
         diagram.description['121'] = [9, 'Vegetated and artificial wetland'];
         diagram.description['122'] = [10, 'Water bodies within an artificial wetland'];
