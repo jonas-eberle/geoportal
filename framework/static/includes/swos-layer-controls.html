@@ -75,7 +75,7 @@
         <tr ng-repeat="item in layer.legend_colors track by $index">
             <td ng-if="item['stroke-color'] != item.color && item['stroke-color']" class="legend-color legend-border-color"  ng-attr-style="background-color:{{ item.color }}; border-color: {{ item['stroke-color'] }};">&nbsp;</td>
             <td ng-if="item['stroke-color'] == item.color || !item['stroke-color']" class="legend-color"  ng-attr-style="background-color:{{ item.color }};">&nbsp;</td>
-            <td class="legend-label">{{ item.label }}</td>
+            <td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="slc.description[item.code]" title="{{slc.description[item.code][1]}}">{{slc.description[item.code][0]}}</sup></td>
         </tr>
     </table>
 </div>
