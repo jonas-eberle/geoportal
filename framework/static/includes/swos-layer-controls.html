@@ -32,20 +32,20 @@
 <!--        <button tooltip-placement="bottom"  uib-tooltip="Download data" ng-if="layer.downloadable" type="button"
                 ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
                 class="fa fa-download fa-lg"></i></button>-->
-        <button tooltip-placement="bottom"  uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
+        <button ng-if="slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Show/Hide station list" type="button"
                 ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(slc.layer)" class="btn btn-default btn-legend"
                 aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
         <button tooltip-placement="bottom"  uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Download" type="button" ng-if="layer.downloadable" ng-click="wetlands.download(slc.layer)"
+        <button tooltip-placement="bottom"  uib-tooltip="Download" type="button" ng-if="layer.downloadable && slc.layer.virtual_layer != 1" ng-click="wetlands.download(slc.layer)"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)" ng-if="!slc.hideShare"
+        <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)" ng-if="!slc.hideShare && slc.layer.virtual_layer != 1"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
-        <button ng-if="layer.story_line.length == 1" tooltip-placement="bottom"  uib-tooltip="Story line" type="button" ng-click="storyline.show_story_line(layer.story_line[0].story_line, layer.story_line[0].order)"
+        <button ng-if="layer.story_line.length == 1 && slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Story line" type="button" ng-click="storyline.show_story_line(layer.story_line[0].story_line, layer.story_line[0].order)"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-info fa-lg"></i></button>
-        <button ng-if="layer.story_line.length > 1" tooltip-placement="bottom"  uib-tooltip="Storyline" type="button" ng-click="storyline.setVisibilityStoryLine()"
+        <button ng-if="layer.story_line.length > 1 && slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Storyline" type="button" ng-click="storyline.setVisibilityStoryLine()"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-info fa-lg"></i></button>
         <div ng-if="show_story_lines">Storylines:</div>
         <div ng-if="show_story_lines" ng-repeat="story_line in layer.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div>

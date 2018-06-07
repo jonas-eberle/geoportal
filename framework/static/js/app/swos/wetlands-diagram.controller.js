@@ -990,22 +990,6 @@ console.log(label_list)
             return csvContent;
         }
 
-        function copy_and_insert_new_layer(layer){
-            console.log("add layer")
-            console.log(WetlandsService.value.data.indicators[0].layers);
-            layer.id = layer.id + 123456;
-            layer.style = "IND";
-            layer.ogc_type = "WMS";
-            layer.env = "attr:MAES_L1";
-            layer.ogc_link = "http://artemis.geogr.uni-jena.de/geoserver/wms";
-            layer.identifier = "SWOS_WET-EXT-MAES_" + layer.identifier.split('_').slice(-2)[0] + "_2090";
-            layer.alternativ_title = "test";
-            WetlandsService.value.data.indicators[0].layers.push(layer);
-            console.log(WetlandsService.value.data.indicators[0].layers);
-             // $rootScope.$broadcast('test');
-
-        }
-
         $scope.$watch("legend_type_lulc", function () {
             var title = $scope.category_name;
             try {
@@ -1280,19 +1264,23 @@ console.log(label_list)
             new_layer.id = Math.floor(Math.random() * 10000);
             new_layer.stat = new_stat;
             new_layer.ogc_type = "WMS";
-            new_layer.env = "col_1:" + '\\"' + new_columns[0].col_cd.toUpperCase() + '\\"' + ";col_2:" + '\\"' + new_columns[1].col_cd.toUpperCase() + '\\"';
-            new_layer.env = "year1:IND_CODE;year2:IND_CODE";
+            new_layer.env = "col_1:" + new_columns[0].col_cd.toUpperCase() + ";col_2:" + new_columns[1].col_cd.toUpperCase() ;
+        //    new_layer.env = "year1:IND_CODE;year2:IND_CODE";
 
             new_layer.ogc_link = new_layer.ogc_link.slice(0, new_layer.ogc_link.indexOf("geoserver")) + "geoserver/wms";
 
-            new_layer.style = first_layer.layer.identifier.split("_")[1] + "_DYNAMIC2";
+            new_layer.style = first_layer.layer.identifier.split("_")[1] + "_DYNAMIC";
             new_layer.legend_colors = set_legend_colors(new_layer.stat, type);
 
             new_layer.identifier = "SWOS_" + type + "_" + first_layer.layer.identifier.split("_")[2] + "_" + first_layer.layer.identifier.split("_")[3] + "_" + name_year1 + "-" + name_year2;
             new_layer.title = first_layer.layer.identifier.split("_").slice(2)[0] + " " + first_layer.layer.meta_file_info.columns[key2].sensor + " " + first_layer.layer.meta_file_info.columns[key2].year + "-" + first_layer.layer.meta_file_info.columns[i].year,
-                new_layer.alternate_title = first_layer.layer.alternate_title.split(" ")[0] + " " + first_layer.layer.alternate_title.split(" ")[1] + " " + name_year1 + " / " + name_year2;
+            new_layer.alternate_title = first_layer.layer.alternate_title.split(" ")[0] + " " + first_layer.layer.alternate_title.split(" ")[1] + " " + name_year1 + " (" + new_columns[0].col_cd.split("_")[0].toUpperCase() + ") - " + name_year2 + " (" + new_columns[1].col_cd.split("_")[0].toUpperCase() + ")";
+            new_layer.virtual_layer = 1;
 
-            //WetlandsService.value.data.indicators[ind_group_key].layers.push(new_layer); // todo add one its works
+            if (type.includes("IND-WET-CHANGE")){
+                WetlandsService.value.data.indicators[ind_group_key].layers.push(new_layer); // todo add one its works
+            }
+
 
             diagram.layers[type].push({
                 type: "change",
@@ -1516,15 +1504,15 @@ console.log(label_list)
                     '<button ng-if="layer.layer.id == active_layer.id" ng-click="diagram.set_data_options_year(layer.layer); diagram.updateChords(active_layer.stat)" style="font-weight: bold;" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '<button ng-if="layer.layer.id != active_layer.id" ng-click="diagram.set_data_options_year(layer.layer);diagram.updateChords(active_layer.stat)" uib-tooltip="{{ layer.title }}" tooltip-append-to-body="true" >{{ layer.name }}</button>' +
                     '</div >' +
-                    '<div ng-if="active_layer && !legend_type_lulc.includes(\'IND-ALL\') && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
+                    '<div ng-if="active_layer  && !legend_type_lulc.includes(\'IND-ALL\')" style="display: inline-block;float: right;padding-top: 14px;"> <button  ng-click="diagram.addLayerToMap(active_layer)" type="button" class="btn btn-default btn-xs" aria-label="Left Align"><i class="fa fa-plus fa-lg " uib-tooltip="Add layer to map" tooltip-append-to-body="true"></i></button>' +
                     '</div>' +
                     '</div>' +
                     
-                    '<uib-tabset justified="true"> <uib-tab heading="Data">' +
+                    '<uib-tabset justified="true" class="tab-diagram"> <uib-tab heading="Data">' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<div class="item_legend" style="" ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
                     '<strong ng-if=active_layer.legend_colors>Relative and absolute area proportions</strong></div>' +
-                    '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
+                    '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" class="chart_year" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
@@ -1536,7 +1524,7 @@ console.log(label_list)
                     '<tr ng-if="!legend_type_lulc.includes(\'WET-THREATS\') && active_layer.area_total"><td></td><td class="legend-label">Wetland area (total site area):</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha ({{diagram.formatValue(active_layer.area_total[0]/ 10000)}} ha)</td></tr>' +
                     '</table>' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<div class="item_legend"  ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
                     '<strong ng-if=active_layer.legend_colors>Absolute wetland area changes</strong></div>' +
                     '<table ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;border-collapse: separate; border-spacing: 0px 2px;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors ">' +
@@ -1546,7 +1534,7 @@ console.log(label_list)
                     '</tr>' +
                     '</table>' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<div class="item_legend"  ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
                     '<strong>Absolute changed area</strong></div>' +
                     '<table ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.stat.stat ">' +
@@ -1560,7 +1548,7 @@ console.log(label_list)
                     '</tr>' +
                     '</table>' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
+                    '<div class="item_legend" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
                     '<div style="float:left"><strong>Abolute area over time</strong></div>' +
 
                     '<div ng-if="!diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in %</div>' +

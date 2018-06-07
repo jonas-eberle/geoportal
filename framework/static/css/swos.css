@@ -759,12 +759,23 @@ path.chord {
     opacity: 0;
 }
 
-table.chart_time_series th, table.chart_time_series td  {
-    
-}  
+table.chart_time_series,
+table.chart_year{
+    margin: 5px 0 0 0;
+}
 
-table.chart_time_series tr.border th, table.chart_time_series tr.border td {
-    border: 1px solid black;
+table.chart_time_series tr.border th,
+table.chart_time_series tr.border td,
+table.chart_year th,
+table.chart_year td {
+    border-top: 1px solid #dddddd;
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.tab-diagram .tab-content {
+    margin-top: -1px;
+    border: 1px solid #dddddd;
+    border-top: 1px solid #fff;
+    padding: 5px 10px 5px 10px
 }
