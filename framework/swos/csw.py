@@ -17,7 +17,10 @@ def create_csw_xml(instance):
 
     # Add online resource
     online_resources = []
-    online_resources.append({'linkage': instance.ogc_link, 'name': instance.title, 'protocol': instance.ogc_type })
+    ogc_type = instance.ogc_type
+    if instance.ogc_type in ['WMS', 'WMTS', 'WFS', 'SOS', 'TMS']:
+        ogc_type = 'OGC:%s' % ogc_type
+    online_resources.append({'linkage': instance.ogc_link, 'name': instance.ogc_layer, 'protocol': ogc_type })
 
     # Add download link
     if instance.downloadable == True:
