@@ -147,6 +147,7 @@ class Layer(models.Model):
     legend_graphic = models.FileField("Legend graphic file", upload_to='legend', null=True, blank=True)
     legend_url = models.URLField("Legend graphic URL", max_length=400, null=True, blank=True)
     legend_colors = models.TextField("Legend rgb colors", null=True, blank=True)
+    legend_info = models.TextField("Legend info", blank=True)
 
     #Permissions
     auth_perm = models.BooleanField("Access permission", default=False, help_text="Activate access permission for layer")
@@ -436,7 +437,7 @@ class LayerSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type',
             'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'dataset_epsg',
-            'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'download', 'download_type', 'map_layout_image',
+            'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'legend_info', 'download', 'download_type', 'map_layout_image',
             'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply','wmts_prefix_matrix_ids',
             'min_zoom', 'max_zoom', 'meta_file_info', 'resolution_distance', 'resolution_unit')
 

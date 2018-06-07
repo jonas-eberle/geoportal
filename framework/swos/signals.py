@@ -38,7 +38,7 @@ def keep_track_delete(sender, instance, **kwargs):
         if sender == WetlandLayer or sender == ExternalLayer:
             LayerIndex.get(id=instance.id).delete()
         if sender == ExternalDatabase:
-            ExternalDatabase.get(id=instance.id).delete()
+            ExternalDatabaseIndex.get(id=instance.id).delete()
         if sender == Wetland:
             WetlandIndex.get(id=instance.id).delete()
 

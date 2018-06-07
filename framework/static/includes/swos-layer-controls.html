@@ -66,8 +66,9 @@
      <p ng-text-truncate='mcl.extentInfo' ng-tt-chars-threshold="100"></p>
 </div>
 
-<div class="item_legend" style="margin-left:5px;margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showLegend">
+<div class="item_legend" style="margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showLegend">
     <div><strong>Legend</strong></div>
+    <div style="" ng-if="layer.legend_info != ''">{{ layer.legend_info }}</div>
     <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ slc.layer.legend_url }}.jpg" ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
     <img ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>
     <table ng-if="layer.legend_colors" style="width:100%;border-collapse: separate; border-spacing: 0px 2px;">

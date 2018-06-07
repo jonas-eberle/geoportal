@@ -97,7 +97,7 @@ class LayersAdmin(admin.ModelAdmin):
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-ogc',),
-            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'min_zoom', 'max_zoom', 'sos_default_field', 'meta_file_info')
+            'fields': ('ogc_link', 'ogc_layer', 'ogc_type', 'ogc_imageformat', 'ogc_attribution', 'statistic','ogc_getfeatureinfo', 'ogc_time', 'ogc_times', 'legend_graphic', 'legend_url', 'legend_colors', 'legend_info', 'min_zoom', 'max_zoom', 'sos_default_field', 'meta_file_info')
         }),
         (None, {
             'classes': ('suit-tab', 'suit-tab-wmts',),

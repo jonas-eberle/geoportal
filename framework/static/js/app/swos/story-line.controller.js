@@ -258,7 +258,7 @@ var storylinePopup;
                                             'placement': 'right',
                                             'animation': false,
                                             'html'     : true,
-                                            'title'    : evt.selected[0].get('name'),
+                                            'title'    : '', //evt.selected[0].get('name'),
                                             'content'  : content
                                         });
                                         $(element).popover('show');

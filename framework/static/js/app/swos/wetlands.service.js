@@ -243,7 +243,7 @@
                         if(no_scroll == true){}
                         else {
                             $(".tab-content").animate({
-                                scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 200
+                                scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 400
                             }, 2000);
                         }
                     });
@@ -260,7 +260,7 @@
                         if(no_scroll == true){}
                         else {
                             $(".tab-content").animate({
-                                scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 200
+                                scrollTop: $("#layer_vis_div_" + layer_id).offset().top - 400
                             }, 2000);
                         }
                     });
