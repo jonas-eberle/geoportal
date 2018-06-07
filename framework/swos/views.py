@@ -279,7 +279,10 @@ class WetlandDetail(APIView):
         else:
             country_continent = Country.objects.get(name=wetland.country.replace('Tanzania', 'United Republic of Tanzania'))
 
-        extdata = ExternalDatabase.objects.filter(country__name=wetland.country) | ExternalDatabase.objects.filter(continent="Global") | ExternalDatabase.objects.filter(continent=country_continent.continent) | ExternalDatabase.objects.filter(wetland_id=wetland.id)
+        extdata = list(ExternalDatabase.objects.filter(country__name=wetland.country))
+        extdata.extend(list(ExternalDatabase.objects.filter(continent="Global")))
+        extdata.extend(list(ExternalDatabase.objects.filter(continent=country_continent.continent)))
+        extdata.extend(list(ExternalDatabase.objects.filter(wetland_id=wetland.id)))
 
         extdb_grouped_list = {'local': [], 'national': [], 'continent': [], 'global': []}
         extdb_grouped_name = {'local': wetland.name, 'national': wetland.country,'continent': country_continent.continent, 'global': "Global"}
