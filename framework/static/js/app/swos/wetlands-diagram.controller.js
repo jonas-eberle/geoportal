@@ -33,6 +33,7 @@
         diagram.data_vals = "";
         diagram.show_percent = false;
         diagram.show_diff = false;
+        diagram.add_plus = add_plus;
 
         diagram.ind_name = [];
         diagram.ind_name['100'] = 'Wetland';
@@ -561,6 +562,8 @@
             var data = [];
             var percent = [];
             var percent_table = [];
+            var percent_total = [];
+            var percent_total_table = [];
             var data_plot = [];
             var data_all_id;
             var data_all = [];
@@ -573,12 +576,16 @@
             for (var p_layer in product_layers) {
                     data[product_layers[p_layer].key] = [];
                     percent[product_layers[p_layer].key] =[];
+                    percent_total[product_layers[p_layer].key] = [];
                     resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,product_layers[p_layer].layer.resolution_unit.replace("meter", "m")]) ;
                     for (var legend_entries in product_layers[p_layer].layer.legend_colors) {
                         class_id = product_layers[p_layer].layer.legend_colors[legend_entries].code;
                         class_list[class_id] = 1;
                         data[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].size;
                         percent[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].percent;
+                        if (product_layers[p_layer].layer.legend_colors[legend_entries].percent_total){
+                            percent_total[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].percent_total;
+                        }
                         color_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].color;
                         label_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].label;
                         // if (data[product_layers[p_layer].identifier.slice(-4)][class_id] == "undefined") {
@@ -602,15 +609,20 @@ console.log(label_list)
             for (var id in class_list) {
                 data_plot[id] = [];
                 percent_table[id] = [];
+                percent_total_table[id] = [];
                 for (var year in data) {
                     data_plot[id].push([year.split("_")[0], data[year][id]]);
                     percent_table[id].push([year.split("_")[0], percent[year][id]]);
+                    percent_total_table[id].push([year.split("_")[0], percent_total[year][id]]);
+
                     i++;
                 }
                 data_all_id = {
+                    "code": id,
                     "key": label_list[id],
                     "values": data_plot[id],
                     "percent": percent_table[id],
+                    "percent_total": percent_total_table[id],
                     "color": color_list[id],
                     "resol": resolution_list
                 };
@@ -1170,6 +1182,12 @@ console.log(label_list)
                                     product_layers[p_layer].legend_colors[key3].percent = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
                                 }
                             }
+                            if (product_layers[p_layer].identifier.includes("WET-EXT-")){
+                                for (key3 in product_layers[p_layer].legend_colors){
+                                    product_layers[p_layer].legend_colors[key3].percent_total = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                    product_layers[p_layer].area_total = product_layers[p_layer].meta_file_info.area[0];
+                                }
+                            }
 
                             diagram.layers[key].push({
                                 key: product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
@@ -1245,6 +1263,16 @@ console.log(label_list)
         }
         function set_show_diff(){
             diagram.show_diff = !diagram.show_diff;
+        }
+        function add_plus(value){
+           if (value <= 0){
+               return value;
+           }
+           else {
+               return "+" + String(value);
+           }
+
+
         }
 
         function add_layer(first_layer, type, ind_group_key, new_columns, new_stat, name_year1, name_year2, key2, i) {
@@ -1500,10 +1528,12 @@ console.log(label_list)
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
-                    '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
+                    '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span><span ng-if="item.percent_total > 0"> ({{ item.percent_total.toFixed(2) }}%)</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
-                    '<tr><td>&nbsp;</td></tr><tr ng-if="!legend_type_lulc.includes(\'WET-THREATS\')"><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>' +
+                    '<tr><td>&nbsp;</td></tr>' +
+                    '<tr ng-if="!legend_type_lulc.includes(\'WET-THREATS\') && !active_layer.area_total"><td></td><td class="legend-label">Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>' +
+                    '<tr ng-if="!legend_type_lulc.includes(\'WET-THREATS\') && active_layer.area_total"><td></td><td class="legend-label">Wetland area (total site area):</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha ({{diagram.formatValue(active_layer.area_total[0]/ 10000)}} ha)</td></tr>' +
                     '</table>' +
 
                     '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
@@ -1548,13 +1578,13 @@ console.log(label_list)
                  //   '<tr ng-if="data[0].resol" class="border"><td></td><td>Sensor and spat. resol.</td><td class="legend-label" ng-repeat="val in data[0].resol">{{val[0]}} ({{val[1]}} {{val[2]}})</td></tr>'+
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.key }}</td>' +
+                    '<td class="legend-label">{{ item.key }}<sup style="padding-left: 5px;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>' +
 
                     '<td ng-if="!diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span><span ng-if="!val[1] > 0" ></span></td>' +
-                    '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} %</span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} %</span><span ng-if="!val[1] > 0" ></span><span ng-if="item.percent_total[$index][1] > 0"> ({{ item.percent_total[$index][1].toFixed(2) }}%)</span></td>' +
 
-                    '<td ng-if="!diagram.show_percent && diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0" >{{ (item.values[$index][1] - item.values[$index-1][1]).toFixed(2) }} ha </span><span ng-if="!val[1] > 0" ></span></td>' +
-                    '<td ng-if="diagram.show_percent && diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0" >{{ (item.percent[$index][1] - item.percent[$index-1][1]).toFixed(2) }} % </span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="!diagram.show_percent && diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0" >{{ diagram.add_plus((item.values[$index][1] - item.values[$index-1][1]).toFixed(2)) }} ha </span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="diagram.show_percent && diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0 && item.values[$index-1][1]" >{{ diagram.add_plus((((item.values[$index][1]-item.values[$index-1][1]) * 100) / item.values[$index-1][1]).toFixed(2))}} % </span><span ng-if="!val[1] > 0" ></span></td>' +
 
                      '</tr>' +
                     '</table></div>' +
