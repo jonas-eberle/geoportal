@@ -31,7 +31,7 @@
         diagram.window_id = 0;
 
         diagram.data_vals = "";
-        diagram.show_percent = true;
+        diagram.show_percent = false;
         diagram.show_diff = false;
 
         diagram.ind_name = [];
@@ -110,17 +110,17 @@
         diagram.ind_color_border['100400'] = '#f70d00';
 
         diagram.description = [];
-        diagram.description['101'] = [1, 'Vegetated wetland; unknown if natural or artificual wetland'];
-        diagram.description['102'] = [2, 'Water bodies; unknown if natural or artificual wetland'];
-        diagram.description['103'] = [3, 'Rriver bodies; unknown if natural or artificual wetland'];
-        diagram.description['110'] = [4, 'Natural wetland; unknown if vegetated, river or water bodyies'];
+        diagram.description['101'] = [1, 'Vegetated wetland; unknown if natural or artificial wetland'];
+        diagram.description['102'] = [2, 'Water bodies; unknown if natural or artificial wetland'];
+        diagram.description['103'] = [3, 'Rriver bodies; unknown if natural or artificial wetland'];
+        diagram.description['110'] = [4, 'Natural wetland; unknown if vegetated, river or water bodies'];
         diagram.description['111'] = [5, 'Vegetated and natural wetland'];
-        diagram.description['112'] = [6, 'Water bodies and natural wetland'];
-        diagram.description['113'] = [7, 'River bodies and natural wetland'];
+        diagram.description['112'] = [6, 'Water bodies within an natural wetland'];
+        diagram.description['113'] = [7, 'River bodies within an natural wetland'];
         diagram.description['120'] = [8, 'Artificial wetland; unknown if vegetated, river or water bodies'];
         diagram.description['121'] = [9, 'Vegetated and artificial wetland'];
-        diagram.description['122'] = [10, 'Water bodies and artificial wetland'];
-        diagram.description['123'] = [11, 'River bodies and artificial wetland'];
+        diagram.description['122'] = [10, 'Water bodies within an artificial wetland'];
+        diagram.description['123'] = [11, 'River bodies within an artificial wetland'];
 
 
         //--------------------------------------------------------------------------------------------------------------
@@ -1494,19 +1494,19 @@ console.log(label_list)
                     
                     '<uib-tabset justified="true"> <uib-tab heading="Data">' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
                     '<strong ng-if=active_layer.legend_colors>Relative and absolute area proportions</strong></div>' +
                     '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 5px;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
+                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
                     '<tr><td>&nbsp;</td></tr><tr ng-if="!legend_type_lulc.includes(\'WET-THREATS\')"><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>' +
                     '</table>' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
                     '<strong ng-if=active_layer.legend_colors>Absolute wetland area changes</strong></div>' +
                     '<table ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;border-collapse: separate; border-spacing: 0px 2px;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors ">' +
@@ -1516,33 +1516,33 @@ console.log(label_list)
                     '</tr>' +
                     '</table>' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
+                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
                     '<strong>Absolute changed area</strong></div>' +
                     '<table ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.stat.stat ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[1]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 5px;" ng-if="diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
                     '<td class="legend-label">to </td>' +
                     '<td class="legend-label">&nbsp;</td>' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[2]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 5px;" ng-if="diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
                     '<td class="legend-percent"><span>{{ diagram.formatValue((item[0]/10000).toFixed(2)) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
 
-                    '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
-                    '<div><strong>Abolute area over time</strong></div>' +
+                    '<div class="item_legend" style="margin-left:5px;margin-top:10px;margin-bottom:5px;" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
+                    '<div style="float:left"><strong>Abolute area over time</strong></div>' +
 
-                    '<div ng-if="!diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;">show in % </div>' +
-                    '<div ng-if="diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;">show in ha </div>' +
+                    '<div ng-if="!diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in %</div>' +
+                    '<div ng-if="diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in ha</div>' +
 
-                    '<div ng-if="!diagram.show_diff" ng-click="diagram.set_show_diff()" style="cursor: pointer;float:right;">show diff </div>' +
-                    '<div ng-if="diagram.show_diff" ng-click="diagram.set_show_diff()" style="cursor: pointer;float:right;">show values </div>' +
+                    '<div ng-if="!diagram.show_diff" ng-click="diagram.set_show_diff()" style="cursor: pointer;float:right;font-size:13px;">Show values by difference&nbsp;|&nbsp;</div>' +
+                    '<div ng-if="diagram.show_diff" ng-click="diagram.set_show_diff()" style="cursor: pointer;float:right;font-size:13px;">Show values by year&nbsp;|&nbsp;</div>' +
 
-                    '<table class="chart_time_series" style="width:100%;">' +
+                    '<table class="chart_time_series" style="width:100%;table-layout:fixed;display:table;">' +
                     '<tr class="border">'+
-                    '<th>&nbsp;</th>'+
-                    '<th>Class</th>'+
+                    '<th width="20">&nbsp;</th>'+
+                    '<th width="200">Class</th>'+
                     '<th style="text-align: right" ng-repeat="val in data[0].values track by $index"><span ng-if="!diagram.show_diff">{{val[0]}}</span><span ng-if="diagram.show_diff && $index != 0">{{data[0].values[$index-1][0]}}-{{data[0].values[$index][0]}}</span></th>'+
                     '</tr>' +
                  //   '<tr ng-if="data[0].resol" class="border"><td></td><td>Sensor and spat. resol.</td><td class="legend-label" ng-repeat="val in data[0].resol">{{val[0]}} ({{val[1]}} {{val[2]}})</td></tr>'+
