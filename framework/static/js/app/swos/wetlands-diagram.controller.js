@@ -20,6 +20,8 @@
         diagram.addLayerToMap = addLayerToMap;
         diagram.init = init;
         diagram.updateChords =updateChords;
+        diagram.set_show_percent = set_show_percent;
+        diagram.set_show_diff = set_show_diff;
         diagram.options_years = [];
 
         diagram.data = [];
@@ -29,6 +31,8 @@
         diagram.window_id = 0;
 
         diagram.data_vals = "";
+        diagram.show_percent = true;
+        diagram.show_diff = false;
 
         diagram.ind_name = [];
         diagram.ind_name['100'] = 'Wetland';
@@ -555,6 +559,8 @@
             var class_id;
             var class_list = [];
             var data = [];
+            var percent = [];
+            var percent_table = [];
             var data_plot = [];
             var data_all_id;
             var data_all = [];
@@ -566,11 +572,13 @@
             console.log( product_layers)
             for (var p_layer in product_layers) {
                     data[product_layers[p_layer].key] = [];
+                    percent[product_layers[p_layer].key] =[];
                     resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,product_layers[p_layer].layer.resolution_unit.replace("meter", "m")]) ;
                     for (var legend_entries in product_layers[p_layer].layer.legend_colors) {
                         class_id = product_layers[p_layer].layer.legend_colors[legend_entries].code;
                         class_list[class_id] = 1;
                         data[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].size;
+                        percent[product_layers[p_layer].key][class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].percent;
                         color_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].color;
                         label_list[class_id] = product_layers[p_layer].layer.legend_colors[legend_entries].label;
                         // if (data[product_layers[p_layer].identifier.slice(-4)][class_id] == "undefined") {
@@ -593,13 +601,16 @@ console.log(label_list)
             var i = 1;
             for (var id in class_list) {
                 data_plot[id] = [];
+                percent_table[id] = [];
                 for (var year in data) {
                     data_plot[id].push([year.split("_")[0], data[year][id]]);
+                    percent_table[id].push([year.split("_")[0], percent[year][id]]);
                     i++;
                 }
                 data_all_id = {
                     "key": label_list[id],
                     "values": data_plot[id],
+                    "percent": percent_table[id],
                     "color": color_list[id],
                     "resol": resolution_list
                 };
@@ -1154,6 +1165,12 @@ console.log(label_list)
                                 var title = product_layers[p_layer].identifier.split("_").slice(2)[0] + " " + product_layers[p_layer].identifier.split("_").slice(3)[0] + resol + " " + product_layers[p_layer].identifier.split("_").slice(-1)[0];
                             }
 
+                            if (product_layers[p_layer].identifier.includes("WET-THREATS")){
+                                for (key3 in product_layers[p_layer].legend_colors){
+                                    product_layers[p_layer].legend_colors[key3].percent = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                }
+                            }
+
                             diagram.layers[key].push({
                                 key: product_layers[p_layer].identifier.split("_").slice(-1)[0] + "_" + product_layers[p_layer].identifier.split("_").slice(3)[0],
                                 name: product_layers[p_layer].identifier.split("_").slice(-1)[0],
@@ -1221,6 +1238,13 @@ console.log(label_list)
 
         WetlandsService.diagram_group_list = diagram.group_list;
         WetlandsService.diagram_layer_list = diagram.layers;
+        }
+
+        function set_show_percent(){
+            diagram.show_percent = !diagram.show_percent;
+        }
+        function set_show_diff(){
+            diagram.show_diff = !diagram.show_diff;
         }
 
         function add_layer(first_layer, type, ind_group_key, new_columns, new_stat, name_year1, name_year2, key2, i) {
@@ -1479,7 +1503,7 @@ console.log(label_list)
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
-                    '<tr><td>&nbsp;</td></tr><tr><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>' +
+                    '<tr><td>&nbsp;</td></tr><tr ng-if="!legend_type_lulc.includes(\'WET-THREATS\')"><td></td><td class="legend-label" >Total area:</td><td></td><td class="legend-percent">{{  diagram.formatValue(sum) }}&nbsp;ha</td></tr>' +
                     '</table>' +
 
                     '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if="active_layer.legend_colors && legend_type_lulc.includes(\'IND-WET-CHANGE\')"> ' +
@@ -1507,20 +1531,33 @@ console.log(label_list)
                     '</table>' +
 
                     '<div class="item_legend" style="margin-left:5px;margin-top:5px;margin-bottom:5px;" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
-                    '<strong>Abolute area over time</strong></div>' +
-                    '<table class="chart_time_series" ng-if="!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')" style="width:100%;">' +
+                    '<div><strong>Abolute area over time</strong></div>' +
+
+                    '<div ng-if="!diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;">show in % </div>' +
+                    '<div ng-if="diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;">show in ha </div>' +
+
+                    '<div ng-if="!diagram.show_diff" ng-click="diagram.set_show_diff()" style="cursor: pointer;float:right;">show diff </div>' +
+                    '<div ng-if="diagram.show_diff" ng-click="diagram.set_show_diff()" style="cursor: pointer;float:right;">show values </div>' +
+
+                    '<table class="chart_time_series" style="width:100%;">' +
                     '<tr class="border">'+
                     '<th>&nbsp;</th>'+
                     '<th>Class</th>'+
-                    '<th style="text-align: right" ng-repeat="val in data[0].values">{{val[0]}}</th>'+
+                    '<th style="text-align: right" ng-repeat="val in data[0].values track by $index"><span ng-if="!diagram.show_diff">{{val[0]}}</span><span ng-if="diagram.show_diff && $index != 0">{{data[0].values[$index-1][0]}}-{{data[0].values[$index][0]}}</span></th>'+
                     '</tr>' +
                  //   '<tr ng-if="data[0].resol" class="border"><td></td><td>Sensor and spat. resol.</td><td class="legend-label" ng-repeat="val in data[0].resol">{{val[0]}} ({{val[1]}} {{val[2]}})</td></tr>'+
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.key }}</td>' +
-                    '<td ng-repeat="val in item.values" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span><span ng-if="!val[1] > 0" ></span></td>' +
-                    '</tr>' +
-                    '</table>' +
+
+                    '<td ng-if="!diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} %</span><span ng-if="!val[1] > 0" ></span></td>' +
+
+                    '<td ng-if="!diagram.show_percent && diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0" >{{ (item.values[$index][1] - item.values[$index-1][1]).toFixed(2) }} ha </span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="diagram.show_percent && diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0" >{{ (item.percent[$index][1] - item.percent[$index-1][1]).toFixed(2) }} % </span><span ng-if="!val[1] > 0" ></span></td>' +
+
+                     '</tr>' +
+                    '</table></div>' +
                     
                     '</uib-tab><uib-tab heading="Interactive Chart">' +
                     
