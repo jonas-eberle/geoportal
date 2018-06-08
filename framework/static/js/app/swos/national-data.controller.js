@@ -80,23 +80,27 @@
                 mapviewer.removeLayerByDjangoID(nationalData.olLayer.get('layerObj').django_id);    
             }
             var layer = mapviewer.baseLayers[1].get('layerObj');
-            layer['ogc_link'] = "http://earthcare.ads.uni-jena.de:8070/geoserver/SWOS/wms?cql_filter=ADMIN='"+country['name']+"'";
+            layer['ogc_link'] = "http://swos-services2.ssv-hosting.de/geoserver/SWOS/wms?cql_filter=ADMIN='"+country['name']+"'";
             //layer['ogc_type'] = 'WMS';
             layer['title'] = country['name'] + ' - Boundaries';
             nationalData.olLayer = mapviewer.addLayer(layer);            
             
+            $('#loading-div').show();
             djangoRequests.request({
                 'method': "GET",
                 'url'   : '/swos/'+country.id+'/nationaldata.json'
             }).then(function (data) {
+                $('#loading-div').hide();
                 nationalData.wetlands = data['wetlands'];
                 nationalData.products = data['products'];
                 WetlandsService.national_products = data['products'];
                 WetlandsService.national_name = country.name;
                 nationalData.geoss = data['geoss'];
                 nationalData.lulc_layers = data['lulc_layers'];
-                nationalData.clc_type = nationalData.lulc_layers[0]; 
-                nationalData.year = nationalData.clc_type.dates[0];
+                if (nationalData.lulc_layers.length > 0)  {
+                    nationalData.clc_type = nationalData.lulc_layers[0]; 
+                    nationalData.year = nationalData.clc_type.dates[0];   
+                }             
                 
                 $timeout(function(){
                    $('#national_geoss_select.selectpicker').selectpicker({
@@ -175,7 +179,7 @@
                         legend[0][0].dispatchEvent(new Event('click'));
                         legend.each(function(){this.dispatchEvent(new Event('click'))});   
                     }
-	            }, 100);
+	            }, 150);
             });
 		}
         

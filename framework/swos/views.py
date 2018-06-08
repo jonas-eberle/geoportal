@@ -973,8 +973,13 @@ class DownloadFiles(APIView):
             # do not create archive if publish or downloadable is false
             if layer.downloadable == False or layer.publishable == False:
                 return HttpResponse("Download not allowed!",content_type = "text/html")
+            
+            if layer.product is not None:
+                product_name = layer.product.short_name
+            elif layer.indicator is not None:
+                product_name = 'IND'
 
-            filenames += self.get_file_names(layer.identifier, type, layer.wetland.identifier, layer.product.short_name)
+            filenames += self.get_file_names(layer.identifier, type, layer.wetland.identifier, product_name)
 
             # Add Metadata XML
             if type in ["complete", "tiff", "shape"]:
@@ -1436,7 +1441,7 @@ class NationalWetlandStatistics(APIView):
         	return Response({})
         from swos.models import Wetland, WetlandLayer
         import json
-        greece_wets = Wetland.objects.filter(country=country)
+        greece_wets = Wetland.objects.filter(country__icontains=country)
         data_all = dict()
         years_all = dict()
         for w in greece_wets:
