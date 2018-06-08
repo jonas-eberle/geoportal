@@ -659,13 +659,16 @@ class SatelliteMetadata(APIView):
                     metaparts = scene['metadata_url'].split('/')
                     scene['usgs_id'] = metaparts[-2]
                 
-                req = requests.get('https://scihub.copernicus.eu/dhus/search?q=%s&format=json' % scene_id, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
-                if req.status_code == 200:
-                    data = req.json()
-                    if 'entry' in data['feed']:
-                        id = data['feed']['entry']['id']
-                        download_url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('%s')/$value" % id
-                        scene['download_urls'].append(dict(url=download_url, filename=scene_id+'.zip'))
+                try:
+                    req = requests.get('https://scihub.copernicus.eu/dhus/search?q=%s&format=json' % scene_id, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
+                    if req.status_code == 200:
+                        data = req.json()
+                        if 'entry' in data['feed']:
+                            id = data['feed']['entry']['id']
+                            download_url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('%s')/$value" % id
+                            scene['download_urls'].append(dict(url=download_url, filename=scene_id+'.zip'))
+                except Exception as e:
+                    pass
             elif 'ESA' in scene_id and scene['source'] == 'ESA-Archive via Sentinel-Hub':
                 scene['download_urls'] = [dict(url=scene['metadata_url'].replace('.MTR.XML', '.ZIP'), filename=scene['title']+'.ZIP')]
                 scene['spacecraft_identifier'] = 'LANDSAT_' + scene_id[2]
