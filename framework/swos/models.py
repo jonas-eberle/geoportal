@@ -58,7 +58,7 @@ class Wetland(models.Model):
         layers = WetlandLayer.objects.filter(wetland_id=self.id, publishable=True).exclude(indicator__isnull=True)
         indicators = set()
         for l in layers:
-            indicators.add(l.indicators.short_name)
+            indicators.add(l.indicator.short_name)
         return list(indicators)
 
     @property
@@ -1290,3 +1290,10 @@ class StoryLineInline(models.Model):
 #    class Meta:
 #        model = IndicatorValue
 #        fields = ('sub_indicator', 'wetland', 'nomenclature', 'creation_date', 'total_pixel', 'total_sqm',  'time_ref_parts', )
+
+
+class SatdataLayer(Layer):
+    wetland = models.ForeignKey(Wetland, related_name="layer_satdata", verbose_name="Wetland", blank=True, null=True)
+
+    def __unicode__(self):
+        return u"%s" %(self.title)

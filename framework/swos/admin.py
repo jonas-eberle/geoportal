@@ -1,7 +1,7 @@
 #from django.contrib import admin
 from django.contrib.gis import admin
 from django import forms
-from .models import Wetland, Product, Indicator,  WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart,StoryLineFeature
+from .models import Wetland, Product, Indicator,  WetlandLayer, ExternalDatabase, ExternalLayer, Country, WetlandImage, WetlandVideo, StoryLine, StoryLineInline, StoryLinePart, StoryLineFeature, SatdataLayer
 
 from layers.admin import LayersAdmin
 
@@ -165,6 +165,33 @@ class StoryLinePartAdmin(admin.ModelAdmin):
     form = StoryLinePartForm
     list_display = ('headline', 'wetland')
 
+class SatdataLayerAdmin(LayersAdmin):
+    fieldsets = LayersAdmin.fieldsets + ((None, {
+            'classes': ('suit-tab', 'suit-tab-swos',),
+            'fields': ('wetland',)
+        }),)
+    list_display=('title','publishable', 'downloadable', 'wetland')
+    suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos','SWOS'),)
+    search_fields=('title','abstract','wetland__name')
+    ordering =['title']
+    list_filter=('publishable', 'downloadable', 'wetland')
+    suit_list_filter_horizontal = ('wetland','publishable', 'downloadable')
+
+    actions=[make_publishable,make_unpublishable, make_downloadable, make_non_downloadable]
+
+    def suit_row_attributes(self, obj, request):
+        class_map = {
+            True: 'table-success',
+            False: 'table-danger',
+        }
+
+        css_class = class_map.get(obj.publishable)
+        if css_class:
+            return {'class': css_class}
+
+
+
+
 # Register your models here.
 admin.site.register(Wetland, Wetlands)
 admin.site.register(Product, ProductAdmin)
@@ -180,3 +207,4 @@ admin.site.register(WetlandVideo, WetlandVideoAdmin)
 admin.site.register(StoryLine, StoryLineAdmin)
 admin.site.register(StoryLinePart, StoryLinePartAdmin)
 admin.site.register(StoryLineFeature, StoryLineFeatureAdmin)
+admin.site.register(SatdataLayer, SatdataLayerAdmin)

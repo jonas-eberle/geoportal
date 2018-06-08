@@ -41,6 +41,8 @@ class SuitConfig(DjangoSuitConfig):
             ChildItem('External Databases', model='swos.externaldatabase'),
             ChildItem('Story Lines', model='swos.storyline'),
             ChildItem('Story Line Parts', model='swos.storylinepart'),
+            ChildItem('Story Line Features', model='swos.storylinefeature'),
+            ChildItem('Satdata Layers', model='swos.satdatalayer'),
         ])
     )
     if "validation" in settings.INSTALLED_APPS:

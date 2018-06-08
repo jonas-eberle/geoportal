@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from webgis import settings
 from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline, StoryLineFeature
 from .models import Product, Indicator, IndicatorSerializer, WetlandLayer, \
-    ExternalDatabase, ExternalLayer, Country
+    ExternalDatabase, ExternalLayer, Country, SatdataLayer
 from layers.models import LayerSerializer, MetadataSerializer
 from swos.search_es import WetlandSearch
 
@@ -480,7 +480,7 @@ class YouTube(APIView):
         videos = wetland.youtube(start=start, max=max)
         return Response(videos)
 
-
+from collections import OrderedDict
 class SatelliteData(APIView):
     def get_object(self, pk):
         try:
@@ -492,7 +492,23 @@ class SatelliteData(APIView):
     def get(self, request, pk, format=None):
         wetland = self.get_object(pk)
         data = wetland.satellitedata()
-        return Response(data)
+        results = dict(table=data, layers=[], layers_count=0)
+        
+        layers = SatdataLayer.objects.filter(wetland=wetland, publishable=True).order_by('title', 'id')
+        layers = LayerSerializer(layers, many=True).data
+        results['layers'] = OrderedDict()
+        for layer_data in layers:
+            if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
+                layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
+                layer_data['selectedDate'] = layer_data['ogc_times'][-1]
+                
+            dataset = layer_data['identifier'].split('_')[-2].replace('LANDSAT-ETM', 'LANDSAT-7')
+            if dataset not in results['layers']:
+                results['layers'][dataset] = []
+            results['layers_count'] += 1
+            results['layers'][dataset].append(layer_data)
+        #results['layers'] = dict(sorted(results['layers'].items()))
+        return Response(results)
 
 
 class SatelliteMetadataExport(APIView):

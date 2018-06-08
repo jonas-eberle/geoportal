@@ -665,6 +665,27 @@
                                                 <a href="javascript:;" uib-tooltip="Click to open the satellite scenes explorer application" ng-click="wetlands.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{wetlands.value.id}}_small.png" width="100%" /></a>
                                                 <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-04-30</div>
                                             </div>
+                                            <div uib-accordion-group is-open="wetlands.satdata_layers" ng-if="wetlands.value.satdata.layers_count > 0">
+                                                <uib-accordion-heading>
+                                                    Satellite scene layers
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_layers, 'glyphicon-chevron-right': !wetlands.satdata_layers}"></i>
+                                                </uib-accordion-heading>
+                                                <div uib-accordion-group ng-repeat="(key, layers) in wetlands.value.satdata.layers" ng-if="layers.length > 0">
+                                                    <uib-accordion-heading>
+                                                        {{key}}
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_layers, 'glyphicon-chevron-right': !wetlands.satdata_layers}"></i>
+                                                    </uib-accordion-heading>
+                                                    <div ng-repeat="layer in layers | orderObjectBy:'id'"
+                                                         ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
+                                                        <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
+                                                        <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
+                                                        <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                        <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                    </div>
+                                                </div>
+                                                <div style="margin-top:10px;margin-left:2px;">Made available based on <a href="https://sentinel-hub.com/" target="_blank">Sentinel Hub Services</a> and the ESA Open Science Earth Observation grant (No. <a href="https://earth.esa.int/web/guest/pi-community/search-results-and-projects/keyword-entry?IFRAME_SRC=%2Fpi%2Fesa%3Fts%3D1528463214378%26targetIFramePage%3D%252Fweb%252Fguest%252Fpi-community%252Fsearch-results-and-projects%252Fkeyword-entry%26topSelectedNavigationNodeId%3DSEARCH%26coordinates%3D%26sideNavigationType%3DSEARCH%26type%3D10%26toprint%3D-1%26token%3D%26addattribute%3Dfalse%26sideExpandedNavigationBoxId%3DprojectSearch%26id%3D36615%26caller%3D%25252Fpi%25252Fesa%25253Finstitute%25253D%252526itemsPerPage%25253D10%252526sideExpandedNavigationBoxId%25253DprojectSearch%252526displayMode%25253Dcenter%252526cmd%25253Dother%252526submissionid%25253D-1%252526showAll%25253Dtrue%252526topSelectedNavigationNodeId%25253DSEARCH%252526keyword%25253D%252526downloadAsCsv%25253Dfalse%252526targetIFramePage%25253D%2525252Fweb%2525252Fguest%2525252Fpi-community%2525252Fsearch-results-and-projects%2525252Fkeyword-entry%252526ts%25253D1528463214378%252526colorTheme%25253D03%252526startFrom%25253D0%252526sideNavigationType%25253DSEARCH%252526title%25253D%252526aoid%25253D1560%26cmd%3Dproject%26header%3D%26displayMode%3Dcenter%26colorTheme%3D03%26subnavigation%3D1%26role%3D0" target="_blank">36615</a>).</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;margin-top: 10px;margin-right: 5px;">Last update: 2018-04-30</div>
+                                            </div>
                                             <div uib-accordion-group is-open="wetlands.satdata_table">
                                                 <uib-accordion-heading>
                                                     Total amount by sensor
@@ -681,7 +702,7 @@
                                                     <tr ng-if="!wetlands.value.satdata">
                                                         <td colspan="4">Loading...</td>
                                                     </tr>
-                                                    <tr ng-repeat="data in wetlands.value.satdata" >
+                                                    <tr ng-repeat="data in wetlands.value.satdata.table" >
                                                         <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
                                                         <td>{{data.dataset}}</td>
                                                         <td>{{data.count}}</td>
