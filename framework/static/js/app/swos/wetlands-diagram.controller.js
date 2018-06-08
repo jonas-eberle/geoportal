@@ -2138,13 +2138,13 @@ console.log(label_list)
                     .text(function (d) {
                         if (landuse[d.target.index].name !== landuse[d.source.index].name) {
                             return [numberWithCommas(d.source.value),
-                                " ha change from ",
+                                " m² change from ",
                                 landuse[d.source.index].name,
                                 " to ",
                                 landuse[d.target.index].name,
                                 "\n",
                                 numberWithCommas(d.target.value),
-                                "m² change from ",
+                                " m² change from ",
                                 landuse[d.target.index].name,
                                 " to ",
                                 landuse[d.source.index].name
