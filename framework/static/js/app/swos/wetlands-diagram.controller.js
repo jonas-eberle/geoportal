@@ -1516,7 +1516,7 @@ console.log(label_list)
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
                     '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
-                    '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}%</span><span ng-if="item.percent_total > 0"> ({{ item.percent_total.toFixed(2) }}%)</span></td>' +
+                    '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}&nbsp;%</span><span ng-if="item.percent_total > 0"> ({{ item.percent_total.toFixed(2) }}&nbsp;%)</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
                     '<tr><td>&nbsp;</td></tr>' +
@@ -1569,10 +1569,10 @@ console.log(label_list)
                     '<td class="legend-label">{{ item.key }}<sup style="padding-left: 5px;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>' +
 
                     '<td ng-if="!diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span><span ng-if="!val[1] > 0" ></span></td>' +
-                    '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} %</span><span ng-if="!val[1] > 0" ></span><span ng-if="item.percent_total[$index][1] > 0"> ({{ item.percent_total[$index][1].toFixed(2) }}%)</span></td>' +
+                    '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }}&nbsp;%</span><span ng-if="!val[1] > 0" ></span><span ng-if="item.percent_total[$index][1] > 0"> ({{ item.percent_total[$index][1].toFixed(2) }}&nbsp;%)</span></td>' +
 
-                    '<td ng-if="!diagram.show_percent && diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0" >{{ diagram.add_plus((item.values[$index][1] - item.values[$index-1][1]).toFixed(2)) }} ha </span><span ng-if="!val[1] > 0" ></span></td>' +
-                    '<td ng-if="diagram.show_percent && diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0 && $index != 0 && item.values[$index-1][1]" >{{ diagram.add_plus((((item.values[$index][1]-item.values[$index-1][1]) * 100) / item.values[$index-1][1]).toFixed(2))}} % </span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="!diagram.show_percent && diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="$index != 0" >{{ diagram.add_plus((item.values[$index][1] - item.values[$index-1][1]).toFixed(2)) }} ha </span><span ng-if="!val[1] > 0" ></span></td>' +
+                    '<td ng-if="diagram.show_percent && diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="$index != 0 && item.values[$index-1][1]" >{{ diagram.add_plus((((item.values[$index][1]-item.values[$index-1][1]) * 100) / item.values[$index-1][1]).toFixed(2))}}&nbsp;% </span><span ng-if="!val[1] > 0" ></span></td>' +
 
                      '</tr>' +
                     '</table></div>' +
