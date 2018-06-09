@@ -577,7 +577,11 @@
                     data[product_layers[p_layer].key] = [];
                     percent[product_layers[p_layer].key] =[];
                     percent_total[product_layers[p_layer].key] = [];
-                    resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,product_layers[p_layer].layer.resolution_unit.replace("meter", "m")]) ;
+                    var resolution_unit = null;
+                    try {
+                        resolution_unit = product_layers[p_layer].layer.resolution_unit.replace("meter", "m");
+                    } catch(e) {}
+                    resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,resolution_unit]) ;
                     for (var legend_entries in product_layers[p_layer].layer.legend_colors) {
                         class_id = product_layers[p_layer].layer.legend_colors[legend_entries].code;
                         class_list[class_id] = 1;
@@ -1163,13 +1167,17 @@ console.log(label_list)
 
                             if (product_layers[p_layer].identifier.includes("WET-THREATS")){
                                 for (key3 in product_layers[p_layer].legend_colors){
-                                    product_layers[p_layer].legend_colors[key3].percent = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                    try {
+                                        product_layers[p_layer].legend_colors[key3].percent = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                    } catch(e) {}
                                 }
                             }
                             if (product_layers[p_layer].identifier.includes("WET-EXT-")){
                                 for (key3 in product_layers[p_layer].legend_colors){
-                                    product_layers[p_layer].legend_colors[key3].percent_total = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
-                                    product_layers[p_layer].area_total = product_layers[p_layer].meta_file_info.area[0];
+                                    try {
+                                        product_layers[p_layer].legend_colors[key3].percent_total = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                        product_layers[p_layer].area_total = product_layers[p_layer].meta_file_info.area[0];
+                                    } catch(e) {}                                    
                                 }
                             }
 
@@ -1549,7 +1557,7 @@ console.log(label_list)
                     '</table>' +
 
                     '<div class="item_legend" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
-                    '<div style="float:left"><strong>Abolute area over time</strong></div>' +
+                    '<div style="float:left"><strong>Absolute area over time</strong></div>' +
 
                     '<div ng-if="!diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in %</div>' +
                     '<div ng-if="diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in ha</div>' +
