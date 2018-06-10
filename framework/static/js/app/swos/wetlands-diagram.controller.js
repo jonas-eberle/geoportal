@@ -1523,7 +1523,7 @@ console.log(label_list)
                     '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" class="chart_year" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
+                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}&nbsp;%</span><span ng-if="item.percent_total > 0"> ({{ item.percent_total.toFixed(2) }}&nbsp;%)</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
@@ -1547,11 +1547,11 @@ console.log(label_list)
                     '<table ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.stat.stat ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[1]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
                     '<td class="legend-label">to </td>' +
                     '<td class="legend-label">&nbsp;</td>' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[2]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
                     '<td class="legend-percent"><span>{{ diagram.formatValue((item[0]/10000).toFixed(2)) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
@@ -1574,7 +1574,7 @@ console.log(label_list)
                  //   '<tr ng-if="data[0].resol" class="border"><td></td><td>Sensor and spat. resol.</td><td class="legend-label" ng-repeat="val in data[0].resol">{{val[0]}} ({{val[1]}} {{val[2]}})</td></tr>'+
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.key }}<sup style="padding-left: 5px;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ item.key }}<sup style="padding-left: 5px;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>' +
 
                     '<td ng-if="!diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span><span ng-if="!val[1] > 0" ></span></td>' +
                     '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }}&nbsp;%</span><span ng-if="!val[1] > 0" ></span><span ng-if="item.percent_total[$index][1] > 0"> ({{ item.percent_total[$index][1].toFixed(2) }}&nbsp;%)</span></td>' +
