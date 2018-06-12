@@ -664,7 +664,7 @@ console.log(label_list)
             var value = [];
             var class_id;
 
-            if (layer.identifier.includes("LULC_")) {
+            if (layer.identifier.includes("LULC_MAES") || layer.identifier.includes("LULC_RAMSAR")) {
                 for (var legend_entries in layer.legend_colors) {
                     //class_id = myRe.exec(layer.legend_colors[legend_entries].label);
                     class_id = layer.legend_colors[legend_entries].code;
@@ -754,7 +754,7 @@ console.log(label_list)
             var options = {};
             var data = -1;
 
-            if (layer.identifier.includes("LULC_")) {
+            if (layer.identifier.includes("LULC_MAES") || layer.identifier.includes("LULC_RAMSAR")) {
                 type = 'sunburstChart';
                 options['height'] = 450;
                 options['showLabels'] = false;
