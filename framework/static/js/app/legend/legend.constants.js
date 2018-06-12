@@ -19,7 +19,7 @@
                 ['1311', '4', '1.3.1.1 Excavations, gravel/brick/clay pits, borrow pits, mining pools', 'rgb(112,68,137)'],
                 ['132', '3', '1.3.2 Dump sites', 'rgb(166,77,0)'],
                 ['133', '3', '1.3.3 Construction sites', 'rgb(255,77,255)'],
-                ['14', '2', '1.4 Artificial non-agricultural vegetated areas√Ç†', 'rgb(255,115,223)'],
+                ['14', '2', '1.4 Artificial non-agricultural vegetated areas', 'rgb(255,115,223)'],
                 ['141', '3', '1.4.1 Green urban areas', 'rgb(255,166,255)'],
                 ['142', '3', '1.4.2 Sport and leisure facilities', 'rgb(255,230,255)'],
                 ['2', '1', '2 Agricultural areas', 'rgb(255,255,210)'],
