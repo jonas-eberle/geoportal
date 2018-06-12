@@ -70,6 +70,7 @@
                 }
             },
             selectWetland: function (wetland, callback) {
+                $('#loading-div').show();
                 if (typeof(callback)==='undefined') callback = null;
 
                 this.diagram_layer_list = null;
@@ -147,7 +148,8 @@
 
                     wetland_service.selectFeature(wetland.id);
                     $rootScope.$broadcast("wetland_loaded",wetland);
-                    if (mapId < 7) {
+                    if (mapId < 0) {
+                        // currently not used, maybe still valid for the validation portal...
                         wetland_service.data.activeTab = 1;   
                     } else {
                         wetland_service.data.activeTab = -1;
@@ -155,11 +157,13 @@
                             $("#link_wetland_list").click();
                         }, 1);
                     }
+                    $('#loading-div').hide();
                     if (typeof(callback)  === 'function') {
                         callback();
                     }
 
                 }, function () {
+                    $('#loading-div').hide();
                     bootbox.alert('<h1>Error while loading wetland details</h1>');
                 });
             },

@@ -1008,6 +1008,11 @@ class WetlandLayer(Layer):
             "type": "Polygon",
             "coordinates": [[[self.west,self.north],[self.east,self.north],[self.east,self.south],[self.west,self.south],[self.west,self.north]]]
         }
+        
+        if self.wetland is not None:
+            wetland_name = self.wetland.name
+        else:
+            wetland_name = None
 
         obj = LayerIndex(
             meta={'id': self.id},
@@ -1016,7 +1021,7 @@ class WetlandLayer(Layer):
             description=self.abstract,
             topiccat=topic_cats,
             keywords=keywords,
-            wetland = self.wetland.name,
+            wetland = wetland_name,
             product_name = product_name,
             indicator_name = indicator_name,
             contact_name = contact_name,

@@ -577,7 +577,11 @@
                     data[product_layers[p_layer].key] = [];
                     percent[product_layers[p_layer].key] =[];
                     percent_total[product_layers[p_layer].key] = [];
-                    resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,product_layers[p_layer].layer.resolution_unit.replace("meter", "m")]) ;
+                    var resolution_unit = null;
+                    try {
+                        resolution_unit = product_layers[p_layer].layer.resolution_unit.replace("meter", "m");
+                    } catch(e) {}
+                    resolution_list.push([product_layers[p_layer].layer.identifier.split("_")[3], product_layers[p_layer].layer.resolution_distance,resolution_unit]) ;
                     for (var legend_entries in product_layers[p_layer].layer.legend_colors) {
                         class_id = product_layers[p_layer].layer.legend_colors[legend_entries].code;
                         class_list[class_id] = 1;
@@ -660,7 +664,7 @@ console.log(label_list)
             var value = [];
             var class_id;
 
-            if (layer.identifier.includes("LULC_")) {
+            if (layer.identifier.includes("LULC_MAES") || layer.identifier.includes("LULC_RAMSAR")) {
                 for (var legend_entries in layer.legend_colors) {
                     //class_id = myRe.exec(layer.legend_colors[legend_entries].label);
                     class_id = layer.legend_colors[legend_entries].code;
@@ -672,6 +676,9 @@ console.log(label_list)
                 }
                 else if (layer.identifier.includes("MAES")) {
                     data = lulcLegend.MAES;
+                }
+                else if (layer.identifier.includes("FAO")) {
+                    data = lulcLegend.LCCS;
                 }
                 data = reformat_legend(data);
                 data = add_no_data_level_clc(value, data[0]); // data = add_no_data_level_10digit(value, data);
@@ -747,7 +754,7 @@ console.log(label_list)
             var options = {};
             var data = -1;
 
-            if (layer.identifier.includes("LULC_")) {
+            if (layer.identifier.includes("LULC_MAES") || layer.identifier.includes("LULC_RAMSAR")) {
                 type = 'sunburstChart';
                 options['height'] = 450;
                 options['showLabels'] = false;
@@ -1163,13 +1170,17 @@ console.log(label_list)
 
                             if (product_layers[p_layer].identifier.includes("WET-THREATS")){
                                 for (key3 in product_layers[p_layer].legend_colors){
-                                    product_layers[p_layer].legend_colors[key3].percent = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                    try {
+                                        product_layers[p_layer].legend_colors[key3].percent = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                    } catch(e) {}
                                 }
                             }
                             if (product_layers[p_layer].identifier.includes("WET-EXT-")){
                                 for (key3 in product_layers[p_layer].legend_colors){
-                                    product_layers[p_layer].legend_colors[key3].percent_total = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
-                                    product_layers[p_layer].area_total = product_layers[p_layer].meta_file_info.area[0];
+                                    try {
+                                        product_layers[p_layer].legend_colors[key3].percent_total = product_layers[p_layer].legend_colors[key3].size * 100 / ((product_layers[p_layer].meta_file_info.area[0]) /10000) ;
+                                        product_layers[p_layer].area_total = product_layers[p_layer].meta_file_info.area[0];
+                                    } catch(e) {}                                    
                                 }
                             }
 
@@ -1515,7 +1526,7 @@ console.log(label_list)
                     '<table ng-if="active_layer.legend_colors && !active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" class="chart_year" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.legend_colors | orderBy : \'-percent\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
+                    '<td class="legend-label">{{ item.label }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>'  +
                     '<td class="legend-percent"><span>{{ item.percent.toFixed(2) }}&nbsp;%</span><span ng-if="item.percent_total > 0"> ({{ item.percent_total.toFixed(2) }}&nbsp;%)</span></td>' +
                     '<td class="legend-percent"><span > {{ diagram.formatValue(item.size) }}&nbsp;ha</span></td>' +
                     '</tr>' +
@@ -1539,17 +1550,17 @@ console.log(label_list)
                     '<table ng-if="active_layer.stat && !legend_type_lulc.includes(\'IND-WET-CHANGE\')" style="width:100%;">' +
                     '<tr ng-repeat="item in active_layer.stat.stat ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[1]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[1]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item[1]]" title="{{diagram.description[item[1]][1]}}">{{diagram.description[item[1]][0]}}</sup></td>' +
                     '<td class="legend-label">to </td>' +
                     '<td class="legend-label">&nbsp;</td>' +
                     '<td class="legend-color" ng-attr-style="background-color:{{diagram.ind_color[item[2]] }};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ diagram.ind_name[item[2]] }}<sup style="padding-left: 3px;cursor:pointer;" ng-if="active_layer.identifier.includes(\'SWOS_IND\') && diagram.description[item[2]]" title="{{diagram.description[item[2]][1]}}">{{diagram.description[item[2]][0]}}</sup></td>' +
                     '<td class="legend-percent"><span>{{ diagram.formatValue((item[0]/10000).toFixed(2)) }} ha</span></td>' +
                     '</tr>' +
                     '</table>' +
 
                     '<div class="item_legend" ng-if=!active_layer.legend_colors && !active_layer.identifier.split(\'_\')[3].includes(\'-\')"> ' +
-                    '<div style="float:left"><strong>Abolute area over time</strong></div>' +
+                    '<div style="float:left"><strong>Absolute area over time</strong></div>' +
 
                     '<div ng-if="!diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in %</div>' +
                     '<div ng-if="diagram.show_percent" ng-click="diagram.set_show_percent()" style="cursor: pointer;float:right;font-size:13px;">Show in ha</div>' +
@@ -1566,7 +1577,7 @@ console.log(label_list)
                  //   '<tr ng-if="data[0].resol" class="border"><td></td><td>Sensor and spat. resol.</td><td class="legend-label" ng-repeat="val in data[0].resol">{{val[0]}} ({{val[1]}} {{val[2]}})</td></tr>'+
                     '<tr class="border" ng-repeat="item in data | orderBy : \'-key\' ">' +
                     '<td class="legend-color" ng-attr-style="background-color:{{item.color}};">&nbsp;</td>' +
-                    '<td class="legend-label">{{ item.key }}<sup style="padding-left: 5px;" ng-if="diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>' +
+                    '<td class="legend-label">{{ item.key }}<sup style="padding-left: 5px;" ng-if="legend_type_lulc.includes(\'IND\') && diagram.description[item.code]" title="{{diagram.description[item.code][1]}}">{{diagram.description[item.code][0]}}</sup></td>' +
 
                     '<td ng-if="!diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.values track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }} ha</span><span ng-if="!val[1] > 0" ></span></td>' +
                     '<td ng-if="diagram.show_percent && !diagram.show_diff" ng-repeat="val in item.percent track by $index" class="legend-percent"><span ng-if="val[1] > 0" >{{ diagram.formatValue(val[1].toFixed(2)) }}&nbsp;%</span><span ng-if="!val[1] > 0" ></span><span ng-if="item.percent_total[$index][1] > 0"> ({{ item.percent_total[$index][1].toFixed(2) }}&nbsp;%)</span></td>' +

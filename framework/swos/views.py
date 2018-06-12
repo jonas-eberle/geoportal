@@ -659,13 +659,16 @@ class SatelliteMetadata(APIView):
                     metaparts = scene['metadata_url'].split('/')
                     scene['usgs_id'] = metaparts[-2]
                 
-                req = requests.get('https://scihub.copernicus.eu/dhus/search?q=%s&format=json' % scene_id, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
-                if req.status_code == 200:
-                    data = req.json()
-                    if 'entry' in data['feed']:
-                        id = data['feed']['entry']['id']
-                        download_url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('%s')/$value" % id
-                        scene['download_urls'].append(dict(url=download_url, filename=scene_id+'.zip'))
+                try:
+                    req = requests.get('https://scihub.copernicus.eu/dhus/search?q=%s&format=json' % scene_id, verify=False, auth=(settings.ESA_DATAHUB_USER, settings.ESA_DATAHUB_PASSWORD))
+                    if req.status_code == 200:
+                        data = req.json()
+                        if 'entry' in data['feed']:
+                            id = data['feed']['entry']['id']
+                            download_url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('%s')/$value" % id
+                            scene['download_urls'].append(dict(url=download_url, filename=scene_id+'.zip'))
+                except Exception as e:
+                    pass
             elif 'ESA' in scene_id and scene['source'] == 'ESA-Archive via Sentinel-Hub':
                 scene['download_urls'] = [dict(url=scene['metadata_url'].replace('.MTR.XML', '.ZIP'), filename=scene['title']+'.ZIP')]
                 scene['spacecraft_identifier'] = 'LANDSAT_' + scene_id[2]
@@ -973,8 +976,13 @@ class DownloadFiles(APIView):
             # do not create archive if publish or downloadable is false
             if layer.downloadable == False or layer.publishable == False:
                 return HttpResponse("Download not allowed!",content_type = "text/html")
+            
+            if layer.product is not None:
+                product_name = layer.product.short_name
+            elif layer.indicator is not None:
+                product_name = 'IND'
 
-            filenames += self.get_file_names(layer.identifier, type, layer.wetland.identifier, layer.product.short_name)
+            filenames += self.get_file_names(layer.identifier, type, layer.wetland.identifier, product_name)
 
             # Add Metadata XML
             if type in ["complete", "tiff", "shape"]:
@@ -1436,7 +1444,7 @@ class NationalWetlandStatistics(APIView):
         	return Response({})
         from swos.models import Wetland, WetlandLayer
         import json
-        greece_wets = Wetland.objects.filter(country=country)
+        greece_wets = Wetland.objects.filter(country__icontains=country)
         data_all = dict()
         years_all = dict()
         for w in greece_wets:
