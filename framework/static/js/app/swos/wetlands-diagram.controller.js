@@ -677,6 +677,9 @@ console.log(label_list)
                 else if (layer.identifier.includes("MAES")) {
                     data = lulcLegend.MAES;
                 }
+                else if (layer.identifier.includes("FAO")) {
+                    data = lulcLegend.LCCS;
+                }
                 data = reformat_legend(data);
                 data = add_no_data_level_clc(value, data[0]); // data = add_no_data_level_10digit(value, data);
                 data = create_value_legend_clc_data(data[1], data[0])[0]; // data = create_value_legend_10digit(data[1], data[0])[0];
