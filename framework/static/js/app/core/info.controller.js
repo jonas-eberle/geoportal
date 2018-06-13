@@ -5,14 +5,15 @@
         .module('webgisApp.core')
         .controller('InfoCtrl', InfoCtrl);
 
-    InfoCtrl.$inject = ['$uibModal', 'mapviewer'];
-    function InfoCtrl($modal, mapviewer) {
+    InfoCtrl.$inject = ['$uibModal', 'mapviewer', '$compile'];
+    function InfoCtrl($modal, mapviewer, $compile) {
         var ic = this;
 
         ic.credits = credits;
         ic.help = help;
         ic.imprint = imprint;
         ic.info = info;
+        ic.welcome = welcome;
         ic.helpFilter = helpFilter;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -108,6 +109,40 @@
                 resolve         : {
                     data : function(){return {};},
                     title: function(){return '';}
+                }
+            });
+        }
+
+        function welcome() {
+            try {
+                _paq.push(['setCustomUrl', '/welcome']);
+                _paq.push(['setDocumentTitle', 'Welcome']);
+                _paq.push(['trackPageView']);
+            } catch (err) {
+                
+            }
+            
+            var wetlandsCtrlScope = angular.element(document.getElementById('sidebar')).scope();
+            bootbox.dialog({
+                title: 'Welcome to the GEO Wetlands Community Portal',
+                message: $compile($('#welcome_text').html())(wetlandsCtrlScope),
+                backdrop: true,
+                onEscape: true,
+                className: 'welcome-dialog',
+                buttons: {
+                    confirm: {
+                        label: 'Start Tour',
+                        className: 'hidden-xs starttour',
+                        callback: function () {
+                            var sidebar = document.getElementById('wetland_sites');
+                            var scope = angular.element(sidebar).scope();
+                            var rootScope = scope.$root;
+                            scope.$apply(function () {
+                                rootScope.$broadcast("start_tour");
+                            });
+                        }
+                    },
+                    close: {label: 'Close'}
                 }
             });
         }

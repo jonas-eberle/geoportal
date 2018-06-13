@@ -32,9 +32,14 @@
         $scope.$on('mapviewer.catalog_loaded', function () {
             if ($routeParams.continent) {
                 $($('#sidebar-tabs a')[2]).tab('show');
-                console.log($routeParams.continent);
                 continentalData.selectContinent($routeParams.continent);
             }
+        });
+        
+        $scope.$on('open_european_layer', function ($broadCast, layer_id) {
+            $($('#sidebar-tabs a')[2]).tab('show');
+            $routeParams.continental_layer_id = layer_id;
+            continentalData.selectContinent('Europe');
         });
         
         function selectContinent(continent) {

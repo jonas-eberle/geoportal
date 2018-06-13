@@ -60,7 +60,12 @@ var storylinePopup;
             }
             storylinePopup = new ol.Overlay({element: document.getElementById('storylinePopup')});
             mapviewer.map.addOverlay(storylinePopup);
-
+        });
+        
+        $scope.$on('open_storyline', function ($broadCast, story_line_id) {
+            show_story_line(story_line_id);
+            storylinePopup = new ol.Overlay({element: document.getElementById('storylinePopup')});
+            mapviewer.map.addOverlay(storylinePopup);
         });
 
         function setVisibilityStoryLine() {

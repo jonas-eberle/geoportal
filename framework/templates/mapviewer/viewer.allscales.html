@@ -76,6 +76,30 @@
     #national .bootstrap-select.btn-group .dropdown-menu, #continental .bootstrap-select.btn-group .dropdown-menu, #global .bootstrap-select.btn-group .dropdown-menu {
         max-width: 375px;
     }
+    
+    .welcome-dialog .modal-dialog {
+        width:800px; 
+    }
+    
+    .welcome-dialog .modal-body {
+        padding: 0;
+    }
+    
+    .welcome-dialog .modal-body .tab-content {
+        padding: 15px;
+    }
+    
+    .welcome-dialog .tab-content h3 {
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .welcome-dialog .content.geospatial a {
+        cursor: help;
+    }
+    
+    .modal-body {
+        max-height: 75vh;
+    }
     </style>
 
     <script type="text/javascript">
@@ -872,7 +896,7 @@
                     
                     <div role="tabpanel" class="tab-pane national_data" id="national" ng-controller="NationalDataCtrl as nationalData">
                         
-                        <select id="contries-selection" class="selectpicker" data-live-search="true">
+                        <select id="contries-selection" class="selectpicker" data-live-search="true" ng-model="nationalData.selectedCountryName">
                           <option ng-repeat="country in nationalData.countries">{{country.name}}</option>
                         </select>
                         
@@ -1083,7 +1107,7 @@
                             <span class="caret" style="margin-top:0;"></span>
                           </button>
                           <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button" style="width:100%;text-align:center;">
-                            <li role="menuitem"><a href="#" ng-click="continentalData.selectContinent(continent)" ng-repeat="continent in continentalData.continents">{{continent}}</a></li>
+                            <li role="menuitem"><a href="#continental/{{continent}}" ng-click="continentalData.selectContinent(continent)" ng-repeat="continent in continentalData.continents">{{continent}}</a></li>
                           </ul>
                         </div>
                         
@@ -1302,13 +1326,147 @@
         </div>
     </div>
 
-    <div id="welcome_text" style="display:none">
-        <p>Welcome to the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
-        <p>The SWOS team has made some maps available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. We will add further maps, functions, and tools in the next months. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
-        <p class="hidden-xs">You can either start an introduction tour now or select the wetland of your interest in the panel on the right.</p>
-        <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
-        <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2018</p>
-    </div>
+    <script id="welcome_text" style="display:none">
+        <uib-tabset justified="true">
+            <uib-tab heading="Info">
+                <div class="content">
+                    <p>Welcome to the <a href="http://swos-service.eu" target="_blank">SWOS</a> and <a href="http://www.geowetlands.org" target="_blank">GEO-Wetlands</a> Community Portal. This portal is currently in development by the EU H2020 project <a href="http://swos-service.eu" target="_blank">Satellite-based Wetland Observation Service (SWOS)</a>. </p>
+                    <p>The SWOS team has made geospatial maps and statistics available for visualization. For each wetland you can find additional data, such as images and videos, and an overview about available satellite data. Subscribe to the <a href="http://swos-service.us13.list-manage1.com/subscribe?u=c058ecca3e127c2a21fddf64e&amp;id=c17f9a0a5e" target="_blank">SWOS Newsletter</a> to remain updated.</p>
+                    <p class="hidden-xs">You can either start an <a href="javascript:;" ng-click="wetlands.startTour();">introduction tour</a> now or select the wetland of your interest in the panel on the right. Also further contents available on this portal are explained in the additional tabs above. You can come back to this screen with the "Info & Help" menu in the header using the "Info" link.</p>
+                    <p><strong>Disclaimer: </strong>Please note, all maps shown in the portal have preliminary status and have not yet been validated.</p>
+                    <p align="right" style="font-size: 0.9em;margin-bottom: 0;">June 2018</p>
+                </div>
+            </uib-tab>
+            
+            <uib-tab heading="Regional scales">
+                <div class="content">
+                    <p><strong>Regional scales</strong> are defined as entry points based on different scales, whether you are interested on levels from local to global:</p>  
+                    <ul style="margin-top:8px;">
+                        <li>Wetland</li>
+                        <li>National</li>
+                        <li>Continental</li>
+                        <li>Global</li>
+                    </ul>
+                    <p>For each of the regional scales different data has been made available, such as geospatial products, external layers and databases, national views on wetlands dependent on data availabilities. In all scales you can search in external databases with support of the <a href="https://www.geoportal.org" target="_blank">GEOSS Platform</a>.</p>
+                    <p style="margin-bottom:0;">You can find the views as tabs in the header on the right-hand panel.</p> 
+                </div>
+            </uib-tab>
+            
+            <uib-tab heading="Story lines">
+                <div class="content">
+                    <p><strong>Story lines</strong> explain different aspects related to wetlands, satellite data and thematic products, which have been used and produced in the framework of the SWOS project. Text and images are linked with geospatial maps that can be explored interactively.</p>
+                    <p>You can click on the story line to open it.</p>
+                    <p style="margin-bottom:0;"><strong>Available story lines</strong></p> 
+                    <ul>
+                        <li><a href="javascript:;" ng-click="wetlands.open_storyline(6)">Explanations for optical satellite data</a></li>
+                        <li><a href="javascript:;" ng-click="wetlands.open_storyline(5)">Land Surface Temperature as indicator of changes and trends in wetlands</a></li>
+                        <li><a href="javascript:;" ng-click="wetlands.open_storyline(4)">Storyline Kilombero floodplain</a></li>
+                        <li><a href="javascript:;" ng-click="wetlands.open_storyline(2)">Storyline Laguna de Fuente de Piedra</a></li>
+                    </ul>
+                </div>
+            </uib-tab>
+            
+            <uib-tab heading="Geospatial data">
+                <div class="content geospatial" style="padding:0;">
+                     <h3 style="margin-top:0">Products</h3>
+                           <p>Geospatial thematic map products have been produced for many wetlands. All of them are visualized in the portal, many can also be downloaded. Also additional statistics have been calculated and are provided in the portal.</p>
+                           <p><strong>Available geospatial data</strong>*<br/>
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Several satellite data from optical satellites (Landsat, Sentinel) that have been used for data processing are shown in this product.">Optical satellite data</a> |  
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="These datasets contain time series statistics of SAR satellite data. All data from Sentinel-1 Synthetic Aperture Radar (SAR) satellite images, acquired in GRD (Ground Range Detected) imaging mode with the respective polarisation acquired in the given time frame have been used to produce multitemporal statistics.">SAR satellite data</a> |  
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Results from the segmentation that is used as input for the land use land cover classification. ">Segmentation</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Land Use Land Cover (LULC) SWOS mapping product depicts the land cover/use of the mapped area according to one of the three nomenclatures (RAMSAR-CLC, MAES, FAO).">Land Use Land Cover</a> |  
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Short Term Land Use Land Cover Change product shows the frequency of change of a pixel through a year i.e. how many times each pixel has changed during that year. ">Short-term Land Use Land Cover Change</a> |  
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="This Land Use Land Cover Change map is an automated output based on the changes between the Land Use Land Cover in two different years.">Long-term Land Use Land Cover Change</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Land Surface Temperature Trend (LSTT) map shows the evolution of the land surface temperature for a period earliest from 2000 on a pixel basis and re-scaled to Celsius based on MODIS daily LST data.">Land Surface Temperature Trend</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Potential Wetlands map shows probabilities to find wetland ecosystems at a predefined scale (e.g. river catchment or national scales) according to topographic, hydrological, climatic and soil nature (water holding capacity) related criteria. ">Potential Wetland Areas</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Surface Water Dynamics (SWD) products display the extent of open water bodies (i.e. not overgrown with vegetation) and its change over time.">Surface Water Dynamics</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Surface Soil Moisture (SSM) product displays a relative soil wetness index computed from Sentinel-1 Synthetic Aperture Radar (SAR) data. ">Surface Soil Moisture</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The SWOS Water Quality products are derived from Envisat MERIS data and can provide reliable and quantitative measures of chlorophyll a (CHL), suspended sediments (TSM) and colored dissolved organic matter (CDOM).">Water Quality</a> | 
+                           <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The flood regulation map shows the capacities of habitats to give a specific ecosystem service with the protection against flood hazards.">Flood Regulation</a>.</p>
+                            
+                     
+                     <h3>Indicators</h3>
+                     
+                            <p>Indicators have been calculated based on the Land Use Land Cover and Surface Water Dynamic maps. Change indicators have been calculated if maps are available for multiple years.</p>
+                            <p><strong>State indicators</strong>*<br/>
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Overview of all indicator classes for different points in time.">State of all indicator classes</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Total Wetland Extent gives an overview about all areas detected as wetland habitats without further distinction of wetland categories.">Extent of all wetlands</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Wetland Extent (artificial / natural) specifies wetland habitats into the wetland categories natural and artificial wetlands.">Extent of natural and artificial wetlands</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Wetland Extent (vegetated / open water bodies / river water bodies) specifies wetland habitats into the wetland categories according to the SDG 6.6.1 definitions.">Extent of vegetated wetlands, open and river water bodies</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The status of Wetland Threats summarize the importance of the threats on the wetland (Urbanization and Agriculture) and is defined by the total surface of urban and agriculture.">Wetland threats (urb/agr)</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Extent of Open Water is defined by the percentage of open water within the total wetland habitats extent at a specific point of time (a hydro-period).">Extent of open water</a>. 
+                            </p>
+                            <p style="margin-bottom:0;"><strong>Change indicators</strong>*<br/>
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Overview of all indicator class changes for different points in time.">Change of all indicator classes</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="The Wetland Extent change shows areas of in/decrease together with non-changed areas for all wetland habitats without further distinction of wetland categories between two different references periods.">Wetlands extent change</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Wetland restoration shows the conversion from agriculture, urban or artificial wetland classes to natural wetland habitats between two different references periods.">Wetlands restoration</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Wetland artificialization shows the total surface that has been converted from natural wetland classes to artificial wetland classes and the conversion into rice.">Wetlands artificialization</a> | 
+                                <a href="javascript:;" tooltip-placement="right" tooltip-append-to-body="true"  uib-tooltip="Urbanization shows the conversion to urban classes between two different references periods. ">Urbanization</a>.
+                            </p>
+                            <p align="right" style="font-size: 0.9em;margin-bottom: 0;/*margin-top: -15px;*/margin-right: 10px;font-style: italic;">*Availability dependent on wetland</p>
+                </div>
+            </uib-tab>
+            
+            <uib-tab heading="External layers">
+                <div class="content" style="padding:0;">
+                     <h3 style="margin-top:0;">Global maps</h3>
+                            <p>Global maps have been integrated based on external OGC Web services. The following datasets and layers are available (you can click on the layer to add it to the map):</p>
+                            <p><strong>JRC/Google Global Surface Water</strong><br/>
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2553)">Annual Water Recurrence</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2550)">Maximum Water Extent</a> |
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2551)">Water Occurrence</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2555)">Water Occurrence Change Intensity</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2554)">Water Seasonality</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2552)">Water Transitions</a>
+                            </p>
+                            
+                            <p><strong>Ramsar Site Information Service</strong><br/>
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2853)">Site Boudaries</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2852)">Site Centroids</a>
+                            </p>
+                            
+                            <p><strong>World Database on Protected Areas</strong><br/>
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2556)">Point</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadGlobalLayer(2557)">Polygon</a>
+                            </p>
+                     <h3>European maps</h3>       
+                            <p>European maps have been integrated based on external OGC Web services. The following datasets and layers are available (you can click on the layer to add it to the map):</p>
+                            <p><strong>Copernicus Land Service High Resolution Layers</strong><br/>
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(3355)">Forest Type 2012</a> |
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(4391)">Forest Type 2015</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(3352)">Grassland 2015</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(4392)">Grassland Vegetation Probability Index 2015</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(3353)">Tree Cover Density 2012</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(4390)">Tree Cover Density 2015</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(4393)">Tree Cover Density Change</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(4394)">Water and Wetness 2015</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(4398)">Water & Wetness Probability Index 2015</a> | 
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(2744)">Wetlands 2012</a> 
+                            </p>
+                            
+                            <p><strong>Copernicus View Services - Natural Color Mosaic</strong><br/>
+                            <a href="javascript:;" ng-click="wetlands.loadEuropeanLayer(2561)">Mosaic, natural color composition, feathering applied to scene borders</a>
+                            </p>
+                        </uib-tab>
+                    </uib-tabset>
+                </div>
+            </uib-tab>
+            
+            <uib-tab heading="Satellite scenes">
+                <div class="content">
+                    <h3 style="margin-top:0">Data discovery & access</h3>
+                    <p>Data for Landsat and Sentinel satellites have been made available for each of the wetlands in the portal. Each satellite scene includes several meta-information (e.g., cloud coverage, sun angles, sun elevation) and a quicklook image collected through different data providers (e.g., USGS Earth Explorer, ESA Landsat Distribution System, Copernicus Open Access Hub). </p>
+                    <p>In total ca. 175.000 scenes have been collected. In addition, for each of these scenes download links from different data providers (e.g., USGS Earth Explorer, Copernicus Open Access Hub, Amazon Web Services, Google Cloud, CODE-DE) have been integrated.</p>
+                    <p>You can find this tool in the "Satellite scenes" tab of each wetland selected in the right-hand panel.</p>
+                    <h3>Data visualization</h3>
+                    <p><strong>Landsat and Sentinel satellite scenes</strong> can be directly visualized using the Sentinel Hub OGC Services, which have been integrated for each wetland. The visualization of Landsat-5, Landsat-7, Landsat-8 as well as Sentinel-1 and Sentinel-2 are provided with different layers (e.g., True color, False color, Normalized Difference Vegetation Index, Moisture Index).</p>
+                    <p>You can find these datasets in the "Satellite scenes" tab ("Satellite scene layers" group) within each wetland on the right-hand panel.</p>
+                    <p>This has been made available based on <a href="https://sentinel-hub.com/" target="_blank">Sentinel Hub Services</a> and the ESA Open Science Earth Observation grant (No. <a href="https://earth.esa.int/web/guest/pi-community/search-results-and-projects/keyword-entry?IFRAME_SRC=%2Fpi%2Fesa%3Fts%3D1528463214378%26targetIFramePage%3D%252Fweb%252Fguest%252Fpi-community%252Fsearch-results-and-projects%252Fkeyword-entry%26topSelectedNavigationNodeId%3DSEARCH%26coordinates%3D%26sideNavigationType%3DSEARCH%26type%3D10%26toprint%3D-1%26token%3D%26addattribute%3Dfalse%26sideExpandedNavigationBoxId%3DprojectSearch%26id%3D36615%26caller%3D%25252Fpi%25252Fesa%25253Finstitute%25253D%252526itemsPerPage%25253D10%252526sideExpandedNavigationBoxId%25253DprojectSearch%252526displayMode%25253Dcenter%252526cmd%25253Dother%252526submissionid%25253D-1%252526showAll%25253Dtrue%252526topSelectedNavigationNodeId%25253DSEARCH%252526keyword%25253D%252526downloadAsCsv%25253Dfalse%252526targetIFramePage%25253D%2525252Fweb%2525252Fguest%2525252Fpi-community%2525252Fsearch-results-and-projects%2525252Fkeyword-entry%252526ts%25253D1528463214378%252526colorTheme%25253D03%252526startFrom%25253D0%252526sideNavigationType%25253DSEARCH%252526title%25253D%252526aoid%25253D1560%26cmd%3Dproject%26header%3D%26displayMode%3Dcenter%26colorTheme%3D03%26subnavigation%3D1%26role%3D0" target="_blank">36615</a>).</p>
+                </div>
+            </uib-tab>
+            
+        </uib-tabset>
+    </script>
 
     <!-- Geoss Search Widget popup container -->
     <!-- 'geoss' class is needed -->

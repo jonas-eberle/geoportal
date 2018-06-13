@@ -50,6 +50,10 @@
         wetlands.externalDBSearchGeoss = externalDBSearchGeoss;
         wetlands.download = download;
         wetlands.cleanUpDiagram = cleanUpDiagram;
+        wetlands.open_storyline = open_storyline;
+        wetlands.loadGlobalLayer = loadGlobalLayer;
+        wetlands.loadEuropeanLayer = loadEuropeanLayer;
+        wetlands.startTour = startTour;
         
         function cleanUpDiagram() {
                 WetlandsService.diagram_layer_list = null;
@@ -171,7 +175,7 @@
                         buttons: {
                             confirm: {
                                 label: 'Start Tour',
-                                className: 'hidden-xs',
+                                className: 'hidden-xs starttour',
                                 callback: function () {
                                     var sidebar = document.getElementById('wetland_sites');
                                     var scope = angular.element(sidebar).scope();
@@ -209,7 +213,36 @@
         });
 
         //--------------------------------------------------------------------------------------------------------------
-
+        
+        function open_storyline(id) {
+            bootbox.hideAll();
+            $rootScope.$broadcast("open_storyline", id);
+        }
+        
+        function loadGlobalLayer(layer_id) {
+            window.global_layer_id = layer_id;
+            $timeout(function () {
+                bootbox.hideAll();
+                $('#sidebar-tabs a:last').tab('show');
+                var layer_id = "#layer_vis_" + window.global_layer_id; // create layer id
+                $(layer_id).attr('checked', 'checked'); // mark as checked
+                angular.element(layer_id).triggerHandler('click'); // add layer to map
+                var closestPanel = $(layer_id).closest('.panel');
+                closestPanel.find('a').trigger('click'); // find headline and open accordion  
+            });
+        }
+        
+        function loadEuropeanLayer(layer_id) {
+            bootbox.hideAll();
+            $rootScope.$broadcast("open_european_layer", layer_id);
+        }
+        
+        function startTour() {
+            $timeout(function () {
+                angular.element('button.starttour').click();
+            });
+        }
+        
         function addLayerToMap(layer, $event) {
             var checkbox = $event.target;
 
