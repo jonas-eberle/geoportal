@@ -22,6 +22,7 @@
         nationalData.selectedCountry = null;
         nationalData.countries = []; 
         nationalData.selectCountry = selectCountry;
+        nationalData.selectedCountryName = '';
         nationalData.loadWetland = loadWetland;
         nationalData.formatValue = formatValue;
         nationalData.first_selection = false;
@@ -60,20 +61,39 @@
                     $('#contries-selection').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue){
                         data = nationalData.countries[clickedIndex-1];
                         nationalData.selectCountry(data);
-                        if (data.bbox != null) {
-                            var bbox = data.bbox.split(",").map(Number);
-                            nationalData.selected_bbox = bbox;
-                            mapviewer.map.getView().fit(
-                                ol.proj.transformExtent(bbox, 'EPSG:4326', mapviewer.displayProjection)
-                            );   
-                        }
+                        $location.path('/national/' + data['id']);
                     });
+                    
+                    if ($routeParams.country_id){
+                        $.each(nationalData.countries, function(c) {
+                            var c = nationalData.countries[c];
+                            console.log(c);
+                            if (c['id'] == parseInt($routeParams.country_id)) {
+                                $($('#sidebar-tabs a')[1]).tab('show');
+                                nationalData.selectCountry(c);
+                                return true;
+                            } 
+                        });
+                    }
                 }, 1);
             });
         });
         
         function selectCountry(country) {
             nationalData.selectedCountry = country;
+            nationalData.selectedCountryName = country.name;
+            $timeout(function(){
+                $('#contries-selection').selectpicker('refresh');
+            });
+            
+            if (country.bbox != null) {
+                var bbox = country.bbox.split(",").map(Number);
+                nationalData.selected_bbox = bbox;
+                mapviewer.map.getView().fit(
+                    ol.proj.transformExtent(bbox, 'EPSG:4326', mapviewer.displayProjection)
+                );   
+            }
+            
             nationalData.geoss_text = "";
             nationalData.geoss_source = [];
             if (nationalData.olLayer != null) {
@@ -123,6 +143,14 @@
                       title: 'Please select a year to compare'
                     });
                    $('#statistics_year').selectpicker('refresh'); 
+                   
+                   if ($routeParams.national_layer_id){
+                        var layer_id = "#layer_vis_" + $routeParams.national_layer_id; // create layer id
+                        $(layer_id).attr('checked', 'checked'); // mark as checked
+                        angular.element(layer_id).triggerHandler('click'); // add layer to map
+                        var closestPanel = $(layer_id).closest('.panel');
+                        closestPanel.find('a').trigger('click'); // find headline and open accordion   
+                    }
                 });
                 
             });

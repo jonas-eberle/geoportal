@@ -29,6 +29,30 @@
                 controller: 'StoryLineCtrl',
                 controllerAs: 'storyLine'
             })
+            .when('/global/:global_layer_id', {
+                controller: 'GlobalDataCtrl',
+                controllerAs: 'globalData'
+            })
+            .when('/continental/:continent', {
+                controller: 'ContinentalDataCtrl',
+                controllerAs: 'continentalData'
+            })
+            .when('/continental/:continent/:continental_layer_id', {
+                controller: 'ContinentalDataCtrl',
+                controllerAs: 'continentalData'
+            })
+            .when('/national/:country_id', {
+                controller: 'NationalDataCtrl',
+                controllerAs: 'nationalData'
+            })
+            .when('/national/:country_id/:national_layer_id', {
+                controller: 'NationalDataCtrl',
+                controllerAs: 'nationalData'
+            })
+            .when('/:view', {
+                controller: 'GlobalDataCtrl',
+                controllerAs: 'globalData'
+            })
         ;
     }
 

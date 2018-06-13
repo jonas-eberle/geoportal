@@ -354,7 +354,7 @@
                 <div class="wrapper">
 
                     <ul class="nav nav-tabs nav-justified list tabcount-all" role="tablist" id="sidebar-tabs">
-                        <li role="presentation"  ng-class="{active: wetlands.data.activeTab==-1}" ><a id="link_wetland_list" href="#catalog" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="wetlands.data.activeTab = -1" ><span> Wetlands </span></a></li>
+                        <li role="presentation"  ng-class="{active: wetlands.data.activeTab==-1}" ><a id="link_wetland_list" href="#wetlands" aria-controls="catalog" role="tab" data-toggle="tab" ng-click="wetlands.data.activeTab = -1" ><span> Wetlands </span></a></li>
                         <!--<li role="presentation" ng-if="wetlands.value.id != null" ng-class="{active: wetlands.data.activeTab==1}"><a id="link_wetland_opened" href="#wetland_{{wetlands.value.id}}" aria-controls="wetland_{{wetlands.value.id}}" role="tab" data-toggle="tab" ng-bind="wetlands.value.name"></a></li>-->
                         <!--<li ng-repeat="(key, value) in wetlands.wetlands_opened" ng-class="{active: wetlands.data.activeTab==value.id}" role="presentation"><a id="link_wetland_{{value.id}}" href="#wetland_{{value.id}}" aria-controls="wetland_{{value.id}}" role="tab" data-toggle="tab">{{value.name}} <span class="badge" repeat-done="wetlands.foo()" ng-click="wetlands.closeWetland(value.id)">&#10006;</span></a> </li>-->
                         <li role="presentation"><a href="#national" aria-controls="national" role="tab" data-toggle="tab">National</a></li>
@@ -367,7 +367,7 @@
                 <!-- Tab panes -->
 
                 <div class="tab-content" style="top:93px">
-                    <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="catalog" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
+                    <div role="tabpanel" class="tab-pane" ng-class="{active: wetlands.data.activeTab==-1}" id="wetlands" ng-controller="WetlandsFilterCtrl as wetlandsFilter">
                         <div  ng-if="!wetlands.value['id']">
                         <button type="button" ng-click="wetlandsFilter.clearFilter()" ng-if="wetlandsFilter.filtered_geo_scale != '' || wetlandsFilter.filtered_country != ''  || wetlandsFilter.filtered_wetland_type != ''  || wetlandsFilter.filtered_site_type != ''  || wetlandsFilter.filtered_ecoregion != ''  || wetlandsFilter.filtered_products != ''" class="btn btn-default" aria-label="Left Align" style="font-size: 11px;padding: 1px 6px 1px 6px; margin-left: 10px;" >x Clear filter</button>
                         <div class="filter" style="padding: 10px;padding-bottom: 0;">
@@ -1074,7 +1074,7 @@
                         
                     </div>
                     
-                    <div role="tabpanel" class="tab-pane national_data" id="continental" ng-controller="ContinentalDataCtrl as continentalData">
+                    <div role="tabpanel" class="tab-pane continental_data" id="continental" ng-controller="ContinentalDataCtrl as continentalData">
                         
                         <div class="btn-group" uib-dropdown is-open="status.isopen" style="width:100%">
                           <button id="continent-selection" type="button" class="btn btn-primary btn-block" uib-dropdown-toggle ng-disabled="disabled" style="width:100%;background-color:#336a5c;">

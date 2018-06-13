@@ -358,7 +358,16 @@
 
         function shareLink(id) {
             var host = $location.protocol() +"://"+ $location.host() + $window.location.pathname;
-            var hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;
+            var hash = '';
+            if ($('#wetlands').is(':visible')) {
+                hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;    
+            } else if ($('.national_data').is(":visible")) {
+                hash = '#/national/'+$routeParams.country_id+'/'+id;
+            } else if ($('.continental_data').is(":visible")) {
+                hash = '#/continental/'+$routeParams.continent+'/'+id;
+            } else if ($('.global_data').is(":visible")) {
+                hash = '#/global/'+id;
+            }
             var url = host+hash;
             bootbox.alert('<h4>Share dataset link</h4><div class="share_link">Please use the following link to share the dataset: <br /><a href="'+url+'" target="_blank">'+url+'</a></div>');
         }

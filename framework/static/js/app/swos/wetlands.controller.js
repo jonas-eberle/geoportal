@@ -22,8 +22,8 @@
         })
         .controller('WetlandsCtrl', WetlandsCtrl);
 
-    WetlandsCtrl.$inject = ['$scope', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location', 'Attribution', '$uibModal', '$rootScope'];
-    function WetlandsCtrl($scope, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location, Attribution, $modal, $rootScope) {
+    WetlandsCtrl.$inject = ['$scope', '$compile', 'mapviewer', 'djangoRequests', '$cookies', '$routeParams', '$timeout', 'WetlandsService', 'TrackingService', '$location', 'Attribution', '$uibModal', '$rootScope'];
+    function WetlandsCtrl($scope, $compile, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, WetlandsService, TrackingService, $location, Attribution, $modal, $rootScope) {
         var proceed = true;
         var wetlands = this;
 
@@ -164,9 +164,10 @@
 
                     bootbox.dialog({
                         title: 'Welcome to the GEO Wetlands Community Portal',
-                        message: $('#welcome_text').html(),
+                        message: $compile($('#welcome_text').html())($scope),
                         backdrop: true,
                         onEscape: true,
+                        className: 'welcome-dialog',
                         buttons: {
                             confirm: {
                                 label: 'Start Tour',

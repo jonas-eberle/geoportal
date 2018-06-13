@@ -18,6 +18,13 @@
         globalData.externalDBSearchGeoss = externalDBSearchGeoss;
         
         $scope.$on('mapviewer.catalog_loaded', function () {
+            
+            if ($routeParams.view){
+                if ($routeParams.view == 'global') {
+                    $('#sidebar-tabs a:last').tab('show');
+                }
+            }
+            
             djangoRequests.request({
                 'method': "GET",
                 'url'   : '/swos/externaldb.json?continent=Global&geoss_search=true'
@@ -31,6 +38,16 @@
                       style: 'btn-info'
                     }); 
                    $('#global_geoss_select.selectpicker').selectpicker('refresh');
+                   
+                   if ($routeParams.global_layer_id){
+                        $('#sidebar-tabs a:last').tab('show');
+                        var layer_id = "#layer_vis_" + $routeParams.global_layer_id; // create layer id
+                        $(layer_id).attr('checked', 'checked'); // mark as checked
+                        angular.element(layer_id).triggerHandler('click'); // add layer to map
+                        var closestPanel = $(layer_id).closest('.panel');
+                        closestPanel.find('a').trigger('click'); // find headline and open accordion   
+                    }
+                   
                 });
             });
         });

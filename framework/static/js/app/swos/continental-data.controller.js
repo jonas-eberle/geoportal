@@ -30,12 +30,20 @@
         continentalData.selected_bbox = null;
         
         $scope.$on('mapviewer.catalog_loaded', function () {
-            
+            if ($routeParams.continent) {
+                $($('#sidebar-tabs a')[2]).tab('show');
+                console.log($routeParams.continent);
+                continentalData.selectContinent($routeParams.continent);
+            }
         });
         
         function selectContinent(continent) {
             continentalData.selectedContinent = continent;
             continentalData.selected_bbox = continentalData.bbox[continent].split(',');
+            var bbox = continentalData.bbox[continent].split(",").map(Number);
+            mapviewer.map.getView().fit(
+                ol.proj.transformExtent(bbox, 'EPSG:4326', mapviewer.displayProjection)
+            );   
             continentalData.geoss_text = "";
             continentalData.geoss_source = [];
             djangoRequests.request({
@@ -51,6 +59,14 @@
                       style: 'btn-info'
                     }); 
                     $('#continental_geoss_select.selectpicker').selectpicker('refresh');
+                    
+                    if ($routeParams.continental_layer_id){
+                        var layer_id = "#layer_vis_" + $routeParams.continental_layer_id; // create layer id
+                        $(layer_id).attr('checked', 'checked'); // mark as checked
+                        angular.element(layer_id).triggerHandler('click'); // add layer to map
+                        var closestPanel = $(layer_id).closest('.panel');
+                        closestPanel.find('a').trigger('click'); // find headline and open accordion   
+                    }
                 });
             });
         }

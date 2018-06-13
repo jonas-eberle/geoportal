@@ -153,9 +153,7 @@
                         wetland_service.data.activeTab = 1;   
                     } else {
                         wetland_service.data.activeTab = -1;
-                        $timeout(function(){
-                            $("#link_wetland_list").click();
-                        }, 1);
+                        $('#sidebar-tabs a:first').tab('show');
                     }
                     $('#loading-div').hide();
                     if (typeof(callback)  === 'function') {
