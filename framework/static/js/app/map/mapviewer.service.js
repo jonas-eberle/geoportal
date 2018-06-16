@@ -196,10 +196,10 @@
 
                 switch(layer.ogc_type) {
                     case 'WMS':
-                        var style = "";
-                        if (layer.style){style = layer.style}
+                       // var style = "";
+                       // if (layer.style){style = layer.style}
 
-                        var params = {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true, 'STYLES': style, 'ENV': layer.env};
+                        var params = {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true, 'STYLES': layer.style, 'ENV': layer.env};
                         if (layer.hasOwnProperty('selectedDate')) {
                             params['TIME'] = layer.selectedDate+'/'+layer.selectedDate;
                         }
