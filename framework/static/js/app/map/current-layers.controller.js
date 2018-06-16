@@ -44,7 +44,7 @@
         mcl.zoomToLayer = zoomToLayer;
         mcl.zoomToStation = zoomToStation;
         mcl.requestShowExtentInfo = requestShowExtentInfo;
-        mcl.extentInfo = "<b>Hint</b>: The product does not match the site area. Possible reasons are: (i) The site area changed later due to user requirements. (ii) The area covered by the product is limited due to the availability of input data."
+        mcl.extentInfo = "<b>Hint</b>: The product does not match the site area. Possible reasons are: (i) The site area changed later due to user requirements. (ii) The area covered by the product is limited due to the availability of input data. (iii) The product shows a derived subset (e.g. indicator). ";
 
         $scope.$on("mapviewer.layeradded", function (event, olLayer) {
             mcl.showToggleButton = true;
@@ -360,7 +360,7 @@
             var host = $location.protocol() +"://"+ $location.host() + $window.location.pathname;
             var hash = '';
             if ($('#wetlands').is(':visible')) {
-                hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;    
+                hash = '#/wetland/'+$routeParams.wetland_id+'/'+$routeParams.type_name+'/'+id;
             } else if ($('.national_data').is(":visible")) {
                 hash = '#/national/'+$routeParams.country_id+'/'+id;
             } else if ($('.continental_data').is(":visible")) {
