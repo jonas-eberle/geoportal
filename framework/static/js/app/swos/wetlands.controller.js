@@ -6,12 +6,12 @@
         .filter('orderObjectBy', function(){
          return function(input, attribute) {
             if (!angular.isObject(input)) return input;
-        
+
             var array = [];
             for(var objectKey in input) {
                 array.push(input[objectKey]);
             }
-        
+
             array.sort(function(a, b){
                 a = parseInt(a[attribute]);
                 b = parseInt(b[attribute]);
@@ -54,11 +54,11 @@
         wetlands.loadGlobalLayer = loadGlobalLayer;
         wetlands.loadEuropeanLayer = loadEuropeanLayer;
         wetlands.startTour = startTour;
-        
+
         function cleanUpDiagram() {
                 WetlandsService.diagram_layer_list = null;
         }
-        
+
         // wetlands.wetlands_opened = {};
 
         $scope.$on("mapviewer.alllayersremoved", function () {
@@ -213,12 +213,12 @@
         });
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         function open_storyline(id) {
             bootbox.hideAll();
             $rootScope.$broadcast("open_storyline", id);
         }
-        
+
         function loadGlobalLayer(layer_id) {
             window.global_layer_id = layer_id;
             $timeout(function () {
@@ -228,21 +228,21 @@
                 $(layer_id).attr('checked', 'checked'); // mark as checked
                 angular.element(layer_id).triggerHandler('click'); // add layer to map
                 var closestPanel = $(layer_id).closest('.panel');
-                closestPanel.find('a').trigger('click'); // find headline and open accordion  
+                closestPanel.find('a').trigger('click'); // find headline and open accordion
             });
         }
-        
+
         function loadEuropeanLayer(layer_id) {
             bootbox.hideAll();
             $rootScope.$broadcast("open_european_layer", layer_id);
         }
-        
+
         function startTour() {
             $timeout(function () {
                 angular.element('button.starttour').click();
             });
         }
-        
+
         function addLayerToMap(layer, $event) {
             var checkbox = $event.target;
 
@@ -308,8 +308,8 @@
                             ]]
                         }
                     };
-    
-                    if (turf.area(wetlandJSON) < (turf.area(layerJSON) - turf.area(layerJSON)* 0.05) || turf.area(wetlandJSON) > (turf.area(layerJSON) + turf.area(layerJSON)* 0.05 )){
+
+                    if ((turf.area(wetlandJSON) < (turf.area(layerJSON) - turf.area(layerJSON)* 0.05) || turf.area(wetlandJSON) > (turf.area(layerJSON) + turf.area(layerJSON)* 0.05 )) && layer.identifier.includes("SWOS")){
                         mapviewer.showExtentInfo[layer.id] = true;
                     }
                     else {
@@ -463,7 +463,7 @@
                 });
             }
         }
-        
+
         function closeWetland() {
             WetlandsService.closeWetland();
             wetlands.value = WetlandsService.value;
@@ -527,7 +527,7 @@
                 $('.modal-content', angular.element('.satdata-window')).css('left', left).css('top', -30).css('width', width);
             });
         }
-        
+
         function externalDBSearchGeoss(geossID, rel) {
             $('#loading-div').show();
             var extent = ol.proj.transformExtent(WetlandsService.wetlandList[WetlandsService.value.data.id].geometry.getExtent(), 'EPSG:3857', 'EPSG:4326');
