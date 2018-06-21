@@ -196,10 +196,17 @@
 
                 switch(layer.ogc_type) {
                     case 'WMS':
-                       // var style = "";
-                       // if (layer.style){style = layer.style}
+                        var params = {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true, 'ENV': layer.env};
+                        var ogc_link = layer.ogc_link
+                        if (layer.style) {
+                            params['STYLES'] = layer.style;
+                        }
 
-                        var params = {'LAYERS': layer.ogc_layer, 'TILED': true, 'TRANSPARENT': true, 'STYLES': layer.style, 'ENV': layer.env};
+                        // Remove styles=default from WMS URLs
+                        if (ogc_link.includes("styles=default")) {
+                            var ogc_link = ogc_link.replace("styles=default", "");
+                        }
+
                         if (layer.hasOwnProperty('selectedDate')) {
                             params['TIME'] = layer.selectedDate+'/'+layer.selectedDate;
                         }
@@ -207,7 +214,7 @@
                             name: layer.title,
                             layerObj: layer,
                             source: new ol.source.TileWMS({
-                                url: layer.ogc_link,
+                                url: ogc_link,
                                 params: params
                             })
                         });
