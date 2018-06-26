@@ -33,10 +33,11 @@ settings.configure()
 
 data = []
 
-sftp_folder = '/products/SWOS_sites'
+#sftp_folder = '/products/SWOS_sites'
+sftp_folder = '/products/SWOS_sites/01_National_InvDel_Service_Case/'
 sftp_user = 'franziska.zander'
 sftp_url = 'swos-data.jena-optronik.de'
-sftp_password = 'xxx'
+sftp_password = ''
 loc_folder = '/home/franzi/data/'
 
 db_passwd = "swos"
@@ -53,15 +54,15 @@ path_template = '/home/franzi/swos/indicator_template.xml'
 
 # replace: add srid for each "Greece_" site
 indicator_sites = ({'name': "Spain_Fuente-de-Piedra", 'calc': 0,'srid': '', 'no_dissolve': 0, 'no_swd':''},  # ok
-                   {'name': "Sweden_Koppangen", 'calc': 0, 'no_dissolve': 0, 'no_swd':''},  # geht
-                   {'name': "France_Camargue", 'calc': 1, 'no_dissolve': 0, 'no_swd':1},  # SWD leoschen!
-                   {'name': "Egypt_Burullus", 'calc':0, 'no_dissolve': 1, 'no_swd':''},  # ohne intersection
-                   {'name': "Spain_Guadalhorce", 'calc':0, 'srid': '', 'no_dissolve': 0, 'no_swd':''},  # geht
+                   {'name': "Sweden_Koppangen", 'calc': 0, 'no_dissolve': 0, 'no_swd':''},  # ok
+                   {'name': "France_Camargue", 'calc': 0, 'no_dissolve': 0, 'no_swd':1},  # ok
+                   {'name': "Egypt_Burullus", 'calc':0, 'no_dissolve': 1, 'no_swd':''},  # ok
+                   {'name': "Spain_Guadalhorce", 'calc':0, 'srid': '', 'no_dissolve': 0, 'no_swd':''},  # ok
 
-                   {'name': "Jordan_Azraq", 'calc': 0, 'srid': '', 'no_dissolve': 1, 'no_swd':0}, ## SWD geloescht - to big
-                   {'name': 'Montenegro-Albania_Skadarsko', 'calc': 1, 'sird': '', 'no_dissolve': 0, 'no_swd':1}, # SWD geloescht - to big
+                   {'name': "Jordan_Azraq", 'calc': 0, 'srid': '', 'no_dissolve': 1, 'no_swd':0}, # ok
+                   {'name': 'Montenegro-Albania_Skadarsko', 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':1}, # ok
 
-        ##           {'name': 'Tanzania_Kilombero', 'calc': 0, 'srid': '', 'no_intersection': 1, 'no_dissolve': 0}, # too big # nicht
+                   {'name': 'Tanzania_Kilombero', 'calc':0, 'srid': 32736, 'no_dissolve': 1, 'no_swd':1}, # ok
 
                    {'name': "Algeria_Kala", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''},# ok
                    {'name': "Algeria_Oued-Sebaou", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''}, # ok
@@ -70,7 +71,7 @@ indicator_sites = ({'name': "Spain_Fuente-de-Piedra", 'calc': 0,'srid': '', 'no_
                    {'name': "France_Palavasiens", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''},# ok
 
                    {'name': "Greece_Axios", 'calc': 0, 'srid': 3035, 'no_dissolve': 0, 'no_swd':''},  # ok
-                   {'name': "Greece_Eastern-Macedonia", 'calc': 0, 'srid': 3035, 'no_dissolve': 1, 'no_swd':1},  # # SWD geloescht - to big
+                   {'name': "Greece_Eastern-Macedonia", 'calc': 0, 'srid': 3035, 'no_dissolve': 1, 'no_swd':1},  # run without S2 with dissolve / run S2 with dissolve
 
                    {'name': "Greece_Amvrakikos", 'calc': 0, 'srid': 3035, 'no_dissolve': 0, 'no_swd':''}, # ok
                    {'name': "Greece_Evros", 'calc': 0, 'srid': 3035, 'no_dissolve': 0, 'no_swd':''}, # ok
@@ -84,7 +85,7 @@ indicator_sites = ({'name': "Spain_Fuente-de-Piedra", 'calc': 0,'srid': '', 'no_
 
                    {'name': "Italy_Fucecchio", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''}, # ok
                    {'name': "Italy_Pesa-valley", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''},# EPSG falsch no
-                 #  {'name': "Kenya_Olbolossat", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''}, # FAO
+                   {'name': "Kenya_Olbolossat", 'calc': 0, 'srid': '', 'no_dissolve': 1, 'no_swd':''}, # FAO ok / one SWD file does not work -> gdal_polygonize does not terminate / no final dissolve possible!
                  #  {'name': "Morocco_Oued-Sebou", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''}, # no LULC folder
 
                    {'name': "Senegal_Lower-Senegal", 'calc': 0, 'srid': '', 'no_intersection': 1, 'no_dissolve': 1, 'no_swd':''},#  SWD prj # nicht kaputt Fehler -> nicht neu!
@@ -95,8 +96,12 @@ indicator_sites = ({'name': "Spain_Fuente-de-Piedra", 'calc': 0,'srid': '', 'no_
                    {'name': "Sweden_Vattenrike", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''}, # ok
                  #  {'name': "Tunisia_Ghar-el-Melh", 'calc': 0, 'srid': '', 'no_dissolve': 0, 'no_swd':''}, # no LULC folder
                    {'name': "United-Arab-Emirates_Ras-Al-Khor", 'calc': 0, 'srid': '', 'no_dissolve': 1, 'no_swd':''}, # geht nicht
-                   {'name': "United-Arab-Emirates_Hatta-Mountain", 'calc':1, 'srid': '', 'no_dissolve': 1, 'no_swd':1}  # ok SWD loeschen!
-                   )
+                   {'name': "United-Arab-Emirates_Hatta-Mountain", 'calc':0, 'srid': '', 'no_dissolve': 1, 'no_swd':1},  # ok
+
+                   {'name': "Mali_Inner-Niger", 'calc': 0, 'srid': '', 'no_dissolve': 1, 'no_swd': 0}, # not working / dissolve not terminating after 2 days
+                    {'name': "Albania_National", 'calc': 1, 'srid': '', 'no_dissolve': 0, 'no_swd': 0} # rename temporary folder name to Albania_National on FTP
+
+)
 def put_data_swos_server(site):
     srv = pysftp.Connection(host=sftp_url, username=sftp_user, password=sftp_password)
     try:
@@ -106,7 +111,7 @@ def put_data_swos_server(site):
     srv.put_d(loc_folder+site+'/IND/', sftp_folder + '/' +site+ '/IND',  preserve_mtime=True)
 
 def get_data_swos_server(site):
-    srv = pysftp.Connection(host="swos-data.jena-optronik.de", username="franziska.zander", password="xxx")
+    srv = pysftp.Connection(host="swos-data.jena-optronik.de", username="franziska.zander", password="")
 
 def reloadFTP():
     cnopts = pysftp.CnOpts()
@@ -344,6 +349,10 @@ def subdivide(table, sensor_date):
 def dissolve_and_subdivide_intersection(table, cols):
     execute_sql("SELECT " + cols +" , st_makevalid(St_subdivide(ST_UNION(geometry))) as geometry into " + '\"' + table +"_dissolved" + '\"'  + " from " + '\"' + table + '\"' "group by " + cols )
 
+def make_valid_intersection(table, cols):
+    execute_sql("SELECT " + cols +" , st_makevalid(geometry) as geometry into " + '\"' + table +"_valid" + '\"'  + " from " + '\"' + table + '\"' )
+
+
 def dissolve_intersection_final(table, cols):
     execute_sql("SELECT " + cols +" , ST_UNION(geometry) as geometry into " + '\"' + table +"_final" + '\"'  + " from " + '\"' + table + '\"' "group by " + cols )
 
@@ -355,7 +364,7 @@ def dissolve_makvalid_swd(table):
     execute_sql("SELECT dn , st_makevalid(St_subdivide(geometry)) as geometry into " + '\"' + table + "_dissolved" + '\"' + " from " + '\"' + table + '\"')
 
 def get_extent(table):
-    return execute_sql_return("SELECT substring(left(St_astext(ST_Extent(ST_Transform( geometry, 4326 ))),-2),10) from" + '\"' + table + '\"')
+    return execute_sql_return("SELECT substring(left(St_astext(ST_Extent(ST_Transform( geometry, 4326 ))),-2),10) from " + '\"' + table + '\"')
 
 def create_index(table):
     #execute_sql("DROP INDEX " + '\"' + table + "_gix" '\"')
@@ -427,11 +436,26 @@ def repair_and_add_ind_code(type,product_name, sensor_date, new_product_name ):
         else:
             join = '" left join maes_indicator on cast(' '"' + product_name.lower() + '".maes_code as integer)=maes_indicator.maes_code where ' + '"' + product_name.lower() + '".maes_code != ' + "'" + "no data" + "'" +" and " + '"' + product_name.lower() + '".maes_code != ' + "'" + "0" + "'"
 
-    execute_sql(
-        "SELECT st_makevalid(geom) as \"geometry\",  indicator_code as indicator_code_" + sensor_date +  " into " + '"' + new_product_name + '"' + " from " + '"' + product_name.lower() + join + " and st_isvalid(geom) is false UNION SELECT geom as \"geometry\",  indicator_code as indicator_code_" + sensor_date + " from " + '"' + product_name.lower() + join + " and st_isvalid(geom) is true")
-   # drop_exist(new_product_name + '_2')
+    if type == "FAO":
+        data_type = get_col_type(product_name.lower(), "fao_code")
+        if len(data_type) == 0:
+            print "No FAO code column found"
+            #add_maes_column(product_name.lower())
+            #data_type = get_col_type(product_name.lower(), "fao_code")
+
+        if data_type[0][0] == "numeric":
+            join = '" left join fao_indicator on ' '"' + product_name.lower() + '".fao_code =fao_indicator.fao_code where ' + '"' + product_name.lower() + '".fao_code != ' + "'" + "0" + "'"
+        else:
+            join = '" left join fao_indicator on ' '"' + product_name.lower() + '".fao_code=fao_indicator.fao_code where ' + '"' + product_name.lower() + '".fao_code != ' + "'" + "no data" + "'" + " and " + '"' + product_name.lower() + '".fao_code != ' + "'" + "0" + "'"
+
    # execute_sql(
-   #     "SELECT st_makevalid(St_subdivide(geom)) as \"geometry\",  clc_indicator.indicator_code as indicator_code_" + sensor_date + " into " + '"' + new_product_name + '_2"' + " from " + '"' + product_name.lower() + join )
+    #    "SELECT st_makevalid(geom) as \"geometry\",  indicator_code as indicator_code_" + sensor_date +  " into " + '"' + new_product_name + '"' + " from " + '"' + product_name.lower() + join + " and st_isvalid(geom) is false UNION SELECT geom as \"geometry\",  indicator_code as indicator_code_" + sensor_date + " from " + '"' + product_name.lower() + join + " and st_isvalid(geom) is true")
+    execute_sql(
+        "SELECT st_makevalid(St_subdivide(geom))  as \"geometry\",  indicator_code as indicator_code_" + sensor_date + " into " + '"' + new_product_name + '"' + " from " + '"' + product_name.lower() + join + " and st_isvalid(geom) is false UNION SELECT geom as \"geometry\",  indicator_code as indicator_code_" + sensor_date + " from " + '"' + product_name.lower() + join + " and st_isvalid(geom) is true")
+
+    # drop_exist(new_product_name + '_2')
+    #execute_sql(
+       #"SELECT st_makevalid(St_subdivide(geom)) as \"geometry\",  clc_indicator.indicator_code as indicator_code_" + sensor_date + " into " + '"' + new_product_name + '_2"' + " from " + '"' + product_name.lower() + join )
    # execute_sql(
    #     "SELECT st_makevalid(St_subdivide(ST_UNION(geometry))) as \"geometry\",  indicator_code_" + sensor_date + " into " + '"' + new_product_name + '"' + " from " + '"' + new_product_name + "_2" + '"' + " group by indicator_code_" + sensor_date)
 
@@ -467,6 +491,8 @@ def extract_metadata(xml_file):
     #will only find and extract the first temporal extent !
     date_begin = root.find('.//gmd:EX_TemporalExtent//gml:beginPosition', namespaces).text
     date_end = root.find('.//gmd:EX_TemporalExtent//gml:endPosition', namespaces).text
+    print date_begin
+    print date_end
     date_begin = datetime.datetime.strptime(date_begin, '%Y-%m-%d').date()
     date_end = datetime.datetime.strptime(date_end, '%Y-%m-%d').date()
     shape_data['date_begin'] = str(date_begin)
@@ -521,7 +547,7 @@ def add_metadata_xml(output_folder, table_name, procuct_name, epsg, file, metada
 
     extent = get_extent(table_name)
     coords = extent[0][0].split(",")
-
+    print coords
     layer = {"north": coords[1].split(" ")[1], "south": coords[0].split(" ")[1], "east" : coords[2].split(" ")[0], "west" : coords[1].split(" ")[0]}
     layer["identifier"] = procuct_name
     layer["characterset"] = "MD_CharacterSetCode_utf8"
@@ -534,10 +560,10 @@ def add_metadata_xml(output_folder, table_name, procuct_name, epsg, file, metada
     layer["date_creation"] = now.strftime("%Y-%m-%d") # current  date_publication / date_revision
 
     layer["point_of_contacts"] = []
-    layer["point_of_contacts"].append({"organisation": "SWOS - Satellite-based Wetland Observation Service", "email":"Kathrin.Weise@jena-optronik.de" })
+    layer["point_of_contacts"].append({"organisation": "Friedrich-Schiller-University Jena, Department of Geography - Earth Observation", "email": "jonas.eberle@uni-jena.de"})
     layer["meta_contacts"] = [] # author FSU / SWOS
     layer["meta_contacts"].append({"organisation": "Friedrich-Schiller-University Jena, Department of Geography - Earth Observation", "email": "jonas.eberle@uni-jena.de"})
-    layer["meta_contacts"].append({"organisation": "SWOS - Satellite-based Wetland Observation Service", "email":"Kathrin.Weise@jena-optronik.de" })
+    #layer["meta_contacts"].append({"organisation": "SWOS - Satellite-based Wetland Observation Service", "email":"Kathrin.Weise@jena-optronik.de" })
 
     layer["layer_constraints_cond"] = []
     layer["layer_constraints_cond"].append({"constraints_cond": "No conditions apply"})
@@ -576,11 +602,14 @@ def add_metadata_xml(output_folder, table_name, procuct_name, epsg, file, metada
         source.append({"id": metadata_swd["identifier"], "resolution_distance": metadata_swd["resolution_distance"],"resolution_unit": metadata_swd["resolution_unit"]})
 
     country_name = output_folder.split("/")[-2].split("_")
+
     if type(metadata) is dict:
         layer["date_begin"] = metadata["date_begin"]
         layer["date_end"] = metadata["date_end"]
         if layer["date_end"] == "00000":
             layer["date_end"] = layer["date_begin"]
+        print metadata
+        print country_name
         layer["meta_lineage"] = "The indicator was automatically delineated based on a Land Use Land Cover (LULC)"+ swd_product +" classification of " + country_name[1].replace("-", " ") + " (" + country_name[0].replace("-", " ") + ") for the year/date "+ procuct_name.split("_")[-1] +" " \
                                 "using the "+procuct_name.split("_")[2] +" nomenclature. For the LULC product "+procuct_name.split("_")[3].replace("L", "Landsat ").replace("S", "Sentinel ") +" satellite image(s) " \
                                 "between " + metadata["date_begin"] + " and " + metadata["date_end"] + " have been used with a spatial resolution of " + metadata['resolution_distance'] + " " + metadata['resolution_unit'] + ". " \
@@ -653,7 +682,6 @@ def add_metadata_xml(output_folder, table_name, procuct_name, epsg, file, metada
     # md_doc_meta = tpl.render(ctx)
     _context = Context(ctx)
     result = _template.render(_context)
-
     f = open(output_folder + "/" + procuct_name + ".xml", 'w')
     f.write(result.encode('UTF-8'))
 
@@ -887,11 +915,11 @@ def claculate_indicator(files, output_folder, type, site):
             date = split_product_name[-1]
             #print date
             sensor = split_product_name[3]
-            #print sensor
+            print sensor
 
             # extract metadata
             metadata = extract_metadata(file[:-3] + "xml")
-
+            print "metadata"
             # import file
             import_file(file, epsg, product_name)
 
@@ -986,7 +1014,9 @@ def claculate_indicator(files, output_folder, type, site):
                     drop_exist(output + "_dissolved")
 
                     if site["no_dissolve"] == 1:
-                        input_1 = output
+                        drop_exist(output + "_valid")
+                        make_valid_intersection(output, columns[1:])
+                        input_1 = output+ "_valid"
 
                     else:
                         dissolve_and_subdivide_intersection(output, columns[1:])
@@ -1009,11 +1039,11 @@ def claculate_indicator(files, output_folder, type, site):
 
         drop_exist(output + "_final")
 
-       # if site["no_dissolve"] == 1:
-        dissolve_intersection_final(output, columns[1:])
-       #     final_output = output + "_final"
-        #else:
-             #final_intersection(output, columns[1:])
+        if site["name"] == "Kenya_Olbolossat":
+            final_intersection(output, columns[1:])
+        else:
+            dissolve_intersection_final(output, columns[1:])
+
         final_output = output + "_final"
 
 
@@ -1146,12 +1176,16 @@ def create_indicator(indicator_sites):
 def execute_calculation(site):
     clc_files = []
     maes_files = []
+    fao_files = []
 
     for name in glob.glob(data_dir + site["name"] + '/LULC/*RAMSAR*.shp'):
         clc_files.append(name)
 
     for name in glob.glob(data_dir + site["name"] + '/LULC/*MAES*.shp'):
         maes_files.append(name)
+
+    for name in glob.glob(data_dir + site["name"] + '/LULC/*FAO*.shp'):
+        fao_files.append(name)
 
     output_folder = data_dir + site["name"] + "/IND"
 
@@ -1167,6 +1201,7 @@ def execute_calculation(site):
     # sort list (L1, L2, S1, S2 => equals order by time)
     clc_files.sort()
     maes_files.sort()
+    fao_files.sort()
 
     # calculate indicator (import, repair, dissolve, subdivide, intersect, export)
     if len(clc_files) > 0:
@@ -1174,6 +1209,10 @@ def execute_calculation(site):
 
     if len(maes_files) > 0:
         claculate_indicator(maes_files, output_folder, "MAES", site)
+
+
+    if len(fao_files) > 0:
+        claculate_indicator(fao_files, output_folder, "FAO", site)
 
     put_data_swos_server(site["name"])
 
