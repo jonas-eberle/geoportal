@@ -10,7 +10,6 @@ from . import models, views
 # register URLs for each app + media URLs
 urlpatterns = [
     url(r'^wetlands.json$', views.WetlandsList.as_view(), name='wetland_list'),
-    #url(r'^wetlands.geojson$',  MapLayer.as_view(model=models.Wetland, properties=('id', 'name', 'country', 'geo_scale', 'size', 'description','ecoregion', 'wetland_type', 'site_type', 'products')), name='wetlands'),
     url(r'^wetlands.geojson$', views.WetlandGeometry.as_view(), name="wetland_geometry"), # replace dynamic create wetlands.geojson by static file
     url(r'^wetland/(?P<pk>[0-9]+)$', views.WetlandDetail.as_view(), name='wetland_detail'),
     url(r'^wetland/(?P<pk>[0-9]+)/panoramio.json$', views.Panoramio.as_view(), name='wetland_panoramio'),

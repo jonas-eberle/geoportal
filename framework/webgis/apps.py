@@ -28,21 +28,29 @@ class SuitConfig(DjangoSuitConfig):
             ChildItem('Layer', model='layers.layer'),
             ChildItem('Layer Groups', model='layers.layergroup')
         ]),
+        ParentItem('Geospatial', children=[
+            ChildItem('Region', model='geospatial.region'),
+        ]),
+        ParentItem('Content', children=[
+            ChildItem('Images', model='content.image'),
+            ChildItem('Videos', model='content.video'),
+            ChildItem('External Layers', model='content.externallayer'),
+            ChildItem('External Databases', model='content.externaldatabase'),
+            ChildItem('Story Lines', model='content.storyline'),
+            ChildItem('Story Line Parts', model='content.storylinepart'),
+            ChildItem('Story Line Features', model='content.storylinefeature'),
+            ChildItem('Satdata Layers', model='content.satdatalayer'),
+        ]),
         ParentItem('SWOS', children=[
             ChildItem('Wetlands', model='swos.wetland'),
             ChildItem('Wetland Layers', model='swos.wetlandlayer'),
             ChildItem('Wetland Products', model='swos.product'),
             ChildItem('Wetland Indicator', model='swos.indicator'),
-            ChildItem('Wetland Subindicator', model='swos.subindicator'),
-            ChildItem('Wetland Indicator Values', model='swos.indicatorvalue'),
-            ChildItem('Wetland Images', model='swos.wetlandimage'),
-            ChildItem('Wetland Videos', model='swos.wetlandvideo'),
-            ChildItem('External Layers', model='swos.externallayer'),
-            ChildItem('External Databases', model='swos.externaldatabase'),
-            ChildItem('Story Lines', model='swos.storyline'),
-            ChildItem('Story Line Parts', model='swos.storylinepart'),
-            ChildItem('Story Line Features', model='swos.storylinefeature'),
-            ChildItem('Satdata Layers', model='swos.satdatalayer'),
+        ]),
+        ParentItem('PhaenOPT', children=[
+            ChildItem('Layers', model='phaenopt.phenolayer'),
+            ChildItem('Products', model='phaenopt.product'),
+            ChildItem('Phenophases', model='phaenopt.pheno'),
         ])
     )
     if "validation" in settings.INSTALLED_APPS:

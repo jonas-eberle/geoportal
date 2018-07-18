@@ -55,9 +55,12 @@ INSTALLED_APPS = (
     'authapi',
     'mapviewer',
     'layers',
+    'geospatial',
+    'content',
     'csw',
     'swos',
-    'validation',
+    'phaenopt',
+    #'validation',
     'django_assets'
 )
 
@@ -88,11 +91,11 @@ DATABASES = {
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'swos_valtool',
-        'USER': 'USER',
-        'PASSWORD': 'PASSWORD',
+        'NAME': 'swos',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 

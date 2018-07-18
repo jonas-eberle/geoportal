@@ -1,0 +1,30 @@
+@media (min-width: 768px) {
+    #sidebar > .tab-content {
+        top: 50px;
+    }
+}
+
+.geospatial_data > h2 {
+    background-color: #528196;
+}
+
+.btn-wetland {
+    color: white;
+    background-color: #1d5976;
+    border-color: #1d5976;
+}
+
+button.btn-wetland:hover {
+    background-color: #528196 !important;
+    border-color: #528196 !important;
+}
+
+#map_icons {
+    top: 30px;
+    position: absolute;
+    right: 5px;
+}
+
+.ol-mouse-position, .ol-scale-line {
+    bottom: 0px !important;
+}

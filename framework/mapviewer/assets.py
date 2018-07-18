@@ -116,7 +116,9 @@ swosAppJs = []
     ['js/app/legend/legend.module.js'],
     glob_files('js/app/legend/*.js'),
     ['js/app/swos/swos.module.js'],
-    glob_files('js/app/swos/*.js')
+    glob_files('js/app/swos/*.js'),
+    ['js/app/phaenopt/phaenopt.module.js'],
+    glob_files('js/app/phaenopt/*.js')
 ]]
 make_bundle('swosAppJsBundle', swosAppJs, filters='uglifyjs', output='build/swos.app.bundle.js')
 
@@ -187,7 +189,8 @@ make_bundle('arbisAppCssBundle', arbisAppCss, filters='cssmin', output='build/ar
 
 swosAppCss = baseAppCss[:]
 swosAppCss.extend([
-    'css/swos.css'
+    'css/swos.css',
+    'css/phaenopt.css'
 ])
 make_bundle('swosAppCssBundle', swosAppCss, filters='cssmin', output='build/swos.app.bundle.css')
 

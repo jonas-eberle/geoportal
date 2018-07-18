@@ -26,9 +26,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from webgis import settings
-from .models import Wetland, StoryLine, StoryLinePart, StoryLineInline, StoryLineFeature
-from .models import Product, Indicator, IndicatorSerializer, WetlandLayer, \
-    ExternalDatabase, ExternalLayer, Country, SatdataLayer
+from content.models import StoryLine, StoryLinePart, StoryLineInline, StoryLineFeature, ExternalDatabase, ExternalLayer, Country, SatdataLayer
+from .models import Wetland, Product, Indicator, IndicatorSerializer, WetlandLayer
 from layers.models import LayerSerializer, MetadataSerializer
 from swos.search_es import WetlandSearch
 

@@ -3,7 +3,8 @@ from webgis import settings
 
 from swos.search_es import LayerIndex, ExternalDatabaseIndex, WetlandIndex
 from swos.csw import create_update_csw, delete_csw
-from swos.models import WetlandLayer, ExternalLayer, Wetland, ExternalDatabase
+from swos.models import WetlandLayer, Wetland
+from content.models import ExternalLayer, ExternalDatabase
 
 from djgeojson.serializers import Serializer as GeoJSONSerializer
 
@@ -51,16 +52,16 @@ def keep_track_publishable(sender, instance, **kwargs):
             LayerIndex.get(id=instance.id).delete()
 
 
-pre_save.connect(keep_track_publishable, sender=WetlandLayer)
-post_save.connect(keep_track_save, sender=WetlandLayer)
-post_delete.connect(keep_track_delete, sender=WetlandLayer)
+#pre_save.connect(keep_track_publishable, sender=WetlandLayer)
+#post_save.connect(keep_track_save, sender=WetlandLayer)
+#post_delete.connect(keep_track_delete, sender=WetlandLayer)
 
-pre_save.connect(keep_track_publishable, sender=ExternalLayer)
-post_save.connect(keep_track_save, sender=ExternalLayer)
-post_delete.connect(keep_track_delete, sender=ExternalLayer)
+#pre_save.connect(keep_track_publishable, sender=ExternalLayer)
+#post_save.connect(keep_track_save, sender=ExternalLayer)
+#post_delete.connect(keep_track_delete, sender=ExternalLayer)
 
-post_save.connect(keep_track_save, sender=Wetland)
-post_delete.connect(keep_track_delete, sender=Wetland)
+#post_save.connect(keep_track_save, sender=Wetland)
+#post_delete.connect(keep_track_delete, sender=Wetland)
 
-post_save.connect(keep_track_save, sender=ExternalDatabase)
-post_delete.connect(keep_track_delete, sender=ExternalDatabase)
+#post_save.connect(keep_track_save, sender=ExternalDatabase)
+#post_delete.connect(keep_track_delete, sender=ExternalDatabase)
