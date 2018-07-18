@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-    <title>GEO Wetlands Community Portal</title>
+    <title>PhaenOPT Portal - Webdienst für das phänologische Klimafolgenmonitoring</title>
 
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
@@ -331,13 +331,13 @@
                                             <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()">
                                                 <div class="flaticon-layers"></div>{{regions.dataCount.products}} Ph&auml;nologiekarten</button>
                                             <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()">
-                                                <div class="flaticon-space-satellite-station"></div>{{regions.dataCount.satdata}} Satellite scenes</button>
+                                                <div class="flaticon-space-satellite-station"></div>{{regions.dataCount.satdata}} Satellitendaten</button>
                                             <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-1 a').click()">
-                                                <div class="flaticon-technology-1"></div>{{regions.dataCount.images}} Photos</button>
+                                                <div class="flaticon-technology-1"></div>{{regions.dataCount.images}} In-Situ Daten</button>
                                             <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology a').click()">
-                                                <div class="flaticon-technology"></div>{{regions.dataCount.videos}} Videos</button>
+                                                <div class="flaticon-technology"></div>{{regions.dataCount.videos}} Citizen Science</button>
                                             <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()">
-                                                <div class="flaticon-technology-2"></div>{{regions.dataCount.externaldb}} External databases</button>
+                                                <div class="flaticon-technology-2"></div>{{regions.dataCount.externaldb}} Hintergrundkarten</button>
                                         </div>
                                     </uib-tab>
 
@@ -414,8 +414,8 @@
                                         </div>
                                     </uib-tab>
 
-                                    <!-- Data -->
-                                    <uib-tab class="flaticon-space-satellite-station" heading="" uib-tooltip="Satellite scenes" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
+                                    <!-- Satellitendaten -->
+                                    <uib-tab class="flaticon-space-satellite-station" heading="" uib-tooltip="Satellitendaten" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
                                         <uib-accordion close-others="false">
                                             <div uib-accordion-group is-open="wetlands.satdata_image">
                                                 <uib-accordion-heading>
@@ -498,86 +498,84 @@
                                         </uib-accordion>
                                     </uib-tab>
 
-                                    <!-- Photos -->
-                                    <uib-tab class="flaticon-technology-1" heading="" uib-tooltip="Photos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('images')">
-                                        <div ng-controller="WetlandsImageCtrl as wetlandsImage">
-                                            <uib-accordion ng-if="wetlandsImage.images.photos.length > 0">
-                                                <div uib-accordion-group is-open="wetlandsImage.imagesIsOpen">
-                                                    <uib-accordion-heading>Images
-                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.imagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.imagesIsOpen}"></i>
+                                    <!-- In-Situ-Daten -->
+                                    <uib-tab class="flaticon-technology-1" heading="" uib-tooltip="In-Situ Daten" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('in-situ')">
+                                        <div ng-controller="InSituCtrl as insitu">
+                                            <uib-accordion>
+                                                <div uib-accordion-group is-open="insitu.stationOpen">
+                                                    <uib-accordion-heading>Stationen (DWD)
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': insitu.stationOpen, 'glyphicon-chevron-right': !insitu.stationOpen}"></i>
                                                     </uib-accordion-heading>
-                                                    <div style="/*height: 185px;overflow-y: auto;*/">
-                                                        <!--<span ng-if="!wetlandsImage.images">Loading...</span>-->
-                                                        <a ng-repeat="image in wetlandsImage.images.photos"
-                                                           ng-click="'{{image.photo_title}}'"
-                                                           class="fancybox" rel="gallery1" data-fancybox-href="{{ image.photo_show_url }}"
-                                                           data-fancybox-title="{{ image.description }}&nbsp;({{ image.date }}) {{image.photo_title}} ({{image.owner_name}})"
-                                                           href="{{image.photo_url_thumb}}" target="_blank"><img
-                                                                ng-src="{{image.photo_url_thumb}}"
-                                                                alt="{{image.photo_title}} ({{image.owner_name}})"
-                                                                title="{{image.photo_title}} ({{image.owner_name}})"
-                                                                style="width: 52px; height: 52px; left: 0; top: 0;margin: 5px;"></a>
+                                                    <div>
+                                                        <select id="stations-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedStation">
+                                                          <option ng-repeat="station in insitu.stationen" value="{{ station }}">{{station.Stationsname}}</option>
+                                                        </select>
+                                                        <div ng-if="insitu.stationDataLoaded">
+                                                            <p>
+                                                                <strong>Lage: </strong>{{ insitu.selectedStationData['geograph_Breite'] }} {{ insitu.selectedStationData['geograph_Laenge'] }}<br/>
+                                                                <strong>Höhe: </strong>{{ insitu.selectedStationData['Stationshoehe'] }} Meter<br/>
+                                                                <strong>Naturraum: </strong>{{ insitu.selectedStationData['Naturraum'] }}
+                                                                <span ng-if="insitu.selectedStationData['Stationsaufloesung']"><br/><strong>Stationsaufloesung: </strong>{{ insitu.selectedStationData['Stationsaufloesung'] }}</span>
+                                                            </p>
+                                                            <div ng-if="insitu.selectedStationData['phases'].length > 0">
+                                                                <strong>Verfügbare Daten:</strong>
+                                                                <select id="phases-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedPhase">
+                                                                  <option ng-repeat="phase in insitu.selectedStationData['phases']" value="{{ phase }}">{{ phase.name }}</option>
+                                                                </select>
+                                                                <img ng-src="{{ insitu.selectedPhaseImage }}" width="100%" />
+                                                            </div>
+                                                            <div ng-if="insitu.selectedStationData['phases'].length == 0">
+                                                                Keine Daten verfügbar!
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <button style="margin-left: 5px;" ng-if="wetlandsImage.images.currentPage > 1" type="button"
-                                                            class="btn btn-prev" ng-click="wetlandsImage.moreImages('prev')">Previous
-                                                    </button>
-                                                    <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.images.currentPage < wetlandsImage.images.lastPage" type="button"
-                                                            class="btn btn-next" ng-click="wetlandsImage.moreImages('next')">Next
-                                                    </button>
                                                 </div>
-                                            </uib-accordion>
-                                            <uib-accordion ng-if="wetlandsImage.externalImages.photos.length > 0">
-                                                <div uib-accordion-group is-open="wetlandsImage.externalImagesIsOpen">
-                                                    <uib-accordion-heading>Panoramio images
-                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlandsImage.externalImagesIsOpen, 'glyphicon-chevron-right': !wetlandsImage.externalImagesIsOpen}"></i>
+                                                <div uib-accordion-group is-open="insitu.PhasenOpen">
+                                                    <uib-accordion-heading>Phasen (DWD)
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': insitu.PhasenOpen, 'glyphicon-chevron-right': !insitu.PhasenOpen}"></i>
                                                     </uib-accordion-heading>
-                                                    <div style="/*height: 185px;overflow-y: auto;*/">
-                                                        <!--<span ng-if="!wetlandsImage.externalImages">Loading...</span>-->
-                                                        <a ng-repeat="image in wetlandsImage.externalImages.photos"
-                                                           ng-click="tracking.trackShowImage('http://static.panoramio.com/photos/large/{{image.photo_id}}.jpg', '{{image.photo_title}')"
-                                                           class="fancybox" rel="gallery1"
-                                                           data-fancybox-href="http://static.panoramio.com/photos/large/{{image.photo_id}}.jpg"
-                                                           data-fancybox-title="<a href='{{image.photo_url}}' target='_blank'>{{image.photo_title}}</a> (<a href='{{image.owner_url}}' target='_blank'>{{image.owner_name}}</a>)"
-                                                           href="{{image.photo_url}}" target="_blank"><img
-                                                                ng-src="{{image.photo_file_url}}"
-                                                                alt="{{image.photo_title}} ({{image.owner_name}})"
-                                                                title="{{image.photo_title}} ({{image.owner_name}})"
-                                                                style="width: 52px; height: 52px; left: 0; top: 0;margin: 5px;"></a>
+                                                    <div>
+
                                                     </div>
-                                                    <div class="panoramio-wapi-tos"
-                                                         style="width: 396px; color: black !important; background-color: white !important;">
-                                                        <a href="http://www.panoramio.com" target="_top"><img
-                                                                src="http://www.panoramio.com/img/logo-tos.png" width="67" height="14"></a>
-                                                        <span style="font-size:12px;">The copyright of the photos hold their owners!</span>
-                                                    </div>
-                                                    <button style="margin-left: 5px;" ng-if="wetlandsImage.externalImages.currentPage > 1" type="button"
-                                                            class="btn btn-prev" ng-click="wetlandsImage.moreExternalImages('prev')">Previous
-                                                    </button>
-                                                    <button style="float:right;margin-right: 10px;" ng-if="wetlandsImage.externalImages.currentPage < wetlandsImage.externalImages.lastPage"
-                                                            type="button" class="btn btn-next" ng-click="wetlandsImage.moreExternalImages('next')">Next
-                                                    </button>
                                                 </div>
                                             </uib-accordion>
                                         </div>
                                     </uib-tab>
 
-                                    <!-- Videos -->
-                                    <uib-tab class="flaticon-technology" heading="" uib-tooltip="Videos" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('video')">
-                                        <div ng-controller="WetlandsVideoCtrl as wetlandsVideo">
-                                            <div>
-                                                <span ng-if="!wetlandsVideo.videos.videos">Loading...</span>
-                                                <a ng-repeat="video in wetlandsVideo.videos.videos" ng-click="tracking.trackShowVideo('{{video.url}}')"
-                                                   class="fancybox fancybox.iframe" data-fancybox-href="{{video.url.toString().replace('watch?v=', 'embed/')}}?autoplay=1"
-                                                   href="{{video.url}}" target="_blank">
-                                                    <img ng-src="{{video.img}}" alt="{{video.title}}" title="{{video.title}}" style="width: 110px; left: 0; top: 0;margin: 5px;">
-                                                </a>
-                                            </div>
-                                            <button ng-if="wetlandsVideo.videos.currentPage < wetlandsVideo.videos.lastPage" type="button" class="btn btn-loadmore" ng-click="wetlandsVideo.loadMoreVideos()">Load more videos</button>
+                                    <!-- Citizen Science -->
+                                    <uib-tab class="flaticon-technology" heading="" uib-tooltip="Citizen Science" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('citizenscience')">
+                                        <div ng-controller="CitizenScienceCtrl as citizenscience">
+                                            <uib-accordion>
+                                                <div uib-accordion-group ng-repeat="project in regions.value.data.citizenscience"  is-open="project.open">
+                                                    <uib-accordion-heading>{{ project.name }}
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': project.open, 'glyphicon-chevron-right': !project.open}"></i>
+                                                    </uib-accordion-heading>
+                                                    <div>
+                                                        <p ng-text-truncate='project.description' ng-tt-chars-threshold="200"></p>
+                                                        <div ng-if="citizenscience.data[project.id].features.length > 0">
+                                                            <table>
+                                                                <tr>
+                                                                    <th>Datum</th>
+                                                                    <th>Baum</th>
+                                                                    <th>Phase</th>
+                                                                    <th>Bild</th>
+                                                                </tr>
+                                                                <tr ng-repeat="feature in citizenscience.data[project.id].features">
+                                                                    <td>{{ feature.properties.pubdate | date:'dd.MM.yyyy HH:mm' }}</td>
+                                                                    <td>{{ feature.properties.baum }}</td>
+                                                                    <td>{{ feature.properties.phase }}</td>
+                                                                    <td><a href="{{ feature.properties.image }}" ng-if="feature.properties.image">Link</a></td>
+                                                                </tr>
+                                                            </table>
+                                                            <button ng-if="!citizenscience.data[project.id].allLoaded" type="button" class="btn btn-loadmore" ng-click="citizenscience.loadData(project.id, citizenscience.data[project.id].features.length)">Load more</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         </div>
                                     </uib-tab>
 
-                                    <!-- External databases -->
-                                    <uib-tab class="flaticon-technology-2" heading="" uib-tooltip="External data" tooltip-append-to-body="true" select="tracking.trackWetlandTab('externaldb')">
+                                    <!-- Hintergrundkarten -->
+                                    <uib-tab class="flaticon-technology-2" heading="" uib-tooltip="Hintergrundkarten" tooltip-append-to-body="true" select="tracking.trackWetlandTab('backgroundmaps')">
                                         <div ng-if="wetlands.value.data.externaldb.length == 0">No external databases registered!</div>
                                         <div ng-if="wetlands.value.data.externaldb.length != 0"><!--{{ wetlands.value.data.externaldb.length }} external databases registered!-->
                                             <div ><input ng-model="wetlands.externaldb_search.searchText" placeholder="Search for ...">

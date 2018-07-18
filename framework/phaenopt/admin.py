@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from suit.sortables import SortableModelAdmin
-from .models import Product, Pheno, PhenoLayer
+from .models import Product, Pheno, PhenoLayer, CitizenScienceProject
 from layers.admin import LayersAdmin
 from content.admin import make_downloadable, make_non_downloadable, make_publishable, make_unpublishable
 
@@ -40,9 +40,12 @@ class PhenoLayerAdmin(LayersAdmin):
             return {'class': css_class}
 
 
-
+class CitizenScienceAdmin(SortableModelAdmin):
+    sortable = 'order'
+    list_display = ('name', 'order')
 
 # Register your models here.
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Pheno, PhenoAdmin)
 admin.site.register(PhenoLayer, PhenoLayerAdmin)
+admin.site.register(CitizenScienceProject, CitizenScienceAdmin)
