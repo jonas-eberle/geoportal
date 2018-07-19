@@ -1,1 +1,0 @@
-[{"dataset":"LANDSAT_MSS","min":1972,"max":2013,"count":501},{"dataset":"LANDSAT_TM","min":1984,"max":2011,"count":2251},{"dataset":"LANDSAT_ETM","min":1999,"max":2017,"count":1542},{"dataset":"LANDSAT_8","min":2013,"max":2017,"count":500},{"dataset":"S1_GRD_IW","min":2014,"max":2017,"count":829},{"dataset":"SENTINEL_2A","min":2015,"max":2017,"count":757}]
