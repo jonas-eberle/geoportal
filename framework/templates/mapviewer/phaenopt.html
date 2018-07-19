@@ -417,18 +417,36 @@
                                     <!-- Satellitendaten -->
                                     <uib-tab class="flaticon-space-satellite-station" heading="" uib-tooltip="Satellitendaten" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('satdata')">
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group is-open="wetlands.satdata_image">
+
+                                            <div uib-accordion-group is-open="regions.satdata_vegetation">
                                                 <uib-accordion-heading>
-                                                    Satellite scenes explorer
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_image, 'glyphicon-chevron-right': !wetlands.satdata_image}"></i>
+                                                    Satelliten-Vegetationsdaten
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_vegetation, 'glyphicon-chevron-right': !regions.satdata_vegetation}"></i>
                                                 </uib-accordion-heading>
-                                                <a href="javascript:;" uib-tooltip="Click to open the satellite scenes explorer application" ng-click="wetlands.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{wetlands.value.id}}_small.png" width="100%" /></a>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-04-30</div>
+
+                                                <div class="select" ng-if="regions.value.data.satdatalayers.length > 0">
+                                                    <div ng-repeat="layer in regions.value.data.satdatalayers" id="layer_vis_div_{{layer.id}}">
+                                                        <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                        <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                        <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                        <swos-layer-controls ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                    </div>
+                                                </div>
+
                                             </div>
-                                            <div uib-accordion-group is-open="wetlands.satdata_layers" ng-if="wetlands.value.satdata.layers_count > 0">
+
+                                            <div uib-accordion-group is-open="regions.satdata_image">
                                                 <uib-accordion-heading>
-                                                    Satellite scene layers
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_layers, 'glyphicon-chevron-right': !wetlands.satdata_layers}"></i>
+                                                    Satellitenszenen Explorer
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_image, 'glyphicon-chevron-right': !regions.satdata_image}"></i>
+                                                </uib-accordion-heading>
+                                                <a href="javascript:;" uib-tooltip="Click to open the satellite scenes explorer application" ng-click="regions.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{regions.value.id}}_small.png" width="100%" /></a>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-06-16</div>
+                                            </div>
+                                            <div uib-accordion-group is-open="regions.satdata_layers" ng-if="regions.value.satdata.layers_count > 0">
+                                                <uib-accordion-heading>
+                                                    Satellitenszenen Visualisierung
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_layers, 'glyphicon-chevron-right': !regions.satdata_layers}"></i>
                                                 </uib-accordion-heading>
                                                 <div uib-accordion-group ng-repeat="(key, layers) in wetlands.value.satdata.layers" ng-if="layers.length > 0">
                                                     <uib-accordion-heading>
@@ -444,12 +462,12 @@
                                                     </div>
                                                 </div>
                                                 <div style="margin-top:10px;margin-left:2px;">Made available based on <a href="https://sentinel-hub.com/" target="_blank">Sentinel Hub Services</a> and the ESA Open Science Earth Observation grant (No. <a href="https://earth.esa.int/web/guest/pi-community/search-results-and-projects/keyword-entry?IFRAME_SRC=%2Fpi%2Fesa%3Fts%3D1528463214378%26targetIFramePage%3D%252Fweb%252Fguest%252Fpi-community%252Fsearch-results-and-projects%252Fkeyword-entry%26topSelectedNavigationNodeId%3DSEARCH%26coordinates%3D%26sideNavigationType%3DSEARCH%26type%3D10%26toprint%3D-1%26token%3D%26addattribute%3Dfalse%26sideExpandedNavigationBoxId%3DprojectSearch%26id%3D36615%26caller%3D%25252Fpi%25252Fesa%25253Finstitute%25253D%252526itemsPerPage%25253D10%252526sideExpandedNavigationBoxId%25253DprojectSearch%252526displayMode%25253Dcenter%252526cmd%25253Dother%252526submissionid%25253D-1%252526showAll%25253Dtrue%252526topSelectedNavigationNodeId%25253DSEARCH%252526keyword%25253D%252526downloadAsCsv%25253Dfalse%252526targetIFramePage%25253D%2525252Fweb%2525252Fguest%2525252Fpi-community%2525252Fsearch-results-and-projects%2525252Fkeyword-entry%252526ts%25253D1528463214378%252526colorTheme%25253D03%252526startFrom%25253D0%252526sideNavigationType%25253DSEARCH%252526title%25253D%252526aoid%25253D1560%26cmd%3Dproject%26header%3D%26displayMode%3Dcenter%26colorTheme%3D03%26subnavigation%3D1%26role%3D0" target="_blank">36615</a>).</div>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;margin-top: 10px;margin-right: 5px;">Last update: 2018-04-30</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;margin-top: 10px;margin-right: 5px;">Last update: 2018-06-16</div>
                                             </div>
-                                            <div uib-accordion-group is-open="wetlands.satdata_table">
+                                            <div uib-accordion-group is-open="regions.satdata_table">
                                                 <uib-accordion-heading>
-                                                    Total amount by sensor
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_table, 'glyphicon-chevron-right': !wetlands.satdata_table}"></i>
+                                                    Satellitenszenen Statistiken
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_table, 'glyphicon-chevron-right': !regions.satdata_table}"></i>
                                                 </uib-accordion-heading>
                                                 <table class="table data">
                                                     <tr>
@@ -459,10 +477,10 @@
                                                         <th>Start</th>
                                                         <th>End</th>
                                                     </tr>
-                                                    <tr ng-if="!wetlands.value.satdata">
+                                                    <tr ng-if="!regions.value.satdata">
                                                         <td colspan="4">Loading...</td>
                                                     </tr>
-                                                    <tr ng-repeat="data in wetlands.value.satdata.table" >
+                                                    <tr ng-repeat="data in regions.value.satdata.table" >
                                                         <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
                                                         <td>{{data.dataset}}</td>
                                                         <td>{{data.count}}</td>
@@ -470,12 +488,12 @@
                                                         <td>{{data.max}}</td>
                                                     </tr>
                                                 </table>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-04-30</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-06-16</div>
                                             </div>
-                                            <div uib-accordion-group is-open="wetlands.satdata_sources">
+                                            <div uib-accordion-group is-open="regions.satdata_sources">
                                                 <uib-accordion-heading>
-                                                    Data sources
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': wetlands.satdata_sources, 'glyphicon-chevron-right': !wetlands.satdata_sources}"></i>
+                                                    Datenquellen
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_sources, 'glyphicon-chevron-right': !regions.satdata_sources}"></i>
                                                 </uib-accordion-heading>
                                                 <p>
                                                     <strong>Copernicus Open Access Hub</strong><br/>
@@ -501,7 +519,7 @@
                                     <!-- In-Situ-Daten -->
                                     <uib-tab class="flaticon-technology-1" heading="" uib-tooltip="In-Situ Daten" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('in-situ')">
                                         <div ng-controller="InSituCtrl as insitu">
-                                            <uib-accordion>
+                                            <uib-accordion close-others="false">
                                                 <div uib-accordion-group is-open="insitu.stationOpen">
                                                     <uib-accordion-heading>Stationen (DWD)
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': insitu.stationOpen, 'glyphicon-chevron-right': !insitu.stationOpen}"></i>
@@ -522,7 +540,7 @@
                                                                 <select id="phases-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedPhase">
                                                                   <option ng-repeat="phase in insitu.selectedStationData['phases']" value="{{ phase }}">{{ phase.name }}</option>
                                                                 </select>
-                                                                <img ng-src="{{ insitu.selectedPhaseImage }}" width="100%" />
+                                                                <a href="{{ insitu.selectedPhaseImage }}" class="fancybox" target="_blank"><img ng-if="insitu.selectedPhaseLoaded" ng-src="{{ insitu.selectedPhaseImage }}" width="100%" /></a>
                                                             </div>
                                                             <div ng-if="insitu.selectedStationData['phases'].length == 0">
                                                                 Keine Daten verfügbar!
@@ -535,7 +553,31 @@
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': insitu.PhasenOpen, 'glyphicon-chevron-right': !insitu.PhasenOpen}"></i>
                                                     </uib-accordion-heading>
                                                     <div>
-
+                                                        <select id="definitions-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedDefinition">
+                                                          <option ng-repeat="phase in insitu.definitions" value="{{ phase }}">{{phase.name}}</option>
+                                                        </select>
+                                                        <div ng-if="insitu.selectedDefinition">
+                                                             <p>
+                                                                <strong>Objekt-ID: </strong>{{ insitu.selectedDefinitionData['Objekt_id'] }}<br/>
+                                                                <strong>Phasen-ID: </strong>{{ insitu.selectedDefinitionData['Phasen_id'] }}
+                                                                 <span ng-if="insitu.selectedDefinitionData['BBCH_Code']"><br/><strong>BBCH-Code: </strong>{{ insitu.selectedDefinitionData['BBCH_Code'] }}</span><br/>
+                                                                <strong>Definition: </strong>{{ insitu.selectedDefinitionData['Phasendefinition'] }}<br/>
+                                                                 <strong>Verfügbare Stationen in Thüringen mit Daten: </strong>{{ insitu.selectedDefinitionData['stationsCount'] }}
+                                                            </p>
+                                                            <hr/>
+                                                            <h4>Verteilung des Eintrittsdatums</h4>
+                                                            <p ng-if="insitu.selectedDefinitionLoaded">
+                                                                Von&nbsp;<select ng-model="insitu.yearStart">
+                                                                    <option ng-repeat="year in insitu.years">{{ year }}</option>
+                                                                </select>
+                                                                &nbsp;bis&nbsp;<select ng-model="insitu.yearEnd">
+                                                                    <option ng-repeat="year in insitu.years">{{ year }}</option>
+                                                                </select>
+                                                                &nbsp;&nbsp;
+                                                                <button class="btn btn-primary" style="padding: 1px 12px;font-size: 13px;cursor:pointer;" ng-click="insitu.updateDefinitionsHistogram()">Update histgram</button>
+                                                                <a href="{{ insitu.selectedDefinitionImage }}" class="fancybox" target="_blank"><img ng-src="{{ insitu.selectedDefinitionImage }}" width="100%" /></a>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </uib-accordion>
@@ -545,26 +587,27 @@
                                     <!-- Citizen Science -->
                                     <uib-tab class="flaticon-technology" heading="" uib-tooltip="Citizen Science" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('citizenscience')">
                                         <div ng-controller="CitizenScienceCtrl as citizenscience">
-                                            <uib-accordion>
+                                            <uib-accordion close-others="false">
                                                 <div uib-accordion-group ng-repeat="project in regions.value.data.citizenscience"  is-open="project.open">
                                                     <uib-accordion-heading>{{ project.name }}
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': project.open, 'glyphicon-chevron-right': !project.open}"></i>
                                                     </uib-accordion-heading>
                                                     <div>
                                                         <p ng-text-truncate='project.description' ng-tt-chars-threshold="200"></p>
+                                                        <p ng-if="project.online_link"><a href="{{ project.online_link }}" target="_blank">{{ project.online_link }}</a></p>
                                                         <div ng-if="citizenscience.data[project.id].features.length > 0">
-                                                            <table>
+                                                            <table class="table table-striped table-hover">
                                                                 <tr>
-                                                                    <th>Datum</th>
+                                                                    <th width="110">Datum</th>
                                                                     <th>Baum</th>
                                                                     <th>Phase</th>
-                                                                    <th>Bild</th>
+                                                                    <th></th>
                                                                 </tr>
                                                                 <tr ng-repeat="feature in citizenscience.data[project.id].features">
-                                                                    <td>{{ feature.properties.pubdate | date:'dd.MM.yyyy HH:mm' }}</td>
+                                                                    <td>{{ feature.properties.pubdate | date:'dd.MM.yy HH:mm' }}</td>
                                                                     <td>{{ feature.properties.baum }}</td>
                                                                     <td>{{ feature.properties.phase }}</td>
-                                                                    <td><a href="{{ feature.properties.image }}" ng-if="feature.properties.image">Link</a></td>
+                                                                    <td><a href="{{ feature.properties.image }}"  class="fancybox" target="_blank" ng-if="feature.properties.image"><img src="/static/img/flaticon/png/camera.png"</a></td>
                                                                 </tr>
                                                             </table>
                                                             <button ng-if="!citizenscience.data[project.id].allLoaded" type="button" class="btn btn-loadmore" ng-click="citizenscience.loadData(project.id, citizenscience.data[project.id].features.length)">Load more</button>

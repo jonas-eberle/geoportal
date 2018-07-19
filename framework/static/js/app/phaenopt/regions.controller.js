@@ -37,6 +37,7 @@
         wetlands.layerIdMap = {};
         wetlands.layers = mapviewer.layers;
         wetlands.removeAllLayers = removeAllLayers;
+        wetlands.satdata_vegetation = true;
         wetlands.satdata_image = true;
         wetlands.satdata_table = false;
         wetlands.selectRegion = selectRegion;
@@ -46,6 +47,7 @@
         wetlands.showSatdataExplorer = showSatdataExplorer;
         wetlands.download = download;
         wetlands.startTour = startTour;
+        wetlands.showSatdataExplorer = showSatdataExplorer;
 
         function cleanUpDiagram() {
                 RegionsService.diagram_layer_list = null;
@@ -368,6 +370,25 @@
                 type + ': ' + layer.title
             );
 
+        }
+
+        function showSatdataExplorer() {
+            $modal.open({
+                bindToController: true,
+                controller: 'WetlandsSatDataCtrl',
+                controllerAs: 'wsdc',
+                templateUrl: subdir+'/static/includes/satdata_explorer.html',
+                windowClass: 'satdata-window',
+                backdrop: 'static'
+            }).rendered.then(function(){
+                $('.selectpicker').selectpicker('render');
+                $('.modal-backdrop').remove();
+                var left = angular.element('.satdata-window .modal-dialog').offset().left;
+                var top = angular.element('.satdata-window .modal-dialog').offset().top;
+                var width = 800;
+                angular.element('.satdata-window').removeClass('modal').addClass('mymodal');
+                $('.modal-content', angular.element('.satdata-window')).css('left', left).css('top', -30).css('width', width);
+            });
         }
     }
 })();

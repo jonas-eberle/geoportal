@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os
+import json
 
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
+from django.db.models import Count, Min, Max
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from webgis import settings
 from geospatial.models import Region
+from content.models import SatdataLayer
 from .models import PhenoLayer, Product, Pheno, CitizenScienceProject, CitizenScienceData, CitizenScienceProjectSerializer, DWDInSituData, DWDStation, DWDStationSerializer, DWDStationSingleSerializer, dwd_id_to_name
 from layers.models import LayerSerializer, MetadataSerializer
 from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -25,7 +28,7 @@ class RegionDetail(APIView):
     def get(self, request, pk):
         region = self.get_object(pk)
         layers = PhenoLayer.objects.filter(region=region)
-        data = dict(phenolayers={}, climatelayers={}, layers=[])
+        data = dict(phenolayers={}, climatelayers={}, layers=[], satdatalayers=[])
         for layer in layers:
             layer_data = LayerSerializer(layer).data
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
@@ -53,6 +56,12 @@ class RegionDetail(APIView):
         data['phenolayers'] = phenolayers
 
         data['citizenscience'] = CitizenScienceProjectSerializer(CitizenScienceProject.objects.all(), many=True).data
+
+        layers = SatdataLayer.objects.filter(region=region)
+        for layer in layers:
+            layer_data = LayerSerializer(layer).data
+            data['satdatalayers'].append(layer_data)
+
         return Response(data)
 
 
@@ -164,3 +173,52 @@ class DWDInSituData_Phase(APIView):
         canvas.print_png(response)
         return response
 
+
+class DWDInSituDataPhases(APIView):
+    def get(self, request):
+        result = []
+        definitions = open('../data/dwd/definitions.json').read().replace('NaN', 'null')
+        definitions = json.loads(definitions)
+        for key in definitions:
+            definitions[key]['name'] = '%s (%s)' % (definitions[key]['Objekt'], definitions[key]['Phase'])
+            data =  DWDInSituData.objects.filter(Phase_id=definitions[key]['Phasen_id'], Objekt_id=definitions[key]['Objekt_id'])
+            definitions[key]['stationsCount'] = data.values('Stations_id').distinct().count()
+            definitions[key].update(data.values('Referenzjahr').distinct().aggregate(Min('Referenzjahr'), Max('Referenzjahr')))
+            if definitions[key]['stationsCount'] > 0:
+                result.append(definitions[key])
+
+        newlist = sorted(result, key=lambda k: k['name'])
+        return Response(newlist)
+
+class DWDInSituData_PhaseHistogram(APIView):
+    def get(self, request):
+        Objekt_id = int(request.query_params.get('Objekt_id', 310))
+        Phase_id = int(request.query_params.get('Phase_id', 5))
+        start = int(request.query_params.get('start', -1))
+        end = int(request.query_params.get('end', -1))
+
+        if start > -1 and end > -1:
+            data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id, Referenzjahr__gte=start, Referenzjahr__lte=end).to_dataframe()
+        elif start > -1:
+            data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id, Referenzjahr__gte=start).to_dataframe()
+        elif end > -1:
+            data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id, Referenzjahr__lte=end).to_dataframe()
+        else:
+            data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id).to_dataframe()
+        jahr_min = data['Referenzjahr'].min()
+        jahr_max = data['Referenzjahr'].max()
+        observations = data['Referenzjahr'].count()
+        title = dwd_id_to_name['%s_%s' % (Objekt_id, Phase_id)] + '\n%s Daten zwischen %s - %s' % (observations, jahr_min, jahr_max)
+
+        from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+        from matplotlib.figure import Figure
+
+        fig = Figure()
+        ax = fig.add_subplot(111)
+        #data['Jultag'].plot(ax=ax, title=title)
+        data['Jultag'].plot.hist(bins=25, ax=ax, title=title)
+        ax.set_xlabel('Julianischer Tag')
+        canvas = FigureCanvas(fig)
+        response = HttpResponse(content_type='image/png')
+        canvas.print_png(response)
+        return response

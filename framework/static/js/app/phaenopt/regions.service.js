@@ -115,6 +115,15 @@
                         callback();
                     }
 
+                    djangoRequests.request({
+                        'method': "GET",
+                        'url'   : '/geospatial/region/' + region.id + '/satdata.json'
+                    }).then((function (data) {
+                        //$scope.wetlands_opened[wetland.id]['satdata'] = data;
+                        region_service.value['satdata'] = data;
+                    }), (function () {
+                    }));
+
                 }, function () {
                     $('#loading-div').hide();
                     bootbox.alert('<h1>Error while loading region details</h1>');

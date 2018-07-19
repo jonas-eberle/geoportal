@@ -33,8 +33,8 @@
           };
         });
 
-    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile', 'Attribution', '$timeout'];
-    function WetlandsSatDataCtrl(WetlandsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile, Attribution, $timeout) {
+    WetlandsSatDataCtrl.$inject = ['WetlandsService', 'RegionsService', 'djangoRequests', 'mapviewer', '$uibModal', '$uibModalInstance', '$compile', 'Attribution', '$timeout'];
+    function WetlandsSatDataCtrl(WetlandsService, RegionsService, djangoRequests, mapviewer, $modal, $modalInstance, $compile, Attribution, $timeout) {
         var wsdc = this;
 
         wsdc.data = {'features':[]};
@@ -140,7 +140,7 @@
             $('#loading-div').show();
             djangoRequests.request({
                 method: 'GET',
-                url: '/media/cache/satdata/satdata_all_' + WetlandsService.value.id + '.stats.json'
+                url: '/media/cache/satdata/satdata_all_' + RegionsService.value.id + '.stats.json'
             }).then(function(data) {
                 wsdc.datasetOptions = data.datasets;
                 wsdc.tileOptions = data.tiles;
@@ -154,7 +154,7 @@
             });
             djangoRequests.request({
                 method: 'GET',
-                url: '/media/cache/satdata/satdata_all_' + WetlandsService.value.id + '.small.json'
+                url: '/media/cache/satdata/satdata_all_' + RegionsService.value.id + '.small.json'
             }).then(function(data) {
                 wsdc.data = data;
                 wsdc.filterChanged();
@@ -189,7 +189,7 @@
                     (element.hasOwnProperty('sun_azimuth_angle_mean') === false || element.sun_azimuth_angle_mean == "nan" || (element.sun_azimuth_angle_mean >= wsdc.filterBySunAzimuth[0] && element.sun_azimuth_angle_mean <= wsdc.filterBySunAzimuth[1]))
                 ) {
                       if (element['thumb_url'] != 'nan') {
-					  	    element['thumb_url'] = 'http://artemis.geogr.uni-jena.de/ec/swos/thumbs/' + element['browse_url'].split('/').pop();
+					  	    element['thumb_url'] = 'http://artemis.geogr.uni-jena.de/ec/phaenopt/thumbs/' + element['browse_url'].split('/').pop();
 					  } else {
 					  	    element['thumb_url'] = '';
 					  }
@@ -318,7 +318,7 @@
             $('#loading-div').show();
             djangoRequests.request({
                 method: 'GET',
-                url: '/swos/wetland/' + WetlandsService.value.id + '/satdata/metadata?scene=' + scene.id + '&dataset=' + scene.dataset
+                url: '/geospatial/region/' + RegionsService.value.id + '/satdata/metadata?scene=' + scene.id + '&dataset=' + scene.dataset
             }).then(function(data) {
                 $('#loading-div').hide();
                 bootbox.dialog({
@@ -385,7 +385,7 @@
         }
 		
 		function exportResults() {
-			var url = '/swos/wetland/' + WetlandsService.value.id + '/satdata/results?';
+			var url = '/swos/wetland/' + RegionsService.value.id + '/satdata/results?';
 			if (wsdc.filterByDataset.length > 0) {
 				url += '&datasets=' + wsdc.filterByDataset.join(',')
 			}
