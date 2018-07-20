@@ -31,7 +31,7 @@ ASSETS_DEBUG = True
 # True: automatically rebuild bundles if source files have changed
 ASSETS_AUTO_BUILD = True
 
-ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de', 'swos.ssv-hosting.de', 'swos2.ssv-hosting.de']
+ALLOWED_HOSTS = ['localhost', 'artemis.geogr.uni-jena.de', 'swos.ssv-hosting.de', 'swos2.ssv-hosting.de', 'phaenopt.ssv-hosting.de']
 
 ##################################################
 # Application definition
@@ -213,6 +213,7 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "media", "email") # change this to a pr
 ##################################################
 # ie csrf cookie
 CSRF_COOKIE_DOMAIN='localhost'
+#CSRF_COOKIE_DOMAIN='phaenopt.ssv-hosting.de'
 SESSION_COOKIE_DOMAIN=CSRF_COOKIE_DOMAIN
 USE_X_FORWARDED_HOST=True
 #SESSION_COOKIE_SECURE=True

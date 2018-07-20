@@ -34,6 +34,11 @@ class RegionDetail(APIView):
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
                 layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
                 layer_data['selectedDate'] = layer_data['ogc_times'][-1]
+            if layer_data['legend_colors']:
+                try:
+                    layer_data['legend_colors'] = json.loads(layer_data['legend_colors'])
+                except:
+                    pass
             if layer.phenophase:
                 if layer.phenophase.name not in data['phenolayers']:
                     data['phenolayers'][layer.phenophase.name] = dict(name=layer.phenophase.name, description=layer.phenophase.description, layers=[])
@@ -130,6 +135,9 @@ class DWDStationsGeometry(APIView):
         else:
             # create file/folder if it does not exist
             geojson = GeoJSONSerializer().serialize(DWDStation.objects.filter(geom__intersects=region.geom), geometry_field='geom', properties=tuple([f.name for f in DWDStation._meta.get_fields()]), precision=4)
+            geojson = json.loads(geojson)
+            del geojson['crs']
+            geojson = json.dumps(geojson)
             f = open(settings.MEDIA_ROOT + 'dwd_stations.geojson', 'w')
             f.write(geojson)
             f.close()
@@ -177,7 +185,7 @@ class DWDInSituData_Phase(APIView):
 class DWDInSituDataPhases(APIView):
     def get(self, request):
         result = []
-        definitions = open('../data/dwd/definitions.json').read().replace('NaN', 'null')
+        definitions = open(os.path.join(settings.MEDIA_ROOT, 'definitions.json')).read().replace('NaN', 'null')
         definitions = json.loads(definitions)
         for key in definitions:
             definitions[key]['name'] = '%s (%s)' % (definitions[key]['Objekt'], definitions[key]['Phase'])

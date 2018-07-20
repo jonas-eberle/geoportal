@@ -85,6 +85,9 @@
                     delete data['count'];
 
                     region['data'] = data;
+                    if (region['data']['climatelayers'].length > 0) {
+                        region['data']['climatelayers'][0]['open'] = true;
+                    }
                     Object.assign(region_service.value, region);
 
                     region_service.videosCurrentPage = 1;

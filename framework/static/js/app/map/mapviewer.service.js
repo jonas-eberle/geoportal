@@ -377,25 +377,38 @@
                         });
                         break;
                     case 'GeoJSON':
-                        vectorSource = new ol.source.Vector({
-                            loader: function() {
-                                $('#loading-div').show();
-                                djangoRequests.request({
-                                    url: layer.ogc_link,
-                                    method: 'GET'
-                                }).then(function(data){
-                                    var format = new ol.format.GeoJSON();
-                                    var features = format.readFeatures(data, {
-                                        featureProjection: 'EPSG:4326'
-                                    });
-                                    $.each(features, function(){
-                                        this.getGeometry().transform('EPSG:4326', _this.displayProjection);
-                                    });
-                                    vectorSource.addFeatures(features);
-                                    $('#loading-div').hide();
-                                })
-                            }
-                        });
+                        if (layer.geojsonObject != null) {
+                            var features = new ol.format.GeoJSON().readFeatures(layer.geojsonObject, {
+                                featureProjection: 'EPSG:4326'
+                            });
+                            $.each(features, function(){
+                                this.getGeometry().transform('EPSG:4326', _this.displayProjection);
+                            });
+                            vectorSource = new ol.source.Vector({
+                              features: features
+                            });
+                            //delete layer.geojsonObject;
+                        } else {
+                            vectorSource = new ol.source.Vector({
+                                loader: function() {
+                                    $('#loading-div').show();
+                                    djangoRequests.request({
+                                        url: layer.ogc_link,
+                                        method: 'GET'
+                                    }).then(function(data){
+                                        var format = new ol.format.GeoJSON();
+                                        var features = format.readFeatures(data, {
+                                            featureProjection: 'EPSG:4326'
+                                        });
+                                        $.each(features, function(){
+                                            this.getGeometry().transform('EPSG:4326', _this.displayProjection);
+                                        });
+                                        vectorSource.addFeatures(features);
+                                        $('#loading-div').hide();
+                                    })
+                                }
+                            });
+                        }
                         olLayer = new ol.layer.Vector({
                             name: layer.title,
                             layerObj: layer,
@@ -497,7 +510,7 @@
                 layer.name = layer.title;
                 layer.id = Math.random().toString(36).substring(2, 15);
                 this.sliderValues[layer.id] = 100;
-                if (!layer.ogc_time && layer.ogc_times instanceof Array) {
+                if (layer.ogc_times instanceof Array) {
                     this.selectedLayerDates[layer.id] = layer.ogc_times[layer.ogc_times.length-1];
                 }
 

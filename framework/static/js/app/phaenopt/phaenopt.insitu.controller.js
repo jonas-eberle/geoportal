@@ -9,6 +9,9 @@
     function InSituCtrl($scope, $compile, mapviewer, djangoRequests, $cookies, $routeParams, $timeout, RegionsService, TrackingService, $location, Attribution, $modal, $rootScope) {
         var insitu = this;
 
+        insitu.stationOpen = true;
+        insitu.PhasenOpen = true;
+
         insitu.region_id = RegionsService.value.id;
         insitu.stationen = [];
         insitu.selectedStation = null;
@@ -17,7 +20,7 @@
         insitu.loadStation = loadStation;
         insitu.selectedPhaseLoaded = false;
 
-        insitu.definitions = []
+        insitu.definitions = [];
         insitu.selectedDefinition = null;
         insitu.loadDefinition = loadDefinition;
         insitu.selectedDefinitionData = {};
@@ -26,6 +29,11 @@
         insitu.yearStart = null;
         insitu.yearEnd = null;
         insitu.updateDefinitionsHistogram = updateDefinitionsHistogram;
+
+        insitu.stations_layer = {"id": "dwd_stations_layer", "identifier": "DWD_Stations_Thueringen", "title": "DWD Stationen Thüringen", "alternate_title": "DWD Stationen Thüringen", "abstract": "das da", "ogc_link": "/phaenopt/region/1/dwd/stations.geojson", "ogc_layer": null, "ogc_type": "GeoJSON", "ogc_time": false, "ogc_times": null, "ogc_imageformat": null, "ogc_attribution": null, "west": 9.75591869832, "east": 12.8345545735, "north": 51.7477174724, "south": 50.0747773234, "dataset_epsg": "4326", "downloadable": false, "legend_url": null, "legend_graphic": null, "legend_colors": null, "legend_info": "", "download": null, "download_type": "", "map_layout_image": null, "wmts_matrixset": null, "wmts_resolutions": null, "wmts_tilesize": null, "wmts_projection": null, "wmts_multiply": false, "wmts_prefix_matrix_ids": null, "min_zoom": null, "max_zoom": null, "meta_file_info": null, "resolution_distance": null, "resolution_unit": null, "statistic": null};
+        insitu.stations_layerOL = null;
+        insitu.showStationMap = showStationMap;
+        insitu.hideStationMap = hideStationMap;
 
         djangoRequests.request({
             'method': "GET",
@@ -62,6 +70,14 @@
             }).then(function (data) {
                 insitu.stationDataLoaded = true;
                 insitu.selectedStationData = data;
+
+                if (insitu.stations_layerOL != null) {
+                    var coordMin = ol.proj.fromLonLat([data['geograph_Laenge'],data['geograph_Breite']], 'EPSG:3857');
+                    var coordMax = ol.proj.fromLonLat([data['geograph_Laenge'],data['geograph_Breite']], 'EPSG:3857');
+                    var extent=[coordMin[0],coordMin[1],coordMax[0],coordMax[1]];
+                    mapviewer.map.getView().fit(extent, {maxZoom:14, size:mapviewer.map.getSize()});
+                }
+
                 $timeout(function(){
                     $('#phases-selection').selectpicker({
                       style: 'btn-info',
@@ -134,6 +150,78 @@
                 insitu.selectedDefinitionImage = '/phaenopt/dwd/definitions/plot.png?Objekt_id=' + insitu.selectedDefinitionData['Objekt_id']+ '&Phase_id=' + insitu.selectedDefinitionData['Phasen_id'] + '&start=' + insitu.yearStart + '&end=' + insitu.yearEnd
             }
         }
+
+        function showStationMap() {
+            insitu.stations_layerOL = mapviewer.addLayer(insitu.stations_layer);
+        }
+
+        function hideStationMap() {
+            mapviewer.removeLayerByDjangoID("dwd_stations_layer")
+        }
+
+        $('.button-checkbox').each(function () {
+
+            // Settings
+            var $widget = $(this),
+                $button = $widget.find('button'),
+                $checkbox = $widget.find('input:checkbox'),
+                color = $button.data('color'),
+                settings = {
+                    on: {
+                        icon: 'glyphicon glyphicon-check'
+                    },
+                    off: {
+                        icon: 'glyphicon glyphicon-unchecked'
+                    }
+                };
+
+            // Event Handlers
+            $button.on('click', function () {
+                $checkbox.prop('checked', !$checkbox.is(':checked'));
+                $checkbox.triggerHandler('change');
+                updateDisplay();
+            });
+            $checkbox.on('change', function () {
+                updateDisplay();
+            });
+
+            // Actions
+            function updateDisplay() {
+                var isChecked = $checkbox.is(':checked');
+
+                // Set the button's state
+                $button.data('state', (isChecked) ? "on" : "off");
+
+                // Set the button's icon
+                $button.find('.state-icon')
+                    .removeClass()
+                    .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                // Update the button's color
+                if (isChecked) {
+                    $button
+                        .removeClass('btn-default')
+                        .addClass('btn-' + color + ' active');
+                }
+                else {
+                    $button
+                        .removeClass('btn-' + color + ' active')
+                        .addClass('btn-default');
+                }
+            }
+
+            // Initialization
+            function init() {
+
+                updateDisplay();
+
+                // Inject the icon if applicable
+                if ($button.find('.state-icon').length == 0) {
+                    $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                }
+            }
+            init();
+        });
 
     }
 })();

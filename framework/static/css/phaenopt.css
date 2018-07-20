@@ -28,3 +28,26 @@ button.btn-wetland:hover {
 .ol-mouse-position, .ol-scale-line {
     bottom: 0px !important;
 }
+
+.btn-info, .btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {
+    color: #fff !important;
+    background-color: #528196 !important;
+    border-color: #528196 !important;
+}
+
+.btn-loadmore {
+    color: white;
+    background-color: #528196;
+    border-color: #528196;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+button.btn-loadmore:hover {
+    background-color: #1d5d86 !important;
+    border-color: #1d5d86 !important;
+}
+
+.buttons.overview button {
+    cursor: pointer;
+}

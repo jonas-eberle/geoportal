@@ -154,7 +154,7 @@
                 } else {
                     RegionsService.selectRegionFromId(1);
                     bootbox.dialog({
-                        title: 'Welcome to the PhaenOPT Portal',
+                        title: 'Willkommen zum PhaenOPT Portal',
                         message: $compile($('#welcome_text').html())($scope),
                         backdrop: true,
                         onEscape: true,

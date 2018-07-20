@@ -190,7 +190,7 @@
                         }
                         break;
                     default:
-                        var output = '<h2>Properties</h2><ul>';
+                        var output = '<h3>Properties</h3><ul>';
                         $.each(feature.getKeys(), function () {
                             if (this !== 'geometry') {
                                 output += '<li><strong>' + this + ': </strong>' + feature.get(this) + '</li>';
