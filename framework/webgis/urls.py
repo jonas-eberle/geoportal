@@ -4,11 +4,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles import views as viewsstatic
 from django.contrib.auth import views as auth_views
+from django.views.generic.base import RedirectView
 from webgis import views
 
 # register URLs for each app + media URLs
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    #url(r'^$', views.index, name='index'),
+    url(r'^$', RedirectView.as_view(url='/mapviewer/detail/1.html'), name='index'),
     url(r'^session$', views.sessions, name='sessions'),
     url(r'^authapi/', include('authapi.urls')),
     url(r'^mapviewer/', include('mapviewer.urls')),
