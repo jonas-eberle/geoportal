@@ -20,6 +20,12 @@
 **Further information:**
 * [Eberle et al. (2018): "Automated Earth Observation data discovery and access using open source web frameworks". Poster at EGU 2018 conference, Vienna.](docs/Eberle_EGU2018.pdf)
 
+**Open issues:**
+* Provide sample database dump file
+* Further source code cleanup and documentation
+* Activate issues in this repository
+* Provide Dockerfile
+
 ## Examples
 
 ### GEO-Wetlands Community Portal - Wetland observations from space
@@ -31,20 +37,12 @@ http://phaenopt.info (coming soon)
 ![Screenshot of the PhaenOPT.info portal](docs/screenshots/Example_PhaenOPT.png)
 
 ### GlobBiomass WebGIS
-offline
 ![Screenshot of the GlobBiomass WebGIS](docs/screenshots/Example_GlobBiomass.png)
 
 ### ARBIS - Assam River Basin Information System
-offline
 ![Screenshot of the ARBIS WebGIS](docs/screenshots/Example_ARBIS.png)
 
 ## Setup
-
-### Database setup
-```
-$ createdb -U <dbUser> <database>
-$ psql <database> < dump.db
-```
 
 ### Backend setup
 ```
@@ -57,6 +55,20 @@ $ virtualenv --python=python2 venv
 $ source venv/bin/activate
 # install all packages listed in requirements.txt
 $ pip install -r framework/requirements.txt
+```
+
+### Database setup (with backup file)
+```
+$ createdb -U <dbUser> <database>
+$ psql <database> < dump.db
+```
+
+### Database setup (without backup file, based on Django migrations)
+```
+$ createdb -U <dbUser> <database>
+$ source venv/bin/active
+$ python manage.py makemigrations
+$ python manage.py migrate
 ```
 
 ### Frontend setup
