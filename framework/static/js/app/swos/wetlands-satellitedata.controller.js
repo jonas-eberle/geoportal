@@ -188,10 +188,17 @@
                     (element.hasOwnProperty('sun_zenith_angle_mean') === false || element.sun_zenith_angle_mean == "nan" || (element.sun_zenith_angle_mean >= wsdc.filterBySunZenith[0] && element.sun_zenith_angle_mean <= wsdc.filterBySunZenith[1])) &&
                     (element.hasOwnProperty('sun_azimuth_angle_mean') === false || element.sun_azimuth_angle_mean == "nan" || (element.sun_azimuth_angle_mean >= wsdc.filterBySunAzimuth[0] && element.sun_azimuth_angle_mean <= wsdc.filterBySunAzimuth[1]))
                 ) {
-                      if (element['thumb_url'] != 'nan') {
-					  	    element['thumb_url'] = 'http://artemis.geogr.uni-jena.de/ec/phaenopt/thumbs/' + element['browse_url'].split('/').pop();
+                      if (element['thumb_url'] != undefined) {
+					  	    element['thumb_url'] = 'http://artemis.geogr.uni-jena.de/ec/phaenopt/thumbs/' + element['thumb_url'].split('/').pop();
 					  } else {
-					  	    element['thumb_url'] = '';
+					  	    element['thumb_url'] = undefined;
+					  }
+
+					  if (element['browse_url'] != undefined) {
+					  	    element['browse_url'] = 'http://artemis.geogr.uni-jena.de/ec/phaenopt/browse/' + element['browse_url'].split('/').pop();
+                            element['thumb_url'] = 'http://artemis.geogr.uni-jena.de/ec/phaenopt/thumbs/' + element['browse_url'].split('/').pop();
+					  } else {
+					  	    element['browse_url'] = undefined;
 					  }
 					  
 					  wsdc.data_filtered.features.push(element);
@@ -343,7 +350,8 @@
             
             
             wsdc.currentVector2 = new ol.layer.Image({
-                opacity: 0.75,
+                //opacity: 0.75,
+				opacity: 1,
                 source: new ol.source.ImageStatic({
                     url: scene['browse_url'],
                     //imageSize: [1024, 1016],
@@ -385,7 +393,7 @@
         }
 		
 		function exportResults() {
-			var url = '/swos/wetland/' + RegionsService.value.id + '/satdata/results?';
+			var url = '/geospatial/region/' + RegionsService.value.id + '/satdata/results?';
 			if (wsdc.filterByDataset.length > 0) {
 				url += '&datasets=' + wsdc.filterByDataset.join(',')
 			}

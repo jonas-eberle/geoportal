@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button ng-click="mi.close()" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-    <h1>Help</h1>
+    <h1>Hilfe</h1>
 </div>
 <div class="modal-body modal-help">
     <div class="text">
@@ -29,42 +29,30 @@
             </table>
         </div>
         <div class="divider_help"></div>
+
         <div class="part">
-            <h3>Catalog</h3><br/>
-            <img src="/static/help/catalog-layer.png" width="300"/><br/>
-            <table>
-                <tr>
-                    <td><img src="/static/help/catalog-download.png"/></td>
-                    <td>Download data (if visible)</td>
-                </tr>
-                <tr>
-                    <td><img src="/static/help/catalog-metadata.png"/></td>
-                    <td>Show metadata of this layer</td>
-                </tr>
-                <tr>
-                    <td><img src="/static/help/catalog-addlayer.png"/></td>
-                    <td>Add layer to map. Afterwards the layer is visible under the "Current" tab.</td>
-                </tr>
-            </table>
-        </div>
-        <div class="divider_help"></div>
-        <div class="part">
-            <h3>Current</h3><br/>
-            <img src="/static/help/current-layer.png" width="300"/><br/>
-            To change the order of current layers, please drag and drop the layers. The layer on the top is the most
-            visible layer in the map.<br/>
+            <h3>Layer</h3><br/>
+            <img src="/static/help/current-layer_swos.png" width=400"/><br/>
             <table>
                 <tr>
                     <td><img src="/static/help/current-visibility.png"/></td>
-                    <td>Checkbox to change visibility of this layer (on/off)</td>
+                    <td>Checkbox to add and remove this layer</td>
                 </tr>
                 <tr>
                     <td><img src="/static/help/current-opacityslider.png"/></td>
                     <td>Change the opacity (0-100%) of this layer</td>
                 </tr>
                 <tr>
-                    <td><img src="/static/help/current-download.png"/></td>
-                    <td>Download data (if visible)</td>
+                    <td><img src="/static/help/current-visibility_new.png"/></td>
+                    <td>Hide / show this layer</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-legend.png"/></td>
+                    <td>Hide / show legend</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-statistics.png"/></td>
+                    <td>Show statistics of this layer / create time series based on each time step</td>
                 </tr>
                 <tr>
                     <td><img src="/static/help/current-metadata.png"/></td>
@@ -75,22 +63,58 @@
                     <td>Zoom to layer</td>
                 </tr>
                 <tr>
-                    <td><img src="/static/help/current-delete.png"/></td>
-                    <td>Remove this layer from the map</td>
+                    <td><img src="/static/help/current-share.png"/></td>
+                    <td>Create a permanent link to share it</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-storyline.png"/></td>
+                    <td>Show storyline</td>
                 </tr>
             </table>
         </div>
         <div class="divider_help"></div>
         <div class="part">
-            <h3>Settings</h3><br/>
-            Within the settings you can change the background layer if another layer is available.
-            <img src="/static/help/settings.png"/>
+            <h3>Active Layer</h3><br/>
+            <img src="/static/help/active_layer.png" height="125"/><br/>
+            <table>
+                <tr>
+                    <td><img src="/static/help/current-visibility_new.png"/></td>
+                    <td>Hide / show this layer</td>
+                </tr>
+                 <tr>
+                    <td><img src="/static/help/remove.png"/></td>
+                    <td>Remove this layer</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-opacityslider.png"/></td>
+                    <td>Change the opacity (0-100%) of this layer</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-legend.png"/></td>
+                    <td>Hide / show legend</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-metadata.png"/></td>
+                    <td>Show metadata of this layer</td>
+                </tr>
+                <tr>
+                    <td><img src="/static/help/current-zoomto.png"/></td>
+                    <td>Zoom to layer</td>
+                </tr>
+            </table>
         </div>
+        <!--
+        <div class="part">
+            <h3>Settings</h3><br />
+            Within the settings you can change the background layer if another layer is available.
+            <img src="/static/help/settings.png" />
+        </div>
+      -->
     </div>
 
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" ng-click="mi.close()">
-        Close
+        Schlie&szlig;en
     </button>
 </div>

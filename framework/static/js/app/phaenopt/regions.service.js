@@ -40,6 +40,7 @@
                 if (this.regionList[id]) {
 
                     var extent = this.regionList[id].geometry.getExtent();
+                    //console.log(ol.proj.transformExtent(extent, mapviewer.displayProjection, 'EPSG:4326'));
                     //pan = ol.animation.pan({duration: 500, source: mapviewer.map.getView().getCenter()})
                     //zoom = ol.animation.zoom({duration: 500, resolution: mapviewer.map.getView().getResolution()})
                     //mapviewer.map.beforeRender(pan, zoom)
@@ -53,8 +54,8 @@
 
                     regionFeature.setStyle(new ol.style.Style({
                         stroke: new ol.style.Stroke({
-                            color: "#000000",
-                            width: 5
+                            color: "#528196",
+                            width: 3
                         })
                     }));
 
@@ -141,6 +142,9 @@
                 return $q.reject();
             },
             styleOnZoom: function (evt) {
+                // disable this
+                return true;
+
                 if (RegionsService.regionFeature == null) {
                     return true;
                 }

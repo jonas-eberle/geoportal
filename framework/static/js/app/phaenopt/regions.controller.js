@@ -160,7 +160,7 @@
                         onEscape: true,
                         className: 'welcome-dialog',
                         buttons: {
-                            close: {label: 'Close'}
+                            close: {label: 'Schlie&szlig;en'}
                         }
                     });
                 }

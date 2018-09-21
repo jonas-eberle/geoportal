@@ -35,6 +35,16 @@
         insitu.showStationMap = showStationMap;
         insitu.hideStationMap = hideStationMap;
 
+        insitu.stations_overlay = null;
+
+        $scope.$on('mapviewer.layerremoved', function(event, layerid) {
+           if (layerid == 'dwd_stations_layer') {
+               if (insitu.stations_overlay != null) {
+                    mapviewer.map.removeOverlay(insitu.stations_overlay);
+                }
+           }
+        });
+
         djangoRequests.request({
             'method': "GET",
             'url'   : '/phaenopt/region/' + insitu.region_id + '/dwd/stations.json'
@@ -71,11 +81,23 @@
                 insitu.stationDataLoaded = true;
                 insitu.selectedStationData = data;
 
-                if (insitu.stations_layerOL != null) {
-                    var coordMin = ol.proj.fromLonLat([data['geograph_Laenge'],data['geograph_Breite']], 'EPSG:3857');
-                    var coordMax = ol.proj.fromLonLat([data['geograph_Laenge'],data['geograph_Breite']], 'EPSG:3857');
-                    var extent=[coordMin[0],coordMin[1],coordMax[0],coordMax[1]];
+                var coords = ol.proj.fromLonLat([data['geograph_Laenge'],data['geograph_Breite']], 'EPSG:3857');
+
+                if (insitu.stations_overlay != null) {
+                    mapviewer.map.removeOverlay(insitu.stations_overlay);
+                }
+
+                if (mapviewer.getIndexFromLayer(insitu.stations_layer.title) > -1) {
+                    var extent=[coords[0],coords[1],coords[0],coords[1]];
                     mapviewer.map.getView().fit(extent, {maxZoom:14, size:mapviewer.map.getSize()});
+                } else {
+                    $('<div id="marker" title="Marker" style="position: absolute;top:-10px;left:-10px;width:20px;height:20px;border:1px solid black;border-radius: 10px;opacity: 0.5;z-index:99999999;background-color:#0FF;"></div>').appendTo('body')
+                    insitu.stations_overlay = new ol.Overlay({
+                        position: coords,
+                        positioning: 'center-center',
+                        element: document.getElementById('marker')
+                    });
+                    mapviewer.map.addOverlay(insitu.stations_overlay);
                 }
 
                 $timeout(function(){
@@ -83,7 +105,7 @@
                       style: 'btn-info',
                       width: '100%',
                       size: 10,
-                      title: 'Bitte eine Phase auswählen'
+                      title: 'Bitte eine phänologische Pflanzenphase auswählen'
                     });
                     $('#phases-selection').selectpicker('refresh');
 

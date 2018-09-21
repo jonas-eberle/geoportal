@@ -94,7 +94,8 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <div class="navbar-brand" id="title-left" style="padding-top: 4px;padding-left: 4px;"><a href="1.html"><img src="/static/tlug-logo.png" style="height: 50px;margin-top: 5px;"></a></div>
+                <!--<div class="navbar-brand" id="title-left" style="padding-top: 4px;padding-left: 4px;"><a href="1.html"><img src="/static/tlug-logo_4c.png" style="height: 50px;margin-top: 5px;"></a></div>-->
+				<div class="navbar-brand" id="title-left" style="padding-top: 4px;padding-left: 12px;width:230px;"><a href="1.html"><img src="/media/phaenopt-logo4.png" style="height: 55px;margin-top: 2px;"></a></div>
             </div>
 
             <!-- TOOLBAR in Navigation fuer Tablet und Desktop -->
@@ -102,16 +103,16 @@
                 <ul class="nav navbar-nav pull-right col-md-3" id="nav-top-right" ng-controller="LoginCtrl as lc" style="padding-right:0;">
                     <li>
                         <div style="margin-top: 2px;font-size: 0.8em;padding-left: 5px;" class="partners">
-                            Entwickelt und bereitgestellt durch:<br>
+                            Bereitgestellt im Rahmen des PhaenOPT-Projekts durch:<br>
                             <a href="http://www.eo.uni-jena.de" target="_blank"><img src="/static/img/UniJena_BildWortMarke_blue.jpg" border="0" height="30"></a>
-<a href="http://www.tlug-jena.de" target="_blank"><img src="/static/tlug-logo.png" border="0" height="30"></a>
+                            <a href="http://www.tlug-jena.de" target="_blank"><img src="/static/tlug-logo_4c.png" border="0" height="30"></a>
                             <a href="http://www.jena-optronik.de" target="_blank"><img src="/static/jop-logo.png" height="28"></a>
                         </div>
                     </li>
                     <li class="dropdown btn-group pull-right" ng-include="'{% static "includes/auth.html" %}'" id="login-icon" style="display:none"></li>
                 </ul>
                 <ul class="nav navbar-nav pull-right" id="nav-top-right2">
-                    <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'" style="width:50px;"></li>
+                    <!--<li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/settings.html" %}'" style="width:50px;"></li>-->
                     <li class="dropdown btn-group  pull-right" ng-include="'{% static "includes/info_swos.html" %}'"></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -139,7 +140,7 @@
                 <div class="map-controls-wrapper">
 
                     <div id="wetland_sites" class="" style="color: black;font-weight: bold;text-align: center;float: left;margin-top: -4px;">
-                        PhaenOPT.org<br>Webdienst für das phänologische Klimafolgenmonitoring
+                        www.phaenopt.info<br>Webdienst für das phänologische Klimafolgenmonitoring
                     </div>
 
                     <div class="input-group hidden-xs hidden-sm" id="map_search" ng-controller="SearchBoxCtrl as sb">
@@ -173,14 +174,14 @@
                     </div>
 
                     <div id="map_icons">
-                        <button type="button" uib-tooltip="Zoom in" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
+                        <button type="button" uib-tooltip="Hineinzoomen" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomIn()" class="btn btn-default btn-circle hidden-xs" id="zoomInButton"><i
                                 class="fa-plus fa fa-lg"></i></button>
-                        <button type="button" uib-tooltip="Zoom out" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
+                        <button type="button" uib-tooltip="Herauszoomen" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomOut()" class="btn btn-default btn-circle hidden-xs" id="zoomOutButton"><i
                                 class="fa-minus fa fa-lg"></i></button>
-                        <button type="button" uib-tooltip="Zoom to initial extent" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
+                        <button type="button" uib-tooltip="Zoom auf Th&uuml;hringen" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.zoomMaxExtent()" class="btn btn-default btn-circle"><i
                                 class="fa-globe fa fa-lg"></i></button>
                         <!--<button type="button" ng-click="mv.createFeature()" class="btn btn-default btn-circle hidden-xs"><i class="fa-pencil-square-o fa fa-lg"></i></button>-->
-                        <button type="button" uib-tooltip="Activate to request information (click on map)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.infoStatus}" ng-disabled="!mv.data.canRequestFeatureInfo" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
+                        <button type="button" uib-tooltip="Featureinfo abfragen aktivieren (Klick auf Karte)" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.requestInfo()" ng-class="{'btn-active': mv.data.infoStatus}" ng-disabled="!mv.data.canRequestFeatureInfo" class="btn btn-default btn-circle hidden-xs"><i class="fa-info fa fa-lg"></i></button>
                         <button type="button" uib-tooltip="Show layer attribution" tooltip-placement="bottom" tooltip-append-to-body="true" ng-click="mv.showAttribution()"
                                 class="btn btn-default btn-circle attributions-button" ng-disabled="mv.layer_attribution == false || mv.layer_attribution == undefined"><i class="fa-copyright fa fa-lg"></i></button>
                     </div>
@@ -313,7 +314,7 @@
                             <div ng-controller="TrackingCtrl as tracking">
                                 <uib-tabset justified="true">
                                     <!-- Overview -->
-                                    <uib-tab class="flaticon-bars" heading="" uib-tooltip="Overview" tooltip-append-to-body="true" select="tracking.trackWetlandTab('overview')">
+                                    <uib-tab class="flaticon-bars" heading="" select="tracking.trackWetlandTab('overview')">
 
                                         <div>
 
@@ -351,13 +352,13 @@
                                                         <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
                                                         <div class="products_datasets">
 
-                                                            <strong>Layers:</strong>
+                                                            <strong>Karten:</strong>
                                                             <div class="select" ng-if="product.layers.length > 0">
                                                                 <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
                                                                     <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                                     <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                                     <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                                    <swos-layer-controls ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                                 </div>
                                                             </div>
                                                             <div class="select"
@@ -372,32 +373,52 @@
                                         </div>
                                     </uib-tab>
 
-                                    <!-- Products -->
+                                    <!-- Phenolayers -->
                                     <uib-tab class="flaticon2-calendar"  heading="" uib-tooltip="Ph&auml;nologiekarten" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('product')" id="product">
                                         <div ng-if="regions.value.data.phenolayers.length == 0">No phenolayers available!</div>
                                         <div>
                                         <ul class="items products">
 
                                             <uib-accordion close-others="false">
-                                                <div uib-accordion-group ng-repeat="product in regions.value.data.phenolayers"  heading="{{product.name}}" is-open="product.open">
+                                                <div uib-accordion-group ng-repeat="product in regions.value.data.phenolayers | orderBy:'+name'"  heading="{{product.name}}" is-open="product.open">
                                                     <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
-                                                        {{product.name}}
+                                                        <img ng-if="product.image" ng-src="{{ product.image }}" align="" class="phenoimage" style="width: 20px;border-radius:50%;margin-right: 5px;margin-top: -3px;">{{product.name}}
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
                                                     </uib-accordion-heading>
                                                     <div class="options">
-                                                        <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
-                                                        <div class="products_datasets">
-                                                            <strong>Layers:</strong>
-                                                            <div class="select" ng-if="product.layers.length > 0">
-                                                                <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
+                                                        <img ng-if="product.image" ng-src="{{ product.image }}" align="right" class="phenoimage" style="width:100px;border-radius:50%;" />
+                                                        <p ng-text-truncate='product.description' ng-tt-chars-threshold="200" ng-tt-more-label="Mehr" ng-tt-less-label="Weniger"></p>
+                                                        <div class="products_datasets" style="margin-top:10px;clear:both;" ng-if="product.layers.insitu.length > 0">
+                                                            <strong>In-situ-Karten:</strong>
+                                                            <div class="select">
+                                                                <div ng-repeat="layer in product.layers.insitu" id="layer_vis_div_{{layer.id}}">
                                                                     <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                                     <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                                     <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                                    <swos-layer-controls ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                                 </div>
                                                             </div>
-                                                            <div class="select" ng-if="product.layers.length == 0">
-                                                                No datasets available.
+                                                        </div>
+                                                        <div class="products_datasets" style="margin-top:10px;clear:both;" ng-if="product.layers.modelliert.length > 0">
+                                                            <strong>Modellierte Karten:</strong>
+                                                            <div class="select">
+                                                                <div ng-repeat="layer in product.layers.modelliert" id="layer_vis_div_{{layer.id}}">
+                                                                    <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                    <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="products_datasets" style="margin-top:10px;clear:both;" ng-if="product.layers.differenz.length > 0">
+                                                            <strong>Differenz-Karten:</strong>
+                                                            <div class="select">
+                                                                <div ng-repeat="layer in product.layers.differenz" id="layer_vis_div_{{layer.id}}">
+                                                                    <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                                    <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -423,7 +444,7 @@
                                                         <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                         <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                         <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                        <swos-layer-controls ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                        <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                     </div>
                                                 </div>
 
@@ -435,7 +456,7 @@
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_image, 'glyphicon-chevron-right': !regions.satdata_image}"></i>
                                                 </uib-accordion-heading>
                                                 <a href="javascript:;" uib-tooltip="Click to open the satellite scenes explorer application" ng-click="regions.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{regions.value.id}}_small.png" width="100%" /></a>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-06-16</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-09-04</div>
                                             </div>
                                             <div uib-accordion-group is-open="regions.satdata_layers" ng-if="regions.value.satdata.layers_count > 0">
                                                 <uib-accordion-heading>
@@ -452,11 +473,11 @@
                                                         <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
                                                         <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
                                                         <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                        <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                        <swos-layer-controls class="swosLayerControls" ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                     </div>
                                                 </div>
                                                 <div style="margin-top:10px;margin-left:2px;">Made available based on <a href="https://sentinel-hub.com/" target="_blank">Sentinel Hub Services</a> and the ESA Open Science Earth Observation grant (No. <a href="https://earth.esa.int/web/guest/pi-community/search-results-and-projects/keyword-entry?IFRAME_SRC=%2Fpi%2Fesa%3Fts%3D1528463214378%26targetIFramePage%3D%252Fweb%252Fguest%252Fpi-community%252Fsearch-results-and-projects%252Fkeyword-entry%26topSelectedNavigationNodeId%3DSEARCH%26coordinates%3D%26sideNavigationType%3DSEARCH%26type%3D10%26toprint%3D-1%26token%3D%26addattribute%3Dfalse%26sideExpandedNavigationBoxId%3DprojectSearch%26id%3D36615%26caller%3D%25252Fpi%25252Fesa%25253Finstitute%25253D%252526itemsPerPage%25253D10%252526sideExpandedNavigationBoxId%25253DprojectSearch%252526displayMode%25253Dcenter%252526cmd%25253Dother%252526submissionid%25253D-1%252526showAll%25253Dtrue%252526topSelectedNavigationNodeId%25253DSEARCH%252526keyword%25253D%252526downloadAsCsv%25253Dfalse%252526targetIFramePage%25253D%2525252Fweb%2525252Fguest%2525252Fpi-community%2525252Fsearch-results-and-projects%2525252Fkeyword-entry%252526ts%25253D1528463214378%252526colorTheme%25253D03%252526startFrom%25253D0%252526sideNavigationType%25253DSEARCH%252526title%25253D%252526aoid%25253D1560%26cmd%3Dproject%26header%3D%26displayMode%3Dcenter%26colorTheme%3D03%26subnavigation%3D1%26role%3D0" target="_blank">36615</a>).</div>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;margin-top: 10px;margin-right: 5px;">Last update: 2018-06-16</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;margin-top: 10px;margin-right: 5px;">Last update: 2018-09-04</div>
                                             </div>
                                             <div uib-accordion-group is-open="regions.satdata_table">
                                                 <uib-accordion-heading>
@@ -482,7 +503,7 @@
                                                         <td>{{data.max}}</td>
                                                     </tr>
                                                 </table>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-06-16</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-09-04</div>
                                             </div>
                                             <div uib-accordion-group is-open="regions.satdata_sources">
                                                 <uib-accordion-heading>
@@ -491,7 +512,7 @@
                                                 </uib-accordion-heading>
                                                 <p>
                                                     <strong>Copernicus Open Access Hub</strong><br/>
-                                                    Sentinel-1 A&B IW GRD data have been searched through the Copernicus Open Access Hub OpenSearch API. <br />
+                                                    Sentinel-1 A&B IW GRD and Sentinel-3 data have been searched through the Copernicus Open Access Hub OpenSearch API. <br />
                                                     <a href="https://scihub.copernicus.eu" target="_blank">https://scihub.copernicus.eu</a>
                                                 </p>
                                                 <hr/>
@@ -515,46 +536,54 @@
                                         <div ng-controller="InSituCtrl as insitu">
                                             <uib-accordion close-others="false">
                                                 <div uib-accordion-group is-open="insitu.stationOpen">
-                                                    <uib-accordion-heading>Stationen (DWD)
+                                                    <uib-accordion-heading>Phänologische Stationen des DWD
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': insitu.stationOpen, 'glyphicon-chevron-right': !insitu.stationOpen}"></i>
                                                     </uib-accordion-heading>
                                                     <div>
-                                                        <div class="button-checkbox" ng-click="insitu.showStationMap()" style="width:100%;margin-bottom:5px;">
-                                                            <button type="button" class="btn" data-color="primary" style="width:100%"> Alle Stationen zur Karte hinzufügen</button>
-                                                            <input type="checkbox" class="hidden" />
+                                                        <strong>Stationen in der Karte anzeigen:</strong>
+                                                        <div id="layer_vis_div_{{insitu.stations_layer.id}}">
+                                                            <input ng-if="regions.layerIdMap[insitu.stations_layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(insitu.stations_layer, $event);" id="layer_vis_{{insitu.stations_layer.id}}" />
+                                                            <input ng-if="regions.layerIdMap[insitu.stations_layer.id]" type="checkbox" ng-click="regions.addLayerToMap(insitu.stations_layer, $event);" id="layer_vis_{{insitu.stations_layer.id}}" checked="checked" />
+                                                            <label for="layer_vis_{{insitu.stations_layer.id}}"> {{insitu.stations_layer.alternate_title}}</label>
+                                                            <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[insitu.stations_layer.id]]" layer-hash="{{ regions.layerIdMap[insitu.stations_layer.id] }}"></swos-layer-controls>
                                                         </div>
-                                                        <select id="stations-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedStation">
-                                                          <option ng-repeat="station in insitu.stationen" value="{{ station }}">{{station.Stationsname}}</option>
-                                                        </select>
-                                                        <div ng-if="insitu.stationDataLoaded">
+
+                                                        <div style="margin-top:10px;">
+															<strong>Stationsdaten anzeigen:</strong><br/>
+	                                                        <select id="stations-selection" class="selectpicker" data-live-search="true" data-live-search-style="startsWith" ng-model="insitu.selectedStation">
+	                                                          <option ng-repeat="station in insitu.stationen" value="{{ station }}">{{station.Stationsname}}</option>
+	                                                        </select>
+														</div>
+                                                        <div ng-if="insitu.stationDataLoaded" style="margin-top:10px;">
                                                             <p>
-                                                                <strong>Lage: </strong>{{ insitu.selectedStationData['geograph_Breite'] }} {{ insitu.selectedStationData['geograph_Laenge'] }}<br/>
+                                                                <strong>Stations-ID: </strong>{{ insitu.selectedStationData['Stations_id'] }}<br/>
+																<strong>Lage: </strong>{{ insitu.selectedStationData['geograph_Breite'] }} {{ insitu.selectedStationData['geograph_Laenge'] }}<br/>
                                                                 <strong>Höhe: </strong>{{ insitu.selectedStationData['Stationshoehe'] }} Meter<br/>
-                                                                <strong>Naturraum: </strong>{{ insitu.selectedStationData['Naturraum'] }}
-                                                                <span ng-if="insitu.selectedStationData['Stationsaufloesung']"><br/><strong>Stationsaufloesung: </strong>{{ insitu.selectedStationData['Stationsaufloesung'] }}</span>
+																<strong>Naturraum: </strong>{{ insitu.selectedStationData['Naturraum'] }}
+                                                                <span ng-if="insitu.selectedStationData['Stationsaufloesung']"><br/><strong>Stationsaufl&ouml;sung: </strong>{{ insitu.selectedStationData['Stationsaufloesung'] }}</span>
                                                             </p>
-                                                            <div ng-if="insitu.selectedStationData['phases'].length > 0">
+                                                            <div ng-if="insitu.selectedStationData['phases'].length > 0" style="margin-top:10px;">
                                                                 <strong>Verfügbare Daten:</strong>
-                                                                <select id="phases-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedPhase">
+                                                                <select id="phases-selection" class="selectpicker" data-live-search="true" data-live-search-style="startsWith" ng-model="insitu.selectedPhase">
                                                                   <option ng-repeat="phase in insitu.selectedStationData['phases']" value="{{ phase }}">{{ phase.name }}</option>
                                                                 </select>
                                                                 <a href="{{ insitu.selectedPhaseImage }}" class="fancybox" target="_blank"><img ng-if="insitu.selectedPhaseLoaded" ng-src="{{ insitu.selectedPhaseImage }}" width="100%" /></a>
                                                             </div>
                                                             <div ng-if="insitu.selectedStationData['phases'].length == 0">
-                                                                Keine Daten verfügbar!
+                                                                Es wurden noch keine Daten in unser System integriert!
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div uib-accordion-group is-open="insitu.PhasenOpen">
-                                                    <uib-accordion-heading>Phasen (DWD)
+                                                    <uib-accordion-heading>Eintrittstermine der Pflanzenphasen in Thüringen
                                                         <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': insitu.PhasenOpen, 'glyphicon-chevron-right': !insitu.PhasenOpen}"></i>
                                                     </uib-accordion-heading>
                                                     <div>
-                                                        <select id="definitions-selection" class="selectpicker" data-live-search="true" ng-model="insitu.selectedDefinition">
+                                                        <select id="definitions-selection" class="selectpicker" data-live-search="true" data-live-search-style="startsWith" ng-model="insitu.selectedDefinition">
                                                           <option ng-repeat="phase in insitu.definitions" value="{{ phase }}">{{phase.name}}</option>
                                                         </select>
-                                                        <div ng-if="insitu.selectedDefinition">
+                                                        <div ng-if="insitu.selectedDefinition" style="margin-top:10px;">
                                                              <p>
                                                                 <strong>Objekt-ID: </strong>{{ insitu.selectedDefinitionData['Objekt_id'] }}<br/>
                                                                 <strong>Phasen-ID: </strong>{{ insitu.selectedDefinitionData['Phasen_id'] }}
@@ -572,7 +601,7 @@
                                                                     <option ng-repeat="year in insitu.years">{{ year }}</option>
                                                                 </select>
                                                                 &nbsp;&nbsp;
-                                                                <button class="btn btn-primary" style="padding: 1px 12px;font-size: 13px;cursor:pointer;" ng-click="insitu.updateDefinitionsHistogram()">Update histgram</button>
+                                                                <button class="btn btn-primary" style="padding: 1px 12px;font-size: 13px;cursor:pointer;" ng-click="insitu.updateDefinitionsHistogram()">Grafik aktualisieren</button>
                                                                 <a href="{{ insitu.selectedDefinitionImage }}" class="fancybox" target="_blank"><img ng-src="{{ insitu.selectedDefinitionImage }}" width="100%" /></a>
                                                             </p>
                                                         </div>
@@ -584,7 +613,7 @@
 
                                     <!-- Citizen Science -->
                                     <uib-tab class="flaticon2-group" heading="" uib-tooltip="Citizen Science" tooltip-append-to-body="true"  select="tracking.trackWetlandTab('citizenscience')">
-                                        <div ng-controller="CitizenScienceCtrl as citizenscience">
+                                        <div ng-controller="CitizenScienceCtrl as citizenscience" id="citizenscience">
                                             <uib-accordion close-others="false">
                                                 <div uib-accordion-group ng-repeat="project in regions.value.data.citizenscience"  is-open="project.open">
                                                     <uib-accordion-heading>{{ project.name }}
@@ -593,26 +622,30 @@
                                                     <div>
                                                         <p ng-text-truncate='project.description' ng-tt-chars-threshold="200"></p>
                                                         <p ng-if="project.online_link"><a href="{{ project.online_link }}" target="_blank">{{ project.online_link }}</a></p>
-                                                        <div ng-if="citizenscience.data[project.id].features.length > 0">
-                                                            <div ng-if="project.id === 1" class="button-checkbox" ng-click="citizenscience.addMySeasonsLayer()" style="width:100%;margin-bottom:5px;">
-                                                                <button type="button" class="btn" data-color="primary" style="width:100%"> Daten zur Karte hinzufügen</button>
-                                                                <input type="checkbox" class="hidden" />
+                                                        <div ng-if="project.id === 1">
+                                                            <div id="layer_vis_div_{{citizenscience.myseasons_layer.id}}">
+                                                                <input ng-if="regions.layerIdMap[citizenscience.myseasons_layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(citizenscience.myseasons_layer, $event);" id="layer_vis_{{citizenscience.myseasons_layer.id}}" />
+                                                                <input ng-if="regions.layerIdMap[citizenscience.myseasons_layer.id]" type="checkbox" ng-click="regions.addLayerToMap(citizenscience.myseasons_layer, $event);" id="layer_vis_{{citizenscience.myseasons_layer.id}}" checked="checked" />
+                                                                <label for="layer_vis_{{citizenscience.myseasons_layer.id}}"> {{citizenscience.myseasons_layer.alternate_title}}</label>
+                                                                <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[citizenscience.myseasons_layer.id]]" layer-hash="{{ regions.layerIdMap[citizenscience.myseasons_layer.id] }}"></swos-layer-controls>
                                                             </div>
-                                                            <table class="table table-striped table-hover">
-                                                                <tr>
-                                                                    <th width="110">Datum</th>
-                                                                    <th>Baum</th>
-                                                                    <th>Phase</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                                <tr ng-repeat="feature in citizenscience.data[project.id].features">
-                                                                    <td>{{ feature.properties.pubdate | date:'dd.MM.yy HH:mm' }}</td>
-                                                                    <td>{{ feature.properties.baum }}</td>
-                                                                    <td>{{ feature.properties.phase }}</td>
-                                                                    <td><a href="{{ feature.properties.image }}"  class="fancybox" target="_blank" ng-if="feature.properties.image"><img src="/static/img/flaticon/png/camera.png"</a></td>
-                                                                </tr>
-                                                            </table>
-                                                            <button ng-if="!citizenscience.data[project.id].allLoaded" type="button" class="btn btn-loadmore" ng-click="citizenscience.loadData(project.id, citizenscience.data[project.id].features.length)">Load more</button>
+                                                            <div ng-if="regions.layers[regions.layerIdMap[citizenscience.myseasons_layer.id]]">
+                                                                <table class="table table-striped table-hover" style="margin-top:10px;">
+                                                                    <tr>
+                                                                        <th width="110">Datum</th>
+                                                                        <th>Baum</th>
+                                                                        <th>Phase</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                    <tr ng-repeat="feature in citizenscience.getFeatures(regions.layers[regions.layerIdMap[citizenscience.myseasons_layer.id]].getSource().getFeatures()).slice(((citizenscience.currentPage-1)*citizenscience.itemsPerPage), ((citizenscience.currentPage)*citizenscience.itemsPerPage))" style="cursor: pointer">
+                                                                        <td ng-click="citizenscience.selectObservation(feature)">{{ feature.getProperties().pubdate | date:'dd.MM.yy HH:mm' }}</td>
+                                                                        <td ng-click="citizenscience.selectObservation(feature)">{{ feature.getProperties().baum }}</td>
+                                                                        <td ng-click="citizenscience.selectObservation(feature)">{{ feature.getProperties().phase }}</td>
+                                                                        <td><a href="{{ feature.getProperties().image }}"  class="fancybox" target="_blank" ng-if="feature.getProperties().image"><img src="/static/img/flaticon/png/camera.png"</a></td>
+                                                                    </tr>
+                                                                </table>
+                                                                <ul uib-pager total-items="citizenscience.totalItems" ng-model="citizenscience.currentPage"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -624,12 +657,21 @@
 
                                         <div style="padding-left:5px;">
                                             <h4 style="margin-top:15px">Allgemeine Karten</h4>
-                                            <div class="select" ng-if="regions.value.data.layers.length > 0">
-                                                <div ng-repeat="layer in regions.value.data.layers" id="layer_vis_div_{{layer.id}}">
+                                            <div class="select" ng-if="regions.value.data.layers.allgemein.length > 0">
+                                                <div ng-repeat="layer in regions.value.data.layers.allgemein" id="layer_vis_div_{{layer.id}}">
                                                     <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                     <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                     <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                    <swos-layer-controls ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                </div>
+                                            </div>
+                                            <h4 style="margin-top:15px">Geoproxy Thüringen</h4>
+                                            <div class="select" ng-if="regions.value.data.layers.geoproxy.length > 0">
+                                                <div ng-repeat="layer in regions.value.data.layers.geoproxy" id="layer_vis_div_{{layer.id}}">
+                                                    <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                    <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
                                                 </div>
                                             </div>
                                         </div>
@@ -641,324 +683,11 @@
                         </div>
                     </div>
 
-                    <div role="tabpanel" class="tab-pane national_data" id="national" ng-controller="NationalDataCtrl as nationalData">
+                </div>
 
-                        <select id="contries-selection" class="selectpicker" data-live-search="true" ng-model="nationalData.selectedCountryName">
-                          <option ng-repeat="country in nationalData.countries">{{country.name}}</option>
-                        </select>
-
-                        <uib-accordion close-others="false" ng-if="nationalData.selectedCountry != null">
-                            <div uib-accordion-group is-open="nationalData.ownmaps_open" ng-if="nationalData.products.length > 0">
-                                <uib-accordion-heading>
-                                    Products
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.ownmaps_open, 'glyphicon-chevron-right': !nationalData.ownmaps_open}"></i>
-                                </uib-accordion-heading>
-                                <uib-accordion close-others="false">
-                                    <ul class="items products" style="padding-left:0;">
-                                        <uib-accordion close-others="false">
-                                            <div uib-accordion-group ng-repeat="product in nationalData.products"  heading="{{product.name}}" is-open="product.open">
-                                                <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);">
-                                                    <span class="project">[SWOS]</span> {{product.name}}
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': product.open, 'glyphicon-chevron-right': !product.open}"></i>
-                                                </uib-accordion-heading>
-                                                <div class="options">
-                                                    <p ng-text-truncate='product.description' ng-tt-chars-threshold="200"></p>
-                                                    <div class="products_datasets">
-                                                        <strong>Layers:</strong>
-                                                        <div class="select" ng-if="product.layers.length > 0">
-                                                            <div ng-repeat="layer in product.layers" id="layer_vis_div_{{layer.id}}">
-                                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
-                                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
-                                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                                            </div>
-                                                        </div>
-                                                        <div class="select" ng-if="product.layers.length == 0">
-                                                            No datasets available.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </uib-accordion>
-                                    </ul>
-                                </uib-accordion>
-                            </div>
-
-                            <div uib-accordion-group is-open="nationalData.wetlands_open" ng-if="nationalData.wetlands.length > 0">
-                                <uib-accordion-heading>
-                                    Wetlands
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.wetlands_open, 'glyphicon-chevron-right': !nationalData.wetlands_open}"></i>
-                                </uib-accordion-heading>
-                                <uib-accordion close-others="false">
-                                    <div uib-accordion-group ng-repeat="wetland in nationalData.wetlands">
-                                        <uib-accordion-heading>
-                                            {{wetland.name}}
-                                            <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.open_global_maps, 'glyphicon-chevron-right': !nationalData.open_global_maps}"></i>
-                                        </uib-accordion-heading>
-                                        <div class="properties">
-                                            <table>
-                                                <tr>
-                                                    <th valign="top">Description:</th>
-                                                    <td valign="top">{{wetland.description}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Scale:</th>
-                                                    <td>{{wetland.geo_scale}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Type:</th>
-                                                    <td>{{wetland.site_type}} | {{wetland.wetland_type}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th valign="top">Ecoregion:</th>
-                                                    <td valign="top">{{wetland.ecoregion}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Size:</th>
-                                                    <td>{{nationalData.formatValue(wetland.size)}} ha</td>
-                                                </tr>
-                                                <tr ng-if="wetland.products.length > 0">
-                                                    <th valign="top">Products:</th>
-                                                    <td valign="top">{{wetland.products.join(', ')}}</td>
-                                                </tr>
-                                            </table>
-                                            <br/>
-                                            <a href="javascript:;" ng-click="nationalData.loadWetland(wetland.id);">&#10095; Show all data from this wetland</a>
-
-                                        </div>
-
-                                    </div>
-                                </uib-accordion>
-                            </div>
-
-                            <div uib-accordion-group is-open="nationalData.statistics_open" ng-if="nationalData.lulc_layers.length > 0">
-                                <uib-accordion-heading>
-                                    National wetland statistics
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.statistics_open, 'glyphicon-chevron-right': !nationalData.statistics_open}"></i>
-                                </uib-accordion-heading>
-                                Please specify classification legend:
-                                <select id="statistics_clc" name="statistics_clc" class="selectpicker" name="clc_type" ng-model="nationalData.clc_type"  ng-options="objMake as objMake.legend for objMake in nationalData.lulc_layers">
-
-                                </select><br /><br/>
-                                Please specify year of data:
-                                <select id="statistics_year" name="statistics_year" class="selectpicker" name="year" ng-model="nationalData.year" ng-options="date for date in nationalData.clc_type.dates">
-
-                                </select><br/><br/>
-                                <button class="btn btn-primary" ng-click="nationalData.showStatistics();">Show statistics</button>
-                            </div>
-
-                            <div uib-accordion-group is-open="nationalData.maps_open" ng-if="nationalData.layers.length > 0">
-                                <uib-accordion-heading>
-                                    External national maps & layers
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.maps_open, 'glyphicon-chevron-right': !nationalData.maps_open}"></i>
-                                </uib-accordion-heading>
-                                <uib-accordion close-others="false">
-                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.layers">
-                                        <uib-accordion-heading>
-                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                        </uib-accordion-heading>
-                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
-                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
-                                        <strong>Link:</strong>
-                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
-                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="nationalData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
-                                        </div>
-                                        <div class="select" ng-if="externaldb.layers.length > 0">
-                                            <strong>Layers:</strong>
-                                            <div ng-repeat="layer in externaldb.layers"
-                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
-                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </uib-accordion>
-                            </div>
-                            <div uib-accordion-group is-open="nationalData.databases_open" ng-if="nationalData.databases.length > 0">
-                                <uib-accordion-heading>
-                                    National databases
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.databases_open, 'glyphicon-chevron-right': !nationalData.databases_open}"></i>
-                                </uib-accordion-heading>
-                                <uib-accordion close-others="false">
-                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in nationalData.databases">
-                                        <uib-accordion-heading>
-                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                        </uib-accordion-heading>
-                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
-                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
-                                        <strong>Link:</strong>
-                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
-                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="nationalData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
-                                        </div>
-                                        <div class="select" ng-if="externaldb.layers.length > 0">
-                                            <strong>Layers:</strong>
-                                            <div ng-repeat="layer in externaldb.layers"
-                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
-                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </uib-accordion>
-                            </div>
-                            <div uib-accordion-group is-open="nationalData.geoss_open">
-                                <uib-accordion-heading>
-                                    Search within GEOSS
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': nationalData.geoss_open, 'glyphicon-chevron-right': !nationalData.geoss_open}"></i>
-                                </uib-accordion-heading>
-                                <form>
-                                    <label style="margin-left:11px;" for="national_geoss_name">Filter by text: </label><br/>
-                                    <input name="national_geoss_name" id="national_geoss_name" type="text" ng-model="nationalData.geoss_text" />
-                                    <br /><br/>
-
-                                    <label style="margin-left:11px;" for="national_geoss_select">Filter by data source: </label><br/>
-                                    <select id="national_geoss_select" name="national_geoss_select" class="selectpicker" ng-model="nationalData.geoss_source" multiple data-live-search="true" title="All - To filter please select">
-                                        <optgroup label="National" ng-if="nationalData.geoss.national.length > 0">
-                                            <option ng-repeat="geoss in nationalData.geoss.national" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
-                                        </optgroup>
-                                        <optgroup label="Continental" ng-if="nationalData.geoss.continental.length > 0">
-                                            <option ng-repeat="geoss in nationalData.geoss.continental" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
-                                        </optgroup>
-                                        <optgroup label="Global" ng-if="nationalData.geoss.global.length > 0">
-                                            <option ng-repeat="geoss in nationalData.geoss.global" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
-                                        </optgroup>
-                                    </select>
-                                    <br /><br/>
-                                    <button ng-click="nationalData.externalDBSearchGeoss(null, 'CONTAINS')" class="btn btn-primary" style="cursor:pointer;">Search</button>
-                                    <div style="font-size:0.8em;font-style:italic;margin-top:5px;">Please note: Only results within the bounding box of the selected country are returned.</div>
-                                </form>
-                            </div>
-                        </uib-accordion>
-
-                    </div>
-
-                    <div role="tabpanel" class="tab-pane continental_data" id="continental" ng-controller="ContinentalDataCtrl as continentalData">
-
-                        <div class="btn-group" uib-dropdown is-open="status.isopen" style="width:100%">
-                          <button id="continent-selection" type="button" class="btn btn-primary btn-block" uib-dropdown-toggle ng-disabled="disabled" style="width:100%;background-color:#336a5c;">
-                            <span ng-if="continentalData.selectedContinent == ''">Please select a continent</span>
-                            <span ng-if="continentalData.selectedContinent != ''">Continent: {{continentalData.selectedContinent}}</span>
-                            <span class="caret" style="margin-top:0;"></span>
-                          </button>
-                          <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button" style="width:100%;text-align:center;">
-                            <li role="menuitem"><a href="#continental/{{continent}}" ng-click="continentalData.selectContinent(continent)" ng-repeat="continent in continentalData.continents">{{continent}}</a></li>
-                          </ul>
-                        </div>
-
-                        <uib-accordion close-others="false" ng-if="continentalData.selectedContinent != ''">
-                            <div uib-accordion-group is-open="continentalData.maps_open" ng-if="continentalData.layers.length > 0">
-                                <uib-accordion-heading>
-                                    Maps & layers
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.maps_open, 'glyphicon-chevron-right': !continentalData.maps_open}"></i>
-                                </uib-accordion-heading>
-                                <uib-accordion close-others="false">
-                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in continentalData.layers">
-                                        <uib-accordion-heading>
-                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                        </uib-accordion-heading>
-                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
-                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
-                                        <strong>Link:</strong>
-                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
-                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="continentelData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
-                                        </div>
-                                        <div class="select" ng-if="externaldb.layers.length > 0">
-                                            <strong>Layers:</strong>
-                                            <div ng-repeat="layer in externaldb.layers"
-                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
-                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </uib-accordion>
-                            </div>
-                            <div uib-accordion-group is-open="continentalData.databases_open" ng-if="continentalData.databases.length > 0">
-                                <uib-accordion-heading>
-                                    Databases
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.databases_open, 'glyphicon-chevron-right': !continentalData.databases_open}"></i>
-                                </uib-accordion-heading>
-                                <uib-accordion close-others="false">
-                                    <div uib-accordion-group  is-open="externaldb.open2" ng-repeat="externaldb in continentalData.databases">
-                                        <uib-accordion-heading>
-                                            <div id=externaldb_{{externaldb.ext_db_id}}" ng-if="externaldb.layers.length > 0" class="flaticon-layers"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                            <div id="externaldb_{{externaldb.ext_db_id}}" ng-if="!externaldb.layers.length" class="flaticon-internet"> {{externaldb.name}}
-                                                <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': externaldb.open2, 'glyphicon-chevron-right': !externaldb.open2}"></i></div>
-                                        </uib-accordion-heading>
-                                        <p ng-text-truncate='externaldb.description' ng-tt-chars-threshold="200"></p>
-                                        <div ng-if="externaldb.provided_info"><strong>Provided data:</strong><p ng-text-truncate='externaldb.provided_info' ng-tt-chars-threshold="200"></p></div>
-                                        <strong>Link:</strong>
-                                        <div><p><a href="{{ externaldb.online_link }}" target="_blank">{{externaldb.online_link}}</a> <span ng-if="externaldb.language != 'en'">({{ externaldb.language }})</span></p></div>
-                                        <div class="geoss-btn" ng-if="externaldb.geoss_datasource_id">
-                                            <button class="btn btn-default btn-primary" style="cursor:pointer" ng-click="continentelData.externalDBSearchGeoss(externaldb.geoss_datasource_id, 'OVERLAPS')">Search with GEOSS</button>
-                                        </div>
-                                        <div class="select" ng-if="externaldb.layers.length > 0">
-                                            <strong>Layers:</strong>
-                                            <div ng-repeat="layer in externaldb.layers"
-                                                 ng-controller="MapCurrentLayersCtrl as mcl" id="layer_vis_div_{{layer.id}}">
-                                                <input ng-if="wetlands.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}"/>
-                                                <input ng-if="wetlands.layerIdMap[layer.id]" type="checkbox" ng-click="wetlands.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked"/>
-                                                <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                <swos-layer-controls ng-if="wetlands.layers[wetlands.layerIdMap[layer.id]]" layer-hash="{{ wetlands.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </uib-accordion>
-                            </div>
-                            <div uib-accordion-group is-open="continentalData.geoss_open">
-                                <uib-accordion-heading>
-                                    Search within GEOSS
-                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': continentalData.geoss_open, 'glyphicon-chevron-right': !continentalData.geoss_open}"></i>
-                                </uib-accordion-heading>
-                                <form>
-                                    <label style="margin-left:11px;" for="continental_geoss_name">Filter by text: </label><br/>
-                                    <input name="continental_geoss_name" id="continental_geoss_name" type="text" ng-model="continentalData.geoss_text" />
-                                    <br /><br/>
-
-                                    <label style="margin-left:11px;" for="continental_geoss_select">Filter by data source: </label><br/>
-                                    <select id="continental_geoss_select" name="continental_geoss_select" class="selectpicker" ng-model="continentalData.geoss_source" multiple data-live-search="true" title="All - To filter please select">
-                                        <optgroup label="Continental" ng-if="continentalData.geoss.continental.length > 0">
-                                            <option ng-repeat="geoss in continentalData.geoss.continental" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
-                                        </optgroup>
-                                        <optgroup label="Global" ng-if="continentalData.geoss.global.length > 0">
-                                            <option ng-repeat="geoss in continentalData.geoss.global" value="{{geoss.geoss_id}}">{{geoss.name}}</option>
-                                        </optgroup>
-                                    </select>
-                                    <br /><br/>
-                                    <button ng-click="continentalData.externalDBSearchGeoss(null, 'CONTAINS')" class="btn btn-primary" style="cursor:pointer;">Search</button>
-                                    <div style="font-size:0.8em;font-style:italic;margin-top:5px;">Please note: Only results within the bounding box of the selected continent are returned.</div>
-                                </form>
-                            </div>
-                        </uib-accordion>
-
-                    </div>
-
-                    <div role="tabpanel" class="tab-pane global_data" id="global">
-
-
-
-                    </div>
-
+                <div class="right-bottom-logo">
+                    <div style="float:left">Portalentwicklung durch<br>Lehrstuhl für Fernerkundung, <br>Friedrich-Schiller-Universität Jena</div>
+                    <div style="float:right"><a href="http://www.eo.uni-jena.de" target="_blank"><img src="/media/UniJena_BildWortMarke_blue_50px.png" style="height: 50px;"></a></div>
                 </div>
             </div>
             {% endverbatim %}
@@ -988,8 +717,8 @@
 
     <script id="welcome_text" style="display:none">
         <div style="padding:15px;">
-            <p>Hier kann ein Einführungstext stehen.</p>
-            <p>Pflanzen ändern Ihr Aussehen im Jahresverlauf: Sie blühen im Frühling, produzieren Blätter und Früchte im Jahresverlauf und verfärben sich im Herbst. Dennoch gibt es Unterschiede: Ackerpflanzen sind nur eine begrenzte Zeit im Jahr vorhanden, Laubbäume haben nicht immer Blätter und Nadelbäume sind auch im Winter grün.</p>
+            <p>Pflanzen ändern ihr Aussehen im Jahresverlauf: Sie blühen im Frühling, produzieren Blätter und Früchte im Jahresverlauf und verfärben sich im Herbst. Dennoch gibt es Unterschiede: Ackerpflanzen sind nur eine begrenzte Zeit im Jahr vorhanden, Laubbäume haben nicht immer Blätter und Nadelbäume sind auch im Winter grün.</p>
+            <p>Diese Unterteilung ist sogar aus dem Weltall zu erkennen; Satellitendaten k&ouml;nnen dabei helfen, &Auml;nderungen dieser Vegetationsbereiche z.B. durch den Klimawandel zu erkennen.</p>
         </div>
     </script>
 

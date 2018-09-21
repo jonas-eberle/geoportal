@@ -1,0 +1,131 @@
+<style type="text/css">
+    table.satdata-metadata td.title {
+        font-weight: bold;
+    }
+</style>
+<h4 style="word-break: break-word;">{{ id }}</h4>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" data-target="#metadata">Metadata</a></li>
+  <li><a data-toggle="tab" data-target="#download">Download</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="metadata" class="tab-pane fade in active">
+        <table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
+            <tbody>
+            <tr>
+                <td class="title">Spacecraft identifier</td>
+                <td class="value">{{ platform }}</td>
+            </tr>
+            <tr>
+                <td class="title">Product type</td>
+                <td class="value">{{ product_type }}</td>
+            </tr>
+            <tr>
+                <td class="title">Sensing orbit direction</td>
+                <td class="value">{{ sensing_orbit_direction }}</td>
+            </tr>
+            <tr>
+                <td class="title">Sensing orbit number</td>
+                <td class="value">{{ sensing_orbit_number }}</td>
+            </tr>
+            <tr>
+                <td class="title">Time start</td>
+                <td class="value">{{ time_start }}</td>
+            </tr>
+            <tr>
+                <td class="title">Time end</td>
+                <td class="value">{{ time_end }}</td>
+            </tr>
+            <tr>
+                <td class="title">Updated</td>
+                <td class="value">{{ updated }}</td>
+            </tr>
+            <tr>
+                <td class="title">Production date</td>
+                <td class="value">{{ production_date }}</td>
+            </tr>
+            <tr>
+                <td class="title">Tile</td>
+                <td class="value">{{ tile }}</td>
+            </tr>
+            <tr>
+                <td class="title">Scene cloudcover</td>
+                <td class="value">{{ cloud_cover }}%</td>
+            </tr>
+            <tr>
+                <td class="title">Sun Zenith Angle Mean</td>
+                <td class="value">{{ sun_zenith_angle_mean }}&deg;</td>
+            </tr>
+            <tr>
+                <td class="title">Sun Azimuth Angle Mean</td>
+                <td class="value">{{ sun_azimuth_angle_mean }}&deg;</td>
+            </tr>
+            <tr>
+                <td class="title">Browse URL</td>
+                <td class="value"><a href="{{ browse_url }}" target="_blank">Link</a></td>
+            </tr>
+            <tr>
+                <td class="title">Metadata URL</td>
+                <td class="value"><a href="{{ metadata_url }}" target="_blank">Link</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="download" class="tab-pane fade">
+        <table class="table table-striped table-bordered table-hover satdata-metadata" style="display:auto;">
+        {% if download_urls.1 %}
+        <tr>
+            <td class="title">ESA Open Data Hub <span style="font-weight:normal">(Login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li><a href="{{ download_urls.1.url }}" target="_blank">{{ download_urls.1.filename }}</a></li>
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
+        {% if code_de_filename %}
+        <tr>
+            <td class="title">CODE-DE <span style="font-weight:normal">(Login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li><a href="https://code-de.org/download/{{ code_de_filename }}" target="_blank">{{ code_de_filename }}</a></li>
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td class="title">Amazon Web Services <span style="font-weight:normal">(No login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li><a href="{{ download_urls.0.url }}" target="_blank">Files overview</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="title">USGS Earth Explorer <span style="font-weight:normal">(Login required!)</span></td>
+        </tr>
+        <tr>
+            <td>
+                <strong>Support links</strong>
+                <ul>
+                    <li><a href="https://ers.cr.usgs.gov/register/" target="_blank">User registration</a></li>
+                    <li><a href="{{ download_url }}" target="_blank">List of products to download</a></li>
+                </ul>
+                <strong>Data download links</strong>
+                <ul>
+                    <li><a href="https://earthexplorer.usgs.gov/download/10880/{{usgs_id}}/STANDARD/INVSVC" target="_blank">L1C Tile in JPEG2000 format</a></li>
+                    <li><a href="https://earthexplorer.usgs.gov/download/10880/{{usgs_id}}/FRB/INVSVC" target="_blank">Full Resolution Browse in GeoTIFF format</a></li>
+                </ul>
+            </td>
+        </tr>
+        </table>
+    </div>
+</div>

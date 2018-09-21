@@ -27,8 +27,8 @@ class RegionDetail(APIView):
 
     def get(self, request, pk):
         region = self.get_object(pk)
-        layers = PhenoLayer.objects.filter(region=region)
-        data = dict(phenolayers={}, climatelayers={}, layers=[], satdatalayers=[])
+        layers = PhenoLayer.objects.filter(region=region, publishable=True)
+        data = dict(phenolayers={}, climatelayers={}, layers={}, satdatalayers=[])
         for layer in layers:
             layer_data = LayerSerializer(layer).data
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
@@ -41,14 +41,19 @@ class RegionDetail(APIView):
                     pass
             if layer.phenophase:
                 if layer.phenophase.name not in data['phenolayers']:
-                    data['phenolayers'][layer.phenophase.name] = dict(name=layer.phenophase.name, description=layer.phenophase.description, layers=[])
-                data['phenolayers'][layer.phenophase.name]['layers'].append(layer_data)
+                    image = None
+                    if layer.phenophase.image:
+                        image = layer.phenophase.image.url
+                    data['phenolayers'][layer.phenophase.name] = dict(name=layer.phenophase.name, description=layer.phenophase.description, image=image, layers=dict(insitu=[], modelliert=[], differenz=[]))
+                data['phenolayers'][layer.phenophase.name]['layers'][layer.type].append(layer_data)
             elif layer.product:
                 if layer.product.name not in data['climatelayers']:
                     data['climatelayers'][layer.product.name] = dict(name=layer.product.name, description=layer.product.description, layers=[])
                 data['climatelayers'][layer.product.name]['layers'].append(layer_data)
             else:
-                data['layers'].append(layer_data)
+                if layer.type not in data['layers']:
+                    data['layers'][layer.type] = []
+                data['layers'][layer.type].append(layer_data)
 
         climatelayers = []
         for key, value in data['climatelayers'].iteritems():
@@ -87,7 +92,7 @@ class RegionCitizenScienceData(APIView):
         region = self.get_region(region_id)
         project = self.get_project(project_id)
         start = int(request.query_params.get('start', 0))
-        max = int(request.query_params.get('maxFeatures', 10))
+        max = int(request.query_params.get('maxFeatures', -1))
 
         features = project.get_data(geom=region.geom, start=start, limit=max)
         features = [i.to_json() for i in features]
@@ -105,10 +110,11 @@ class RegionCitizenScienceDataInitial(APIView):
     def get(self, request, region_id):
         region = self.get_region(region_id)
         start = int(request.query_params.get('start', 0))
+        limit = int(request.query_params.get('limit', -1))
 
         result = dict()
         for project in CitizenScienceProject.objects.all():
-            features = project.get_data(geom=region.geom, start=start, limit=10)
+            features = project.get_data(geom=region.geom, start=start, limit=limit)
             features = [i.to_json() for i in features]
             data = dict(type="FeatureCollection", totalFeatures=len(features), features=features, crs=dict(type="name", properties=dict(name="urn:ogc:def:crs:EPSG::4326")))
             result[project.id] = data
@@ -121,7 +127,7 @@ class DWDStations(APIView):
         stations = DWDStation.objects.filter(geom__intersects=region.geom).order_by('Stationsname')
         result = []
         for data in DWDStationSerializer(stations, many=True).data:
-            if data['dataCount'] > 0:
+            if data['dataCount'] > -1:
                 result.append(data)
         return Response(result)
 
@@ -175,7 +181,14 @@ class DWDInSituData_Phase(APIView):
 
         fig = Figure()
         ax = fig.add_subplot(111)
-        data.plot(ax=ax, title=title)
+        ax.set_ylabel('Tag des Jahres')
+        ax.locator_params(integer=True)
+        
+        if len(data) == 1:
+            data.plot(ax=ax, title=title, legend=False, style='o')
+        else:
+            data.plot(ax=ax, title=title, legend=False)
+
         canvas = FigureCanvas(fig)
         response = HttpResponse(content_type='image/png')
         canvas.print_png(response)
@@ -207,14 +220,21 @@ class DWDInSituData_PhaseHistogram(APIView):
 
         if start > -1 and end > -1:
             data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id, Referenzjahr__gte=start, Referenzjahr__lte=end).to_dataframe()
+            jahr_min = start
+            jahr_max = end
         elif start > -1:
             data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id, Referenzjahr__gte=start).to_dataframe()
+            jahr_min = start
+            jahr_max = data['Referenzjahr'].max()
         elif end > -1:
             data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id, Referenzjahr__lte=end).to_dataframe()
+            jahr_min = data['Referenzjahr'].min()
+            jahr_max = end
         else:
             data = DWDInSituData.objects.filter(Objekt_id=Objekt_id, Phase_id=Phase_id).to_dataframe()
-        jahr_min = data['Referenzjahr'].min()
-        jahr_max = data['Referenzjahr'].max()
+            jahr_min = data['Referenzjahr'].min()
+            jahr_max = data['Referenzjahr'].max()
+
         observations = data['Referenzjahr'].count()
         title = dwd_id_to_name['%s_%s' % (Objekt_id, Phase_id)] + '\n%s Daten zwischen %s - %s' % (observations, jahr_min, jahr_max)
 
@@ -225,7 +245,7 @@ class DWDInSituData_PhaseHistogram(APIView):
         ax = fig.add_subplot(111)
         #data['Jultag'].plot(ax=ax, title=title)
         data['Jultag'].plot.hist(bins=25, ax=ax, title=title)
-        ax.set_xlabel('Julianischer Tag')
+        ax.set_xlabel('Tag des Jahres')
         canvas = FigureCanvas(fig)
         response = HttpResponse(content_type='image/png')
         canvas.print_png(response)

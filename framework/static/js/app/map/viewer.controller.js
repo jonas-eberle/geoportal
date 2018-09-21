@@ -1,3 +1,53 @@
+var grid_to_label = {};
+grid_to_label[1] = '111 - Continuous urban fabric';
+grid_to_label[2] = '112 - Discontinuous urban fabric';
+grid_to_label[3] = '121 - Industrial or commercial units';
+grid_to_label[4] = '122 - Road and rail networks and associated land';
+grid_to_label[5] = '123 - Port areas';
+grid_to_label[6] = '124 - Airports';
+grid_to_label[7] = '131 - Mineral extraction sites';
+grid_to_label[8] = '132 - Dump sites';
+grid_to_label[9] = '133 - Construction sites';
+grid_to_label[10] = '141 - Green urban areas';
+grid_to_label[11] = '142 - Sport and leisure facilities';
+grid_to_label[12] = '211 - Non-irrigated arable land';
+grid_to_label[13] = '212 - Permanently irrigated land';
+grid_to_label[14] = '213 - Rice fields';
+grid_to_label[15] = '221 - Vineyards';
+grid_to_label[16] = '222 - Fruit trees and berry plantations';
+grid_to_label[17] = '223 - Olive groves';
+grid_to_label[18] = '231 - Pastures';
+grid_to_label[19] = '241 - Annual crops associated with permanent crops';
+grid_to_label[20] = '242 - Complex cultivation patterns';
+grid_to_label[21] = '243 - Land principally occupied by agriculture, with significant areas of natural vegetation';
+grid_to_label[22] = '244 - Agro-forestry areas';
+grid_to_label[23] = '311 - Broad-leaved forest';
+grid_to_label[24] = '312 - Coniferous forest';
+grid_to_label[25] = '313 - Mixed forest';
+grid_to_label[26] = '321 - Natural grasslands';
+grid_to_label[27] = '322 - Moors and heathland';
+grid_to_label[28] = '323 - Sclerophyllous vegetation';
+grid_to_label[29] = '324 - Transitional woodland-shrub';
+grid_to_label[30] = '331 - Beaches, dunes, sands';
+grid_to_label[31] = '332 - Bare rocks';
+grid_to_label[32] = '333 - Sparsely vegetated areas';
+grid_to_label[33] = '334 - Burnt areas';
+grid_to_label[34] = '335 - Glaciers and perpetual snow';
+grid_to_label[35] = '411 - Inland marshes';
+grid_to_label[36] = '412 - Peat bogs';
+grid_to_label[37] = '421 - Salt marshes';
+grid_to_label[38] = '422 - Salines';
+grid_to_label[39] = '423 - Intertidal flats';
+grid_to_label[40] = '511 - Water courses';
+grid_to_label[41] = '512 - Water bodies';
+grid_to_label[42] = '521 - Coastal lagoons';
+grid_to_label[43] = '522 - Estuaries';
+grid_to_label[44] = '523 - Sea and ocean';
+grid_to_label[48] = '999 - NODATA';
+grid_to_label[49] = '990 - UNCLASSIFIED LAND SURFACE';
+grid_to_label[50] = '995 - UNCLASSIFIED WATER BODIES';
+grid_to_label[255] = '990 - UNCLASSIFIED';
+
 (function() {
     'use strict';
 
@@ -190,8 +240,10 @@
                         }
                         break;
                     default:
-                        var output = '<h3>Properties</h3><ul>';
-                        $.each(feature.getKeys(), function () {
+                        var output = '<h4 style="font-size:20px">Eigenschaften</h4><ul>';
+						var keys = feature.getKeys();
+						keys.sort();
+                        $.each(keys, function () {
                             if (this !== 'geometry') {
                                 output += '<li><strong>' + this + ': </strong>' + feature.get(this) + '</li>';
                             }
@@ -224,7 +276,7 @@
         });
 
         $scope.$on('turn_off_request_info', function () {
-            if (mv.infoStatus){
+            if (mv.data.infoStatus){
                 requestInfo();
             }
         });
@@ -286,14 +338,14 @@
 
         function requestInfo() {
 
-            if (mv.infoStatus === false) {
-                 mv.infoStatus = true;
+            if (mv.data.infoStatus === false) {
+                 mv.data.infoStatus = true;
 
                 //Add Feature Layer for points to map
                 mapviewer.pointFeatureLayer("featureRequest", "add");
                 var point_count = 0;
 
-                mv.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
+                mv.data.infoEventKey = mapviewer.map.on('singleclick', function (evt) {
                     var viewResolution = mapviewer.map.getView().getResolution();
                     var lonlat = ol.proj.transform(evt.coordinate, mapviewer.map.getView().getProjection(), 'EPSG:4326');
 
@@ -325,14 +377,18 @@
                         }
 
                         // Request JSON for SWOS layer
-                        if (String(name).includes("SWOS")){
+                        //if (String(name).includes("SWOS")){
+						if (layer.get('layerObj') == undefined) {
+							return;
+						}
+						if (layer.get('layerObj').ogc_link.startsWith('http://swos-services.ssv-hosting.de')) {
                             var info_format = 'application/json';
                         }
                         // Request Text for all other
                         else{
                             var info_format = 'text/html';
                         }
-
+						
                         // Works only for WMS layers
                         try {
                             var source = layer.getSource();
@@ -450,12 +506,12 @@
                     }
                 });
             } else {
-                mv.infoStatus = false;
-                ol.Observable.unByKey(mv.infoEventKey);
+                mv.data.infoStatus = false;
+                ol.Observable.unByKey(mv.data.infoEventKey);
                 //Remove Feature Layer for points to map
                 mapviewer.pointFeatureLayer('featureRequest',"remove");
             }
-            mapviewer.selectInteraction.setActive(!mv.infoStatus);
+            mapviewer.selectInteraction.setActive(!mv.data.infoStatus);
         }
 
         function showFeatureRequestResult(coordinate, data) {
@@ -472,155 +528,27 @@
                         continue;
                     }
 
-                    console.log(output, data["json"][i]["name"]);
+                    //console.log(output, data["json"][i]["name"]);
 
                     if ("features" in output && output["features"].length == 0) {
                         // do not show layer without result
                     }
 
-                    else if (data["json"][i]["name"].includes("LULC RAMSAR-CLC")) {
-                        var property_value;
-                        var legend_value = Math.max(output["features"][0]["properties"]["CLC_L1"], output["features"][0]["properties"]["CLC_L2"], output["features"][0]["properties"]["CLC_L3"], output["features"][0]["properties"]["CLC_L4"]);
-                        $.each(lulcLegend.CLC, function (index, value) {
-                            if (value[0] == legend_value) {
-                                property_value = value[2];
-                                return false;
-                            }
-                        });
+                    else if (data["json"][i]["name"].includes("Niederschlag")) {
                         table_values = [];
-                        table_values["CLC class"] = property_value;
-                        table_values["Area (ha)"] = output["features"][0]["properties"]["Area_ha"];
-                        table_values["Perimeter (m)"] = output["features"][0]["properties"]["Perimeter"];
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-
-                    }
-                    else if (data["json"][i]["name"].includes("LULC MAES")) {
-                        var property_value;
-                        var legend_value = Math.max(output["features"][0]["properties"]["MAES_L1"], output["features"][0]["properties"]["MAES_L2"], output["features"][0]["properties"]["MAES_L3"], output["features"][0]["properties"]["MAES_L4"]);
-                        $.each(lulcLegend.MAES, function (index, value) {
-                            if (value[0] == legend_value) {
-                                property_value = value[2];
-                                return false;
-                            }
-                        });
-                        table_values = [];
-                        table_values["MAES class"] = property_value;
-                        table_values["Area (ha)"] = output["features"][0]["properties"]["Area_ha"];
-                        table_values["Perimeter (m)"] = output["features"][0]["properties"]["Perimeter"];
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-
-                    }
-                    else if (data["json"][i]["name"].includes("LULCC_L")) {
-                        var property_value;
-                        var legend_value = Math.max(output["features"][0]["properties"]["MAES_L1"], output["features"][0]["properties"]["MAES_L2"], output["features"][0]["properties"]["MAES_L3"], output["features"][0]["properties"]["MAES_L4"]);
-
-                        table_values = [];
-                        table_values["Land Use Land Cover Change code"] = output["features"][0]["properties"]["ChangeCode"];
-                        table_values["Area (ha)"] = output["features"][0]["properties"]["Area_ha"];
-                        table_values["Perimeter (m)"] = output["features"][0]["properties"]["Perimeter"];
+                        table_values["Pixelwert"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(2) + ' mm';
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
-                    else if (data["json"][i]["name"].includes("LULCC S")) {
+                    else if (data["json"][i]["name"].includes("Temperatur")) {
                         table_values = [];
-                        table_values["Frequency of change"] = output["features"][0]["properties"]["GRAY_INDEX"];
+                        table_values["Pixelwert"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(2) + ' &deg;C';
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
-                    else if (data["json"][i]["name"].includes("Sentinel-1")) {
+                    else if (data["json"][i]["name"].includes("Corine Landcover")) {
                         table_values = [];
-
-                        if (data["json"][i]["name"].includes("Max")) {
-                            table_values["Maximum value over one year in dB"] = output["features"][0]["properties"]["GRAY_INDEX"];
-                        }
-                        if (data["json"][i]["name"].includes("Min")) {
-                            table_values["Minimum value over one year in dB"] = output["features"][0]["properties"]["GRAY_INDEX"];
-                        }
-                        if (data["json"][i]["name"].includes("Mean")) {
-                            table_values["Maen value over one year in dB"] = output["features"][0]["properties"]["GRAY_INDEX"];
-                        }
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("WQ CDOM")) {
-                        table_values = [];
-                        var value;
-                        if (output["features"][0]["properties"]["GRAY_INDEX"] == -1) {
-                            value = "no result"
-                        }
-                        else {
-                            value = parseFloat(output["features"][0]["properties"]["GRAY_INDEX"]).toFixed(3);
-                        }
-                        table_values["Colored dissolved organic matter (m<sup>-1</sup>)"] = value;
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("WQ CHL")) {
-                        table_values = [];
-                        var value;
-                        if (output["features"][0]["properties"]["GRAY_INDEX"] == -1) {
-                            value = "no result"
-                        }
-                        else {
-                            value = parseFloat(output["features"][0]["properties"]["GRAY_INDEX"]).toFixed(3);
-                        }
-                        table_values["Chlorophyll (µg/l)"] = value;
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("WQ TSM")) {
-                        table_values = [];
-                        var value;
-                        if (output["features"][0]["properties"]["GRAY_INDEX"] == -1) {
-                            value = "no result"
-                        }
-                        else {
-                            value = parseFloat(output["features"][0]["properties"]["GRAY_INDEX"]).toFixed(3);
-                        }
-                        table_values["Suspended sediments (TSM)(mg/l)"] = value;
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("SWD TD OP")) {
-                        var swd_class = [];
-                        swd_class[1] = "permanently flooded";
-                        swd_class[2] = "temporarly flooded";
-                        swd_class[3] = "never flooded";
-
-                        table_values = [];
-                        table_values["SWD class"] = swd_class[output["features"][0]["properties"]["PALETTE_INDEX"]];
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("SWD TF OP")) {
-                        table_values = [];
-                        table_values["Temporal flood frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("SWD TF SAR")) {
-                        table_values = [];
-                        table_values["Temporal flood frequency (%)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("LSTT")) {
-                        table_values = [];
-                        table_values["Land Surface Temperature Trend (°C)"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("InvDel")) {
-                        table_values = [];
-                        table_values["Probability for wetlands"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
-
-                        result += createHTML(table_values, data["json"][i]["name"]);
-                    }
-                    else if (data["json"][i]["name"].includes("FloodReg")) {
-                        table_values = [];
-                        table_values["Estimated capacity for flood regulation"] = output["features"][0]["properties"]["GRAY_INDEX"].toFixed(3);
+                        table_values["Klasse"] = grid_to_label[output["features"][0]["properties"]["GRAY_INDEX"]];
 
                         result += createHTML(table_values, data["json"][i]["name"]);
                     }
@@ -642,7 +570,12 @@
 
             result += '<div style="display: table; padding-left: 20px;">';
             for (var index in table_values) {
-                result += '<div style="display: table-row"><div style="padding-right: 15px;display: table-cell">' + index + ':</div><div style="display: table-cell">' + table_values[index] + '</div></div>';
+				var label = index;
+				if (index == 'GRAY_INDEX') {
+					table_values[index] = table_values[index].toFixed(2);
+					label = 'Pixelwert';                    
+				}
+                result += '<div style="display: table-row"><div style="padding-right: 15px;display: table-cell">' + label + ':</div><div style="display: table-cell">' + table_values[index] + '</div></div>';
             }
             result += '</div></p>';
             return result;

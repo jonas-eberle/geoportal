@@ -1,8 +1,9 @@
 @media (min-width: 768px) {
     #sidebar > .tab-content {
-        bottom: 0;
+        bottom: 0px;
     }
 }
+
 
 .list-group {
     margin-bottom: 0;
@@ -596,7 +597,7 @@ button.btn-loadmore:hover {
 }
 
 .anno-emphasise-target {
-  z-index: 1601 !important !important;
+  z-index: 1601 !important;
 }
 
 .anno-exit-left {

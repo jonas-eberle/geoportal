@@ -124,13 +124,13 @@
             
             var wetlandsCtrlScope = angular.element(document.getElementById('sidebar')).scope();
             bootbox.dialog({
-                title: 'Welcome to the GEO Wetlands Community Portal',
+                title: 'Willkommen zum PhaenOPT Portal',
                 message: $compile($('#welcome_text').html())(wetlandsCtrlScope),
                 backdrop: true,
                 onEscape: true,
                 className: 'welcome-dialog',
                 buttons: {
-                    confirm: {
+                    /*confirm: {
                         label: 'Start Tour',
                         className: 'hidden-xs starttour',
                         callback: function () {
@@ -141,8 +141,8 @@
                                 rootScope.$broadcast("start_tour");
                             });
                         }
-                    },
-                    close: {label: 'Close'}
+                    },*/
+                    close: {label: 'Schlie&szlig;en'}
                 }
             });
         }

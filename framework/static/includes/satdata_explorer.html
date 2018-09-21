@@ -32,7 +32,7 @@
                     <slider class="slider" ng-model="wsdc.filterByCloud" min="0" max="100" step="1" style="width:95%;"></slider>
                 </div>
                 
-                <div class="sun_slider">
+                <!--<div class="sun_slider">
                     <div class="elevation" ng-if="wsdc.filter_sun_elevation_show">
                         Sun Elevation:<br />
                         <slider class="slider" ng-model="wsdc.filterBySunElevation" min="-90" max="90" step="1" range="true" style="width:95%;"></slider>
@@ -45,7 +45,7 @@
                         Sun Azimuth Angle:<br />
                         <slider class="slider" ng-model="wsdc.filterBySunAzimuth" min="-180" max="180" step="1" range="true" style="width:95%;"></slider>
                    </div>
-                </div>
+                </div>-->
             </div>
     
             <div uib-accordion-group is-open="wsdc.filter_date">
@@ -84,12 +84,12 @@
 		        <!--<uib-accordion close-others="false">
 		            <div uib-accordion-group ng-repeat="group in wsdc.groups"  heading="Results: {{wsdc.groupBy}} {{group}}">-->
 					<!-- filter ng-repeat:  | filterData:wsdc.filterByDataset:wsdc.filterByTile:wsdc.time_start_begin:wsdc.time_start_end:wsdc.filterByCloud:wsdc.filterBySunZenith:wsdc.filterBySunAzimuth:wsdc.groupBy:group -->
-		                <div class="satdata-scene" ng-animate="'animate'" ng-class="{selected: scene.selected}" ng-repeat="scene in wsdc.data_filtered.features | orderBy: 'time_start' | limitTo: wsdc.limitTo">
+		                <div class="satdata-scene" ng-animate="'animate'" ng-class="{selected: scene.selected}" ng-repeat="scene in wsdc.data_filtered.features | orderBy: '-time_start' | limitTo: wsdc.limitTo">
 		                    <img ng-src="{{scene.thumb_url}}" width="145" height="145" ng-click="wsdc.openMetadata(scene)" style="cursor:pointer;" uib-tooltip="Click here to open metadata and data download links" ng-mouseover="wsdc.onmouseover(scene)" ng-mouseleave="wsdc.onmouseleave()" />
 		                    <div class="satdata-info">
 		                        {{scene.dataset}}: {{scene.time_start | limitTo:10}}<br/>
-		                        Tile: {{scene.tile}}&nbsp;&nbsp;Cloud: {{scene.cloud_cover | limitTo:5}}%
-		                        <div ng-if="scene.senhub_wms_url != 'nan'">
+		                        <span ng-if="scene.tile != 'nan' && scene.tile != undefined">Tile: {{scene.tile}}&nbsp;&nbsp;</span><span ng-if="scene.cloud_cover != 'nan' && scene.cloud_cover != undefined">Cloud: {{scene.cloud_cover | limitTo:5}}%</span>
+		                        <div ng-if="scene.senhub_wms_url != 'nan' && scene.senhub_wms_url != undefined">
 		                            <button ng-click="wsdc.addWMSLayer(scene)">Add layer to map</button>
 		                        </div>
 		                    </div>

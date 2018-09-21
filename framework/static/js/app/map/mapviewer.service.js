@@ -11,6 +11,7 @@
             'baseLayers': [],
             'layers': {},
             'layersTime': [],
+            'selectedTime': null,
             'layersMeta': [],
             'datacatalog': [],
             'sliderValues': {},
@@ -28,9 +29,11 @@
             'data': {
                 'layersCount': 0,
                 'addexternallayer': false,
-                'canRequestFeatureInfo': false
+                'canRequestFeatureInfo': false,
+                'infoStatus': false,
+                'infoEventKey': null
             },
-            'maxExtent': [0, 0, -11, 70],
+            'maxExtent': [9.8778, 50.2042, 12.6532, 51.6491],
             'showExtentInfo': [],
 
             /* functions */
@@ -76,6 +79,7 @@
                 //gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('map'));
                 
                 view.on('change:resolution', function() {
+                    $rootScope.$broadcast('mapviewer.map_zoom', view.getZoom());
                     if (view.getZoom() >= _this.zoom_max) {
                         angular.element('#zoomInButton').addClass('disabled');
                     } else {
@@ -97,6 +101,9 @@
                     } else {
                         $('#wetland_legend').hide();
                     }
+                    try {
+                        $('.geospatial_data ul.nav.nav-tabs li.active a').click();   
+                    } catch(e) {}
                 });
 
                 var baseLayers = [];
@@ -511,7 +518,11 @@
                 layer.id = Math.random().toString(36).substring(2, 15);
                 this.sliderValues[layer.id] = 100;
                 if (layer.ogc_times instanceof Array) {
-                    this.selectedLayerDates[layer.id] = layer.ogc_times[layer.ogc_times.length-1];
+                    if (this.selectedTime != null) {
+                        this.selectedLayerDates[layer.id] = this.selectedTime;
+                    } else {
+                        this.selectedLayerDates[layer.id] = layer.ogc_times[layer.ogc_times.length-1];
+                    }
                 }
 
                 // true: button is already enabled OR layer that allows GetFeatureInfoRequests is added
@@ -524,13 +535,13 @@
 
                 if (layer.ogc_time === true) {
                     this.layersTime.push(layer.id);
-                    var $slider = $('#slider');
+                    /*var $slider = $('#slider');
                     $slider.find(".tooltip.bottom").css('margin-top', '20px');
                     $('.ol-attribution, .ol-scale-line').css('bottom', '70px');
                     $('.ol-mouse-position').css('bottom', '100px');
                     $("#gmap").find("img[src*='google_white']").parent().parent().parent().css('bottom', '60px');
                     $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '60px');
-                    $slider.show();
+                    $slider.show();*/
                 }
 
                 this.layersMeta.unshift(layer);
@@ -540,7 +551,7 @@
                 $rootScope.$broadcast("mapviewer.layeradded", olLayer);
                 //adjust current zoom level
                 if (layer.min_zoom != null && layer.min_zoom > this.map.getView().getZoom()){
-                    this.map.getView().setZoom(layer.min_zoom)
+                    //this.map.getView().setZoom(layer.min_zoom
                 }
                 if (layer.max_zoom != null && layer.max_zoom < this.map.getView().getZoom()){
                     this.map.getView().setZoom(layer.max_zoom)
@@ -554,6 +565,7 @@
                         return i;
                     }
                 }
+                return -1;
             },
             'removeLayerByDjangoID': function(layer_id) {
                 for (var i=0; i<this.layersMeta.length; i++) {
@@ -588,13 +600,17 @@
                     var timeIndex = jQuery.inArray(id, this.layersTime);
                     if (timeIndex > -1) {
                         this.layersTime.splice(timeIndex, 1);
-                        var $slider = $("#slider");
-                        $slider.hide();
-                        $slider.find('.tooltip.bottom').css('margin-top', '3px');
-                        $('.ol-attribution, .ol-scale-line').css('bottom', '5px');
-                        $('.ol-mouse-position').css('bottom', '33px');
-                        $("#gmap").find("img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
-                        $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
+                        /*
+                        if (this.layersTime.length == 0) {
+                            var $slider = $("#slider");
+                            $slider.hide();
+                            $slider.find('.tooltip.bottom').css('margin-top', '3px');
+                            $('.ol-attribution, .ol-scale-line').css('bottom', '5px');
+                            $('.ol-mouse-position').css('bottom', '33px');
+                            $("#gmap").find("img[src*='google_white']").parent().parent().parent().css('bottom', '0px');
+                            $('#gmap .gm-style-cc, #gmap .gmnoprint').css('bottom', '0px');
+                        }
+                        */
                     }
 
                     Attribution.update(jQuery.extend({}, this.layers, [this.baseLayers[this.currentBaseLayerIndex]]));
@@ -627,11 +643,17 @@
             },
             'changeWMSTime': function(time) {
                 var _this = this;
+                _this.selectedTime = time;
                 $.each(this.layersTime, function() {
                     var layer = _this.layers[this];
                     var source = layer.getSource();
                     source.updateParams({'TIME':time+'/'+time});
+                    var layer_id = layer.get('layerObj').id;
+                    if (_this.selectedLayerDates[layer_id]) {
+                        _this.selectedLayerDates[layer_id] = time;
+                    }
                 });
+                $('.geospatial_data ul.nav.nav-tabs li.active a').click();
             },
             'initialize': function(id, mapElement, baseLayer) {
                 var mapviewer = this;
@@ -728,7 +750,7 @@
                             i++;
                         });
 
-                        $slider.find(".input").slider({
+                        mapviewer.slider = $slider.find(".input").slider({
                             tooltip: 'always',
                             handle: 'round',
                             ticks: ticks,
@@ -743,7 +765,11 @@
                             mapviewer.changeWMSTime(times[e.value]);
                         });
                         $slider.find(".slider .tooltip-main").removeClass('top').addClass('bottom');
-                        $slider.hide();
+                        $slider.find(".tooltip.bottom").css('margin-top', '20px');
+                        $('.ol-attribution, .ol-scale-line').css('bottom', '65px !important');
+                        $('.ol-mouse-position').css('bottom', '65px !important');
+                        $slider.show();
+                        mapviewer.slider.slider('refresh');
                     }
 
                 }, function(error) {

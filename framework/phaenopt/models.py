@@ -23,8 +23,9 @@ class Product(models.Model):
 
 class Pheno(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
+    image = models.FileField("Image", upload_to="pheno", null=True, blank=True, help_text="Upload phase image")
 
     def __unicode__(self):
         return u"%s" % (self.name)
@@ -34,23 +35,33 @@ class PhenoLayer(Layer):
     region = models.ForeignKey(Region, related_name="layer_region", verbose_name="Region", blank=True, null=True)
     product = models.ForeignKey(Product, related_name="layer_product", verbose_name="Product", blank=True, null=True)
     phenophase = models.ForeignKey(Pheno, related_name="layer_phenophase", verbose_name="Phenophase", blank=True, null=True)
-    type = models.CharField(max_length=20, choices=(('time-series', 'time-series'), ('multi-annual state', 'multi-annual state'), ('overview', 'overview')),help_text="Type of layer", blank=True, null=True)
+    type = models.CharField(max_length=20, choices=(('insitu', 'insitu'), ('modelliert', 'modelliert'), ('differenz', 'differenz'), ('allgemein', 'allgemein'), ('geoproxy', 'geoproxy')),help_text="Untergliederung der Phenophasen-Layer", blank=True, null=True)
+
+    @property
+    def alternate_title(self):
+        if ':' in self.title:
+            return self.title.split(':')[1].strip()
+        else:
+            return self.title
 
 
 class CitizenScienceProject(ExternalDatabase):
     order = models.PositiveIntegerField(default=0)
     data_url = models.CharField(max_length=255, blank=True, null=True)
 
-    def get_data(self, start=0, limit=10, geom=None):
+    def get_data(self, start=0, limit=-1, geom=None):
         if geom:
-            all_data = CitizenScienceData.objects.filter(project=self, geom__intersects=geom).order_by('-pub_date')
+            data = CitizenScienceData.objects.filter(project=self, geom__intersects=geom).order_by('-pub_date')
         else:
-            all_data = CitizenScienceData.objects.filter(project=self).order_by('-pub_date')
-        end = start+limit
-        if end > len(all_data):
-            end = len(all_data)
+            data = CitizenScienceData.objects.filter(project=self).order_by('-pub_date')
 
-        data = all_data[start:end]
+        if limit > -1:
+            end = start+limit
+            if end > len(data):
+                end = len(data)
+
+            data = data[start:end]
+
         return data
 
 class CitizenScienceProjectSerializer(serializers.ModelSerializer):

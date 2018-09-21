@@ -19,6 +19,7 @@
         mcl.download = downloadLayer;
         mcl.layersMeta = mapviewer.layersMeta;
         mcl.mapviewerdata = mapviewer.data;
+        mcl.current_map_zoom = -1;
         mcl.newLayerIndex = -1;
         mcl.prepareIndex = prepareIndex;
         mcl.removeAllLayers = removeAllLayers;
@@ -46,6 +47,14 @@
         mcl.requestShowExtentInfo = requestShowExtentInfo;
         mcl.extentInfo = "<b>Hint</b>: The product does not match the site area. Possible reasons are: (i) The site area changed later due to user requirements. (ii) The area covered by the product is limited due to the availability of input data. (iii) The product shows a derived subset (e.g. indicator). ";
 
+        $scope.$on("mapviewer.map_zoom", function(event, zoom) {
+            mcl.current_map_zoom = mapviewer.map.getView().getZoom();
+        });
+
+        $scope.$on("mapviewer.map_created", function() {
+            mcl.current_map_zoom = mapviewer.map.getView().getZoom();
+        });
+
         $scope.$on("mapviewer.layeradded", function (event, olLayer) {
             mcl.showToggleButton = true;
             if (olLayer.get('layerObj').hasOwnProperty('layers')) {
@@ -64,6 +73,10 @@
             if (mapviewer.data.layersCount < 1) {
                 mcl.showToggleButton = false;
             }
+        });
+
+        $scope.$on("mapviewer.wms_time_changed", function(event, time){
+
         });
 
         //--------------------------------------------------------------------------------------------------------------

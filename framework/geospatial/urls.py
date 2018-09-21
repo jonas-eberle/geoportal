@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^region/(?P<pk>[0-9]+)$', views.RegionDetail.as_view(), name='region_detail'),
     url(r'^region/(?P<pk>[0-9]+)/satdata.json$', views.SatelliteData.as_view(), name='region_detail'),
     url(r'^region/(?P<pk>[0-9]+)/satdata/metadata$', views.SatelliteMetadata.as_view(), name='wetland_satmetadata'),
+    url(r'^region/(?P<pk>[0-9]+)/satdata/results', views.SatelliteMetadataExport.as_view(), name="download_satdata_results"),
 ]

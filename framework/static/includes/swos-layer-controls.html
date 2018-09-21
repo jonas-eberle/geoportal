@@ -1,57 +1,55 @@
 <div class="item_catalog">
     <div class="item_desc">
-        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Hide layer"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Karte ausblenden"
                 type="button"  ng-click="mcl.changeVisibility(slc.layer.id, $event)" ng-if="mcl.getVisibility(slc.layer.id)" class="btn btn-default btn-legend" aria-label="Left Align"><i
                 class="fa fa-eye fa-lg"></i></button>
-        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Show layer"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Karte einblenden"
                 type="button"  ng-click="mcl.changeVisibility(slc.layer.id, $event)" ng-if="!mcl.getVisibility(slc.layer.id)" class="btn btn-default btn-legend" aria-label="Left Align"><i
                 class="fa fa-eye-slash fa-lg"></i></button>
         <slider class="slider" ng-model="mcl.sliderValues[slc.layer.id]" min="0" max="100" step="1" style="width:75%;margin-left: 10px;"
                 on-slide="mcl.changeOpacity(slc.layer.id)" on-stop-slide="mcl.changeOpacity(slc.layer.id)" formatter="mcl.sliderTooltipFormatter(slc.layer.id)"></slider>
     </div>
 
-        <div ng-if="layer.ogc_times">Specify date: <select ng-model="mcl.selectedLayerDates[slc.layer.id]"
+    <div ng-if="layer.min_zoom != null && layer.min_zoom > mcl.current_map_zoom" style="font-weight:bold;color:red;">
+        Zur Anzeige dieses Layers bitte weiter hineinzoomen!
+    </div>
+	
+	<div ng-if="layer.max_zoom != null && layer.max_zoom < mcl.current_map_zoom" style="font-weight:bold;color:red;">
+        Zur Anzeige dieses Layers bitte weiter herauszoomen!
+    </div>
+
+        <div ng-if="layer.ogc_times">Datum ausw&auml;hlen: <select ng-model="mcl.selectedLayerDates[slc.layer.id]"
                                                        ng-change="mcl.updateLayer(slc.layer.id)"
                                                        ng-options="o as o for o in layer.ogc_times"></select></div>
-        <div ng-if="layer.layers">Specify layer: <select ng-model="mcl.selectedLayerNames[slc.layer.id]"
+        <div ng-if="layer.layers">Karte ausw&auml;hlen: <select ng-model="mcl.selectedLayerNames[slc.layer.id]"
                                                        ng-change="mcl.updateLayerName(slc.layer.id)"
                                                        ng-options="o as o for o in layer.layers"></select></div>
     </div>
     <div class="item_icon" style="margin-top: 10px;">
 
-        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Show/Hide legend"
+        <button tooltip-append-to-body="true" tooltip-placement="bottom"  uib-tooltip="Legende anzeigen/ausblenden"
                 type="button" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors"
                 ng-click="mcl.toggleLegend(slc.layer)" class="btn btn-default btn-legend" aria-label="Left Align"><i
                 class="fa fa-list fa-lg"></i></button>
-        <button ng-controller="DiagramCtrl as diagram" ng-if="layer.legend_colors && (layer.legend_colors[0].size || layer.legend_colors[0].size == 0)" tooltip-placement="bottom"  uib-tooltip="Show statistic"
+        <button ng-controller="DiagramCtrl as diagram" ng-if="layer.legend_colors && (layer.legend_colors[0].size || layer.legend_colors[0].size == 0)" tooltip-placement="bottom"  uib-tooltip="Statistik anzeigen"
                 type="button" ng-click="diagram.onclickCreate(layer.id);"
                 class="btn btn-default hidden-xs btn-legend" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
-        <button ng-controller="DiagramCtrl as diagram"  ng-if="layer.statistic == 'time'" tooltip-placement="bottom"  uib-tooltip="Create time series"
+        <button ng-controller="DiagramCtrl as diagram"  ng-if="layer.statistic == 'time'" tooltip-placement="bottom"  uib-tooltip="Pixelzeitreihe extrahieren"
                 type="button" ng-click="mcl.toggleStatistic(slc.layer);diagram.requestTimeSeries(layer);"
                 class="btn btn-default hidden-xs btn-legend" aria-label="Left Align"><i class="fa fa-line-chart fa-lg"></i></button>
-<!--        <button tooltip-placement="bottom"  uib-tooltip="Download data" ng-if="layer.downloadable" type="button"
-                ng-click="mcl.download(slc.layer)" class="btn btn-default" aria-label="Left Align"><i
-                class="fa fa-download fa-lg"></i></button>-->
-        <button ng-if="slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Show metadata" type="button" ng-click="mcl.showMetadata(slc.layer)"
-                class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>
+        <!--<button ng-if="slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Metadaten aufrufen" type="button" ng-click="mcl.showMetadata(slc.layer)"
+                class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-file-text-o fa-lg"></i></button>-->
         <button tooltip-placement="bottom"  uib-tooltip="Show/Hide station list" type="button"
                 ng-if="layer.ogc_type == 'SOS'" ng-click="mcl.toggleStations(slc.layer)" class="btn btn-default btn-legend"
                 aria-label="Left Align"><i class="fa fa-list-ol fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Zoom to layer" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
+        <button tooltip-placement="bottom"  uib-tooltip="Auf Karte zoomen" type="button" ng-click="mcl.zoomToLayer(slc.layer.id)"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-search fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Download" type="button" ng-if="layer.downloadable && slc.layer.virtual_layer != 1" ng-click="wetlands.download(slc.layer)"
+        <button tooltip-placement="bottom"  uib-tooltip="Herunterladen" type="button" ng-if="layer.downloadable && slc.layer.virtual_layer != 1" ng-click="wetlands.download(slc.layer)"
                 class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-download fa-lg"></i></button>
-        <button tooltip-placement="bottom"  uib-tooltip="Share link to dataset" type="button" ng-click="mcl.shareLink(slc.layer.django_id)" ng-if="!slc.hideShare && slc.layer.virtual_layer != 1"
-                class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>
-        <button ng-if="layer.story_line.length == 1 && slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Story line" type="button" ng-click="storyline.show_story_line(layer.story_line[0].story_line, layer.story_line[0].order)"
-                class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-info fa-lg"></i></button>
-        <button ng-if="layer.story_line.length > 1 && slc.layer.virtual_layer != 1" tooltip-placement="bottom"  uib-tooltip="Storyline" type="button" ng-click="storyline.setVisibilityStoryLine()"
-                class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-info fa-lg"></i></button>
+        <!--<button tooltip-placement="bottom"  uib-tooltip="Karte teilen" type="button" ng-click="mcl.shareLink(slc.layer.django_id)" ng-if="!slc.hideShare && slc.layer.virtual_layer != 1"
+                class="btn btn-default btn-legend" aria-label="Left Align"><i class="fa fa-share-alt fa-lg"></i></button>-->
         <div ng-if="show_story_lines">Storylines:</div>
         <div ng-if="show_story_lines" ng-repeat="story_line in layer.story_line"><a href="#" ng-click="storyline.show_story_line(story_line.story_line, story_line.order)">{{ story_line.title }}</a></div>
-        <!--<button tooltip-placement="bottom"  uib-tooltip="Remove layer" type="button"
-                ng-click="mcl.removeLayer(slc.layer.id, $index, slc.layer.django_id)" class="btn btn-default"
-                aria-label="Left Align"><i class="fa fa-times fa-lg"></i></button>-->
     </div>
 </div>
 <div class="item_stations" ng-if="slc.layer.ogc_type == 'SOS'" ng-hide="!slc.layer.showStations">
@@ -66,7 +64,7 @@
      <p ng-text-truncate='mcl.extentInfo' ng-tt-chars-threshold="100"></p>
 </div>
 <div class="item_legend" style="margin-top:5px;" ng-if="layer.legend_url || layer.legend_graphic || layer.legend_colors" ng-hide="!slc.layer.showLegend">
-    <div><strong>Legend</strong></div>
+    <div><strong>Legende</strong></div>
     <div style="" ng-if="layer.legend_info != ''">{{ layer.legend_info }}</div>
     <img ng-if="!layer.legend_colors && layer.legend_url" href="{{ slc.layer.legend_url }}.jpg" ng-src="{{ slc.layer.legend_url }}" alt="Layer legend" style="max-width:100%"/>
     <img ng-if="!layer.legend_colors && layer.legend_graphic && !layer.legend_url" href="{{ layer.legend_graphic }}" ng-src="{{ layer.legend_graphic }}" alt="Layer legend" style="max-width:100%"/>

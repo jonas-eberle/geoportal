@@ -179,11 +179,11 @@ class SatelliteMetadataExport(APIView):
 
         # SQLite
         os.system('ogr2ogr -f "CSV" -sql "%s" %s.csv %s' % (
-        sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite'))
+            sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(region.id) + '.sqlite'))
         os.system('ogr2ogr -f "ESRI Shapefile" -sql "%s" %s.shp %s' % (
-        sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite'))
+            sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(region.id) + '.sqlite'))
         os.system('ogr2ogr -f "GeoJSON" -sql "%s" %s.json %s' % (
-        sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(wetland.id) + '.sqlite'))
+            sql_query, filename, settings.MEDIA_ROOT + 'cache/satdata/satdata_all_' + str(region.id) + '.sqlite'))
 
         import zipfile
         s = StringIO.StringIO()
@@ -244,6 +244,12 @@ class SatelliteMetadata(APIView):
                 today = datetime.today()
                 if ((today.year - b_date.year) * 12 + today.month - b_date.month) <= 4:
                     scene['code_de_filename'] = scene_id + '.SAFE.zip'
+            elif scene_id.startswith('S3'):
+                scene['browse_url'] = 'http://artemis.geogr.uni-jena.de/ec/phaenopt/browse/' + scene['id'] + '.jpg'
+                if "Products('')" in scene['download_url']:
+                    scene['download_urls'] = []
+                else:
+                    scene['download_urls'] = [dict(url=scene['download_url'], filename=scene['id'] + '.zip')]
             elif scene_id.startswith('S2') or scene_id.startswith('L1C'):
                 # download url from ESA-Datenhub anfragen
                 scene_id = scene['vendor_product_id']

@@ -1626,6 +1626,10 @@ console.log(label_list)
 
         function requestTimeSeries(layer) {
             console.log("requestTimeSeries");
+            mapviewer.data.infoStatus = false;
+            ol.Observable.unByKey(mapviewer.data.infoEventKey);
+            mapviewer.pointFeatureLayer('featureRequest',"remove");
+            mapviewer.selectInteraction.setActive(true);
 
             var window_open = false;
             var type;
@@ -1648,22 +1652,21 @@ console.log(label_list)
             var unit = "";
             var yaxix_title = "";
 
-            if (layer.title.includes("CDOM")) {
-                var str = "-1";
-                unit = "m" + str.sup();
-                yaxix_title = "CDOM in m^-1";
+            if (layer.title.includes("Temperatur")) {
+                unit = "°C";
+                yaxix_title = layer.title + " in " + unit;
             }
-            if (layer.title.includes("CHL")) {
-                unit = "µg/l";
-                yaxix_title = "CHL in" + unit;
+            if (layer.title.includes("Niederschlag")) {
+                unit = "mm";
+                yaxix_title = layer.title + " in " + unit;
             }
-            if (layer.title.includes("TSM")) {
-                unit = "mg/l";
-                yaxix_title = "TSM in" + unit;
+            if (layer.identifier.includes("Pheno")) {
+                unit = "Tag des Jahres";
+                yaxix_title = layer.title + " in " + unit;
             }
 
             var output = '<div  class="ts_diagram">' +
-                '<p><strong>Please select a point in the map to create a time series.</strong></p>' +
+                '<p><strong>Bitte klicken Sie in die Karte um einen Pixel zu extrahieren.</strong></p>' +
                 '<div id="diagram_wq_window_' + layer.id + '" style="display:none;">' +
                 '</div>' +
                 '</div>';
@@ -1680,17 +1683,19 @@ console.log(label_list)
                     closeButton: false,
                     buttons: {
                         "Export as CSV": {
-                            label: "Export as CSV",
+                            label: "Export als CSV",
                             className: "btn-default",
                             callback: function () {
                                 var csvContent = "";
                                 var data_arr = [];
                                 var value = "";
-                                var header = "#date";
+                                var header = "Jahr";
+                                var points = "";
 
                                 $scope.data.forEach(function (series) {
                                     var latlong = series.coordinates;
-                                    header = header + "," + series.key + "(" + latlong[0].toFixed(2) + " " + latlong[1].toFixed(2) + ")";
+                                    points = points + "," + series.key + "(" + latlong[0].toFixed(2) + " " + latlong[1].toFixed(2) + ")";
+                                    header = header + "," + unit;
                                     series.values.forEach(function (data) {
 
                                         if (isNaN(data.y)) {
@@ -1700,7 +1705,8 @@ console.log(label_list)
                                             value = data.y;
                                         }
 
-                                        var date = d3.time.format("%Y-%m-%d")(new Date(data.x));
+                                        //var date = d3.time.format("%Y-%m-%d")(new Date(data.x));
+                                        var date = d3.time.format("%Y")(new Date(data.x));
 
                                         if (data_arr[date] == undefined) {
                                             data_arr[date] = [];
@@ -1711,6 +1717,7 @@ console.log(label_list)
                                         }
                                     })
                                 });
+                                csvContent += points + "\n";
                                 csvContent += header + "\n";
                                 for (var key in data_arr) {
                                     var dataString = data_arr[key].join(",");
@@ -1718,7 +1725,7 @@ console.log(label_list)
                                 }
 
                                 var blob = new Blob([csvContent], {
-                                    "type": "text/csv;charset=utf8;"
+                                    "type": "text/csv;charset=UTF-8;"
                                 });
                                 var link = document.createElement("a");
 
@@ -1738,7 +1745,7 @@ console.log(label_list)
                             }
                         },
                         cancel: {
-                            label: "Close",
+                            label: "Schlie&szlig;en",
                             className: "btn-primary",
                             callback: function () {
                                 ol.Observable.unByKey(diagram.infoEventKey);
@@ -1813,7 +1820,7 @@ console.log(label_list)
                         if (data_obj) {
 
                             var new_data = {
-                                "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
+                                "key": "Pixel " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
                                 "color": color[color_pos],
                                 "coordinates": lonlat,
                                 "values": data_obj
@@ -1821,7 +1828,7 @@ console.log(label_list)
                             if (data.length == undefined) {
                                 data = [
                                     {
-                                        "key": "Point " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
+                                        "key": "Pixel " + point_count, // + " (" + lonlat[0].toFixed(2) + ', ' + lonlat[1].toFixed(2) + ')',
                                         "color": color[color_pos],
                                         "coordinates": lonlat,
                                         "values": data_obj
@@ -1855,13 +1862,14 @@ console.log(label_list)
                                             bottom: 60,
                                             right: 30
                                         },
-                                        "forceY": ([0]),
+                                        //"forceY": ([0]),
                                         "yAxis": {
                                             "axisLabel": yaxix_title
                                         },
                                         "xAxis": {
                                             tickFormat: function (d) {
-                                                return d3.time.format("%Y-%m-%d")(new Date(d))
+                                                //return d3.time.format("%Y-%m-%d")(new Date(d))
+                                                return d3.time.format("%Y")(new Date(d))
                                             }
                                         },
                                         /*"x2Axis": {

@@ -19,9 +19,9 @@ class PhenoAdmin(SortableModelAdmin):
 class PhenoLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
             'classes': ('suit-tab', 'suit-tab-phaenopt',),
-            'fields': ('region', 'product', 'phenophase')
+            'fields': ('region', 'product', 'phenophase', 'type')
         }),)
-    list_display=('title','publishable', 'downloadable', 'region', 'product', 'phenophase')
+    list_display=('title','publishable', 'downloadable', 'region', 'product', 'phenophase', 'type')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('phaenopt','PhaenOPT'),)
     ordering =['title']
     list_filter=('publishable', 'downloadable', 'region','product', 'phenophase')
