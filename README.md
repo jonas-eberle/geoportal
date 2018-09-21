@@ -2,8 +2,8 @@
 
 ### Database setup
 ```
-$ createdb -U swos swos
-$ psql swos < swos3_20160907.db
+$ createdb -U <dbUser> <database>
+$ psql <database> < dump.db
 ```
 
 ### Backend setup
