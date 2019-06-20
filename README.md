@@ -1,10 +1,48 @@
-## Setup
+# Geoportal WebGIS framework using Python Django
 
-### Database setup
-```
-$ createdb -U <dbUser> <database>
-$ psql <database> < dump.db
-```
+**Objectives:**
+* Develop a generic framework to set up web-based geoportals using existing open source web frameworks
+* Publish independent map viewers with centralized data management
+* Provide ability to automatize the discovery of multi-source Earth Observation data for individual regions
+
+**Tools:**
+* Interactive visualization of geospatial data based on OGC services
+* ISO-compliant metadata management and publication
+* Satellite scene explorer
+* Time-series data extraction services
+
+**Main open source software used:**
+* Django Web Framework (Python) with Django REST framework and GeoDjango
+* AngularJS
+* OpenLayers
+* Bootstrap CSS
+
+**Further information:**
+* [Eberle et al. (2018): "Automated Earth Observation data discovery and access using open source web frameworks". Poster at EGU 2018 conference, Vienna.](docs/Eberle_EGU2018.pdf)
+
+**Open issues:**
+* Provide sample database dump file
+* Further source code cleanup and documentation
+* Activate issues in this repository
+* Provide Dockerfile
+
+## Examples
+
+### GEO-Wetlands Community Portal - Wetland observations from space
+http://portal.swos-service.eu
+![Screenshot of the GEO-Wetlands Community Portal](docs/screenshots/Example_SWOS.png)
+
+### PhaenOPT.info - phenological maps for Thuringia, Germany
+http://phaenopt.info (coming soon)
+![Screenshot of the PhaenOPT.info portal](docs/screenshots/Example_PhaenOPT.png)
+
+### GlobBiomass WebGIS
+![Screenshot of the GlobBiomass WebGIS](docs/screenshots/Example_GlobBiomass.png)
+
+### ARBIS - Assam River Basin Information System
+![Screenshot of the ARBIS WebGIS](docs/screenshots/Example_ARBIS.png)
+
+## Setup
 
 ### Backend setup
 ```
@@ -17,6 +55,20 @@ $ virtualenv --python=python2 venv
 $ source venv/bin/activate
 # install all packages listed in requirements.txt
 $ pip install -r framework/requirements.txt
+```
+
+### Database setup (with backup file)
+```
+$ createdb -U <dbUser> <database>
+$ psql <database> < dump.db
+```
+
+### Database setup (without backup file, based on Django migrations)
+```
+$ createdb -U <dbUser> <database>
+$ source venv/bin/active
+$ python manage.py makemigrations
+$ python manage.py migrate
 ```
 
 ### Frontend setup
