@@ -5,8 +5,8 @@
         .module('webgisApp.swos')
         .controller('IntroductionTourCtrl', IntroductionTourCtrl);
 
-    IntroductionTourCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', '$timeout', '$cookies', '$rootScope', 'TrackingService', '$location'];
-    function IntroductionTourCtrl($scope, mapviewer, WetlandsService, $timeout, $cookies, $rootScope, TrackingService, $location) {
+    IntroductionTourCtrl.$inject = ['$scope', 'mapviewer', 'WetlandsService', 'RegionsService', '$timeout', '$cookies', '$rootScope', 'TrackingService', '$location'];
+    function IntroductionTourCtrl($scope, mapviewer, WetlandsService, RegionsService, $timeout, $cookies, $rootScope, TrackingService, $location) {
         var introTour = this;
 
         introTour.startAnno = startAnno;
@@ -15,7 +15,7 @@
         var extdb_id = "2551"; // Global Surface Water: Water Occurence (1984-2015)
         var product_id = "3291"; // Camargue:  Land Surface Temperature Trend 2000 to 2016
         var wetland_id = 4; // Camargue
-        var step_count = 14;
+        var step_count = 12;
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -39,6 +39,7 @@
                 $("#gmap").css('z-index', '');
                 $('.map-controls-wrapper').css('z-index', '');
                 $('.ol-viewport').css('z-index', '');
+                $('nav.navbar').css('z-index', '1030');
             }
         }
 
@@ -80,7 +81,7 @@
                 {size: mapviewer.map.getSize()}
             );
 
-            $('#closeWetland').click();
+            //$('#closeWetland').click();
             WetlandsService.selectTab(); // Open wetland Catalog
 
             $('.main').css('position', 'fixed'); // set back to origin
@@ -161,9 +162,9 @@
                             $target[0].removeEventListener('click', handler, true)
                         },
 
-                        content: '<div class="anno-step-of">(Step 1 of '+ step_count +')</div><h4>Welcome </h4><p>Welcome to the introduction tour of the <strong>SWOS and GEO-Wetlands Community Portal</strong>. We will show you how to navigate and find the information you might be interested in.</p>' +
-                        '<p>Please notice that certain functions are deactivated during the tour. If you would like to do the tour in a more interactive way you can try it by following the <strong>next step</strong> information on each card.</p> ' +
-                        '<p>You can always stop the tour with a click on the semi-transparent black area or on <span class="anno-highlight">Exit</span>. To <strong>start</strong> the <strong>tour again </strong>go to <strong>Info & Help</strong> on the top. Here you will also find information on how to contact us.</p>' +
+                        content: '<div class="anno-step-of">(Step 1 of '+ step_count +')</div><h4>Willkommen </h4><p>Willkommen zur Einführungstour auf dem PhaenOPT-Portal. Wir zeigen Ihnen wie Sie sich auf dem Portal navigieren und bewegen können.</p>' +
+                        '<p>Bitte beachten Sie, dass manche Funktionen während der Tour deaktiviert sind. Sie können die Tour immer mit einem Klick auf den halbtransparenten schwarzen Hintergrund oder über den Button <span class="anno-highlight">Exit</span> beenden.</p> ' +
+                        '<p>Um die Einführungstour erneut zu starten, klicken Sie bitte auf den "Menü"-Button oben im Header und wählen den Menüpunkt "Einführungstour" aus. Hier finden Sie ebenso Kontaktdaten und weitere Informationen zum Portal.</p>' +
                         '</div>'
                     }, // Welcome
                     {
@@ -185,7 +186,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -194,7 +195,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Catalog', '02');
                             //ensure wetland catalog is shown
-                            WetlandsService.selectTab();
+                            WetlandsService.selectTab("overview");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -217,15 +218,14 @@
                         onHide       : function (anno, $target, $annoElem, handler) {
                             $target[0].removeEventListener('click', handler, true)
                         },
-                        content      : '<div class="anno-step-of">(Step 2 of '+ step_count +')</div><h4>Wetlands catalog</h4><div><p>All wetland sites of the <strong>SWOS project</strong> are listed here.</p> ' +
-                        '<p>The preselected wetlands already have products developed within the project.</p>' +
-                        '<p>To see the full list of wetlands of the SWOS project please unselect the checkbox <span class="anno-highlight">List only wetlands with products</span> or use the provided filter to search for wetlands.</p>' +
+                        content      : '<div class="anno-step-of">(Step 2 of '+ step_count +')</div><h4>Inhalte und Übersicht</h4><div><p>In diesem Bereich finden Sie alle relevanten Informationen und Karten, die wir zur Verfügung gestellt haben.</p> ' +
+                        '<p>Jede dieser Kacheln im Bereich "Verfügbare Daten" spiegelt einen Reiter in der Leiste unterhalb der Übeschrift "Thüringen" wieder. Weitere Texte und Links zum Projekt finden Sie unterhalb der Kacheln.</p>' +
                         '</div>'
                     }, // Wetland Catalog
                     {
                         target       : '.sidebar',
                         position     : {
-                            top  : '15em',
+                            top  : '3em',
                             right: '420px'
                         },
                         className    : 'anno-width-400',
@@ -241,7 +241,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -250,7 +250,7 @@
                         onShow       : function (anno, $target) {
                             introTour.trackIntroductionTour('Selection', '03');
                             //ensure wetland catalog is shown
-                            WetlandsService.selectTab();
+                            WetlandsService.selectTab("product");
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -276,13 +276,13 @@
                             $target[0].removeEventListener('click', handler, true);
                             $('.sidebar').css( 'zIndex', '');
                         },
-                        content      : '<div class="anno-step-of">(Step 3 of '+ step_count +')</div><h4>Wetland selection</h4><div><p>To get more information about a wetland you can select it on the <strong>map</strong> or from the <strong>list</strong>.</p>' +
-                        '<p>In the <strong>next step</strong> we will use the <span class="anno-highlight">Camargue</span> wetland in France.</p></div>'
-                    }, // Wetland selection
+                        content      : '<div class="anno-step-of">(Step 3 of '+ step_count +')</div><h4>Karten</h4><div>' +
+                        '<p>Bei den allgemeinen Karten sind topographische Karten, digitale Geländemodelle, Luft- und Satellitenbilder zu finden. Über die Checkbox vor dem Namen der Karte können Sie den Datensatz der interaktiven Karte hinzufügen.</p></div>'
+                    },
                     {
                         target       : '.sidebar',
                         position     : {
-                            top  : '6em',
+                            top  : '60px',
                             right: '420px'
                         },
                         className    : 'anno-width-500',
@@ -298,215 +298,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
-                                click: function (anno) {
-                                    anno.switchToChainNext();
-                                }
-                            }
-                        ],
-                        onShow       : function (anno, $target) {
-                            introTour.trackIntroductionTour('Wetland', '04');
-                            //Load wetland (id 4 - Camargue)
-                            WetlandsService.loadWetland(4);
-
-                            //ensure overview of wetland is shown
-                            WetlandsService.selectTab("overview");
-
-                            //reset on close Anno
-                            annoOverlay.on("click", function () {
-                                reset();
-                            });
-
-                            $('.sidebar').css( 'zIndex', '1501');
-
-                            // prevent all click events (except of checkboxes)
-                            var handler = function (e) {
-
-                                // Allow preselection of overview tab; allow selection of products
-                                if (e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers" || e.target.parentElement.className.includes("flaticon-layers")) {
-                                    if (e.target.className === "flaticon-layers" || e.target.parentElement.className.includes("flaticon-layers")) {
-                                        anno.switchToChainNext(); // switch to next step, if the user click on "products"
-                                    }
-                                } else {
-                                    e.stopPropagation();
-                                }
-                            };
-                            $target[0].addEventListener('click', handler, true);
-                            return handler;
-                        },
-                        onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true);
-                            $('.sidebar').css( 'zIndex', '');
-                        },
-                        content      : '<div class="anno-step-of">(Step 4 of '+ step_count +')</div><h4>Overview of selected wetland</h4><div><p>For each wetland SWOS provides several data and information:</p>' +
-                        '<ol style="list-style:disc outside;">' +
-                        '<li><strong>Indicators: </strong>Wetland indicators derived on the basis of satellite data and SWOS products.</li>' +
-                        '<li><strong>Products: </strong>Maps produced with the SWOS software toolbox.</li>' +
-                        '<li><strong>Satellite data: </strong>Overview on free available satellite data and satellite data explorer.</li>' +
-                        '<li><strong>Photos: </strong>Uploaded and linked (source: Panoramio) photos.</li>' +
-                        '<li><strong>Videos: </strong>Uploaded and linked (source: Youtube) videos.</li>' +
-                        '<li><strong>External databases: </strong>Compilation of other external data sources (e.g. databases, maps, websites).</li></ol>' +
-                        '<p></p><p>In addition there are <strong>storylines</strong> available at few wetlands (e.g. Laguna de Fuente de Piedra)</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will have a closer look at <span class="anno-highlight">Products</span> <span class="flaticon-layers"><a style="text-decoration: none;"></a></span>.</p></div>'
-                    }, // Wetland overview
-                    {
-                        target       : '.sidebar',
-                        position     : {
-                            top  : '6em',
-                            right: '420px'
-                        },
-                        className    : 'anno-width-500',
-                        arrowPosition: 'center-right',
-                        buttons      : [
-                            {
-                                text: 'Exit',
-                                className: 'anno-btn-low-importance anno-exit-left',
-                                click: function (anno) {
-                                    reset();
-                                    anno.hide();
-                                }
-                            },
-                            AnnoButton.BackButton,
-                            {
-                                text : 'Next',
-                                click: function (anno) {
-                                    anno.switchToChainNext();
-                                }
-                            }
-                        ],
-                        onShow       : function (anno, $target) {
-                            introTour.trackIntroductionTour('Products', '05');
-                            //ensure products is shown
-                            WetlandsService.selectTab("product");
-
-                            //reset on close Anno
-                            annoOverlay.on("click", function () {
-                                reset();
-                            });
-
-                            $('.sidebar').css( 'zIndex', '1501');
-
-                            // prevent all click events (except of ...)
-                            var handler = function (e) {
-
-                                // Allow preselection of product tab; allow accordion; allow layer selection
-                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.id === "link_wetland_opened" || e.target.className === "flaticon-layers") {
-
-                                } else {
-                                    e.stopPropagation();
-                                }
-                            };
-                            $target[0].addEventListener('click', handler, true);
-                            return handler;
-                        },
-                        onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true);
-                            $('.sidebar').css( 'zIndex', '');
-                        },
-                        content      : '<div class="anno-step-of">(Step 5 of '+ step_count +')</div><h4>Products of selected wetland</h4><div><p>On the basis of satellite data the <span class="anno-highlight">SWOS software toolbox</span> can be used to derive geospatial maps. Within SWOS the following products are provided: </p>' +
-                        '<ol style="list-style:disc outside;">' +
-                        '<li>Water Quality</li>' +
-                        '<li>Land Surface Temperature Trend</li>' +
-                        '<li>Surface Water Dynamics</li>' +
-                        '<li>Flood Regulation</li>' +
-                        '<li>Potential Wetland areas</li>' +
-                        '<li>Land Use Land Cover</li>' +
-                        '<li>Land Use Land Cover Change (Short- and Long-term)</li>' +
-                        '<li>Surface Soil Moisture</li>' +
-                        '</ol>' +
-
-                        '<p>(Please keep in mind that not all products can and will be derived for each wetland.)</p>' +
-
-                        '<p></p>In the <strong>next step</strong> we will select the product <span class="anno-highlight">Land Surface Temperature Trend</span>.</p></div>'
-                    }, // Wetland Product
-                    {
-                        target       : '.sidebar',
-                        position     : {
-                            top  : '300px',
-                            right: '420px'
-                        },
-                        className    : 'anno-width-500',
-                        arrowPosition: 'center-right',
-                        buttons      : [
-                            {
-                                text: 'Exit',
-                                className: 'anno-btn-low-importance anno-exit-left',
-                                click: function (anno) {
-                                    reset();
-                                    anno.hide();
-                                }
-                            },
-                            AnnoButton.BackButton,
-                            {
-                                text : 'Next',
-                                click: function (anno) {
-                                    anno.switchToChainNext();
-                                }
-                            }
-                        ],
-                        onShow       : function (anno, $target) {
-                            introTour.trackIntroductionTour('Product', '06');
-                            //ensure products is shown
-                            WetlandsService.selectTab("product");
-
-                            // prevent more than one layer warning
-                            $cookies.put('hasNotifiedAboutLayers', true);
-
-                            //add layer (max one layer)
-                            WetlandsService.loadLayer(wetland_id, "product", product_id, "no");
-
-                            //reset on close Anno
-                            annoOverlay.on("click", function () {
-                                reset();
-                            });
-
-                            $('.sidebar').css( 'zIndex', '1501');
-
-                            // prevent all click events (except of ... )
-                            var handler = function (e) {
-                                // Allow preselection of overview tab; allow selection of products
-                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.id === "layer_vis_" + product_id) {
-                                    if (e.target.id === "layer_vis_" + product_id) {
-                                        anno.switchToChainNext();
-                                    }
-                                } else {
-                                    e.stopPropagation();
-                                }
-                            };
-                            $target[0].addEventListener('click', handler, true);
-                            return handler;
-                        },
-                        onHide       : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true);
-                            $cookies.remove('hasNotifiedAboutLayers');
-                            $('.sidebar').css( 'zIndex', '');
-
-                        },
-                        content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Detailed product information</h4><div><p></p>' +
-                        '<p>All available datasets of a product are listed here below a short description of the product. Each layer can be added to the map using the checkbox in front of the layer name.</p>' +
-
-                        '<p></p><p>In the <strong>next step</strong> we will add the <span class="anno-highlight">Land Surface Temperature Trend (LSTT) 2000 to 2017</span> layer to the map.</p></div>'
-                    }, // Show product layer
-                    {
-                        target       : '.sidebar',
-                        position     : {
-                            top  : '300px',
-                            right: '420px'
-                        },
-                        className    : 'anno-width-500',
-                        arrowPosition: 'center-right',
-                        buttons      : [
-                            {
-                                text: 'Exit',
-                                className: 'anno-btn-low-importance anno-exit-left',
-                                click: function (anno) {
-                                    reset();
-                                    anno.hide();
-                                }
-                            },
-                            AnnoButton.BackButton,
-                            {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -521,7 +313,8 @@
                             $cookies.put('hasNotifiedAboutLayers', true);
 
                             //add layer (max one layer)
-                            WetlandsService.loadLayer(wetland_id, "product", product_id, "yes", true);
+                            //WetlandsService.loadLayer(wetland_id, "product", product_id, "yes", true);
+                            RegionsService.loadLayer(1, "product", 10, "yes", true);
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -552,66 +345,18 @@
                             $cookies.remove('hasNotifiedAboutLayers');
                             $('.sidebar').css( 'zIndex', '');
                         },
-                        content      : '<div class="anno-step-of">(Step 7 of '+ step_count +')</div><h4>Dataset information and tools</h4><div><p></p>' +
-                        '<p>You can change the transparency for each layer (slider) and:' +
+                        content      : '<div class="anno-step-of">(Step 4 of '+ step_count +')</div><h4>Information und Funktionen zum Datensatz</h4><div><p></p>' +
+                        '<p>Sie können die Transparenz für jeden Layer über den Slider ändern. Ebenso stehen folgende Buttons zur Verfügung:' +
                         '<ol style="list-style: disc outside;">' +
-                        '<li><p><span class="fa fa-eye fa-lg"></span> hide your layer,</p></li>' +
-                        '<li><p><span class="fa fa-list fa-lg"></span> hide the legend,</p></li>' +
-                        '<li><p><span class="fa fa-file-text-o fa-lg"></span> view metadata, </p></li>' +
-                        '<li><p><span class="fa fa-line-chart fa-lg"></span> view statistics* / create time series* (* if available), </p></li>' +
-                        '<li><p><span class="fa fa-search fa-lg"></span> zoom to your layer,</p></li>' +
-                        '<li><p><span class="fa fa-share-alt fa-lg"></span> and create a permanent link to share it.</p></li></ol></p>' +
+                        '<li><p><span class="fa fa-eye fa-lg"></span> Layer ausblenden,</p></li>' +
+                        '<li><p><span class="fa fa-list fa-lg"></span> Legende ausblenden,</p></li>' +
+                        '<li><p><span class="fa fa-file-text-o fa-lg"></span> Metadaten anzeigen, </p></li>' +
+                        '<li><p><span class="fa fa-line-chart fa-lg"></span> Zeitreihe extrahieren* (* wenn verfügbar), </p></li>' +
+                        '<li><p><span class="fa fa-search fa-lg"></span> Auf den Layer zoomen,</p></li>' +
+                        '</ol></p>' +
 
-                        '<p></p><p>In the <strong>next step</strong> we will move to <span class="anno-highlight">Satellite data</span> <span class="flaticon-space-satellite-station"><a style="text-decoration: none;"></a></span>.</p></div>'
-                    }, // Load product layer
-                    /*  {
-                     target: '.sidebar',
-                     position: {
-                     top: '300px',
-                     right: '420px'
-                     },
-                     className: 'anno-width-500',
-                     arrowPosition: 'center-right',
-                     buttons: [
-                     AnnoButton.BackButton,
-                     {
-                     text: 'Next',
-                     click: function (anno, evt) {
-                     anno.switchToChainNext();
-                     }
-                     }
-                     ],
-                     onShow: function (anno, $target, $annoElem) {
-
-                     //open metadata
-                     show_metadata("open");
-
-
-                     // prevent all click events (except of ... )
-                     var handler = function (e) {
-                     console.log(e);
-                     // Allow preselection of overview tab; allow selection of products
-                     if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("fa-file")) {
-
-                     } else {
-                     e.stopPropagation();
-                     }
-                     }
-                     $target[0].addEventListener('click', handler, true);
-                     return handler;
-                     },
-                     onHide: function (anno, $target, $annoElem, handler) {
-                     $target[0].removeEventListener('click', handler, true);
-                     show_metadata("hide");
-
-
-                     },
-                     content: '<h4>Wetland product dataset metadata</h4><div><p></p>' +
-                     '<p>Here you find more information about the map (e.g. about its lineage)' +
-                     '</p>' +
-
-                     '<p></p><p>In the <strong>next step</strong> we will close the metadata info box and move to satellite data.</p></div>'
-                     }, // Show Metadata for Product */
+                        '</div>'
+                    },
                     {
                         target       : '.sidebar',
                         position     : {
@@ -631,7 +376,127 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
+                                click: function (anno) {
+                                    anno.switchToChainNext();
+                                }
+                            }
+                        ],
+                        onShow       : function (anno, $target) {
+                            introTour.trackIntroductionTour('Satellitedata', '08');
+                            //ensure products is shown
+                            $('.flaticon2-climate a').click();
+
+                            //reset on close Anno
+                            annoOverlay.on("click", function () {
+                                reset();
+                            });
+
+                            $('.sidebar').css( 'zIndex', '1501');
+
+                            // prevent all click events (except of checkboxes)
+                            var handler = function (e) {
+
+                                // Allow preselection of overview tab; allow selection of products
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-technology-2") || e.target.className.includes("fancybox") || e.target.parentElement.className.includes("flaticon-technology-2") || e.target.nodeName === "IMG") {
+                                    if (e.target.className.includes("flaticon-technology-2") || e.target.parentElement.className.includes("flaticon-technology-2")) {
+                                        anno.switchToChainNext();
+                                    }
+                                } else {
+                                    e.stopPropagation();
+                                }
+                            };
+                            $target[0].addEventListener('click', handler, true);
+                            return handler;
+                        },
+                        onHide       : function (anno, $target, $annoElem, handler) {
+                            $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
+                        },
+                        content      : '<div class="anno-step-of">(Step 5 of '+ step_count +')</div><h4>Klimakarten</h4><div>' +
+                        '<p>Unter dem Reiter Klimakarten sind Niederschlags- und Temperaturdaten hinterlegt, sowohl für einzelne Jahre, als auch für Anomalien innerhalb  von Bezugszeiträumen. Diese Werte beeinflussen maßgeblich das Verhalten von Pflanzen.</p>' +
+                        '</div>'
+                    }, 
+                    {
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '6em',
+                            right: '420px'
+                        },
+                        className    : 'anno-width-500',
+                        arrowPosition: 'center-right',
+                        buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
+                            AnnoButton.BackButton,
+                            {
+                                text : 'Weiter',
+                                click: function (anno) {
+                                    anno.switchToChainNext();
+                                }
+                            }
+                        ],
+                        onShow       : function (anno, $target) {
+                            introTour.trackIntroductionTour('Satellitedata', '08');
+                            //ensure products is shown
+                            $('.flaticon2-calendar a').click();
+
+                            //reset on close Anno
+                            annoOverlay.on("click", function () {
+                                reset();
+                            });
+
+                            $('.sidebar').css( 'zIndex', '1501');
+
+                            // prevent all click events (except of checkboxes)
+                            var handler = function (e) {
+
+                                // Allow preselection of overview tab; allow selection of products
+                                if (e.target.className === "accordion-toggle" || e.target.parentElement.className === "accordion-toggle" || e.target.className.includes("flaticon-technology-2") || e.target.className.includes("fancybox") || e.target.parentElement.className.includes("flaticon-technology-2") || e.target.nodeName === "IMG") {
+                                    if (e.target.className.includes("flaticon-technology-2") || e.target.parentElement.className.includes("flaticon-technology-2")) {
+                                        anno.switchToChainNext();
+                                    }
+                                } else {
+                                    e.stopPropagation();
+                                }
+                            };
+                            $target[0].addEventListener('click', handler, true);
+                            return handler;
+                        },
+                        onHide       : function (anno, $target, $annoElem, handler) {
+                            $target[0].removeEventListener('click', handler, true);
+                            $('.sidebar').css( 'zIndex', '');
+                        },
+                        content      : '<div class="anno-step-of">(Step 6 of '+ step_count +')</div><h4>Phänologiekarten</h4><div>' +
+                        '<p>Unter dem Reiter Phänologiekarten sind gemessene und modellierte Ergebnisse zum einsetzen der phänologischen Phasen einzusehen. So kann beispielsweise die Blüte verschiedener Pflanzen vorausgesagt werden. Auch geben uns die verschiedenen Jahre einen Überblick darüber, ob sich die Dauer der Vegetationsperiode verändert hat. Dies kann als Hinweis auf den Klimawandel gesehen werden.</p>' +
+                        '</div>'
+                    }, 
+                    {
+                        target       : '.sidebar',
+                        position     : {
+                            top  : '6em',
+                            right: '420px'
+                        },
+                        className    : 'anno-width-500',
+                        arrowPosition: 'center-right',
+                        buttons      : [
+                            {
+                                text: 'Exit',
+                                className: 'anno-btn-low-importance anno-exit-left',
+                                click: function (anno) {
+                                    reset();
+                                    anno.hide();
+                                }
+                            },
+                            AnnoButton.BackButton,
+                            {
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -668,10 +533,12 @@
                             $target[0].removeEventListener('click', handler, true);
                             $('.sidebar').css( 'zIndex', '');
                         },
-                        content      : '<div class="anno-step-of">(Step 8 of '+ step_count +')</div><h4>Satellite data</h4><div>' +
-                        '<p>An overview about free available satellite data (Landsat and Sentinel) covering the wetland area is given here. Please click on the image in section <span class="anno-highlight">Satellite data explorer</span> to open this tool. You will also find the total amount of data by sensor as a table below as well as the data sources used for scene discovery. </p>' +
-                        '<p>Within the satellite data explorer application you can interactively filter by scene properties, look at quicklooks, and access each individual scene by download links provided.</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will move to the <span class="anno-highlight">External databases</span> tab <span class="flaticon-technology-2"><a style="text-decoration: none;"></a></span>.</p></div>'
+                        content      : '<div class="anno-step-of">(Step 7 of '+ step_count +')</div><h4>Satellitendaten</h4><div>' +
+                        '<p>Satellitendaten ermöglichen die Beobachtung der Erde aus dem All. Neben dem Bereich des sichtbaren Lichtes zeichnen sie beispielsweise auch im nahen Infrarot auf. Dies kann helfen, Aussagen über die Vegetation zu tätigen.  Sie sind besonders nützlich, da sie die zeitaufwendige Messung vor Ort unterstützen können und flächendeckend für ganz Thüringen vorliegen.</p>' +
+                        '<p>In diesem Reiter haben wir für Sie Vegetationsdaten basierend auf Satellitendaten sowie weitergehende textliche Informationen bereitgestellt. Zur Visualisierung stehen die Vegetationsdaten des Copernicus Land Dienstes, des NASA MODIS Sensors sowie der europäischen Satelliten Sentinel-2 und Sentinel-3 bereit.</p>' +
+                        '<p>Nach Auswahl eines Layers können Sie das Datum der Aufnahme wählen. Angezeigt wird jeweils ein Vegetationsindex (siehe textliche Beschreibung).</p>' +
+                        '<p>Eine Übersicht verfügbarer Erdbeobachtungsdaten der Satellitenmissionen Landsat und Sentinel finden Sie ganz unten. </p>' +
+                        '</div>'
                     }, // Satellite data ,
                     {
                         target       : '.sidebar',
@@ -692,7 +559,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -719,7 +586,7 @@
                                         anno.switchToChainNext();
                                     }
                                 } else {
-                                    e.stopPropagation();
+                                    //e.stopPropagation();
                                 }
                             };
                             $target[0].addEventListener('click', handler, true);
@@ -729,9 +596,11 @@
                             $target[0].removeEventListener('click', handler, true);
                             $('.sidebar').css( 'zIndex', '');
                         },
-                        content      : '<div class="anno-step-of">(Step 9 of '+ step_count +')</div><h4>External databases</h4><div>' +
-                        '<p>In this tab external databases and information sources related to the selected wetland on the regional, country, continental and global level are shown. To search for external layers that can be visualized in the map use the <span class="anno-highlight"><span class="flaticon-layers"><a style="text-decoration: none;"></a></span> Filter by maps</span> checkbox. You can add those layers in the same way as the product maps.</p>' +
-                        '<p></p><p>In the <strong>next step</strong> we will discover and add one of the Global Surface Water maps from JRC/Google as an external global resource to the map (<span class="anno-highlight">Global</span> -> <span class="anno-highlight">Global Surface Water</span>).</p></div>'
+                        content      : '<div class="anno-step-of">(Step 8 of '+ step_count +')</div><h4>Phänologische In-Situ-Daten des DWD</h4><div>' +
+                        '<p>In-Situ Daten sind vor Ort gemessene Daten, welche unter anderem der Deutsche Wetterdienst erhebt. Beobachter des deutschen Wetterdienstes erkunden regelmäßig die Umgebung der Stationen und dokumentieren einzelne Pflanzen.</p>' +
+                        '<p>In diesem Reiter können Sie eine Übersicht der phänologischen Stationen des DWD in Thüringen sehen. Ebenso haben wir die In-Situ Daten für Sie aufbereitet: Wählen Sie einfach eine Station aus der Liste und nachfolgend eine Pflanze und ihre Phase aus. Wir zeigen Ihnen den Eintrittstermin dieser Phase über den verfügbaren Zeitraum in einer Grafik.</p>'+
+                        '<p>Sie können aber auch die Eintrittstermine aller Pflanzen in Thüringen für eine ausgewählte Phase in einem Histogramm sich ausgeben lassen. Wählen Sie im unteren Teil einfach die gewünschte Phase aus, das Histogramm wird automatisch berechnet.</p>' +
+                        '</div>'
                     }, // External DB
                     {
                         target       : '.sidebar',
@@ -753,7 +622,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -764,7 +633,7 @@
                             //ensure products is shown
                             //selectTab("externaldb");
                             $cookies.put('hasNotifiedAboutLayers', true);
-                            WetlandsService.loadLayer(wetland_id, "externaldb", extdb_id, "yes");
+                            $('.flaticon2-group a').click();
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -793,9 +662,9 @@
                             $cookies.remove('hasNotifiedAboutLayers');
                             $('.sidebar').css( 'zIndex', '');
                         },
-                        content: '<div class="anno-step-of">(Step 10 of '+ step_count +')</div><h4>Information and tools on selected resource</h4><div>' +
-                        '<p>For each external resource some descriptions, links and datasets are provided. Please use the checkbox in front of the dataset name (e.g., Water Occurrence) to add the external layer to the map. </p>' +
-                        '<p></p> In the <strong>next step</strong> we will show you how the change to order of the selected layers.</p></div>'
+                        content: '<div class="anno-step-of">(Step 9 of '+ step_count +')</div><h4>Citizen Science</h4><div>' +
+                        '<p>Bürgerinnen und Bürger können sich selbst an der Sammlung phänologischer Daten beteiligen, indem sie mit mobilen Geräten wie Smartphones oder Tablets nach Pflanzen Ausschau halten und das Stadium der Pflanze dokumentieren. Hier finden Sie Datenbanken mit Fokussierung auf phänlogische Informationen.</p>' +
+                        '</div>'
                     }, // Select external Layer
                     {
                         target   : '#active_layer',
@@ -816,7 +685,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -827,7 +696,7 @@
                             $cookies.put('hasNotifiedAboutLayers', true);
 
                             //selectTab("externaldb");
-                            WetlandsService.loadLayer(wetland_id, "externaldb", extdb_id, "yes");
+                            //WetlandsService.loadLayer(wetland_id, "externaldb", extdb_id, "yes");
 
                             open_close_active_layer("open");
 
@@ -868,63 +737,12 @@
                             el2[0].addEventListener('click', handler, true);
                             $cookies.remove('hasNotifiedAboutLayers');
                         },
-                        content: '<div class="anno-step-of">(Step 11 of '+ step_count +')</div><h4>Active layers</h4><div>' +
-                        '<p>All layers activated and added to the map are listed in the <span class="anno-highlight">Active layer</span> box on the left. You can hide, remove or change the order of the layers. In addition you can do the same actions as on the right side (e.g. view the metadata, change the transparency, show legend).</p>' +
-                        '<p></p><p>In the <strong>next step </strong> we will show the general map functions.</p></div>'
+                        content: '<div class="anno-step-of">(Step 10 of '+ step_count +')</div><h4>Aktive Layer</h4><div>' +
+                        '<p>Alle Layer, die Sie der Karte hinzugefügt haben, werden hier aufgelistet. Sie können einzelne Layer ausblenden, entfernen oder per Drag\'n\'Drop die Reihenfolge der Layer verändern. Ebenso können Sie die Transparenz einzelner Layer ändern und die Metadaten sich anzeigen lassen.</p>' +
+                        '</div>'
                     }, // Active Layer
                     {
-                        target  : '.map-controls-wrapper',
-                        position: 'bottom',
-                        buttons : [
-                            {
-                                text: 'Exit',
-                                className: 'anno-btn-low-importance anno-exit-left',
-                                click: function (anno) {
-                                    reset();
-                                    anno.hide();
-                                }
-                            },
-                            AnnoButton.BackButton,
-                            {
-                                text : 'Next',
-                                click: function (anno) {
-                                    anno.switchToChainNext();
-                                }
-                            }
-                        ],
-                        onShow  : function (anno, $target) {
-                            introTour.trackIntroductionTour('WetlandSites', '12');
-                            $cookies.put('hasNotifiedAboutLayers', true);
-
-                            move_map_elements_higher();
-
-                            //reset on close Anno
-                            annoOverlay.on("click", function () {
-                                reset();
-                            });
-
-                            var handler = function (e) {
-                                // prevent info tool selection
-                                if (e.target.className.includes("fa-info") || e.target.innerHTML.includes("fa-info")) {
-                                    e.stopPropagation();
-                                }
-                            };
-                            $target[0].addEventListener('click', handler, true);
-                            return handler;
-
-                        },
-                        onHide  : function (anno, $target, $annoElem, handler) {
-                            $target[0].removeEventListener('click', handler, true);
-                            move_map_elements_higher("reset");
-                            $cookies.remove('hasNotifiedAboutLayers');
-                        },
-                        content : '<div class="anno-step-of">(Step 12 of '+ step_count +')</div><h4>Wetland sites</h4><div>' +
-                        '<p>Unselect <span class="anno-highlight">Show Wetland sites</span> to hide the wetland boundaries in the map.</p>' +
-                        '<p>In the <strong>next step</strong> we show you the general map control elements.</p>' +
-                        '</div>'
-                    }, // Wetland sites
-                    {
-                        target   : '.map-controls-wrapper',
+                        target   : '#map_icons',
                         position : 'center-bottom',
                         className: 'anno-width-500',
                         buttons  : [
@@ -938,7 +756,7 @@
                             },
                             AnnoButton.BackButton,
                             {
-                                text : 'Next',
+                                text : 'Weiter',
                                 click: function (anno) {
                                     anno.switchToChainNext();
                                 }
@@ -949,6 +767,7 @@
                             $cookies.put('hasNotifiedAboutLayers', true);
 
                             move_map_elements_higher();
+                            $('#map_icons').css('zIndex', 1078);
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -969,23 +788,23 @@
                             move_map_elements_higher("reset");
                             $cookies.remove('hasNotifiedAboutLayers');
                         },
-                        content  : '<div class="anno-step-of">(Step 13 of '+ step_count +')</div><h4>Map control</h4><div><p></p>' +
-                        '<p>You can' +
+                        content  : '<div class="anno-step-of">(Step 11 of '+ step_count +')</div><h4>Interaktion mit der Karte</h4><div><p></p>' +
+                        '<p>Sie können ' +
                         '<ol style="list-style: disc outside;">' +
-                        '<li><p><span class="fa fa-plus fa-lg"></span> zoom into the map,</p></li>' +
-                        '<li><p><span class="fa fa-minus fa-lg"></span> zoom out of the map, </p></li>' +
-                        '<li><p><span class="fa fa-globe fa-lg"></span> zoom to the maximal SWOS extent,</p></li>' +
-                        '<li><p><span class="fa fa-info fa-lg"></span> &nbsp; and request information on visible layers. You need to activate this tool by clicking on the button. Afterwards you can click in the map. A window shows the responses from the visible WMS/WMTS layers.</p></li></ol></p>' +
-                        '<p></p><p>In the <strong>next step </strong> we will show you the search function.</p></div>'
+                        '<li><p><span class="fa fa-plus fa-lg"></span> in die Karte hineinzoomen,</p></li>' +
+                        '<li><p><span class="fa fa-minus fa-lg"></span> aus der Karte herauszoomen, </p></li>' +
+                        '<li><p><span class="fa fa-globe fa-lg"></span> den initialen Zoomzustand (Thüringen) wiederherstellen,</p></li>' +
+                        '<li><p><span class="fa fa-info fa-lg"></span> &nbsp; und Pixelinformationen für in der Karte sichtbare Layer anfragen. Dafür müssen Sie diesen Button mit einem Klick aktivieren. Danach können Sie in die Karte klicken, die Informationen der in der Karte verfügbaren Layer werden extrahiert und angezeigt.</p></li></ol></p>' +
+                        '</div>'
                     }, // Map Control
                     {
-                        target  : '.map-controls-wrapper',
+                        target  : '#info_help',
                         position: 'right',
 
                         buttons: [
                             AnnoButton.BackButton,
                             {
-                                text : 'Close',
+                                text : 'Schließen',
                                 click: function (anno) {
                                     introTour.trackIntroductionTour('Close', '15');
                                     reset();
@@ -997,7 +816,9 @@
                             introTour.trackIntroductionTour('Search', '14');
                             $cookies.put('hasNotifiedAboutLayers', true);
 
-                            move_map_elements_higher();
+                            move_map_elements_higher("reset");
+                            $('nav.navbar').css('z-index', 1035);
+                            $('.map-controls-wrapper').css('z-index', 1036);
 
                             //reset on close Anno
                             annoOverlay.on("click", function () {
@@ -1017,10 +838,8 @@
                             move_map_elements_higher("reset");
                             $cookies.remove('hasNotifiedAboutLayers');
                         },
-                        content: '<div class="anno-step-of">(Step 14 of '+ step_count +')</div><h4>Search</h4><div><p></p>' +
-                        '<p>Using this text field you can search within our SWOS database. Requests will be send to the SWOS search catalogue service where you will find our indicator and products, wetlands, external layers and external databases. You can also search through external databases using the search from <a href="http://www.geoportal.org" target="_blank">GEOSS</a>.</p>' +
-                        '<p></p><p></p>' +
-                        '<p><strong>Congratulations</strong>, you reached the end of the tour. <strong>Now it\'s your turn!</strong> We will remove all added layer and guide you back to the start page.</p>'
+                        content: '<div class="anno-step-of">(Step 12 of '+ step_count +')</div><h4>Herzlichen Glückwunsch</h4><div><p></p>' +
+                        '<p>Sie haben das Ende der Einführungstour erreicht. <strong>Nun sind Sie dran!</strong> Wir entfernen automatisch alle Layer aus der Karte und führen Sie zum Ausgsangspunkt des Portals zurück.</p>'
                     } // Search
                 ]
             );

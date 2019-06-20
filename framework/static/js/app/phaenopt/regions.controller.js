@@ -38,8 +38,17 @@
         wetlands.layers = mapviewer.layers;
         wetlands.removeAllLayers = removeAllLayers;
         wetlands.satdata_vegetation = true;
-        wetlands.satdata_image = true;
+        wetlands.vegindex = true;
+        wetlands.phenology = false;
+        wetlands.satdata_image = false;
         wetlands.satdata_table = false;
+        wetlands.overview = true;
+        wetlands.introduction = false;
+        wetlands.weiteres = false;
+        wetlands.maps = true;
+        wetlands.geoproxy = true;
+        wetlands.satdata = true;
+        
         wetlands.selectRegion = selectRegion;
         wetlands.closeRegion = closeRegion;
         wetlands.value = RegionsService.value;
@@ -154,12 +163,24 @@
                 } else {
                     RegionsService.selectRegionFromId(1);
                     bootbox.dialog({
-                        title: 'Willkommen zum PhaenOPT Portal',
+                        title: 'Willkommen auf dem PhaenOPT Portal',
                         message: $compile($('#welcome_text').html())($scope),
                         backdrop: true,
                         onEscape: true,
                         className: 'welcome-dialog',
                         buttons: {
+                            confirm: {
+                                label: 'Starte Einf&uuml;hrungstour',
+                                className: 'hidden-xs starttour',
+                                callback: function () {
+                                    var sidebar = document.getElementById('sidebar');
+                                    var scope = angular.element(sidebar).scope();
+                                    var rootScope = scope.$root;
+                                    scope.$apply(function () {
+                                        rootScope.$broadcast("start_tour");
+                                    });
+                                }
+                            },
                             close: {label: 'Schlie&szlig;en'}
                         }
                     });

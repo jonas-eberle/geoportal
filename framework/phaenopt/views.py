@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from webgis import settings
 from geospatial.models import Region
-from content.models import SatdataLayer
+from content.models import SatdataLayer, SatdataLayerSerializer
 from .models import PhenoLayer, Product, Pheno, CitizenScienceProject, CitizenScienceData, CitizenScienceProjectSerializer, DWDInSituData, DWDStation, DWDStationSerializer, DWDStationSingleSerializer, dwd_id_to_name
 from layers.models import LayerSerializer, MetadataSerializer
 from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -28,7 +28,7 @@ class RegionDetail(APIView):
     def get(self, request, pk):
         region = self.get_object(pk)
         layers = PhenoLayer.objects.filter(region=region, publishable=True)
-        data = dict(phenolayers={}, climatelayers={}, layers={}, satdatalayers=[])
+        data = dict(phenolayers={}, climatelayers={}, layers={}, satdatalayers=[], satdataproducts=[])
         for layer in layers:
             layer_data = LayerSerializer(layer).data
             if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
@@ -67,10 +67,16 @@ class RegionDetail(APIView):
 
         data['citizenscience'] = CitizenScienceProjectSerializer(CitizenScienceProject.objects.all(), many=True).data
 
-        layers = SatdataLayer.objects.filter(region=region)
+        layers = SatdataLayer.objects.filter(region=region).order_by('identifier')
         for layer in layers:
-            layer_data = LayerSerializer(layer).data
-            data['satdatalayers'].append(layer_data)
+            layer_data = SatdataLayerSerializer(layer).data
+            if layer_data['ogc_times'] != None and layer_data['ogc_times'] != '':
+                layer_data['ogc_times'] = layer_data['ogc_times'].split(',')
+                layer_data['selectedDate'] = layer_data['ogc_times'][-1]
+            if layer_data['thema'] == 'Rohdaten':
+                data['satdatalayers'].append(layer_data)
+            else:
+                data['satdataproducts'].append(layer_data)
 
         return Response(data)
 
@@ -127,7 +133,7 @@ class DWDStations(APIView):
         stations = DWDStation.objects.filter(geom__intersects=region.geom).order_by('Stationsname')
         result = []
         for data in DWDStationSerializer(stations, many=True).data:
-            if data['dataCount'] > -1:
+            if data['dataCount'] > 0:
                 result.append(data)
         return Response(result)
 
@@ -244,7 +250,7 @@ class DWDInSituData_PhaseHistogram(APIView):
         fig = Figure()
         ax = fig.add_subplot(111)
         #data['Jultag'].plot(ax=ax, title=title)
-        data['Jultag'].plot.hist(bins=25, ax=ax, title=title)
+        data['Jultag'].plot.hist(bins=25, ax=ax, title=title) #, range=(0,360)
         ax.set_xlabel('Tag des Jahres')
         canvas = FigureCanvas(fig)
         response = HttpResponse(content_type='image/png')

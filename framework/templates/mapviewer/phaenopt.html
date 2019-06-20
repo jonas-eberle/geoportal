@@ -318,22 +318,131 @@
 
                                         <div>
 
-                                            <h4 style="margin-top:15px">Verfügbare Datensätze und Informationen</h4>
-                                            <div class="buttons overview" style="text-align: center;margin-top: 20px;">
-                                                <button type="button" class="btn btn-wetland" onclick="$('li.flaticon2-climate a').click()">
-                                                    <div class="flaticon2-climate"></div>{{regions.dataCount.indicators}} Klimakarten</button>
-                                                <button type="button" class="btn btn-wetland" onclick="$('li.flaticon2-calendar a').click()">
-                                                    <div class="flaticon2-calendar"></div>{{regions.dataCount.products}} Ph&auml;nologiekarten</button>
-                                                <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()">
-                                                    <div class="flaticon-space-satellite-station"></div>{{regions.dataCount.satdata}} Satellitendaten</button>
-                                                <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()">
-                                                    <div class="flaticon-technology-2"></div>{{regions.dataCount.images}} In-Situ Daten</button>
-                                                <button type="button" class="btn btn-wetland" onclick="$('li.flaticon2-group a').click()">
-                                                    <div class="flaticon2-group"></div>{{regions.dataCount.videos}} Citizen Science</button>
-                                                <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()">
-                                                    <div class="flaticon-layers"></div>{{regions.dataCount.externaldb}} Allgemeine Karten</button>
-                                            </div>
+                                             <uib-accordion close-others="false">
+                                                <div uib-accordion-group heading="Verfügbare Daten" is-open="regions.overview">
+                                                    <uib-accordion-heading>
+                                                        Verfügbare Daten
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.overview, 'glyphicon-chevron-right': !regions.overview}"></i>
+                                                    </uib-accordion-heading>
+                                                    <div class="buttons overview" style="text-align: center;margin-top: 10px;">
+                                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-layers a').click()">
+                                                            <div class="flaticon-layers"></div>{{regions.dataCount.externaldb}} Allgemeine Karten</button>
+                                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon2-climate a').click()">
+                                                            <div class="flaticon2-climate"></div>{{regions.dataCount.indicators}} Klimakarten</button>
+                                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon2-calendar a').click()">
+                                                            <div class="flaticon2-calendar"></div>{{regions.dataCount.products}} Ph&auml;nologiekarten</button>
+                                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-space-satellite-station a').click()">
+                                                            <div class="flaticon-space-satellite-station"></div>{{regions.dataCount.satdata}} Satellitendaten</button>
+                                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon-technology-2 a').click()">
+                                                            <div class="flaticon-technology-2"></div>{{regions.dataCount.images}} In-Situ Daten</button>
+                                                        <button type="button" class="btn btn-wetland" onclick="$('li.flaticon2-group a').click()">
+                                                            <div class="flaticon2-group"></div>{{regions.dataCount.videos}} Citizen Science</button>
+                                                        
+                                                    </div>
+                                               </div>
+                                               
+                                               <style type="text/css">
+                                                   div.text p {
+                                                        text-align:justify;
+                                                   }
+                                               </style>
+                                            
+                                                
+                                                <div class="text" uib-accordion-group heading="Thematische Einführung" is-open="regions.introduction">
+                                                    <uib-accordion-heading>
+                                                        Thematische Einführung
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.introduction, 'glyphicon-chevron-right': !regions.introduction}"></i>
+                                                    </uib-accordion-heading>
+                                                    
+                                                    <p>Pflanzen ändern Ihr Aussehen im Jahresverlauf: Sie blühen im Frühling, produzieren Blätter und Früchte im Jahresverlauf und verfärben sich im Herbst. Dennoch gibt es Unterschiede: Ackerpflanzen sind nur eine begrenzte Zeit im Jahr vorhanden, Laubbäume haben nicht immer Blätter und Nadelbäume sind auch im Winter grün.</p>
+                                                    <p>Diese Unterteilung ist sogar aus dem Weltall zu erkennen; sie kann helfen, Änderungen dieser Vegetationsbereiche z. B. durch den Klimawandel zu erkennen.</p>
+                                                    <h4>Einfluss des Klimawandels</h4>
+                                                    <p>Die Auswirkungen des Klimawandels  in Thüringen sind bereits heute direkt spürbar: Durch eine gestiegene Durchschnittstemperatur (+1,3°C 1986-2015 im Vergleich zu 1881-1910) kommt es immer häufiger zu Trockenereignissen, die vor allem die Landwirtschaft treffen.</p>
+                                                    <p>Eine weitere direkt messbare Folge des Klimawandels ist die Verschiebung der Vegetationsperiode von Pflanzen in den Winter – sie blühen früher und länger im Jahr. Messbar sind sie mit zehn sog. phänologische Phasen, die in einer phänologischen Uhr abgebildet werden.</p>
+                                                    <p>Die Sal-Weide, als Indikator für den Vorfrühling, blüht heute bis zu 15 Tage früher als noch vor 50 Jahren – und der Trend hält an. Änderungen über die letzten Jahrzehnte sind anhand von kontinuierlichen Beobachtungsdaten freiwilliger Beobachter in Diensten des Deutschen Wetterdienstes (DWD) sehr gut belegbar.</p>
+                                                    <h4>Klimafolgenindikatoren</h4>
+                                                    <p>Die Verschiebung der phänologischen Phasen wird als „Klimafolgenindikator“ bezeichnet, dessen Änderungen auch über einzelne Dekaden (10 Jahre) aufgeschlüsselt werden kann. Anhand der Änderungen, können Rückschlüsse auf potentielle Folgen für Mensch und Umwelt gezogen werden.</p>
+                                                    <h4>Klimafolgenmonitoring</h4>
+                                                    <p>Potentielle Folgen für Mensch und Umwelt, durch Änderungen in der Phänologie, können sein:</p>
+                                                    <ul>
+                                                        <li>Zunehmende gesundheitliche Beeinträchtigungen von Allergikern durch früheren und verstärkten Pollenflug</li>
+                                                        <li>Zunahme von Ernteausfällen bei Kulturpflanzen in der Landwirtschaft (da die Gefahr von Spätfrösten und Trockenperioden steigt)</li>
+                                                        <li>Verstärkung von Wassermangelerscheinungen, da die Vegetation länger im Jahr aktiv ist und weniger Niederschläge im Sommer zu erwarten sind – Wasser, das an anderer Stelle fehlen wird.</li>
+                                                    </ul>
+                                                    <p>Um auf diese Folgen mit passenden Strategien zu reagieren, wird vom Freistaat Thüringen ein „Klimafolgenmonitoring“ eingerichtet. Es ist Bestandteil des Integrierten Maßnahmenprogramms zur Anpassung an die Folgen des Klimawandels im Freistaat Thüringen – IMPAKT.</p>
+                                                    <p>Mit „PhaenOPT“ soll ein erster, zuverlässiger webbasierter Monitoring-Dienst eingerichtet werden, der Aussagen zu zeitlichen Änderungen phänologischer Phasen treffen kann. Die Informationen sollen frei abrufbar sein.</p>
+                                                </div>
+                                                
+                                                <div uib-accordion-group heading="Weitere Informationen" is-open="regions.weiteres">
+                                                    <uib-accordion-heading>
+                                                        Weitere Informationen
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.weiteres, 'glyphicon-chevron-right': !regions.weiteres}"></i>
+                                                    </uib-accordion-heading>
+                                                    
+                                                    <ul style="padding-left: 20px;">
+                                                        <li><a href="http://www.spektrum.de/lexikon/geographie/fernerkundung/2424" target="_blank">Was ist Fernerkundung?</a></li>
+                                                        <li><a href="http://www.dwd.de/DE/klimaumwelt/klimaueberwachung/phaenologie/phaenologie_node.html;jsessionid=4552EAA9345D56A45C3F92848E531DCC.live11051" target="_blank">Was ist Phänologie?</a></li>
+                                                        <li><a href="/th8/klimaagentur/impakt/index.aspx" target="_blank">IMPAKT (2013)</a></li>
+                                                        <li><a href="http://www.d-copernicus.de/" target="_blank">Copernicus Deutschland</a></li>
+                                                        <li><a href="http://www.d-copernicus.de/weltraumkomponente" target="_blank">Informationen zu den europäischen Sentinel-Satelliten</a></li>
+                                                        <li><a href="https://www.dwd.de/DE/leistungen/phaeno_akt/phaenoakt.html" target="_blank">Aktuelle Vegetationsphase Thüringen (DWD)</a></li>
+                                                        <li><a href="http://myseasons.eu/" target="_blank">App „MySeasons“ (engl.)</a></li>
+                                                    </ul>
+                                                </div>
+                                            </uib-accordion>
                                         </div>
+                                    </uib-tab>
+                                    
+                                    <!-- Allgemeine Karten -->
+                                    <uib-tab class="flaticon-layers" heading="" uib-tooltip="Allgemeine Karten" tooltip-append-to-body="true" select="tracking.trackWetlandTab('backgroundmaps')">
+
+                                        <div>
+                                            <uib-accordion close-others="false">
+                                                <div uib-accordion-group heading="Allgemeine Karten" is-open="regions.maps"  ng-if="regions.value.data.layers.allgemein.length > 0">
+                                                    <uib-accordion-heading>
+                                                        Allgemeine Karten
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.maps, 'glyphicon-chevron-right': !regions.maps}"></i>
+                                                    </uib-accordion-heading>
+                                                    
+                                                    <div ng-repeat="layer in regions.value.data.layers.allgemein" id="layer_vis_div_{{layer.id}}">
+                                                        <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                        <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                        <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                        <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div uib-accordion-group heading="Geoproxy Thüringen" is-open="regions.geoproxy"  ng-if="regions.value.data.layers.geoproxy.length > 0">
+                                                    <uib-accordion-heading>
+                                                        Geoproxy Thüringen
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.geoproxy, 'glyphicon-chevron-right': !regions.geoproxy}"></i>
+                                                    </uib-accordion-heading>
+                                                    
+                                                    <div ng-repeat="layer in regions.value.data.layers.geoproxy" id="layer_vis_div_{{layer.id}}">
+                                                        <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                        <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                        <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                        <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                    </div>
+                                                </div>
+                                            
+                                                
+                                                <div uib-accordion-group heading="Satellitendaten" is-open="regions.satdata"  ng-if="regions.value.data.satdatalayers.length > 0">
+                                                    <uib-accordion-heading>
+                                                        Satellitendaten
+                                                        <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata, 'glyphicon-chevron-right': !regions.satdata}"></i>
+                                                    </uib-accordion-heading>
+                                                    
+                                                    <div ng-repeat="layer in regions.value.data.satdatalayers" id="layer_vis_div_{{layer.id}}">
+                                                        <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
+                                                        <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
+                                                        <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
+                                                        <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
+                                                    </div>
+                                                </div>
+                                            </uib-accordion>
+                                        </div>
+
                                     </uib-tab>
 
                                     <!-- Indicators -->
@@ -341,7 +450,7 @@
                                         <div ng-if="regions.value.data.climatelayers.length == 0">No indicators available!</div>
                                         <div ng-if="regions.value.data.climatelayers.length > 0">
 
-                                            <uib-accordion>
+                                            <uib-accordion close-others="false">
                                                 <div uib-accordion-group ng-repeat="product in regions.value.data.climatelayers" heading="{{product.name}}" is-open="product.open">
                                                     <uib-accordion-heading ng-click="tracking.trackProduct(product.name, product.open);" >
                                                         {{product.name}}
@@ -439,8 +548,8 @@
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_vegetation, 'glyphicon-chevron-right': !regions.satdata_vegetation}"></i>
                                                 </uib-accordion-heading>
 
-                                                <div class="select" ng-if="regions.value.data.satdatalayers.length > 0">
-                                                    <div ng-repeat="layer in regions.value.data.satdatalayers" id="layer_vis_div_{{layer.id}}">
+                                                <div class="select" ng-if="regions.value.data.satdataproducts.length > 0">
+                                                    <div ng-repeat="layer in regions.value.data.satdataproducts" id="layer_vis_div_{{layer.id}}">
                                                         <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
                                                         <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
                                                         <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
@@ -449,15 +558,68 @@
                                                 </div>
 
                                             </div>
+                                            
+                                            <div uib-accordion-group is-open="regions.vegindex" style="text-align:justify">
+                                                <uib-accordion-heading>
+                                                    Vegetationsindex
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.vegindex, 'glyphicon-chevron-right': !regions.vegindex}"></i>
+                                                </uib-accordion-heading>
+                                                
+                                                <p>Informationen über die Vegetation lassen sich über spektrale Kanäle optischer Satelliten ableiten. "Gesunde" Vegetation absorbiert sehr viel Licht aus dem roten Spektralbereich und reflektiert sehr viel Strahlung im nahen Infrarot-Bereich. Die Reflexion im nahen Infrarot ist auf das Vorhandensein von Chlorophyll zurückzuführen.</p>
+                                                <p>Die folgende Abbildung zeigt den Reflexionsgrad von unterschiedlicher Landbedeckung in Abhängigkeit mit dem Wellenbereich. Je vitaler (grüner) die Pflanze, desto größer ist der Anstieg des Reflexionsgrades in diesem Spektralbereich.</p>
+                                                <p><a href="/media/spektralbereich.png" class="fancybox"><img src="/media/spektralbereich.png" width="100%"/></a></p>
+                                                <p>Die folgenden Vegetationsindizes haben sich in der Forschung bewährt:</p>
+                                                <p><strong>Normalized Difference Vegetation Index (NDVI)</strong></p>
+                                                <p><img src="/media/ndvi_formel.png" width="200"/></p>
+                                                <p><strong>Enhanced Vegetation Index (EVI)</strong></p>
+                                                <p><img src="/media/evi_formel.png" width="200"/></p>
+                                                <p>Während NDVI-Werte aus Satellitendaten von der Aufnahmeuhrzeit und damit vom Sonneneinfallswinkel abhängen, entstehen je nach Aufnahmezeitpunkt an einem Tag unterschiedliche Informationen zum Vegetationsstatus. Der EVI berücksichtigt dies und korrigiert den Unterschied zwischen den atmosphärischen Bedingungen und dem Einfallswinkel der Sonne.</p>
+                                            </div>
+                                            
+                                            <div uib-accordion-group is-open="regions.phenology" style="text-align:justify">
+                                                <uib-accordion-heading>
+                                                    Ph&auml;nologische Modellierung
+                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.phenology, 'glyphicon-chevron-right': !regions.phenology}"></i>
+                                                </uib-accordion-heading>
+                                                
+                                                <p>Die phänologische Modellierung basiert auf der Ableitung von Beginn und Ende der Vegetationsperiode innerhalb eines Jahres. Zwischen dem niedrigsten (Basis) und höchsten (Peak) Wert des Satelliten-basierten Vegetationsindex befindet sich der Beginn der Vegetationsperiode. Verschiedene Softwarepakete existieren, mit denen die Ableitung durchgeführt werden können. Wir verwenden die Software <a href="http://web.nateko.lu.se/timesat/timesat.asp?cat=1" target="_blank">TIMESAT</a>.</p>
+                                                <p>Die folgende Abbildung zeigt den Verlauf des Vegetationsindex in einem Jahr (blaue Linie), der geglättete Verlauf (rote Linie) sowie die phänologischen Parameter, die abgeleitet werden können. Verschiedene Parameter können eingestellt werden, um den Beginn und das Ende der Vegetationsperiode zu bestimmen. Für die Kalibrierung dieser Parameter verwenden wir die phänologischen Insitu-Daten des DWD.</p>  
+                                                <p>
+                                                    <a href="http://web.nateko.lu.se/timesat/images/TIMESAT_parameters.png" class="fancybox"><img src="http://web.nateko.lu.se/timesat/images/TIMESAT_parameters.png" width="100%" /></a><br>
+                                                    <i>Abbildung: Parameters aus der Software TIMESAT: (a) beginning of season, (b) end of season, (c) length of season, (d) base value, (e) time of middle of season, (f) maximum value, (g) amplitude, (h) small integrated value, (h+i) large integrated value. &copy; Eklundh (2018) under Creative Commons Attribution-NonCommercial-NoDerivs 2.5 Sweden License.</i>
+                                                </p>
+                                            </div>
 
                                             <div uib-accordion-group is-open="regions.satdata_image">
                                                 <uib-accordion-heading>
-                                                    Satellitenszenen Explorer
+                                                    Verfügbare Satellitenszenen* für Thüringen
                                                     <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_image, 'glyphicon-chevron-right': !regions.satdata_image}"></i>
                                                 </uib-accordion-heading>
+                                                <p>* Basierend auf Landsat- und Sentinel-Daten!</p>
                                                 <a href="javascript:;" uib-tooltip="Click to open the satellite scenes explorer application" ng-click="regions.showSatdataExplorer()"><img ng-src="/media/cache/satdata/satdata_all_{{regions.value.id}}_small.png" width="100%" /></a>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-09-04</div>
+                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Letzte Aktualisierung: 04.09.2018</div>
+                                                
+                                                <table class="table data">
+                                                    <tr>
+                                                        <!--<th>&nbsp;</th>-->
+                                                        <th>Sensor</th>
+                                                        <th>Szenen</th>
+                                                        <th>Start</th>
+                                                        <th>Ende</th>
+                                                    </tr>
+                                                    <tr ng-if="!regions.value.satdata">
+                                                        <td colspan="4">Loading...</td>
+                                                    </tr>
+                                                    <tr ng-repeat="data in regions.value.satdata.table" >
+                                                        <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
+                                                        <td>{{data.dataset}}</td>
+                                                        <td>{{data.count}}</td>
+                                                        <td>{{data.min}}</td>
+                                                        <td>{{data.max}}</td>
+                                                    </tr>
+                                                </table>
                                             </div>
+                                            
                                             <div uib-accordion-group is-open="regions.satdata_layers" ng-if="regions.value.satdata.layers_count > 0">
                                                 <uib-accordion-heading>
                                                     Satellitenszenen Visualisierung
@@ -478,55 +640,6 @@
                                                 </div>
                                                 <div style="margin-top:10px;margin-left:2px;">Made available based on <a href="https://sentinel-hub.com/" target="_blank">Sentinel Hub Services</a> and the ESA Open Science Earth Observation grant (No. <a href="https://earth.esa.int/web/guest/pi-community/search-results-and-projects/keyword-entry?IFRAME_SRC=%2Fpi%2Fesa%3Fts%3D1528463214378%26targetIFramePage%3D%252Fweb%252Fguest%252Fpi-community%252Fsearch-results-and-projects%252Fkeyword-entry%26topSelectedNavigationNodeId%3DSEARCH%26coordinates%3D%26sideNavigationType%3DSEARCH%26type%3D10%26toprint%3D-1%26token%3D%26addattribute%3Dfalse%26sideExpandedNavigationBoxId%3DprojectSearch%26id%3D36615%26caller%3D%25252Fpi%25252Fesa%25253Finstitute%25253D%252526itemsPerPage%25253D10%252526sideExpandedNavigationBoxId%25253DprojectSearch%252526displayMode%25253Dcenter%252526cmd%25253Dother%252526submissionid%25253D-1%252526showAll%25253Dtrue%252526topSelectedNavigationNodeId%25253DSEARCH%252526keyword%25253D%252526downloadAsCsv%25253Dfalse%252526targetIFramePage%25253D%2525252Fweb%2525252Fguest%2525252Fpi-community%2525252Fsearch-results-and-projects%2525252Fkeyword-entry%252526ts%25253D1528463214378%252526colorTheme%25253D03%252526startFrom%25253D0%252526sideNavigationType%25253DSEARCH%252526title%25253D%252526aoid%25253D1560%26cmd%3Dproject%26header%3D%26displayMode%3Dcenter%26colorTheme%3D03%26subnavigation%3D1%26role%3D0" target="_blank">36615</a>).</div>
                                                 <div class="last_update" style="text-align: right;font-size: 0.85em;margin-top: 10px;margin-right: 5px;">Last update: 2018-09-04</div>
-                                            </div>
-                                            <div uib-accordion-group is-open="regions.satdata_table">
-                                                <uib-accordion-heading>
-                                                    Satellitenszenen Statistiken
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_table, 'glyphicon-chevron-right': !regions.satdata_table}"></i>
-                                                </uib-accordion-heading>
-                                                <table class="table data">
-                                                    <tr>
-                                                        <!--<th>&nbsp;</th>-->
-                                                        <th>Sensor</th>
-                                                        <th>Scenes</th>
-                                                        <th>Start</th>
-                                                        <th>End</th>
-                                                    </tr>
-                                                    <tr ng-if="!regions.value.satdata">
-                                                        <td colspan="4">Loading...</td>
-                                                    </tr>
-                                                    <tr ng-repeat="data in regions.value.satdata.table" >
-                                                        <!--<td><input type="checkbox" id="layer_data_s2" /><label for="layer_data_s2"></label></td>-->
-                                                        <td>{{data.dataset}}</td>
-                                                        <td>{{data.count}}</td>
-                                                        <td>{{data.min}}</td>
-                                                        <td>{{data.max}}</td>
-                                                    </tr>
-                                                </table>
-                                                <div class="last_update" style="text-align: right;font-size: 0.85em;">Last update: 2018-09-04</div>
-                                            </div>
-                                            <div uib-accordion-group is-open="regions.satdata_sources">
-                                                <uib-accordion-heading>
-                                                    Datenquellen
-                                                    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': regions.satdata_sources, 'glyphicon-chevron-right': !regions.satdata_sources}"></i>
-                                                </uib-accordion-heading>
-                                                <p>
-                                                    <strong>Copernicus Open Access Hub</strong><br/>
-                                                    Sentinel-1 A&B IW GRD and Sentinel-3 data have been searched through the Copernicus Open Access Hub OpenSearch API. <br />
-                                                    <a href="https://scihub.copernicus.eu" target="_blank">https://scihub.copernicus.eu</a>
-                                                </p>
-                                                <hr/>
-                                                <p>
-                                                    <strong>USGS Earth Explorer</strong><br/>
-                                                    Landsat MSS, Landsat TM (Collection 1), Landsat ETM (Collection 1), Landsat-8 (Collection 1), Sentinel 2A data have been searched through the USGS Earth Explorer API. <br />
-                                                    <a href="https://earthexplorer.usgs.gov" target="_blank">https://earthexplorer.usgs.gov</a>
-                                                </p>
-                                                <hr/>
-                                                <p>
-                                                    <strong>Sinergise Sentinel Hub Services</strong><br/>
-                                                    Landsat TM and Landsat ETM data from ESA archives have been searched through the Sentinel Hub WFS Services. Furthermore WMS services for Landsat TM, Landsat ETM, Landsat 8 and Sentinel datasets have been integrated within the satellite scenes explorer for data visualization.<br />
-                                                    <a href="http://sentinel-hub.com" target="_blank">http://sentinel-hub.com</a>
-                                                </p>
                                             </div>
                                         </uib-accordion>
                                     </uib-tab>
@@ -652,31 +765,6 @@
                                         </div>
                                     </uib-tab>
 
-                                    <!-- Allgemeine Karten -->
-                                    <uib-tab class="flaticon-layers" heading="" uib-tooltip="Allgemeine Karten" tooltip-append-to-body="true" select="tracking.trackWetlandTab('backgroundmaps')">
-
-                                        <div style="padding-left:5px;">
-                                            <h4 style="margin-top:15px">Allgemeine Karten</h4>
-                                            <div class="select" ng-if="regions.value.data.layers.allgemein.length > 0">
-                                                <div ng-repeat="layer in regions.value.data.layers.allgemein" id="layer_vis_div_{{layer.id}}">
-                                                    <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
-                                                    <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
-                                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                                </div>
-                                            </div>
-                                            <h4 style="margin-top:15px">Geoproxy Thüringen</h4>
-                                            <div class="select" ng-if="regions.value.data.layers.geoproxy.length > 0">
-                                                <div ng-repeat="layer in regions.value.data.layers.geoproxy" id="layer_vis_div_{{layer.id}}">
-                                                    <input ng-if="regions.layerIdMap[layer.id] === undefined" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" />
-                                                    <input ng-if="regions.layerIdMap[layer.id]" type="checkbox" ng-click="regions.addLayerToMap(layer, $event);" id="layer_vis_{{layer.id}}" checked="checked" />
-                                                    <label for="layer_vis_{{layer.id}}"> {{layer.alternate_title}}</label>
-                                                    <swos-layer-controls class="swosLayerControls" ng-if="regions.layers[regions.layerIdMap[layer.id]]" layer-hash="{{ regions.layerIdMap[layer.id] }}"></swos-layer-controls>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </uib-tab>
                                 </uib-tabset>
                             </div>
                                 </div>
@@ -717,8 +805,9 @@
 
     <script id="welcome_text" style="display:none">
         <div style="padding:15px;">
-            <p>Pflanzen ändern ihr Aussehen im Jahresverlauf: Sie blühen im Frühling, produzieren Blätter und Früchte im Jahresverlauf und verfärben sich im Herbst. Dennoch gibt es Unterschiede: Ackerpflanzen sind nur eine begrenzte Zeit im Jahr vorhanden, Laubbäume haben nicht immer Blätter und Nadelbäume sind auch im Winter grün.</p>
-            <p>Diese Unterteilung ist sogar aus dem Weltall zu erkennen; Satellitendaten k&ouml;nnen dabei helfen, &Auml;nderungen dieser Vegetationsbereiche z.B. durch den Klimawandel zu erkennen.</p>
+            <p>Willkommen auf dem PhaenOPT-Webportal.</p>
+            <p>Hier stellen wir Daten und Informationen zu unserem Webdienst für das phänologische Klimafolgenmonitoring bereit.</p>
+            <!--<p><a href="/mapviewer/detail/2.html">Hier geht es zum Expertentool</a></p>-->
         </div>
     </script>
 

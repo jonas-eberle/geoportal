@@ -504,6 +504,21 @@ class StoryLineInline(models.Model):
 
 class SatdataLayer(Layer):
     region = models.ForeignKey(Region, related_name="layer_satdata", verbose_name="Region", blank=True, null=True)
+    thema = models.CharField("Type", max_length=30, choices=(('Rohdaten', 'Rohdaten'), ('Produkt', 'Produkt')))
 
     def __unicode__(self):
         return u"%s" %(self.title)
+
+from rest_framework import serializers
+class SatdataLayerSerializer(serializers.ModelSerializer):
+    # legend = serializers.FileField(source='legend_graphic') or serializers.CharField(source='legend_url')
+    download = serializers.FileField(source='download_file') or serializers.CharField(source='download_url')
+
+    class Meta:
+        model = SatdataLayer
+        fields = (
+            'id', 'identifier', 'title', 'alternate_title', 'abstract', 'ogc_link', 'ogc_layer', 'ogc_type',
+            'ogc_time', 'ogc_times', 'ogc_imageformat', 'ogc_attribution', 'west', 'east', 'north', 'south', 'dataset_epsg',
+            'downloadable','legend_url', 'legend_graphic', 'legend_colors', 'legend_info', 'download', 'download_type', 'map_layout_image',
+            'wmts_matrixset', 'wmts_resolutions', 'wmts_tilesize', 'wmts_projection', 'wmts_multiply','wmts_prefix_matrix_ids',
+            'min_zoom', 'max_zoom', 'meta_file_info', 'resolution_distance', 'resolution_unit', 'statistic', 'thema')

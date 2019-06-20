@@ -125,11 +125,11 @@ class StoryLinePartAdmin(admin.ModelAdmin):
 class SatdataLayerAdmin(LayersAdmin):
     fieldsets = LayersAdmin.fieldsets + ((None, {
         'classes': ('suit-tab', 'suit-tab-swos',),
-        'fields': ('region',)
+        'fields': ('region','thema',)
     }),)
-    list_display = ('title', 'publishable', 'downloadable', 'region')
+    list_display = ('title', 'publishable', 'downloadable', 'region', 'thema')
     suit_form_tabs = LayersAdmin.suit_form_tabs + (('swos', 'SWOS'),)
-    search_fields = ('title', 'abstract', 'region__name')
+    search_fields = ('title', 'abstract', 'region__name',)
     ordering = ['title']
     list_filter = ('publishable', 'downloadable', 'region')
     suit_list_filter_horizontal = ('region', 'publishable', 'downloadable')

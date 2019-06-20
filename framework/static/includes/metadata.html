@@ -20,19 +20,19 @@
     </div>-->
     <div class="item">
         <div class="headline">
-            Resource Description
+            Beschreibung
         </div>
         <div class="description" style="white-space: pre-line;">{{ mi.value_passed.abstract }}</div>
     </div>
     <div class="item" ng-if="mi.value_passed.date_begin || mi.value_passed.date_end">
         <div class="headline">
-            Temporal Extent
+            Zeitliches Ausma&szlig;
         </div>
         <div class="description">
             {{ mi.value_passed.date_begin }} - {{ mi.value_passed.date_end }}
         </div>
     </div>
-    <div class="item" ng-if="mi.value_passed.topicCategory.length > 0">
+    <!--<div class="item" ng-if="mi.value_passed.topicCategory.length > 0">
         <div class="headline">
             Category
         </div>
@@ -41,10 +41,10 @@
                 <div class="topic_cat">{{ cat.identifier }}</div>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="item" ng-if="mi.value_passed.keywords.length > 0">
         <div class="headline">
-            Keywords
+            Schlagw&ouml;rter
         </div>
         <div class="description">
             <div ng-repeat="keyword in mi.value_passed.keywords">
@@ -52,7 +52,7 @@
             </div>
         </div>
     </div>
-    <div class="item">
+    <!--<div class="item">
         <div class="headline">
             Bounding Box (Lat, Lon Coordinates)
         </div>
@@ -65,16 +65,16 @@
             <br>
             East: {{ mi.value_passed.east.toFixed(3) }}
         </div>
-    </div>
+    </div>-->
     <div class="item" ng-if="mi.value_passed.meta_lineage">
         <div class="headline">
-            Lineage
+            Herkunft
         </div>
         <div class="description" style="white-space: pre-line;">{{ mi.value_passed.meta_lineage }}</div>
     </div>
     <div class="item" ng-if="mi.value_passed.equi_scale || mi.value_passed.resolution_distance">
         <div class="headline">
-            Resolution
+            R&auml;mliche Aufl&ouml;sung
         </div>
         <div class="description">
             {{ mi.value_passed.resolution_distance }} {{ mi.value_passed.resolution_unit }}
@@ -82,25 +82,28 @@
     </div>
     <div class="item" ng-if="mi.value_passed.layer_online_resource.length > 0">
         <div class="headline">
-            Online Resources
+            Online-Links
         </div>
         <div ng-repeat="resource in mi.value_passed.layer_online_resource">
-            <a ng-if="resource.name" href="{{ resource.linkage }}" target="_blank">{{ resource.name }}</a> <span ng-if="resource.function.identifier">({{ resource.function.identifier }})</span>
-            <a ng-if="!resource.name" href="{{ resource.linkage }}" target="_blank">{{ resource.linkage }}</a> <span ng-if="resource.function.identifier">({{ resource.function.identifier }})</span>
+            <div  ng-if="resource.name"><a href="{{ resource.linkage }}" target="_blank">{{ resource.name }}</a> <span ng-if="resource.function.identifier">({{ resource.function.identifier }})</span></div>
+            <div  ng-if="!resource.name"><a href="{{ resource.linkage }}" target="_blank">{{ resource.linkage }}</a> <span ng-if="resource.function.identifier">({{ resource.function.identifier }})</span></div>
         </div>
     </div>
 
     <div class="item">
         <div class="headline">
-            Point of Contact (Dataset)
+            Kontakt (Datensatz)
         </div>
         <div class="description">
             <div ng-repeat="contact in mi.value_passed.point_of_contacts">
                 <div ng-if="contact.organisation">{{ contact.organisation }}</div>
                 <div ng-if="contact.last_name">
-                    Contact: {{ contact.first_name }} {{ contact.last_name }}</div>
+                    Ansprechpartner: {{ contact.first_name }} {{ contact.last_name }}</div>
                 <div ng-if="contact.email">
                     Email: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                </div>
+                <div ng-if="contact.website">
+                    Webseite: <a href="{{ contact.website }}" target="_blank">{{ contact.website }}</a>
                 </div>
             </div>
         </div>
@@ -108,6 +111,6 @@
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" ng-click="mi.close()">
-        Close
+        Schlie&szlig;en
     </button>
 </div>
