@@ -8,7 +8,7 @@ cssmin==0.2.0
 cycler==0.10.0
 decorator==4.3.0
 descartes==1.1.0
-Django==1.11.5
+Django==1.11.29
 django-allauth==0.33.0
 django-assets==0.12
 django-cronjobs==0.2.3
