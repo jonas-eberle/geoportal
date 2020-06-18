@@ -5,7 +5,7 @@
   "main": "framework/index.wsgi",
   "dependencies": {
     "@turf/turf": "^4.7.3",
-    "angular": "^1.6.6",
+    "angular": "^1.8.0",
     "angular-animate": "^1.6.6",
     "angular-bootstrap-slider": "github:seiyria/angular-bootstrap-slider#master",
     "angular-cookies": "^1.6.6",
