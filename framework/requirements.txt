@@ -18,7 +18,7 @@ django-pandas==0.5.1
 django-rest-auth==0.9.1
 #-e git://github.com/darklow/django-suit.git@ebaf0e862a49aa897c5414db0c8b59df85f78839#egg=django_suit
 django-thumbs==0.4
-djangorestframework==3.6.4
+djangorestframework==3.11.2
 elasticsearch==5.4.0
 elasticsearch-dsl==5.3.0
 enum34==1.1.6
